@@ -4,12 +4,7 @@
 ,biblatexbackend=biber
 ]{langsci/langscibook}
 
-\author{
-  Timm Lichte\affiliation{University of Düsseldorf}\and 
-  Simon Petitjean\affiliation{University of Düsseldorf}\and 
-  Agata Savary\affiliation{University of Tours}\lastand 
-  Jakub Waszczuk\affiliation{Université of Tours\\University of Orléans}
-}
+\author{Timm Lichte\affiliation{University of Düsseldorf}\and Simon Petitjean\affiliation{University of Düsseldorf}\and Agata Savary\affiliation{University of Tours}\lastand Jakub Waszczuk\affiliation{Université of Tours\\University of Orléans}}
 \title{Lexical encoding formats for multi-word expressions: The challenge of ``irregular'' regularities}
 
 %\lehead{}
@@ -241,7 +236,7 @@ A true classic, PATR-II \citep{shieber:84,shieber:86} dates back to the early 80
  (`wineglass').} 
 
 All this is exemplified for (NL) \ile{zijn kansen waarnemen} in Figure~\ref{lic:fig:patr:dutch}.
-\begin{figure}[t]
+\begin{figure}[p]
   \begin{patr-listing}
 Define Verb as
     [cat: v]
@@ -288,7 +283,7 @@ In Figure~\ref{lic:fig:patr:dutch}, the first five templates (\texttt{Verb}, \te
 Comparing the PATR-II encoding with the DuELME encoding from Figure~\ref{lic:fig:duelme}, it becomes evident that PATR-II is more flexible at defining properties or factorizing what are called ``patterns'' in DuELME. The reason for this divergence of \isi{flexibility} also lies in the fact that PATR-II descriptions come with a clear denotational semantics, which does not seem to be fixed for DuELME encodings. In fact, one could see this as an advantage of DuELME, taking it as a sign of desired neutrality. But then one must also accept intransparency and inflexibility, at least to some degree.
 
 A tentative PATR-II encoding of (PL) \ile{dobrze [KOMUŚ] z oczu patrzy} is presented in Figure~\ref{lic:fig:patr:polish}.
-\begin{figure}[htp]
+\begin{figure}[p]
   \begin{patr-listing}
 Define ImpersIntransitive as
     [cat: v
@@ -495,11 +490,11 @@ Table~\ref{lic:tab:comparison} shows a comparison of the encoding formalisms pre
   \begin{center}
     % \setlength{\tabcolsep}{2ex}
     \fittable{%
-    \begin{tabular}{lccccc}
+    \begin{tabular}{rccccc}
       % \hline
       \lsptoprule
       & \multicolumn{4}{c}{human user oriented}
-      & \multicolumn{1}{c}{lexical resource oriented}\\ 
+      & \multicolumn{1}{c}{lexical resource oriented}\\\cmidrule(lr){2-5}
       %\cline{2-6}
 
       & \textsc{transparency}
@@ -515,21 +510,17 @@ Table~\ref{lic:tab:comparison} shows a comparison of the encoding formalisms pre
       %\hline
       \midrule
       
-      \multicolumn{1}{r}{DuELME}
-      & 4 & 4 & 3 & 2 & 1  \\ 
-      \multicolumn{1}{r}{Walenty}
-      & 3 & 3 & 3 & 1 & 1 \\ 
-      \multicolumn{1}{r}{PATR-II}
-      & 1 & 2 & 2 & 4 & 4 \\ 
-      \multicolumn{1}{r}{XMG}
-      & 1 & 1 & 1 & 3 & 3  %\\\hline
+      DuELME & 4 & 4 & 3 & 2 & 1  \\ 
+      Walenty & 3 & 3 & 3 & 1 & 1 \\ 
+      PATR-II & 1 & 2 & 2 & 4 & 4 \\ 
+      XMG  & 1 & 1 & 1 & 3 & 3  %\\\hline
       \tabularnewline
       \lspbottomrule
     \end{tabular}
     }
     \caption{Ranking of encoding formats in different categories -- lexical
       encoding virtues -- with special focus on MWEs.
-      The range of values is from $1$ to $4$, where $1$ means that we judge the
+      The range of values is from 1 to 4, where 1 means that we judge the
       corresponding format as relatively the best in the given category.
     }
     \label{lic:tab:comparison}
@@ -552,8 +543,8 @@ As a general conclusion, lexical encoding of MWEs is a highly challenging task, 
 \section*{Acknowledgements}
 This work has been supported by the IC1207 PARSEME COST action, by the Deutsche Forschungsgemeinschaft
 (DFG) within the CRC 991 ``The Structure of Representations in Language, Cognition, and Science'', and by a doctoral grant from the \ili{French} Ministry of Higher Education and Research.
- 
-\printbibliography[heading=subbibliography,notkeyword=this]
+
+{\sloppy\printbibliography[heading=subbibliography,notkeyword=this]}
 
 \end{document}
 

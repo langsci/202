@@ -612,23 +612,23 @@ For instance, such lexicon of newly discovered MWEs can be subsequently used for
 used automatically parsed data for discovering MWEs of different types, including idiomatic verb + prepositional \isi{phrase} (PP) combinations and light-verb constructions {in English}. These cases involved the use of different {\isi{collocation extraction} scores}.
 
 \begin{table}
-\begin{tabular}{llllrr}
+\begin{tabular}{llllS[table-format=1.5]S[table-format=1.5e+1]}
 %\includegraphics[width=180pt,height=160pt]{VOPN_OE.png}
   %\hline \hline
   \lsptoprule
-  verb & object & prep & desc. noun & T-score & O/E \\ %\hline
+  verb & object & prep & desc. noun & \multicolumn{1}{c}{T-score} & \multicolumn{1}{c}{O/E} \\ %\hline
   \midrule
-  send & shiver & down & spine & 5.74456 & 2.21477×10$^8$\\
-  tap & esc & for & escape & 6.40312 & 2.1134×10$^8$\\
-  separate & shield & from & plate & 6.78233 & 2.33384×10$^7$\\
-  refer & gentleman & to & reply & 8.24621 & 7.8143×10$^6$\\
-  obtain & property & by & deception & 5.2915 & 7.60043×10$^6$\\
-  ask & secretary & for & affairs & 6.40312 & 5.01529×10$^6$\\
-  kill & bird & with & stone & 5.38516 & 3.37917×10$^6$\\
-  add & insult & to & injury & 6.08276 & 2.21769×10$^6$\\
-  throw & caution & to & wind & 5.09902 & 2.03157×10$^6$\\
-  refer & friend & to & reply & 7.54983 & 1.36298×10$^6$\\
-  report & loss & on & turnover & 7.14142 & 1.34742×10$^6$ \tabularnewline %\\ %\hline \hline
+  send & shiver & down & spine & 5.74456 & 2.21477e8\\
+  tap & esc & for & escape & 6.40312 & 2.1134e8\\
+  separate & shield & from & plate & 6.78233 & 2.33384e7\\
+  refer & gentleman & to & reply & 8.24621 & 7.8143e6\\
+  obtain & property & by & deception & 5.2915 & 7.60043e6\\
+  ask & secretary & for & affairs & 6.40312 & 5.01529e6\\
+  kill & bird & with & stone & 5.38516 & 3.37917e6\\
+  add & insult & to & injury & 6.08276 & 2.21769e6\\
+  throw & caution & to & wind & 5.09902 & 2.03157e6\\
+  refer & friend & to & reply & 7.54983 & 1.36298e6\\
+  report & loss & on & turnover & 7.14142 & 1.34742e6 \tabularnewline %\\ %\hline \hline
   \lspbottomrule
 \end{tabular}
 \caption{Top-ranked verb-object + preposition-noun tuples, using the the O/E score \citep{lehmann-schneider2011:verb-pp}}
@@ -906,7 +906,7 @@ the concatenation of MWEs into single units  decrements the total number of eval
 Figure~\ref{con:fig:example} provides two example sequences for the phenomena discussed above; one containing a continuous MWE (on the left side)  and another one containing a non-continuous MWE (on the right side).
 The dependency trees in this figure provide the gold standard unlabeled dependency relations for both examples.
 Correctly predicted dependencies %by the used setting 
-are presented with check marks (\checkmark) over the relations, whereas the wrongly predicted dependencies are presented with a cross mark (\ding{55}). 
+are presented with check marks (\ding{51}) over the relations, whereas the wrongly predicted dependencies are presented with a cross mark (\ding{55}). 
 The continuous MWE of the left side sequence consists of three tokens (w$_4$, w$_5$ and w$_6$). In other words, the two dependency relations of the overall sequence belong to the relations between MWE elements. The non-continuous MWE of the right side sequence consists of two tokens (w$_3$ and w$_6$).
 
 The first examples of each column (``(A)'' and ``(E)'') show the success of a dependency parser without any prior MWE identification process. 

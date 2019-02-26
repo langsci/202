@@ -1,5 +1,7 @@
 %add all your local new commands to this file
 \counterwithout{equation}{chapter} % remove the chapter number
+\newcommand{\sg}{\textsc{sg}{}\xspace}	%singular 
+\newcommand{\definite}{\textsc{def}{}\xspace}	%definite
 
 \newcommand{\tobi}[2]{%
 \parbox{0cm}{\raisebox{.3cm}[0cm]{#2}}#1}
@@ -19,10 +21,10 @@
 %CONSTANT
 \newcommand{\asu}{UAS}
 \newcommand{\asl}{LAS}
-\newcommand{\asuo}{UAS$_{OA}$}
-\newcommand{\aslo}{LAS$_{OA}$}
-\newcommand{\asus}{UAS$_{surr}$}
-\newcommand{\asls}{LAS$_{surr}$}
+\newcommand{\asuo}{UAS\textsubscript{OA}}
+\newcommand{\aslo}{LAS\textsubscript{OA}}
+\newcommand{\asus}{UAS\textsubscript{surr}}
+\newcommand{\asls}{LAS\textsubscript{surr}}
 \newcommand{\ww}{$WW_U$}
 \newcommand{\main}[1]{\textit{#1}}
 \newcommand{\expl}[1]{\emph{#1}}

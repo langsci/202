@@ -133,10 +133,10 @@ By contrast, for the same sentence, \isi{CCG} has information in its lexicon tha
 \end{figure}
 
 \indent Transforming the test data by for example collapsing the three lexical items `part', `of' and `speech' to one token `part+of+speech' can help the parser make sensible decisions locally by telling it to consider the three words as one. For example, if this token is followed by a coordinator, the parser knows that coordinating one of the units is not a possibility. In the sentence `it gives part+of+speech and lemma information', the parser cannot coordinate `speech' with `lemma' which would be a possibility otherwise. Transforming MWEs in training and test data leads to two different effects of adding MWE information to the \isi{syntactic parsing} pipeline and it is best if we can differentiate both in the experiments. We call the first type of effect \textit{training effect} and the second \textit{parsing effect}. We repeat the definition of these two effects below.
-    \begin{itemize}
-        \item Training effect: the parser learns more sensible representations of MWEs and its units. 
-        \item Parsing effect: the parser is helped locally in its decision by considering the MWE units as one unit.
-    \end{itemize}
+    \begin{description}
+        \item[Training effect:] the parser learns more sensible representations of MWEs and its units. 
+        \item[Parsing effect:] the parser is helped locally in its decision by considering the MWE units as one unit.
+    \end{description}
 
 \subsection{Parsing model}
 \label{del:parsingmodel}
@@ -403,8 +403,7 @@ We build 5 different MWE recognisers with different combinations of these tools.
 
 \begin{table}[h]
     \footnotesize
-    \def\arraystretch{1.20} 
-    \begin{tabular}{l l l l c c c} %\hline
+    \begin{tabular}{l l l l r r S[table-format=2.2]} %\hline
       \lsptoprule
         \textnormal{ID}
         & \textnormal{detector}
@@ -412,7 +411,7 @@ We build 5 different MWE recognisers with different combinations of these tools.
         & \textnormal{resolver}
         & \textnormal{MWE \#}%count}
         & \textnormal{Sibling \#}%count}
-        & \textnormal{Sibling \%}
+        & \multicolumn{1}{c}{\textnormal{Sibling \%}}
         \\ %\hline
         \midrule
         1 & Exhaustive & MoreFreqAsMWE & Longest & 53,208 & 42,309 & 79.51 \\
@@ -437,8 +436,6 @@ We build 5 different MWE recognisers with different combinations of these tools.
 \indent In order to find out whether or not training data on an MWE-informed corpus can lead to an improved accuracy, i.e. leads to training effect, we compare the output of {\modelB} against the output of {\modelA} tested on the `gold test' data. 3 out of our 5 {\modelB} s outperform {\modelA} on unlabeled\subscript{B}, although generally by a slight margin. The best results are obtained by model\subscript{B\subscript{3}} and are given in Table~\ref{del:tab:res1}. Model\subscript{B} significantly outperforms {\modelA} by 0.24\% (p=.006) which supports the hypothesis that there is indeed a training effect.
 
 \begin{table}[h]
-    \footnotesize
-    \def\arraystretch{1.20} 
     \centering
     \begin{tabular}{l l c c c} %\hline
       \lsptoprule
@@ -460,8 +457,6 @@ We build 5 different MWE recognisers with different combinations of these tools.
 \indent Because using gold test data gives {\modelB} an unfair advantage, we also test these models on the `fully transformed test' data. In this case 3 of our 5 {\modelB} s outperform {\modelA} again although by an even slighter margin. The biggest difference in results is obtained with model\subscript{B\subscript{1}} and results are given in Table~\ref{del:tab:res1bis}. Although the margin is smaller, {\modelB} still significantly outperforms {\modelA} by 0.15\% (p=.047) which shows that there is a training effect.
 
 \begin{table}[h]
-    \footnotesize
-    \def\arraystretch{1.20} 
     \centering
     \begin{tabular}{l l c c c} %\hline
       \lsptoprule
@@ -485,8 +480,6 @@ We build 5 different MWE recognisers with different combinations of these tools.
 \indent In order to test whether there can be a parsing effect, we compare the output of {\modelA} when data are transformed before parsing with {\modelA} when data are transformed after parsing. In this case {\modelB} always outperforms {\modelA}. Our best results are shown in Table~\ref{del:tab:res1bisbis} in which {\modelB} highly significantly outperforms {\modelA} (p$<$.0001).
 
 \begin{table}[h]
-    \footnotesize
-    \def\arraystretch{1.20} 
     \centering
     \begin{tabular}{l l l c c c} %\hline
       \lsptoprule
@@ -508,8 +501,6 @@ We build 5 different MWE recognisers with different combinations of these tools.
 \indent The problem with these results is that `transforming before parsing' method has gold standard information about siblings which the `transforming after parsing' method does not. In order to cross-validate our result, we transform all MWEs both before and after parsing and compare the results. In this case, {\modelA} when data are transformed before parsing outperforms {\modelA} when data are transformed after parsing only in one of the 5 cases which undermines a little the previous argument about the parsing effects showing that there can also be undesirable effects to transforming test data. It could, however, be partly due to the fact that we transformed non-siblings, which may have triggered errors during parsing. In any case, our best results still show a significant improvement with the `transforming before parsing' method over the `transforming after parsing' method. These results are obtained when using recogniser\subscript{3} and are given in Table~\ref{del:tab:res1tris}. Model\subscript{A} transformed before parsing significantly outperforms {\modelA} transformed after parsing by 0.20\% (p=.008). This indicates that there can be a parsing effect.
 
 \begin{table}[h]
-    \footnotesize
-    \def\arraystretch{1.20} 
     \centering
     \begin{tabular}{l l c c c} %\hline
       \lsptoprule
@@ -532,8 +523,6 @@ We build 5 different MWE recognisers with different combinations of these tools.
 \indent We now verify if we can also outperform the baseline on the untransformed gold standard. This means testing whether or not {\modelB} improves over {\modelA} on \textit{external edges} and/or on \textit{mediating edges}. We test this by combining dependency edges obtained from {\modelA} and {\modelB}. We combine these edges with 3 different methods. \textit{Internal} edges are always taken from {\modelA} and \textit{external edges} are always taken from {\modelB}. \textit{Mediating edges} are taken from A in the \textit{medFromA} evaluation and from B in the 2 other cases. In the \textit{rightmostMed} evaluation, the rightmost MWE unit is always chosen as incoming or outgoing node and in the \textit{leftmostMed} evaluation, it is the leftmost MWE unit that is always taken as incoming or outgoing node. Our best results are given in~\ref{del:tab:res2} in which {\modelB} only outperforms {\modelA} in the \textit{medFromA} case by 0.13\% which is not significant (p$>$.05). This seems to show that {\modelB} may perform better than {\modelA} on \textit{external edges} but as far as \textit{mediating edges} are concerned, the picture is unclear. If we take the \textit{mediating edge} from B, it seems clearly better to choose the rightmost MWE unit as incoming or outgoing node (which is not surprising since compound nouns are almost always right-headed) but doing so does not seem to be a big help in parsing accuracy. Model\subscript{B} might perform better than {\modelA} on \textit{mediating edges} if we had a better mechanism to recover the head word but with our simple method we cannot say whether or not this is the case.
 
 \begin{table}[h]
-    \footnotesize
-    \def\arraystretch{1.20} 
     \centering
     \begin{tabular}{l l c c c} %\hline
       \lsptoprule
@@ -561,8 +550,6 @@ We build 5 different MWE recognisers with different combinations of these tools.
 \indent As can be seen in Table~\ref{del:tab:res3}, different \isi{MWE recognition} methods seem to make a difference in results. There is a significant difference between our best model (based on recogniser\subscript{3}) and our worst model (based on recogniser\subscript{2}) of .26 (p=.01). Some recognisers lead to decreases in parsing accuracy while others lead to increases. It appears from the table that using a leftmost resolver (a resolver that always chooses the leftmost MWE when there is a conflict) has a bad impact on parsing accuracy. Looking at the different models, it is interesting to note that there is a much lower percentage of MWEs that are siblings in the tree and hence a much lower amount of changes made in the treebank. It is interesting to note that the best model is based on a detector that only detects proper nouns. This seems to show that they are the best candidates for being treated as words-with-spaces. This is not surprising because they are not flexible and never get inflected. For other types of MWE, an analysis as word-with-spaces might not be the most appropriate, as argued by many researchers \citep{sag02} to give just one example, see Section~\ref{del:relatedwork}).
 
 \begin{table}[h]
-    \footnotesize
-    \def\arraystretch{1.20} 
     \centering
     \begin{tabular}{l l l c} %\hline
       \lsptoprule
@@ -572,7 +559,7 @@ We build 5 different MWE recognisers with different combinations of these tools.
         & \textnormal{F$_1$}
         \\ %\hline
         \midrule
-        A &  &  & 85.15\\ \hline
+        A &  &  & 85.15\\ \midrule
         B1 & exhaustive & longest & 85.18 \\
         B2 & exhaustive & leftmost & 85.02 \\
         B3 & Proper Nouns & longest & \textbf{85.28} \\
@@ -587,8 +574,6 @@ We build 5 different MWE recognisers with different combinations of these tools.
 \subsection{Summary of our findings}
 We summarise our findings in Table~\ref{del:tab:sum}.
 \begin{table}[h]
-    \footnotesize
-    %\def\arraystretch{1.20} 
     \centering
     \fittable{%
       \begin{tabular}{l l l} %\hline

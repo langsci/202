@@ -113,7 +113,7 @@ The \isi{alignment} process has the following four steps \citep{semmar2010hybrid
  \item Monolingual extraction of MWEs: The role of this step consists to identify all the $n$-grams (up to 6-grams) that may represent a MWE. This is done through frequency analysis and heuristic scoring. This step outputs two lists of terms, which we will refer to as SC (MWE in the Source Language) and TC (MWE in the Target Language).
  \item Frequency distance calculation: This step calculates for all source MWEs in SC the distance to each of the target MWEs in TC. The main idea of this metric is that if two MWEs are translations of each other then they must appear together in the corpus segments, and only together. Their frequency distance is then calculated as follows:
  \begin{equation}
-  FD(s,t)=\frac{|f(s)-f(t)|}{max(f(s),f(t))}
+  FD(s,t)=\frac{|f(s)-f(t)|}{\max(f(s),f(t))}
  \end{equation}
  Where, $f(s)$ is the frequency of the source MWE and $f(t)$ is the frequency of the target MWE under consideration.
 
@@ -615,11 +615,11 @@ Our model operates on lemmas instead of surface forms, in which the translation 
 The features used in the baseline system include: (1) four translation probability features, (2) two language models, (3) one generation model and (4) word penalty. %For the CORPUS method, bilingual MWEs are added into the training corpus, as result, new \isi{alignment} and \isi{phrase} table are obtained. 
 
 The goal of these experiments is to study in what respect MWEs are useful to improve the performance of Moses. In Moses, \isi{phrase} tables are the main knowledge source for the machine translation decoder. The decoder consults these tables to figure out how to translate an input sentence into the target language. These tables are built automatically using the open source \isi{word alignment} tool Giza++ \citep{och2000improved}. However, Giza++ could produce errors in particular when it aligns multiword expressions \citep{fraser2007measuring}. In order to integrate into Moses the \isi{bilingual lexicon} which is extracted automatically by the \isi{MWE alignment} approaches, we propose the following three methods:
-\begin{itemize}
-\item CORPUS: In this method, we add the extracted \isi{bilingual lexicon} as a parallel corpus and retrain the \isi{translation model}. By increasing the occurrences of the MWEs and their translations, we expect a modification of \isi{alignment} and probability estimation.
- \item TABLE: This method consists in adding the extracted \isi{bilingual lexicon} into Moses’s \isi{phrase} table. We use a smoothed probability estimator to construct a translation probability for each MWE of the \isi{bilingual lexicon}. This estimator is based on the similarity measure provided by each \isi{word alignment} approach.
- \item FEATURE: In this method, we extend the ``TABLE'' method by adding a new feature indicating whether a MWE comes from the \isi{bilingual lexicon} or not (l or 0 is introduced for each entry of the \isi{phrase} table).
-\end{itemize}
+\begin{description}
+\item[CORPUS:] In this method, we add the extracted \isi{bilingual lexicon} as a parallel corpus and retrain the \isi{translation model}. By increasing the occurrences of the MWEs and their translations, we expect a modification of \isi{alignment} and probability estimation.
+ \item[TABLE:] This method consists in adding the extracted \isi{bilingual lexicon} into Moses’s \isi{phrase} table. We use a smoothed probability estimator to construct a translation probability for each MWE of the \isi{bilingual lexicon}. This estimator is based on the similarity measure provided by each \isi{word alignment} approach.
+ \item[FEATURE:] In this method, we extend the ``TABLE'' method by adding a new feature indicating whether a MWE comes from the \isi{bilingual lexicon} or not (l or 0 is introduced for each entry of the \isi{phrase} table).
+\end{description}
 
 
 

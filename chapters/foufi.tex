@@ -15,9 +15,7 @@ Eric Wehrli\affiliation{University of Geneva}%
 
 %\epigram{}
 
-\abstract{
-  Identifying multiword expressions (MWEs) in a sentence in order to ensure their proper processing in subsequent applications, like machine translation, and performing the syntactic analysis of the sentence are interrelated processes. In our approach, priority is given to parsing alternatives involving collocations, and hence collocational information helps the parser through the maze of alternatives, with the aim to lead to substantial improvements in the performance of both tasks (collocation identification and parsing), and in that of a subsequent task (machine translation).
-}
+\abstract{Identifying multiword expressions (MWEs) in a sentence in order to ensure their proper processing in subsequent applications, like machine translation, and performing the syntactic analysis of the sentence are interrelated processes. In our approach, priority is given to parsing alternatives involving collocations, and hence collocational information helps the parser through the maze of alternatives, with the aim to lead to substantial improvements in the performance of both tasks (collocation identification and parsing), and in that of a subsequent task (machine translation).}
 
 \begin{document}
 \maketitle
@@ -45,8 +43,7 @@ However, as argued by many researchers (e.g., \citealt{heid94,seretan11}), \isi{
 \section{The Fips parser}
 \label{fou:sec3}
 Fips is a \isi{multilingual parser}, available for several languages, i.e. \ili{French}, \ili{English}, \ili{German}, \ili{Italian}, \ili{Spanish}, \ili{Modern Greek}, \ili{Romanian} and Portuguese. It relies on generative \isi{grammar} concepts and is basically made up of a generic parsing module which can be refined in order to suit the specific needs of a particular language. Fips is a constituent parser that functions as follows: it scans an input string from left to right, without any backtracking. The parsing algorithm, iteratively, performs the following three steps:
-%\vspace*{3mm}
-%\renewcommand{\labelitemi}{$\bullet$}
+%%\renewcommand{\labelitemi}{$\bullet$}
 \begin{itemize}
 \item get the next lexical item and project the relevant phrasal category\\ (X $\rightarrow$ XP);
 \item merge XP with the structure in its left context (the structure already built);
@@ -59,7 +56,6 @@ Fips is a \isi{multilingual parser}, available for several languages, i.e. \ili{
 	\end{itemize}
 \end{itemize}
  
-\vspace*{3mm}
 The parsing procedure is a one-pass (no pre-processing, no post-processing) scan of the input text, using rules to build up constituent structures and (syntactic) interpretation procedures to determine the dependency relations between constituents (grammatical functions, etc.), including cases of \isi{long-distance dependencies}.
 One of the key components of the parser is its lexicon, which contains detailed morphosyntactic and semantic information, selectional properties, valency information, and syntactico-semantic features that are likely to influence the syntactic analysis. 
 
@@ -67,13 +63,12 @@ One of the key components of the parser is its lexicon, which contains detailed 
 
 The lexicon was built manually and contains fine-grained information required by the parser. It is organized as a relational database with four main tables:
 
-\vspace*{3mm}
-\begin{itemize}
-\item \emph{words}, representing all morphological forms (spellings) of the words of a language, grouped into inflectional paradigms; 
-\item \emph{lexemes}, describing more abstract lexical forms which correspond to the syntactic and semantic readings of a word (a lexeme corresponds roughly to a standard dictionary entry); 
-\item \emph{collocations}, which describe multiword expressions combining two lexical items, not counting function words;
-\item \emph{variants}, which list all the alternatives written forms for a word, e.g. the written forms of British \ili{English} vs American \ili{English}, the spellings introduced by a spelling reform, presence of both literary and modern forms in Greek, etc.
-\end{itemize}
+\begin{description}
+\item[words,] representing all morphological forms (spellings) of the words of a language, grouped into inflectional paradigms; 
+\item[lexemes,] describing more abstract lexical forms which correspond to the syntactic and semantic readings of a word (a lexeme corresponds roughly to a standard dictionary entry); 
+\item[collocations,] which describe multiword expressions combining two lexical items, not counting function words;
+\item[variants,] which list all the alternatives written forms for a word, e.g. the written forms of British \ili{English} vs American \ili{English}, the spellings introduced by a spelling reform, presence of both literary and modern forms in Greek, etc.
+\end{description}
 
 \subsection{Representation of MWEs in the lexicon}
 
@@ -178,7 +173,7 @@ The identification of compounds and named entities can be achieved during the le
 %%   \caption{\label{fou:exFirst} Parse structure for sentence `Paul took up a new challenge'}
 %% \end{figure}
 
-%% \vspace*{3mm}
+%% 
 \begin{exe}
   \ex\label{fou:exFirst}
   Paul took up a new challenge.\\
@@ -201,8 +196,7 @@ the direct object
 follows the verb, while in (\ref{fou:exMinister}b), %(\refex{1})b,
 it precedes the verb, with several intervening words between them:
 
-%% \vspace*{3mm}
-%% \debex{%% Ο Υπουργός Παιδείας \textbf{έκανε έκκληση} στους διοικητικούς υπαλλήλους να σταμα\-τήσουν την απεργία. \\ 
+%% %% \debex{%% Ο Υπουργός Παιδείας \textbf{έκανε έκκληση} στους διοικητικούς υπαλλήλους να σταμα\-τήσουν την απεργία. \\ 
 %% %% Ο Ιpurgós Pedías \textbf{ékane éklisi} stus diikitikús ipalílus ná stamatísun tín aperyía\\
 %% %% `The Minister of Education \textbf{made an appeal} to the administrative staff to stop the strike.'
 %% {\gll Ο Υπουργός Παιδείας \textbf{έκανε έκκληση} στους διοικητικούς υπαλλήλους να σταμα\-τήσουν την απεργία. \\
@@ -496,7 +490,7 @@ Our system recognizes a large range of collocation types (more than 30 types), i
     Noun-noun	& 5,671 & 	454 & 	2,476  &	131 &	66	& 471\\
     Noun-prep-noun & 555 & 7,846 & 22 & 1,246 & 988 & 11 \\
     Verb-object	 & 850 &	1,560 &	197 &	250 &	1,098	& 382\\
-    Others	& 932 &	2,963 &	330 &	209	 & 592 & 126\\	\hline
+    Others	& 932 &	2,963 &	330 &	209	 & 592 & 126\\\midrule
     Total	& 11,057	& 18,758 &	3,515 &	3,161 &	4,365	& 21,122 \tabularnewline
     \lspbottomrule
   \end{tabular}
@@ -505,7 +499,7 @@ Our system recognizes a large range of collocation types (more than 30 types), i
 
 \section{Evaluation and results}
 \label{fou:sec6}
-The Fips parser performs well compared to other `deep' linguistic parsers (Delph-in,\footnote{International consortium developing HPSG grammars and other tools, cf. \url{http://www.delph-in.net/wiki/index.php/Home}.} ParGram,\footnote{ParGram is an international consortium for the development of LFG-based grammars, see \url{http://pargram.b.uib.no}.} etc.) in terms of speed. Parsing time depends on two main factors: (i) the type and complexity of the corpus, and (ii) the selected beam size (maximum number of alternatives allowed). By default, Fips runs with a beam size of 40 alternatives, which gives it a speed ranging from 150 to 250 tokens (word, punctuation) per second. At that pace, parsing a one million word corpus takes approximately 2-3 hours. We are going to present the experiments that were performed for \ili{Modern Greek} and \ili{English} in order to evaluate the performance of our parser. 
+The Fips parser performs well compared to other `deep' linguistic parsers (Delph-in,\footnote{International consortium developing HPSG grammars and other tools, cf. \url{http://www.delph-in.net/wiki/index.php/Home}.} ParGram,\footnote{ParGram is an international consortium for the development of LFG-based grammars, see \url{http://pargram.b.uib.no}.} etc.) in terms of speed. Parsing time depends on two main factors: (i) the type and complexity of the corpus, and (ii) the selected beam size (maximum number of alternatives allowed). By default, Fips runs with a beam size of 40 alternatives, which gives it a speed ranging from 150 to 250 tokens (word, punctuation) per second. At that pace, parsing a one million word corpus takes approximately 2--3 hours. We are going to present the experiments that were performed for \ili{Modern Greek} and \ili{English} in order to evaluate the performance of our parser. 
 
 \subsection{Modern Greek}
 The evaluation measures the performance of our parser to identify collocations that are lexicalized (i.e. collocations that are present in the lexical database). We also measure the impact of the collocation knowledge on the performance of the parser (in percentage of complete analyses). To achieve the evaluation, we took a small newspaper corpus of about 20,000 words  and we manually identified 638 collocations (both nominal and verbal). We ran the parser twice on the corpus: the first time before and the second time after enrichment of the collocation database. 
@@ -587,37 +581,25 @@ In this chapter, we have argued in favour of a treatment of collocations, and by
 %\bibliography{lrec2014-admin} 
 
 \section*{Abbreviations}
-
-The abbreviations used in this chapter are given in Table~\ref{fou:abbr} page~\pageref{fou:abbr}.
-
-\begin{table}[h!]
-  \begin{tabular}{ll}
-    \lsptoprule
-    abbreviation & full form \\
-    \midrule
-    ADJ & adjective \\
-    ADP & adposition \\
-    ADV & adverb \\
-    CONJ & coordinating conjunction \\
-    DET & determiner \\
-    NOUN & noun \\
-    NUM & numeral \\
-    PRON & pronoun \\
-    PRT & particle     \\
-    PUNC & punctuation \\
-    VERB & verb \\
-    X & other \tabularnewline
-    \lspbottomrule
-  \end{tabular}
-  \caption{\label{fou:abbr}Tagset from \cite{petrov12}}
-\end{table}
-
+Tagset from \cite{petrov12}.
+\begin{multicols}{2}
+\begin{tabbing}
+NOUN \hspace{1em} \= coordinating conjunction\kill
+    ADJ \> adjective \\
+    ADP \> adposition \\
+    ADV \> adverb \\
+    CONJ \> coordinating conjunction \\
+    DET \> determiner \\
+    NOUN \> noun \\
+    NUM \> numeral \\
+    PRON \> pronoun \\
+    PRT \> particle     \\
+    PUNC \> punctuation \\
+    VERB \> verb \\
+    X \> other
+\end{tabbing}
+\end{multicols}
 %\section*{Acknowledgements}
 
-%\printbibliography{localbibliography}
-
-\printbibliography[heading=subbibliography,notkeyword=this]
-
-% \printbibliography{localbibliography}
-
+{\sloppy\printbibliography[heading=subbibliography,notkeyword=this]}
 \end{document}
