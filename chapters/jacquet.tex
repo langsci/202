@@ -17,7 +17,7 @@
 
 % \epigram{Change epigram in chapters/01.tex or remove it there }
 
-\abstract{The contribution of our work is to address multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this chapter describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities, using distributional patterns. This rule-learning approach, which has currently been tested only for English and Spanish, does not require linguistic tools such as part-of-speech taggers so that it is perfectly suitable for our highly multilingual environment. When adding these learnt patterns to an existing rule-based Named Entity Recognition (NER) system, F1 performance for Spanish increases from 42.4\% to 50\% (18\% increase) and for English from 43.4\% to 44.5\% (2.5\% increase). The purpose of our effort is to improve on current methods for Named Entity Recognition (NER) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.}
+\abstract{The contribution of our work is to address multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this chapter describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities, using distributional patterns. This rule-learning approach, which has currently been tested only for English and Spanish, does not require linguistic tools such as part-of-speech taggers so that it is perfectly suitable for our highly multilingual environment. When adding these learnt patterns to an existing rule-based Named Entity Recognition (\textsc{ner}) system, F1 performance for Spanish increases from 42.4\% to 50\% (18\% increase) and for English from 43.4\% to 44.5\% (2.5\% increase). The purpose of our effort is to improve on current methods for Named Entity Recognition (\textsc{ner}) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.}
 
 \maketitle
 \begin{document}
@@ -25,11 +25,11 @@
 \section{Introduction} 
 %\remMaud{as discussed on skype, I liked the initial generic frame formulated by Ralf on going from unstructured to structured data/information to answer the needs of applications xyz.}
 
-%In this chapter, we present our contribution in addressing multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this contribution describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes our ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities. We then show how such rules can improve the recognition of new or unknown MWEntities. The purpose of our effort is to improve on current methods for Named Entity Recognition (NER) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.
+%In this chapter, we present our contribution in addressing multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this contribution describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes our ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities. We then show how such rules can improve the recognition of new or unknown MWEntities. The purpose of our effort is to improve on current methods for Named Entity Recognition (\textsc{ner}) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.
 
 %by addressing the specific case of multi-word entities.
 
-Named Entities (NEs) such as persons, organisations, locations and events are major bearers of information in text as they provide answers to the text representation questions \textit{Who did What to Whom, Where and When}. For this reason, work on NER and Classification is abundant \citep{nadeau-05} and NEs have been linked to knowledge bases \citep{rao-13,mcnamee-09}. Major challenges are homographic entity names belonging to different classes or within the same class and the existence of variant spellings within the same or across different languages, as well as morphological inflection \citep{steinberger-13}. An additional challenge for names of organisations and events is that they may be referred to as multi-word expressions or acronyms, e.g., \textit{Economic Community of West African States} (abbreviated as ECOWAS), and that name parts are likely to be translated, e.g., the equivalent Portuguese \textit{Comunidade Económica dos Estados da África Ocidental} (abbreviated as CEDEAO). Users searching for such an entity will want to retrieve all mentions, independently of their spelling or abbreviation or language.
+Named Entities (NEs) such as persons, organisations, locations and events are major bearers of information in text as they provide answers to the text representation questions \textit{Who did What to Whom, Where and When}. For this reason, work on \textsc{ner} and Classification is abundant \citep{nadeau-05} and NEs have been linked to knowledge bases \citep{rao-13,mcnamee-09}. Major challenges are homographic entity names belonging to different classes or within the same class and the existence of variant spellings within the same or across different languages, as well as morphological inflection \citep{steinberger-13}. An additional challenge for names of organisations and events is that they may be referred to as multi-word expressions or acronyms, e.g., \textit{Economic Community of West African States} (abbreviated as ECOWAS), and that name parts are likely to be translated, e.g., the equivalent Portuguese \textit{Comunidade Económica dos Estados da África Ocidental} (abbreviated as CEDEAO). Users searching for such an entity will want to retrieve all mentions, independently of their spelling or abbreviation or language.
 
 Our interest in entity variants originally stems from our multiannual work on the Europe Media Monitor (EMM), which is a freely accessible meta-news web platform\footnote{See \url{http://emm.newsbrief.eu/overview.html} and \url{http://emm.newsexplorer.eu/}} that has been online since 2002 \citep{steinberger-09,steinberger-15}. EMM currently gathers an average of 300,000 news articles per day in about 70 languages from about 8,000 news websites (HTML pages and RSS feeds). News items are classified into thousands of categories 
 %(more than half are customer-specific so that they are not available on the public website)
@@ -38,7 +38,7 @@ and many others are all identified as referring to the 12th President of the Eur
 
  
 %TODO : maybe remove the two next paragraphs
-%In recent years, EMM’s text mining capacity has also been applied to social media posts (e.g., \citealt{Zavarella-14}) and to documents resulting from generic web searches \citep{Crawley-10}, thus widening the range of analysed text types. NER software does not perform equally well on all text types. We try to overcome this limitation by building up a large historical collection of names previously seen in hundreds of millions of news articles (known names) that can then be recognised through a simple lookup rather than re-recognising the names anew in every text. This should allow a decent performance even for poorly written texts such as Twitter messages. Accumulated lists of variants within the same and across different languages and scripts additionally have the benefit of grounding name mentions with real-world entities by abstracting away from the spelling. It is our intention to release large volumes of names and their multilingual spelling variants by adding them to the freely accessible JRC-Names name variant resource \citep{ehrmann-15,steinberger-11}.
+%In recent years, EMM’s text mining capacity has also been applied to social media posts (e.g., \citealt{Zavarella-14}) and to documents resulting from generic web searches \citep{Crawley-10}, thus widening the range of analysed text types. \textsc{ner} software does not perform equally well on all text types. We try to overcome this limitation by building up a large historical collection of names previously seen in hundreds of millions of news articles (known names) that can then be recognised through a simple lookup rather than re-recognising the names anew in every text. This should allow a decent performance even for poorly written texts such as Twitter messages. Accumulated lists of variants within the same and across different languages and scripts additionally have the benefit of grounding name mentions with real-world entities by abstracting away from the spelling. It is our intention to release large volumes of names and their multilingual spelling variants by adding them to the freely accessible JRC-Names name variant resource \citep{ehrmann-15,steinberger-11}.
 %
 % 
 %
@@ -132,7 +132,7 @@ With the emergence of large-scale knowledge bases and the availability
 of web-scale corpora, numerous efforts on exploiting such resources
 for developping named entity recognition and classification tools have
 been reported. For instance, \citet{nothman:2013:lmn} reports on a
-multilingual NER approach based on using Wikipedia links for
+multilingual \textsc{ner} approach based on using Wikipedia links for
 automatically annotating a huge corpus for training purposes, whereas
 \citet{downey:2007:lcn} presents a novel method for detecting
 complex (multi-word) named entities using solely capitalisation
@@ -176,8 +176,8 @@ then applied, with the following main constraints: the first letter of
 the acronym must be upper-cased, and the length of the expansion must
 be smaller than (a) twice as many words as there are characters in the
 acronym, or (b) the number of characters in the acronym plus five
-words, whichever is the smaller (i.e. \textit{min}($\vert$A$\vert$+5,
-$\vert$A$\vert$* 2) words, with $\vert$A$\vert$ being the number of
+words, whichever is the smaller (i.e. $\min(\vert$A$\vert+5,
+\vert$A$\vert*2$) words, with $\vert$A$\vert$ being the number of
 characters of the acronym). We refer the reader to \citet{schwartz-03}
 for more details.  This process resulted in the extraction of 1.7
 million expansions for 0.4 million different acronyms.
@@ -277,7 +277,7 @@ consider the tf-idf value of each token $t_j$ where, in our context,
 each cluster $c_i$ is seen as a document and the whole set of clusters
 $\mathbb{C}$ as a corpus:
 \begin{equation}\label{jac:eq:tfidf}
-C(c_i,t_j) = tf(t_j,c_i) \times idf(t_j,\mathbb{C})
+C(c_i,t_j) = \tf(t_j,c_i) \times \idf(t_j,\mathbb{C})
 \end{equation}
 
 \subsubsubsection{Cluster aggregation based on similar tokens}
@@ -309,7 +309,7 @@ have a significant amount of highly similar tokens.
 \centering
 %\ra{1.1}
 %\resizebox{8.5cm}{!}{
-\begin{tabular}{@{}clcc@{}}\lsptoprule
+\begin{tabular}{clcc}\lsptoprule
 Clusters    &  Expansion  & Acronym  &  Language \\
 \midrule
 cluster 1  &  Social-Democratic Party      &  SDP  & en  \\
@@ -326,45 +326,45 @@ cluster 2  &  Partito Social-Democratico   &  PSD  & it \\
 
 
 We compute the matrix $(|\mathbb{T}| \times |\mathbb{T}|)$, hereafter
-$InvEdit$, which corresponds to the inverse of the normalized
+$\InvEdit$, which corresponds to the inverse of the normalized
 Levenshtein edit distance where $t_i : i = 1,...,|\mathbb{T}|$ and
 $t_j : j = 1,...,|\mathbb{T}|$ are tokens from all the addressed
 languages:
 \begin{equation}\label{jac:eq:edit}
-InvEdit(t_i,t_j) = 1 - \frac{Lev(t_i,t_j)}{max(|t_i|,|t_j|)} 
+\InvEdit(t_i,t_j) = 1 - \frac{\Lev(t_i,t_j)}{\max(|t_i|,|t_j|)} 
 \end{equation}
-$Lev(t_i,t_j)$ is the Levenshtein edit-distance between $t_i$ and $t_j$, 
+$\Lev(t_i,t_j)$ is the Levenshtein edit-distance between $t_i$ and $t_j$, 
 and $|t_i|$ and $|t_j|$ are respectively the length of the tokens $t_i$ 
-and $t_j$. We filter $InvEdit$ using a threshold $\delta$ as follows:
+and $t_j$. We filter $\InvEdit$ using a threshold $\delta$ as follows:
 
 \begin{equation}
-InvEdit(t_i,t_j,\delta) =
+\InvEdit(t_i,t_j,\delta) =
 %\[
 \left\{
   \begin{array}{lr}
-    InvEdit(t_i,t_j) & : InvEdit(t_i,t_j) \ge \delta\\
-    0 & : InvEdit(t_i,t_j) < \delta
+    \InvEdit(t_i,t_j) & : \InvEdit(t_i,t_j) \ge \delta\\
+    0 & : \InvEdit(t_i,t_j) < \delta
   \end{array}
 \right.
 %\]
 \end{equation}
 
-In this case, if $\delta = 1$, $InvEdit$ only contains values for
+In this case, if $\delta = 1$, $\InvEdit$ only contains values for
 exact matching tokens.
 This matrix is then used to enrich the monolingual cluster
 representation.  Given two languages $l_{1}$ and $l_{2}$, the
 corresponding monolingual clusters $C_{l_{1}}$ and $C_{l_{2}}$ do not
 have common tokens since in $\mathbb{T}$ tokens are
-language-dependent. The $InvEdit$ matrix is used to identify common or
-similar tokens. We convert the obtained matrix $C\_Tok_{l_{1}}$ to a
+language-dependent. The $\InvEdit$ matrix is used to identify common or
+similar tokens. We convert the obtained matrix $C\_\CTok_{l_{1}}$ to a
 binary matrix:
 
 \begin{equation}
-C\_Tok_{l_{1}}(c_i,t_j) =
+C\_\CTok_{l_{1}}(c_i,t_j) =
 %\[
 \left\{
   \begin{array}{lr}
-    1 : C_{l_{1}}(c_i,t_j) \times InvEdit(c_i,t_j,\delta) > 0\\
+    1 : C_{l_{1}}(c_i,t_j) \times \InvEdit(c_i,t_j,\delta) > 0\\
     0 : otherwise
   \end{array}
 \right.
@@ -405,7 +405,7 @@ language (especially with names of international organisations such as
 \centering
 %\ra{1.1}
 %\resizebox{9.5cm}{!}{
-\begin{tabular}{@{}clcc@{}}\lsptoprule
+\begin{tabular}{clcc}\lsptoprule
 Clusters    &  Expansion  & Acronym  &  Language \\
 \midrule
 cluster 1   &  Russian Academy of Sciences     &  RAS  & en  \\
@@ -437,18 +437,18 @@ these Wikipedia tables matching with one of the 1.7 million expansions
 or 0.4 million acronyms is removed from the \isi{parallel corpora} (see
 Section~\ref{jac:evaluation}).
 
-Let $TransMod$ be the resulting $(|\mathbb{T}| \times |\mathbb{T}|)$
+Let $\TransMod$ be the resulting $(|\mathbb{T}| \times |\mathbb{T}|)$
 \isi{translation model} matrix where $t_i : i = 1,...,|\mathbb{T}|$ and $t_j
-: j = 1,...,|\mathbb{T}|$ are tokens.  As for $InvEdit$ matrix, we
-filter $TransMod$ using a threshold $\beta$:
+: j = 1,...,|\mathbb{T}|$ are tokens.  As for $\InvEdit$ matrix, we
+filter $\TransMod$ using a threshold $\beta$:
 
 \begin{equation}
-TransMod(t_i,t_j,\beta) =
+\TransMod(t_i,t_j,\beta) =
 %\[
 \left\{
   \begin{array}{lr}
-    TransMod(t_i,t_j) & : TransMod(t_i,t_j) \ge \beta\\
-    0 & : TransMod(t_i,t_j) < \beta
+    \TransMod(t_i,t_j) & : \TransMod(t_i,t_j) \ge \beta\\
+    0 & : \TransMod(t_i,t_j) < \beta
   \end{array}
 \right.
 %\]
@@ -456,15 +456,15 @@ TransMod(t_i,t_j,\beta) =
 
 This matrix is then used to enrich the monolingual cluster
 representation.  Given a language $l$ and its corresponding
-monolingual clusters $C_{l}$,$C\_TransTok_{l}$ corresponds to the
+monolingual clusters $C_{l}$,$C\_\TransTok_{l}$ corresponds to the
 binary extended matrix based on a given \isi{translation model}:
 
 \begin{equation}
-C\_TransTok_{l}(c_i,t_j) =
+C\_\TransTok_{l}(c_i,t_j) =
 %\[
 \left\{
   \begin{array}{lr}
-    1 : C_{l}(c_i,t_j) \times TransMod(c_i,t_j,\beta) > 0\\
+    1 : C_{l}(c_i,t_j) \times \TransMod(c_i,t_j,\beta) > 0\\
     0 : otherwise
   \end{array}
 \right.
@@ -472,7 +472,7 @@ C\_TransTok_{l}(c_i,t_j) =
 \end{equation}
 
 Table~\ref{jac:tab:translated token aggregation} illustrates a case of
-such cluster aggregation, thanks to a high score in the $TransMod$
+such cluster aggregation, thanks to a high score in the $\TransMod$
 matrix between tokens \textit{Science} in \ili{English} and
 \textit{Wissenschaften} in \ili{German}.
 
@@ -488,8 +488,8 @@ threshold $\alpha$. During preliminary experiments, we had also tested
 \emph{pure} clustering algorithms, but it turned out that the graph
 approach was more efficient.
 
-For the last two cluster aggregation methods (\textit{TokAgg} and
-\textit{TransTokAgg}), we applied two similarity measures: cosine and
+For the last two cluster aggregation methods (TokAgg and
+TransTokAgg), we applied two similarity measures: cosine and
 ComMNZ. The latter is actually a data fusion algorithm \citep{fox-94}
 which we assimilate, in this context, to a similarity measure.  This
 algorithm aims at measuring the similarity between two objects having
@@ -504,7 +504,7 @@ the similarity between two clusters $c_i$ and $c_j$ if they have few
 similar or translated tokens $t_k$ with a very high similarity score:
 
 \begin{equation}
-CombMNZ(c_i,c_j) = \sum_{t_k\in c_j} \frac{C(c_i,t_k)}{\sum_{t_l\in
+\CombMNZ(c_i,c_j) = \sum_{t_k\in c_j} \frac{C(c_i,t_k)}{\sum_{t_l\in
     c_i} C(c_i,t_l)} \times \sum_{t_k\in c_j} 1_{\{C(c_i,t_k)\neq0\}}
 \end{equation}
 
@@ -540,15 +540,15 @@ languages (fr, en, de, it), 93.4\% of the forms were correct
 
 Parameters have to be set with regards to, first, the thresholds
 $\delta$ and $\beta$ applied to filter out some similarity values in
-the above-mentioned token matrices ($C\_Tok_{l}$ and $C\_TransTok_{l}$) and, second,
+the above-mentioned token matrices ($C\_\CTok_{l}$ and $C\_\TransTok_{l}$) and, second,
 the threshold $\alpha$ applied to the aggregation strategies, i.e. the
 one above which clusters are aggregated.
 
 With respect to cluster representations based on similar tokens
-$C\_Tok_{l}$, the threshold $\delta$ should be high in order to
+$C\_\CTok_{l}$, the threshold $\delta$ should be high in order to
 consider two tokens as similar only if they are close in terms of edit
 distance. Regarding representations based on translated tokens
-$C\_TransTok_{l}$, the threshold $\beta$ can be low since even a weak
+$C\_\TransTok_{l}$, the threshold $\beta$ can be low since even a weak
 token similarity could be a relevant indicator at the cluster
 level. For our experiments, the values of $\delta$ and $\beta$ were
 fixed to 0.7 and 0.3 respectively.
@@ -601,8 +601,8 @@ heuristic \citep{koehn-03}. Lexical translation tables for the three
 language pairs in both directions where extracted with a tool from the
 Moses translation toolkit \citep{koehn2007moses}. Tables contain maximum
 likelihood probability estimated for the conditional word translation
-probabilities $p(En|\{Fr,De,It\})$ and $p(\{Fr,De,It\}|En)$. Our
-$TransMod$ matrix is constructed based on the concatenation of these
+probabilities $p(\text{En}|\{\text{Fr},\text{De},\text{It}\})$ and $p(\{\text{Fr},\text{De},\text{It}\}|\text{En})$. Our
+$\TransMod$ matrix is constructed based on the concatenation of these
 tables.
 
 
@@ -615,15 +615,15 @@ and gold standard clusters which maximised the $F_1$
 measure. Micro-average precision (MAV-P) and recall (MAV-R) are
 defined as follows:
 \begin{equation}
-MAV-P (C) = \frac{\sum_{c \in C}{EXP(c)_{true}}}{\sum_{c \in C}{EXP(c)_{true}}+\sum_{c \in
- C}{EXP(c)_{false}}}
+\text{MAV-P} (C) = \frac{\sum_{c \in C}{\EXP(c)_{\text{true}}}}{\sum_{c \in C}{\EXP(c)_{\text{true}}}+\sum_{c \in
+ C}{\EXP(c)_{\text{false}}}}
 \end{equation}
 \begin{equation}
-MAV-R (C) = \frac{\sum_{c \in C}{EXP(c)_{true}}}{\sum_{c \in C}{EXP(c)_{true}}+\sum_{c \in C}{EXP(c)_{miss}}}
+\text{MAV-R} (C) = \frac{\sum_{c \in C}{\EXP(c)_{\text{true}}}}{\sum_{c \in C}{\EXP(c)_{\text{true}}}+\sum_{c \in C}{\EXP(c)_{\text{miss}}}}
 \end{equation}
-where $C$ is the set of produced clusters, $EXP(c)_{true}$ is the set
+where $C$ is the set of produced clusters, $\EXP(c)_{\text{true}}$ is the set
 of expansions in a cluster $c$ which also appear in the corresponding
-class of the gold standard, and $EXP(c)_{false}$ is the set of
+class of the gold standard, and $\EXP(c)_{\text{false}}$ is the set of
 expansions in a cluster $c$ which do not appear in the gold
 standard\footnote{We tried two other metrics: macro-average and
   B-cubed measure \citep{bagga-98} but since results are comparable we
@@ -659,9 +659,9 @@ standard\footnote{We tried two other metrics: macro-average and
 
 \begin{table}[h]
 \centering
-\ra{1.1}
-\resizebox{7cm}{!}{
-\begin{tabular}{@{}lccc@{}}\lsptoprule
+% \ra{1.1}
+% \resizebox{7cm}{!}{
+\begin{tabular}{lccc}\lsptoprule
 &  \textnormal{MAV-P}  & \textnormal{MAV-R}  &  \textnormal{F1} \\ 
 \midrule
 Baseline                &     97.7\%   &  51.5\%  & 67.4\%  \\  
@@ -680,7 +680,8 @@ TransTokAgg   &     97.7\%   &  51.6\%  & 67.6\%  \\
 All aggregations &     \textbf{95.8\%}   &  \textbf{71.2\%}  & 
 \textbf{81.6\%}  \\ 
 \lspbottomrule
-\end{tabular}}
+\end{tabular}
+% }
 \caption{Cluster aggregation strategies for 3 language pairs}
 \label{jac:tab:Eval3l}
 \end{table}
@@ -695,9 +696,9 @@ aggregation similarity threshold $\alpha$ set to 0.9.
 
 \begin{table}[h]
 \centering
-\ra{1.1}
-\resizebox{7cm}{!}{
-\begin{tabular}{@{}lccc@{}}\lsptoprule
+% \ra{1.1}
+% \resizebox{7cm}{!}{
+\begin{tabular}{lccc}\lsptoprule
 &  \textnormal{MAV-P}  & \textnormal{MAV-R}  &  \textnormal{F1} \\ 
 \midrule
 Baseline                &     98.2\%   &  40.5\%  & 57.4\%  \\ 
@@ -716,7 +717,8 @@ TransTokAgg  &     98.2\%   &  40.8\%  & 57.6\%  \\
 All aggregations &     \textbf{95.8\%}   &  \textbf{65.5\%}  & 
 \textbf{77.8\%}  \\
 \lspbottomrule
-\end{tabular}}
+\end{tabular}
+% }
 \caption{Cluster aggregation strategies on 22 languages}
 \label{jac:tab:Eval22l}
 \end{table}
@@ -731,7 +733,7 @@ improve the recall without affecting the precision too much.
 In Tables~\ref{jac:tab:Eval3l} and~\ref{jac:tab:Eval22l}, \textit{monolingual
   ExpAgg} corresponds to the expansion aggregation strategy applied at
 the monolingual level, and \textit{multilingual ExpAgg} at the
-multilingual level.  The $TokAgg$ and $TransTokAgg$ lines correspond
+multilingual level.  The TokAgg and TransTokAgg lines correspond
 to results with the corresponding token aggregation strategies using
 cosine similarity and CombMNZ fusion, and \textit{All aggregations} to
 the ones obtained when using the four aggregation strategies in a
@@ -739,14 +741,14 @@ joint way.
 
 It can be observed that each aggregation strategy contributes to
 improving the quality of cross-lingual cluster aggregation, with
-$multilingual ExpAgg$ providing the best improvement (+10.8 points for
+multilingual ExpAgg providing the best improvement (+10.8 points for
 the 3 language pairs and +12.6 points for the 22 languages). The
-contribution of the $TransTokAgg$ aggregation is slightly
+contribution of the TransTokAgg aggregation is slightly
 disappointing; it improves the baseline in both language
 configurations, but not significantly.  Nevertheless, when all the
 aggregations are applied (bold lines), results are better than the
 addition of each single aggregation. It could mean that the
-$TransTokAgg$ aggregation provides links between clusters which are
+TransTokAgg aggregation provides links between clusters which are
 not useful in isolation, but adds relevant bridges between sets of
 clusters when combined with other aggregations. Besides, one should
 notice that between the three language pairs and the 22 languages,
@@ -803,14 +805,14 @@ The pattern learning process consists of three main steps: (a) acquisition of ca
 
 %\vspace{0.3cm}
 %\noindent
-\paragraph*{Acquisition of candidate patterns.} First, each organisation name is transformed into a candidate pattern, i.e., each token which can be found in a set of predefined surface forms (consisting of keywords that trigger organisation names, e.g.,  \textit{University}, and frequently occurring word forms, e.g., prepositions) remains unchanged, whereas all other tokens are mapped into a corresponding generic token class. Each candidate pattern must contain at least one surface form and at least one token-class element,
+\subsubsection{Acquisition of candidate patterns} First, each organisation name is transformed into a candidate pattern, i.e., each token which can be found in a set of predefined surface forms (consisting of keywords that trigger organisation names, e.g.,  \textit{University}, and frequently occurring word forms, e.g., prepositions) remains unchanged, whereas all other tokens are mapped into a corresponding generic token class. Each candidate pattern must contain at least one surface form and at least one token-class element,
 otherwise it is discarded.
 
 The set of predefined surface forms has been computed automatically and consists of word uni-grams that fulfill the following criteria: (a) it appears more than $\phi=20$ times as part of an organisation name, (b) it does not appear on a list of known toponyms\footnote{We used GeoNames resource at: \url{http://www.geonames.org} for this purpose.}, (c) it does not appear on the list of known first names and surnames\footnote{We used for this purpose {\sc JRC Name Variant Database} and huge list of first names extracted from~\cite{piskorski-11}}, and (d) it is not an adjective (unless it appears very frequently). For instance, for the subset of \ili{English} organisation names consisting solely of company names, the 10 top-most frequent word uni-grams that fulfill the aforementioned criteria are: \textit{Company}, \textit{and}, \textit{of}, \textit{The}, \textit{Group}, \textit{Corporation}, \textit{Bank}, \textit{de}, \textit{Limited} and \textit{Air}.  
 
 %\vspace{0.3cm}
 %\noindent
-\paragraph*{Filtering candidate patterns.} In the subsequent
+\subsubsection{Filtering candidate patterns} In the subsequent
 step, a candidate pattern is discarded if:
 \begin{enumerate}
 \item its final element is the token class \verb+[LOW_W]+ (any
@@ -839,7 +841,7 @@ observed more than once. Interestingly, only 0,57\% of \ili{English} and
 
 %\vspace{0.3cm}
 %\noindent
-\paragraph*{Ranking patterns.} In the final step candidate patterns are ranked with respect to their reliability based on the
+\subsubsection{Ranking patterns} In the final step candidate patterns are ranked with respect to their reliability based on the
 following general assumptions related to their structure: 
 \begin{itemize}
 \item a pattern that contains either: (a) a larger fraction of surface forms vis-a-vis token-class elements, or (b) longer sequences of consecutive surface forms is deemed more reliable,
@@ -849,21 +851,21 @@ or (b) longer sequences of consecutive token-class elements representing lowerca
 \end{itemize}
 
 %\noindent
-The formal definition of the reliability score ($Rel(p)$) for a pattern $p$ is given below, where the expressions starting with $\#$ denote the number of elements in the pattern of a specific type\footnote{$\#LowerCTokens(p)$ denotes the number of lowercase tokens, while $\#NonWhitespaces(p)$ denotes the number of elements in the pattern which are not whitespaces, i.e., it is a count of surface forms and token-class elements. $LastElementIsLowercaseToken(p)$ denotes a function which returns 1 in case the last element of the pattern is a lowercase token class or 0 otherwise.} and $\alpha=0.2$, $\beta=0.2$, $\gamma=0.2$, $\delta=0.15$, $\lambda=0.1$ and $\kappa=0.15$ are weighting coefficients for the various criteria used in the reliability ranking, whose values have been set based on empirical observations.  
+The formal definition of the reliability score ($\Rel(p)$) for a pattern $p$ is given below, where the expressions starting with $\#$ denote the number of elements in the pattern of a specific type\footnote{$\#\text{LowerCTokens}(p)$ denotes the number of lowercase tokens, while $\#\text{NonWhitespaces}(p)$ denotes the number of elements in the pattern which are not whitespaces, i.e., it is a count of surface forms and token-class elements. $\text{LastElementIsLowercaseToken}(p)$ denotes a function which returns 1 in case the last element of the pattern is a lowercase token class or 0 otherwise.} and $\alpha=0.2$, $\beta=0.2$, $\gamma=0.2$, $\delta=0.15$, $\lambda=0.1$ and $\kappa=0.15$ are weighting coefficients for the various criteria used in the reliability ranking, whose values have been set based on empirical observations.  
 \begin{eqnarray*}
-Rel(p) & = & \frac{\#SurfaceForms(p) \cdot \alpha +
-  \#ConsecutiveSurfaceForms(p) \cdot \beta}{\#NonWhitespaces(p)} \\ &
-- & \frac{(\#LowerCTokens(p) \cdot \gamma +
-  \#ConsecutiveLowerCTokens(p) \cdot \delta)}{\#NonWhitespaces(p)}\\ &
-- & \frac{\#SingleCapitalLetterTokens(p) \cdot
-  \lambda}{\#NonWhitespaces(p)}\\ & + & \gamma + \delta + \lambda + (1
-- LastElementIsLowerCToken(p)) \cdot \kappa \\
+\Rel(p) & = & \frac{\#\text{SurfaceForms}(p) \cdot \alpha +
+  \#\text{ConsecutiveSurfaceForms}(p) \cdot \beta}{\#\text{NonWhitespaces}(p)} \\ &
+- & \frac{(\#\text{LowerCTokens}(p) \cdot \gamma +
+  \#\text{ConsecutiveLowerCTokens}(p) \cdot \delta)}{\#\text{NonWhitespaces}(p)}\\ &
+- & \frac{\#\text{SingleCapitalLetterTokens}(p) \cdot
+  \lambda}{\#\text{NonWhitespaces}(p)}\\ & + & \gamma + \delta + \lambda + (1
+- \text{LastElementIsLowerCToken}(p)) \cdot \kappa \\
 \end{eqnarray*}
 %\noindent
 A few examples of patterns with various reliability scores
 (provided in brackets) are given below.
 
-{\small 
+{\small
 \begin{verbatim}
     Ministry [] of [] Foreign [] Affairs [] of [] [UPP_W]          (0.97)
     Institute [] of [] [UPP_W] [] Studies                          (0.95)
@@ -883,72 +885,69 @@ respect to their reliability scores.
 \end{figure}
 
 \subsection{Evaluation}
-In order to evaluate the quality of the learned patterns we used two NE annotated corpora from the CoNLL shared task for \ili{English} and \ili{Spanish}\footnote{\url{http://www.cnts.ua.ac.be/conll2002/ner/} and \url{http://www.cnts.ua.ac.be/conll2003/ner/}}, which contains respectively 6,300 and 7,389 organisation occurrences, and tested the performance using different settings. In particular, we compared three settings: (a) using only BabelNet-derived patterns (denoted in the figures with PATTERNS),  (b) using only an existing rule-based NER system as a baseline (denoted RULES), (c) combining rule-based NER system and BabelNet-derived patterns (denoted in the figures with RULES+PATTERNS).
-In our experiments, we used an in-house rule based NER system \citep{steinberger-11, ehrmann-15} that is geared towards high precision. The choice of a specific NER system is not decisive for these experiments, but by combining an existing NER system with our BabelNet-derived patterns, we aim at testing how our automatically created patterns could be useful to improve the quality of the NER recognition.
+In order to evaluate the quality of the learned patterns we used two NE annotated corpora from the CoNLL shared task for \ili{English} and \ili{Spanish}\footnote{\url{http://www.cnts.ua.ac.be/conll2002/ner/} and \url{http://www.cnts.ua.ac.be/conll2003/ner/}}, which contains respectively 6,300 and 7,389 organisation occurrences, and tested the performance using different settings. In particular, we compared three settings: (a) using only BabelNet-derived patterns (denoted in the figures with \textsc{patterns}),  (b) using only an existing rule-based \textsc{ner} system as a baseline (denoted \textsc{rules}), (c) combining rule-based \textsc{ner} system and BabelNet-derived patterns (denoted in the figures with \textsc{rules+patterns}).
+In our experiments, we used an in-house rule based \textsc{ner} system \citep{steinberger-11, ehrmann-15} that is geared towards high precision. The choice of a specific \textsc{ner} system is not decisive for these experiments, but by combining an existing \textsc{ner} system with our BabelNet-derived patterns, we aim at testing how our automatically created patterns could be useful to improve the quality of the \textsc{ner} recognition.
 
 Figures~\ref{jac:fig:eval_patterns_english_precision},~\ref{jac:fig:eval_patterns_english_recall},~\ref{jac:fig:eval_patterns_spanish_precision}
 and~\ref{jac:fig:eval_patterns_spanish_recall} depict the performance of applying the BabelNet-derived patterns for \ili{English} and \ili{Spanish} 
 in terms of precision and recall. The precision and recall values were computed for the varying minimum pattern reliability threshold in the range of $\{0.10,0.15,...,0.95\}$, i.e., patterns below the minimum reliability threshold were discarded.
-The figures are showing the results obtained for exact matching (denoted with EXACT-PATTERNS or EXACT-RULES+PATTERNS) and for fuzzy matching, e.g., when there is a matching but with a left or right boundary mismatch (denoted with FUZZY-PATTERNS or FUZZY-RULES+PATTERNS).
-We did not visualise the results corresponding to the RULE setting in the figures because they do not depend on the reliability threshold. However, the obtained scores for this setting are embraced in Table~\ref{jac:tab:EvalPatterns}.
+The figures are showing the results obtained for exact matching (denoted with \textsc{exact}-\textsc{patterns} or \textsc{exact}-\textsc{rules+patterns}) and for fuzzy matching, e.g., when there is a matching but with a left or right boundary mismatch (denoted with \textsc{fuzzy}-\textsc{patterns} or \textsc{fuzzy}-\textsc{rules+patterns}).
+We did not visualise the results corresponding to the \textsc{rule} setting in the figures because they do not depend on the reliability threshold. However, the obtained scores for this setting are embraced in Table~\ref{jac:tab:EvalPatterns}.
 
 \begin{figure}
 \centering
 \includegraphics[width=.95\textwidth]{figures/eval_patterns_English_precision.jpg}
-\caption{Experiments on English: Precision curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based NER system}
+\caption{Experiments on English: Precision curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
 \label{jac:fig:eval_patterns_english_precision}
 \end{figure}
 
 \begin{figure}
 \centering
 \includegraphics[width=.95\textwidth]{figures/eval_patterns_English_recall.jpg}
-\caption{Experiments on English: Recall curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based NER system}
+\caption{Experiments on English: Recall curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
 \label{jac:fig:eval_patterns_english_recall}
 \end{figure}
 
 \begin{figure}
 \centering
 \includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_precision.jpg}
-\caption{Experiments on Spanish: Precision curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based NER system}
+\caption{Experiments on Spanish: Precision curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
 \label{jac:fig:eval_patterns_spanish_precision}
 \end{figure}
 
 \begin{figure}
 \centering
 \includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_recall.jpg}
-\caption{Experiments on Spanish: Recall curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based NER system}
+\caption{Experiments on Spanish: Recall curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
 \label{jac:fig:eval_patterns_spanish_recall}
 \end{figure}
         
-Table~\ref{jac:tab:EvalPatterns} provides the results obtained with a pattern-reliability threshold equal to 0.60, which corresponds to the best results obtained in both languages. For the \textit{EXACT} evaluation, an improvement in terms of F1 of 6.5 points for \ili{Spanish} could be observed with the setting \textit{RULES+PATTERNS} versus the baseline \textit{RULES}. As regards \textit{FUZZY} evaluation, one could observe an improvement of F1 of 7.6 and 1.1 points for \ili{Spanish} and \ili{English} respectively when comparing \textit{RULES+PATTERNS} versus the baseline \textit{RULES} setting.
+Table~\ref{jac:tab:EvalPatterns} provides the results obtained with a pattern-reliability threshold equal to 0.60, which corresponds to the best results obtained in both languages. For the \textsc{exact} evaluation, an improvement in terms of F1 of 6.5 points for \ili{Spanish} could be observed with the setting \textsc{rules+patterns} versus the baseline \textsc{rules}. As regards \textsc{fuzzy} evaluation, one could observe an improvement of F1 of 7.6 and 1.1 points for \ili{Spanish} and \ili{English} respectively when comparing \textsc{rules+patterns} versus the baseline \textsc{rules} setting.
 
 
 \begin{table}[h]
-\centering
-%\ra{1.1}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{@{}l cccc ccc@{}}\lsptoprule
-&    & \textnormal{EXACT matching}  &  & & &\textnormal{FUZZY matching} & \\ 
-&  \textbf{P}  & \textbf{R}  &  \textbf{F1} & &  \textbf{P}  & \textbf{R}  &  \textbf{F1} \\ 
+\begin{tabular}{l ccc ccc}\lsptoprule
+&     \multicolumn{3}{c}{\textsc{exact} matching}  & \multicolumn{3}{c}{\textsc{fuzzy} matching}  \\\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+&  \textbf{P}  & \textbf{R}  &  \textbf{F1}  &  \textbf{P}  & \textbf{R}  &  \textbf{F1} \\ 
 \midrule
-\textnormal{Spanish}                        & & & & & & &   \\
-PATTERNS                &     63.1\% & 10.2\% & 17.6\% &  & 81.4\% & 13.2\% & 22.8\%  \\  
-RULES   &  \textbf{79.8\%} & 24.2\% & 37.1\% &  & \textbf{91.3\%} & 27.6\% & 42.4\%  \\
-RULES+PATTERNS  &     73.5\% & \textbf{31.0\%} & \textbf{43.6\%} &  & 84.2\% & \textbf{35.5\%} & \textbf{50.0\%}  \\ 
+\textnormal{Spanish}                        & & &  & & &   \\
+\textsc{patterns}                &     63.1\% & 10.2\% & 17.6\% & 81.4\% & 13.2\% & 22.8\%  \\  
+\textsc{rules}   &  \textbf{79.8\%} & 24.2\% & 37.1\% & \textbf{91.3\%} & 27.6\% & 42.4\%  \\
+\textsc{rules+patterns}  &     73.5\% & \textbf{31.0\%} & \textbf{43.6\%} & 84.2\% & \textbf{35.5\%} & \textbf{50.0\%}  \\ 
 \midrule
-\textnormal{English}                        & & & & & & &   \\
-PATTERNS                &     48.5\% & 11.4\% & 18.5\% &  & 69.2\% & 16.3\% & 26.4\%   \\  
-RULES   &  \textbf{69.0\%} & 25.5\% & 37.3\% &  & \textbf{80.4\%} & 29.7\% & 43.4\%  \\
-RULES+PATTERNS  &     55.9\% & \textbf{28.7\%} & \textbf{37.9\%} &  & 65.6\% & \textbf{33.6\%} & \textbf{44.5\%}  \\ 
+\textnormal{English}                        & & & &  & &   \\
+\textsc{patterns}                &     48.5\% & 11.4\% & 18.5\% & 69.2\% & 16.3\% & 26.4\%   \\  
+\textsc{rules}   &  \textbf{69.0\%} & 25.5\% & 37.3\% & \textbf{80.4\%} & 29.7\% & 43.4\%  \\
+\textsc{rules+patterns}  &     55.9\% & \textbf{28.7\%} & \textbf{37.9\%} & 65.6\% & \textbf{33.6\%} & \textbf{44.5\%}  \\ 
 \lspbottomrule
 \end{tabular}
-}
 \caption{Results obtained with pattern reliability threshold = 0.60}
 \label{jac:tab:EvalPatterns}
 \end{table}
 
 
-\paragraph*{Mistakes and fuzzy matchings.}~\\
+\subsubsection{Mistakes and fuzzy matchings}
+\todo[inline]{This subsubsection is the only subsection to ``Evaluation''}
 Using existing NE annotated corpora for our preliminary experiments was the most obvious choice to measure the quality of our patterns. Nevertheless, it appears that some MWEntities recognised by the BabelNet-derived patterns considered as incorrectly extracted according to the annotated corpora, could still be considered as correct extractions.
 Figure~\ref{jac:fig:error_analysis} provides the complete list of 'wrong' MWEntities (first column) recognised by our patterns when pattern reliability threshold equals 0.90. Even if some cases are clear mistakes, like \textit{Results of European Super} or \textit{Bank on Thursday}, large fraction of the extractions could be considered as valid organisation names. The two other columns show the partial matches with the same reliability threshold, which are considered as incorrect in the \emph{Exact matching} evaluation, and correct in the \emph{Fuzzy matching} evaluation. Again, if some of them are clear mismatches, like \textit{European Commission on Wednesday} or \textit{NATO and the European Union}, most of the extractions appear to be consistent entities.
 
