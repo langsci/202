@@ -1,0 +1,813 @@
+\documentclass[output=paper]{LSP/langsci} 
+\author{Krasimir Angelov \affiliation{University of Gothenburg}
+}
+\title{Multi-word expressions in multilingual applications within
+the Grammatical Framework} 
+
+%\lehead{}
+\shorttitlerunninghead{Multi-word expressions within the Grammatical Framework}
+
+% \abstract{This chapter is about the Grammatical Framework and 
+% how multiword expressions are represented in the framework.
+% The main strength of the framework is in multilingual applications
+% which also means that multiword expressions are considered
+% from a cross-lingual perspective.}
+
+\abstract{The main focus of Grammatical Framework (GF) is in
+multilingual applications where the same type of content is
+produced and analyzed in several languages at once. This
+is achieved by joining the grammars for all languages with
+a shared interlingual representation. In designing the interlingua,
+multiword expressions are an important factor that must be considered.
+Here, we adopt the broader definition where everything that translates
+non-compositionally accross languages is considered 
+an expression. In the chapter we present multiword expressions
+from a cross-lingual perspective in relation to an interlingual
+grammar.
+}
+
+\maketitle
+
+\usepackage{subcaption}
+
+\begin{document}\ili{}
+\ili{}
+\ili{}\section\ili{}{Introduction}\ili{}
+\ili{}
+Grammatical\ili{} Framework\ili{} \ili{}(GF\ili{},\ili{} \ili{}\citealt\ili{}{ranta\ili{}-2011}\ili{})\ili{} is\ili{} a\ili{} programming\ili{} language\ili{} \ili{}
+for\ili{} developing\ili{} multilingual\ili{} applications\ili{}.\ili{} The\ili{} typical\ili{} applications\ili{} are\ili{} in\ili{}
+natural\ili{} language\ili{} generation\ili{},\ili{} dialogue\ili{} systems\ili{},\ili{} machine\ili{} translation\ili{}
+or\ili{} in\ili{} question\ili{} answering\ili{} systems\ili{} where\ili{} it\ili{} is\ili{} feasible\ili{} to\ili{} assume\ili{} \ili{}
+a\ili{} limited\ili{} language\ili{} domain\ili{}.\ili{} In\ili{} these\ili{} scenarios\ili{} it\ili{} is\ili{} possible\ili{} to\ili{} design\ili{}
+a\ili{} controlled\ili{} language\ili{} which\ili{} can\ili{} be\ili{} completely\ili{} covered\ili{} with\ili{}
+a\ili{} formal\ili{} grammar\ili{}.\ili{} On\ili{} the\ili{} other\ili{} hand\ili{},\ili{} these\ili{} applications\ili{} are\ili{} typically\ili{}
+highly\ili{} multilingual\ili{}.\ili{} It\ili{} is\ili{} not\ili{} uncommon\ili{} to\ili{} have\ili{} a\ili{} single\ili{} \ili{}\isi\ili{}{grammar}\ili{}
+which\ili{} supports\ili{} simultaneously\ili{} more\ili{} than\ili{} twenty\ili{} languages\ili{}.\ili{}
+There\ili{} are\ili{} a\ili{} number\ili{} of\ili{} challenges\ili{} in\ili{} this\ili{} kind\ili{} of\ili{} applications\ili{}.\ili{}
+\ili{}
+First\ili{} of\ili{} all\ili{} in\ili{} order\ili{} to\ili{} scale\ili{} to\ili{} a\ili{} high\ili{} number\ili{} of\ili{} languages\ili{},\ili{}
+the\ili{} framework\ili{} is\ili{} designed\ili{} to\ili{} work\ili{} with\ili{} an\ili{} interlingua\ili{}.\ili{} Every\ili{} grammar\ili{}
+is\ili{} divided\ili{} into\ili{} an\ili{} abstract\ili{} syntax\ili{} and\ili{} one\ili{} or\ili{} more\ili{} concrete\ili{} syntaxes\ili{}.\ili{}
+The\ili{} abstract\ili{} syntax\ili{} is\ili{} a\ili{} language\ili{} independent\ili{} interlingual\ili{} representation\ili{}
+of\ili{} the\ili{} application\ili{} domain\ili{},\ili{} while\ili{} each\ili{} of\ili{} the\ili{} concrete\ili{} syntaxes\ili{}
+renders\ili{} an\ili{} abstract\ili{} syntax\ili{} tree\ili{} into\ili{} a\ili{} string\ili{} in\ili{} \ili{}
+the\ili{} corresponding\ili{} natural\ili{} language\ili{}.\ili{} In\ili{} that\ili{} setting\ili{},\ili{} translation\ili{},\ili{} for\ili{} instance\ili{},\ili{}
+is\ili{} reduced\ili{} to\ili{} parsing\ili{} the\ili{} input\ili{} sentence\ili{} into\ili{} an\ili{} abstract\ili{}
+tree\ili{} and\ili{} then\ili{} rendering\ili{} of\ili{} the\ili{} same\ili{} tree\ili{} into\ili{} another\ili{} concrete\ili{} language\ili{}.\ili{}
+\ili{}
+Furthermore\ili{},\ili{} developing\ili{} even\ili{} a\ili{} small\ili{} language\ili{} fragment\ili{} would\ili{} normally\ili{}
+require\ili{} several\ili{} low\ili{}-level\ili{} details\ili{},\ili{} such\ili{} as\ili{} word\ili{} order\ili{} and\ili{} gender\ili{}/number\ili{}
+agreement\ili{},\ili{} to\ili{} be\ili{} reimplemented\ili{} from\ili{} scratch\ili{} for\ili{} every\ili{} language\ili{}
+and\ili{} for\ili{} every\ili{} application\ili{}.\ili{} This\ili{} would\ili{} be\ili{} highly\ili{} ineffective\ili{},\ili{} if\ili{}
+it\ili{} was\ili{} not\ili{} helped\ili{} by\ili{} the\ili{} development\ili{} of\ili{} the\ili{} Resource\ili{} Grammars\ili{} Library\ili{} \ili{}(RGL\ili{},\ili{} \ili{}\citealt\ili{}{gf\ili{}-rgl}\ili{})\ili{} in\ili{} GF\ili{}.\ili{}
+This\ili{} is\ili{} a\ili{} library\ili{} of\ili{} wide\ili{} coverage\ili{} grammars\ili{} for\ili{} more\ili{} than\ili{} thirty\ili{} \ili{}
+languages\ili{} developed\ili{} by\ili{} a\ili{} community\ili{} of\ili{} linguists\ili{} and\ili{} computer\ili{} scientists\ili{}.\ili{}
+By\ili{} reusing\ili{} the\ili{} library\ili{},\ili{} new\ili{} applications\ili{} can\ili{} be\ili{} build\ili{} in\ili{} short\ili{} time\ili{}
+by\ili{} people\ili{} who\ili{} do\ili{} not\ili{} even\ili{} have\ili{} to\ili{} be\ili{} linguistically\ili{} trained\ili{} and\ili{} who\ili{}
+may\ili{} not\ili{} be\ili{} experts\ili{} in\ili{} the\ili{} target\ili{} languages\ili{}.\ili{}
+\ili{}
+Working\ili{} on\ili{} the\ili{} level\ili{} of\ili{} the\ili{} RGL\ili{} is\ili{} still\ili{} too\ili{} low\ili{}-level\ili{}.\ili{} The\ili{} library\ili{}
+is\ili{} trying\ili{} to\ili{} hide\ili{} syntactic\ili{} differences\ili{} across\ili{} languages\ili{}
+but\ili{} this\ili{} is\ili{} still\ili{} not\ili{} what\ili{} we\ili{} ultimately\ili{} want\ili{} in\ili{} an\ili{} application\ili{}.\ili{} \ili{}
+What\ili{} is\ili{} needed\ili{} is\ili{} a\ili{} model\ili{} which\ili{} can\ili{} abstract\ili{} away\ili{} \ili{}
+the\ili{} language\ili{}-independent\ili{} semantics\ili{} of\ili{} the\ili{} sentence\ili{}.\ili{} Phenomena\ili{}
+like\ili{} constructions\ili{} and\ili{} multiword\ili{} expressions\ili{} translate\ili{}
+non\ili{}-compositionally\ili{} across\ili{} languages\ili{},\ili{} and\ili{} thus\ili{} are\ili{} recurring\ili{} obstacles\ili{} that\ili{}
+have\ili{} to\ili{} be\ili{} resolved\ili{} in\ili{} every\ili{} application\ili{}.\ili{} For\ili{} that\ili{} purpose\ili{}
+there\ili{} is\ili{} a\ili{} different\ili{} grammar\ili{} for\ili{} each\ili{} application\ili{}.\ili{}
+In\ili{} contrast\ili{} to\ili{} the\ili{} resource\ili{} grammars\ili{},\ili{} the\ili{} application\ili{} grammars\ili{}
+are\ili{} more\ili{} semantically\ili{} oriented\ili{} while\ili{} the\ili{} resource\ili{} grammars\ili{} are\ili{} syntactic\ili{}.\ili{}
+The\ili{} other\ili{} difference\ili{} is\ili{} that\ili{} while\ili{} the\ili{} resource\ili{} grammars\ili{} are\ili{} highly\ili{}
+lexicalized\ili{},\ili{} in\ili{} the\ili{} application\ili{} grammars\ili{},\ili{} what\ili{} is\ili{} normally\ili{} a\ili{} lexical\ili{}
+entry\ili{} often\ili{} becomes\ili{} a\ili{} semantic\ili{} function\ili{}.\ili{} This\ili{} is\ili{} a\ili{} key\ili{} design\ili{} decision\ili{}
+which\ili{} lets\ili{} us\ili{} to\ili{} have\ili{} an\ili{} abstract\ili{} language\ili{}-independent\ili{}
+representation\ili{}.\ili{} For\ili{} example\ili{} it\ili{} lets\ili{} us\ili{} to\ili{} hide\ili{} the\ili{} language\ili{}-specific\ili{}
+multiword\ili{} expressions\ili{} in\ili{} the\ili{} modules\ili{} for\ili{} the\ili{} concrete\ili{} languages\ili{},\ili{}
+without\ili{} affecting\ili{} the\ili{} abstract\ili{} syntax\ili{}.\ili{}
+\ili{}
+This\ili{} strategy\ili{} has\ili{} been\ili{} proven\ili{} to\ili{} work\ili{} well\ili{} in\ili{} limited\ili{} domains\ili{},\ili{} and\ili{} most\ili{} of\ili{}
+this\ili{} chapter\ili{} will\ili{} be\ili{} about\ili{} how\ili{} language\ili{}-specific\ili{} multiword\ili{} expressions\ili{}
+and\ili{} constructions\ili{} are\ili{} represented\ili{} in\ili{} the\ili{} framework\ili{}.\ili{}
+\ili{}
+We\ili{} have\ili{} started\ili{} recently\ili{} to\ili{} scale\ili{} up\ili{} from\ili{} limited\ili{}-domain\ili{}
+applications\ili{} to\ili{} wide\ili{} coverage\ili{} parsing\ili{} and\ili{} translation\ili{}.\ili{} \ili{}
+For\ili{} this\ili{} to\ili{} be\ili{} successful\ili{},\ili{} it\ili{} is\ili{} important\ili{} to\ili{} have\ili{} a\ili{} library\ili{}
+of\ili{} commonly\ili{} used\ili{} constructions\ili{} across\ili{} different\ili{} languages\ili{}.\ili{} \ili{}
+Although\ili{} this\ili{} is\ili{} still\ili{} a\ili{} moving\ili{} target\ili{},\ili{} we\ili{} will\ili{} report\ili{} on\ili{} the\ili{} current\ili{}
+efforts\ili{} to\ili{} build\ili{} such\ili{} a\ili{} library\ili{} by\ili{} either\ili{} reusing\ili{} existing\ili{} resources\ili{},\ili{}
+or\ili{} by\ili{} automatically\ili{} creating\ili{} those\ili{} by\ili{} using\ili{} automatic\ili{} methods\ili{}.\ili{}
+This\ili{} also\ili{} shows\ili{} that\ili{} the\ili{} strategy\ili{} that\ili{} we\ili{} have\ili{} used\ili{} for\ili{} limited\ili{}
+domains\ili{} can\ili{} scale\ili{} to\ili{} an\ili{} open\ili{} domain\ili{},\ili{} when\ili{} there\ili{} is\ili{} a\ili{} wide\ili{}-coverage\ili{}
+resource\ili{} of\ili{} raw\ili{} data\ili{} that\ili{} can\ili{} be\ili{} ported\ili{} to\ili{} the\ili{} platform\ili{}.\ili{}
+\ili{}
+It\ili{} is\ili{} an\ili{} important\ili{} observation\ili{} that\ili{} to\ili{} be\ili{} able\ili{} to\ili{} move\ili{}
+from\ili{} lexicalized\ili{} syntactic\ili{} grammars\ili{},\ili{} to\ili{} unlexicalized\ili{} semantic\ili{}
+grammars\ili{},\ili{} it\ili{} is\ili{} necessary\ili{} to\ili{} make\ili{} the\ili{} syntax\ili{} of\ili{} many\ili{} languages\ili{}
+discontinuous\ili{}.\ili{} Just\ili{} to\ili{} give\ili{} a\ili{} simple\ili{} example\ili{},\ili{} forming\ili{} questions\ili{}
+in\ili{} \ili{}\ili\ili{}{English}\ili{} requires\ili{} that\ili{} we\ili{} must\ili{} move\ili{} or\ili{} add\ili{} auxiliary\ili{} verbs\ili{}
+in\ili{} front\ili{} of\ili{} the\ili{} sentence\ili{},\ili{} while\ili{} the\ili{} rest\ili{} of\ili{} the\ili{} verb\ili{} \ili{}\isi\ili{}{phrase}\ili{}
+is\ili{} left\ili{} somewhere\ili{} in\ili{} the\ili{} middle\ili{}.\ili{} Other\ili{} languages\ili{} might\ili{} not\ili{} use\ili{}
+auxiliaries\ili{} at\ili{} all\ili{} or\ili{} they\ili{} might\ili{} just\ili{} form\ili{} questions\ili{} differently\ili{}.\ili{}
+This\ili{} means\ili{} that\ili{} the\ili{} verb\ili{} \ili{}\isi\ili{}{phrase}\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} must\ili{} be\ili{} modelled\ili{}
+as\ili{} a\ili{} single\ili{} \ili{}\isi\ili{}{phrase}\ili{} with\ili{} two\ili{} discontinuous\ili{} parts\ili{}.\ili{} The\ili{} implications\ili{}
+from\ili{} this\ili{} for\ili{} the\ili{} implementation\ili{} of\ili{} the\ili{} framework\ili{} will\ili{} be\ili{} discussed\ili{}
+as\ili{} well\ili{}.\ili{}
+\ili{}
+\ili{}\section\ili{}{The\ili{} basic\ili{} principles\ili{} of\ili{} GF}\ili{}
+\ili{}
+GF\ili{} is\ili{} designed\ili{} as\ili{} a\ili{} multilingual\ili{} framework\ili{} from\ili{} the\ili{} ground\ili{} up\ili{}.\ili{}
+A\ili{} typical\ili{} application\ili{} starts\ili{} by\ili{} identifying\ili{} the\ili{} relevant\ili{}
+domain\ili{} and\ili{} then\ili{} describing\ili{} the\ili{} desired\ili{} phrases\ili{} within\ili{} that\ili{} domain\ili{}
+in\ili{} multiple\ili{} languages\ili{}.\ili{} In\ili{} order\ili{} to\ili{} accommodate\ili{} and\ili{} link\ili{} several\ili{}
+diverse\ili{} languages\ili{},\ili{} the\ili{} framework\ili{} separates\ili{} the\ili{} grammar\ili{} into\ili{} two\ili{} distinct\ili{}
+conceptual\ili{} layers\ili{}:\ili{} abstract\ili{} and\ili{} concrete\ili{} syntax\ili{}.\ili{}
+\ili{}
+The\ili{} \ili{}\textbf\ili{}{abstract\ili{} syntax}\ili{} is\ili{} a\ili{} logical\ili{} framework\ili{} which\ili{} acts\ili{} as\ili{} a\ili{} language\ili{} independent\ili{} interlingua\ili{}.\ili{} It\ili{} defines\ili{} a\ili{} collection\ili{} of\ili{} types\ili{} and\ili{} functions\ili{} which\ili{} can\ili{} be\ili{} used\ili{} to\ili{} build\ili{} abstract\ili{} syntax\ili{} trees\ili{}.\ili{} Each\ili{} abstract\ili{} tree\ili{} represents\ili{} a\ili{} \ili{}\isi\ili{}{phrase}\ili{} which\ili{} is\ili{} realized\ili{} by\ili{} using\ili{} one\ili{} of\ili{} the\ili{} available\ili{} \ili{}\textbf\ili{}{concrete\ili{} syntaxes}\ili{}.\ili{} In\ili{} this\ili{} section\ili{},\ili{} we\ili{} will\ili{} informally\ili{} introduce\ili{} the\ili{} abstract\ili{} and\ili{} the\ili{} concrete\ili{} syntax\ili{} in\ili{} GF\ili{} by\ili{} example\ili{}.\ili{} For\ili{} a\ili{} more\ili{} detailed\ili{} introduction\ili{} to\ili{} GF\ili{} we\ili{} refer\ili{} to\ili{} \ili{}\cite\ili{}{ranta\ili{}-2011}\ili{}.\ili{}
+\ili{}
+We\ili{} start\ili{} with\ili{} the\ili{} lexicon\ili{}.\ili{} On\ili{} an\ili{} abstract\ili{} level\ili{},\ili{} the\ili{} lexicon\ili{} consists\ili{} of\ili{} a\ili{} simple\ili{} inventory\ili{} of\ili{} word\ili{} senses\ili{}.\ili{} For\ili{} example\ili{} we\ili{} might\ili{} have\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} cat\ili{} N\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} fun\ili{} horse_N\ili{} \ili{}:\ili{} N\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+Here\ili{} the\ili{} first\ili{} line\ili{} declares\ili{} that\ili{} there\ili{} is\ili{} a\ili{} category\ili{} \ili{}\verb\ili{}=N\ili{}=\ili{},\ili{} which\ili{} will\ili{} denote\ili{} the\ili{} type\ili{} of\ili{} all\ili{} nouns\ili{}.\ili{} The\ili{} second\ili{} line\ili{} defines\ili{} a\ili{} function\ili{} with\ili{} no\ili{} arguments\ili{},\ili{} a\ili{}.k\ili{}.a\ili{}.\ili{} a\ili{} constant\ili{} of\ili{} type\ili{} \ili{}\verb\ili{}=N\ili{}=\ili{}.\ili{} These\ili{} abstract\ili{} constants\ili{} serve\ili{} as\ili{} cross\ili{}-lingual\ili{} lemmas\ili{}.\ili{} By\ili{} convention\ili{} we\ili{} use\ili{} names\ili{} composed\ili{} of\ili{} an\ili{} \ili{}\ili\ili{}{English}\ili{} lemma\ili{} followed\ili{} by\ili{} a\ili{} part\ili{} of\ili{} speech\ili{} tag\ili{}.\ili{} When\ili{} these\ili{} are\ili{} not\ili{} sufficient\ili{} to\ili{} disambiguate\ili{} the\ili{} meaning\ili{} of\ili{} the\ili{} word\ili{},\ili{} then\ili{} we\ili{} can\ili{} add\ili{} more\ili{} elements\ili{}.\ili{} For\ili{} example\ili{} we\ili{} could\ili{} use\ili{} WordNet\ili{}’s\ili{} sense\ili{} numbers\ili{} for\ili{} disambiguation\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} fun\ili{} arm_1_N\ili{} \ili{}:\ili{} N\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}(body\ili{} part\ili{})\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} fun\ili{} arm_3_N\ili{} \ili{}:\ili{} N\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}(weapon\ili{})\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+\ili{}
+The\ili{} lexicon\ili{} starts\ili{} to\ili{} get\ili{} interesting\ili{} only\ili{} when\ili{} we\ili{} move\ili{} to\ili{} \ili{}
+the\ili{} concrete\ili{} syntax\ili{}.\ili{} There\ili{} the\ili{} concrete\ili{} syntax\ili{} for\ili{} \ili{}\ili\ili{}{English}\ili{} \ili{}
+looks\ili{} something\ili{} like\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lincat\ili{} N\ili{} \ili{}=\ili{} Number\ili{} \ili{}=\ili{}>\ili{} Str\ili{}
+\ili{} \ili{} lin\ili{} horse_N\ili{} \ili{}=\ili{} table\ili{} \ili{}{Sg\ili{} \ili{}=\ili{}>\ili{} \ili{}"horse\ili{}"\ili{} \ili{};\ili{} Pl\ili{} \ili{}=\ili{}>\ili{} \ili{}"horses\ili{}"}\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+Here\ili{} the\ili{} keyword\ili{} \ili{}\verb\ili{}=lincat\ili{}=\ili{} introduces\ili{} the\ili{} linearization\ili{} category\ili{} \ili{}
+for\ili{} nouns\ili{},\ili{} i\ili{}.e\ili{}.\ili{} for\ili{} the\ili{} type\ili{} \ili{}\verb\ili{}=N\ili{}=\ili{},\ili{} and\ili{} \ili{}\verb\ili{}=lin\ili{}=\ili{} introduces\ili{} \ili{}
+the\ili{} linearization\ili{} of\ili{} the\ili{} function\ili{} \ili{}\verb\ili{}=horse_N\ili{}=\ili{} itself\ili{}.\ili{}
+\ili{}
+In\ili{} the\ili{} programming\ili{} languages\ili{} parlance\ili{},\ili{} the\ili{} abstract\ili{} category\ili{} \ili{}\verb\ili{}=N\ili{}=\ili{} \ili{}
+is\ili{} like\ili{} an\ili{} abstract\ili{} data\ili{} type\ili{},\ili{} i\ili{}.e\ili{}.\ili{} a\ili{} mere\ili{} name\ili{} with\ili{} \ili{}
+a\ili{} hidden\ili{} implementation\ili{},\ili{} while\ili{} the\ili{} linearization\ili{} category\ili{} in\ili{} \ili{}
+the\ili{} concrete\ili{} syntax\ili{} is\ili{} its\ili{} actual\ili{} implementation\ili{}.\ili{} \ili{}
+In\ili{} GF\ili{} unlike\ili{} in\ili{} other\ili{} programming\ili{} languages\ili{},\ili{} a\ili{} single\ili{} type\ili{} \ili{}
+or\ili{} a\ili{} single\ili{} function\ili{} might\ili{} have\ili{} several\ili{} different\ili{} implementations\ili{} \ili{}-\ili{}-\ili{} \ili{}
+one\ili{} for\ili{} every\ili{} concrete\ili{} syntax\ili{}.\ili{} In\ili{} this\ili{} case\ili{} the\ili{} implementation\ili{} in\ili{} \ili{}
+\ili{}\ili\ili{}{English}\ili{} says\ili{} that\ili{} \ili{}\verb\ili{}=N\ili{}=\ili{} is\ili{} a\ili{} table\ili{} or\ili{} an\ili{} array\ili{} of\ili{} \ili{}
+strings\ili{} \ili{}(\ili{}\verb\ili{}=Str\ili{}=\ili{})\ili{} indexed\ili{} by\ili{} a\ili{} \ili{}\verb\ili{}=Number\ili{}=\ili{}.\ili{} \ili{}
+The\ili{} number\ili{} itself\ili{} is\ili{} another\ili{} data\ili{} type\ili{} defined\ili{} as\ili{} an\ili{} enumeration\ili{} \ili{}
+with\ili{} two\ili{} possible\ili{} values\ili{} \ili{}-\ili{}-\ili{} singular\ili{} \ili{}(Sg\ili{})\ili{} and\ili{} plural\ili{} \ili{}(Pl\ili{})\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} param\ili{} Number\ili{} \ili{}=\ili{} Sg\ili{} \ili{}|\ili{} Pl\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+\ili{}
+The\ili{} linearization\ili{} of\ili{} \ili{}\verb\ili{}=horse_N\ili{}=\ili{} on\ili{} the\ili{} other\ili{} hand\ili{} gives\ili{} \ili{}
+the\ili{} actual\ili{} values\ili{} in\ili{} the\ili{} table\ili{}.\ili{} In\ili{} \ili{}\ili\ili{}{English}\ili{} these\ili{} would\ili{} be\ili{} \ili{}
+the\ili{} word\ili{} forms\ili{} \ili{}`\ili{}`horse\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`horses\ili{}'\ili{}'\ili{},\ili{} and\ili{} in\ili{} \ili{}
+\ili{}\ili\ili{}{French}\ili{} \ili{}`\ili{}`cheval\ili{}'\ili{}'\ili{},\ili{} \ili{}`\ili{}`chevaux\ili{}'\ili{}'\ili{}.\ili{} In\ili{} \ili{}\ili\ili{}{French}\ili{},\ili{} however\ili{},\ili{} we\ili{} also\ili{} need\ili{} to\ili{} \ili{}
+know\ili{} the\ili{} gender\ili{} of\ili{} the\ili{} noun\ili{} in\ili{} order\ili{} to\ili{} take\ili{} care\ili{} of\ili{} \ili{}
+the\ili{} word\ili{} agreement\ili{} in\ili{} the\ili{} syntax\ili{}.\ili{} Because\ili{} of\ili{} that\ili{} \ili{}
+the\ili{} corresponding\ili{} definition\ili{} in\ili{} the\ili{} concrete\ili{} syntax\ili{} for\ili{} \ili{}\ili\ili{}{French}\ili{} is\ili{} a\ili{}
+little\ili{} bit\ili{} more\ili{} complicated\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lincat\ili{} N\ili{} \ili{}=\ili{} \ili{}{s\ili{} \ili{}:\ili{} Number\ili{} \ili{}=\ili{}>\ili{} Str\ili{} \ili{};\ili{} g\ili{} \ili{}:\ili{} Gender}\ili{}
+\ili{} \ili{} lin\ili{} horse_N\ili{} \ili{}=\ili{} \ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}{s\ili{} \ili{}=\ili{} table\ili{} \ili{}{Sg\ili{} \ili{}=\ili{}>\ili{} \ili{}"cheval\ili{}"\ili{};\ili{} Pl\ili{} \ili{}=\ili{}>\ili{} \ili{}"chevaux\ili{}"}\ili{};\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} g\ili{} \ili{}=\ili{} Masc\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} }\ili{}
+\ili{}
+\ili{} \ili{} param\ili{} Gender\ili{} \ili{}=\ili{} Masc\ili{} \ili{}|\ili{} Fem\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+Here\ili{} the\ili{} linearization\ili{} category\ili{} for\ili{} \ili{}\verb\ili{}=N\ili{}=\ili{} is\ili{} not\ili{} a\ili{} simple\ili{} table\ili{} of\ili{} \ili{}
+word\ili{} forms\ili{} but\ili{} a\ili{} record\ili{} with\ili{} two\ili{} fields\ili{} \ili{}-\ili{}-\ili{} \ili{}\verb\ili{}=s\ili{}=\ili{} and\ili{} \ili{}\verb\ili{}=g\ili{}=\ili{}.\ili{} \ili{}
+The\ili{} field\ili{} \ili{}\verb\ili{}=s\ili{}=\ili{} is\ili{} still\ili{} an\ili{} inflection\ili{} table\ili{} like\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{},\ili{} \ili{}
+but\ili{} there\ili{} is\ili{} also\ili{} the\ili{} field\ili{} \ili{}\verb\ili{}=g\ili{}=\ili{} of\ili{} type\ili{} \ili{}\verb\ili{}=Gender\ili{}=\ili{} with\ili{} \ili{}
+two\ili{} possible\ili{} values\ili{} \ili{}\verb\ili{}=Masc\ili{}=\ili{} and\ili{} \ili{}\verb\ili{}=Fem\ili{}=\ili{}.\ili{} The\ili{} linearization\ili{} \ili{}
+for\ili{} \ili{}\verb\ili{}=horse_N\ili{}=\ili{} assigns\ili{} to\ili{} the\ili{} field\ili{} \ili{}\verb\ili{}=s\ili{}=\ili{} the\ili{} inflection\ili{} table\ili{} \ili{}
+for\ili{} \ili{}\ili\ili{}{French}\ili{} and\ili{} sets\ili{} the\ili{} field\ili{} \ili{}\verb\ili{}=g\ili{}=\ili{} to\ili{} \ili{}\verb\ili{}=Masc\ili{}=\ili{}.\ili{}
+\ili{}
+It\ili{} is\ili{} also\ili{} possible\ili{} to\ili{} have\ili{} records\ili{} which\ili{} combine\ili{} together\ili{} more\ili{} than\ili{} \ili{}
+one\ili{} string\ili{} fields\ili{}.\ili{} This\ili{} is\ili{} used\ili{} for\ili{} instance\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} \ili{}
+where\ili{} \ili{}\isi\ili{}{phrasal\ili{} verbs}\ili{} consist\ili{} of\ili{} a\ili{} main\ili{} verb\ili{} and\ili{} a\ili{} particle\ili{}.\ili{} \ili{}
+Those\ili{} are\ili{} modelled\ili{} as\ili{} records\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lincat\ili{} V2\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}=\ili{} \ili{}{s\ili{} \ili{}:\ili{} VForm\ili{} \ili{}=\ili{}>\ili{} Str\ili{};\ili{} part\ili{} \ili{}:\ili{} Str\ili{};\ili{} prep\ili{} \ili{}:\ili{} Str}\ili{}
+\ili{} \ili{} lin\ili{} swith_off_V2\ili{} \ili{}=\ili{} \ili{}{s\ili{} \ili{}=\ili{} table\ili{} \ili{}{VInf\ili{} \ili{}=\ili{}>\ili{}"switch\ili{}"\ili{};\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} VPres\ili{}=\ili{}>\ili{}"switches\ili{}"\ili{};\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}.\ili{}.\ili{}.}\ili{};\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} part\ili{} \ili{}=\ili{} \ili{}"off\ili{}"\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} prep\ili{} \ili{}=\ili{} \ili{}"\ili{}"}\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+Here\ili{} the\ili{} field\ili{} \ili{}\verb\ili{}=part\ili{}=\ili{} keeps\ili{} the\ili{} particle\ili{} while\ili{} the\ili{} \ili{}\verb\ili{}=s\ili{}=\ili{} field\ili{} is\ili{} the\ili{} inflection\ili{} table\ili{} of\ili{} the\ili{} main\ili{} verb\ili{}.\ili{} There\ili{} is\ili{} also\ili{} a\ili{} third\ili{} field\ili{} \ili{}\verb\ili{}=prep\ili{}=\ili{} which\ili{} stores\ili{} the\ili{} potential\ili{} preposition\ili{} for\ili{} transitive\ili{} verbs\ili{}.\ili{} Since\ili{} there\ili{} is\ili{} no\ili{} preposition\ili{} in\ili{} this\ili{} case\ili{} we\ili{} just\ili{} put\ili{} an\ili{} empty\ili{} string\ili{}.\ili{} In\ili{} \ili{}\isi\ili{}{prepositional\ili{} verbs}\ili{},\ili{} however\ili{},\ili{} this\ili{} field\ili{} will\ili{} be\ili{} non\ili{}-empty\ili{}.\ili{} It\ili{} is\ili{} even\ili{} possible\ili{} to\ili{} have\ili{} verbs\ili{} with\ili{} both\ili{} a\ili{} particle\ili{} and\ili{} a\ili{} preposition\ili{}.\ili{}
+\ili{}
+It\ili{} is\ili{} possible\ili{} to\ili{} have\ili{} multiple\ili{} string\ili{} fields\ili{} in\ili{} nouns\ili{} as\ili{} well\ili{}.\ili{} This\ili{} happens\ili{} for\ili{} instance\ili{} in\ili{} Chinese\ili{} where\ili{} a\ili{} noun\ili{} is\ili{} characterised\ili{} by\ili{} its\ili{} lemma\ili{} and\ili{} its\ili{} classifier\ili{}.\ili{} Both\ili{} are\ili{} string\ili{} fields\ili{} and\ili{} they\ili{} could\ili{} be\ili{} arbitrarily\ili{} far\ili{} apart\ili{} in\ili{} the\ili{} final\ili{} sentence\ili{}.\ili{} For\ili{} that\ili{} reason\ili{} they\ili{} are\ili{} stored\ili{} as\ili{} two\ili{} different\ili{} fields\ili{} in\ili{} the\ili{} record\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lincat\ili{} N\ili{} \ili{}=\ili{} \ili{}{s\ili{} \ili{}:\ili{} Str\ili{};\ili{} c\ili{} \ili{}:\ili{} Str}\ili{}
+\ili{} \ili{} lin\ili{} horse_N\ili{} \ili{}=\ili{} \ili{}{s\ili{} \ili{}=\ili{} \ili{}"ma\ili{}"\ili{};\ili{} c\ili{} \ili{}=\ili{} \ili{}"pi\ili{}"}\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+\ili{}
+The\ili{} structure\ili{} of\ili{} the\ili{} lexicon\ili{} in\ili{} all\ili{} languages\ili{} is\ili{} \ili{}
+conceptually\ili{} very\ili{} similar\ili{}.\ili{} There\ili{} might\ili{} be\ili{} more\ili{} numbers\ili{} and\ili{} genders\ili{},\ili{} \ili{}
+or\ili{} there\ili{} might\ili{} be\ili{} grammatical\ili{} cases\ili{},\ili{} but\ili{} in\ili{} general\ili{} a\ili{} \ili{}\isi\ili{}{lexical\ili{} entry}\ili{} in\ili{} \ili{}
+GF\ili{} is\ili{} an\ili{} inflection\ili{} table\ili{} indexed\ili{} by\ili{} one\ili{} or\ili{} more\ili{} parameters\ili{},\ili{} and\ili{} \ili{}
+there\ili{} might\ili{} be\ili{} additional\ili{} fields\ili{} for\ili{} features\ili{} such\ili{} as\ili{} gender\ili{},\ili{} \ili{}
+word\ili{} class\ili{},\ili{} classifier\ili{},\ili{} or\ili{} a\ili{} particle\ili{}.\ili{} \ili{}
+\ili{}
+The\ili{} records\ili{} that\ili{} we\ili{} have\ili{} shown\ili{} above\ili{} are\ili{} rarely\ili{} what\ili{} \ili{}
+the\ili{} GF\ili{} grammarian\ili{} actually\ili{} writes\ili{}.\ili{} Instead\ili{} it\ili{} is\ili{} possible\ili{} to\ili{} \ili{}
+isolate\ili{} common\ili{} patterns\ili{} into\ili{} reusable\ili{} operations\ili{} which\ili{} let\ili{} us\ili{} to\ili{} \ili{}
+have\ili{} succinct\ili{} definitions\ili{} like\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lin\ili{} horse_N\ili{} \ili{}=\ili{} mkN\ili{} \ili{}"horse\ili{}"\ili{} \ili{};\ili{}
+\ili{} \ili{} lin\ili{} switch_off_V2\ili{} \ili{}=\ili{} mkV2\ili{} \ili{}(partV\ili{} \ili{}(mkV\ili{} \ili{}"switch\ili{}"\ili{})\ili{} \ili{}"off\ili{}"\ili{})\ili{};\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+Here\ili{} the\ili{} smart\ili{} paradigm\ili{} \ili{}\citep\ili{}{DBLP\ili{}:conf\ili{}/eacl\ili{}/DetrezR12}\ili{} operations\ili{} \ili{}
+\ili{}\verb\ili{}=mkN\ili{}=\ili{} and\ili{} \ili{}\verb\ili{}=mkV\ili{}=\ili{} are\ili{} responsible\ili{} for\ili{} predicting\ili{} \ili{}
+the\ili{} inflection\ili{} tables\ili{} of\ili{} nouns\ili{} and\ili{} verbs\ili{} from\ili{} the\ili{} lemma\ili{}.\ili{} \ili{}
+When\ili{} the\ili{} inflection\ili{} is\ili{} not\ili{} predictable\ili{} from\ili{} the\ili{} lemma\ili{} alone\ili{} then\ili{} \ili{}
+it\ili{} is\ili{} possible\ili{} to\ili{} specify\ili{} extra\ili{} arguments\ili{},\ili{} i\ili{}.e\ili{}.\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lin\ili{} mouse_N\ili{} \ili{}=\ili{} mkN\ili{} \ili{}"mouse\ili{}"\ili{} \ili{}"mice\ili{}"\ili{};\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+In\ili{} this\ili{} case\ili{} the\ili{} second\ili{} argument\ili{} of\ili{} \ili{}\verb\ili{}=mkN\ili{}=\ili{} is\ili{} \ili{}
+the\ili{} irregular\ili{} plural\ili{} form\ili{} of\ili{} \ili{}\textit\ili{}{mouse}\ili{}.\ili{} Auxiliary\ili{} operations\ili{} \ili{}
+like\ili{} \ili{}\verb\ili{}=partV\ili{}=\ili{} and\ili{} \ili{}\verb\ili{}=mkV2\ili{}=\ili{} are\ili{} used\ili{} to\ili{} set\ili{} the\ili{} particle\ili{} or\ili{} \ili{}
+the\ili{} transitivity\ili{} of\ili{} the\ili{} verb\ili{}.\ili{}
+\ili{}
+Having\ili{} set\ili{} the\ili{} basics\ili{} of\ili{} the\ili{} lexicon\ili{} we\ili{} can\ili{} move\ili{} on\ili{} to\ili{} the\ili{} syntax\ili{}.\ili{} \ili{}
+In\ili{} the\ili{} abstract\ili{} syntax\ili{},\ili{} the\ili{} syntax\ili{} is\ili{} represented\ili{} as\ili{} a\ili{} collection\ili{} of\ili{} \ili{}
+n\ili{}-ary\ili{} functions\ili{}.\ili{} For\ili{} example\ili{} adjectival\ili{} modification\ili{} requires\ili{} two\ili{} \ili{}
+functions\ili{},\ili{} \ili{}\verb\ili{}=AdjCN\ili{}=\ili{} and\ili{} \ili{}\verb\ili{}=UseN\ili{}=\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} cat\ili{} AP\ili{};\ili{} CN\ili{}
+\ili{} \ili{} fun\ili{} AdjCN\ili{} \ili{}:\ili{} AP\ili{} \ili{}-\ili{}>\ili{} CN\ili{} \ili{}-\ili{}>\ili{} CN\ili{}
+\ili{} \ili{} fun\ili{} UseN\ili{} \ili{}:\ili{} N\ili{} \ili{}-\ili{}>\ili{} CN\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+We\ili{} have\ili{} two\ili{} syntactic\ili{} categories\ili{}:\ili{} adjectival\ili{} phrases\ili{} \ili{}(\ili{}\verb\ili{}=AP\ili{}=\ili{})\ili{} and\ili{} \ili{}
+common\ili{} nouns\ili{} \ili{}(\ili{}\verb\ili{}=CN\ili{}=\ili{})\ili{}.\ili{} The\ili{} simplest\ili{} common\ili{} noun\ili{} consists\ili{} of\ili{} just\ili{} \ili{}
+a\ili{} single\ili{} noun\ili{} \ili{}(\ili{}\verb\ili{}=N\ili{}=\ili{})\ili{} and\ili{} is\ili{} produced\ili{} by\ili{} the\ili{} function\ili{} \ili{}\verb\ili{}=UseN\ili{}=\ili{}.\ili{} \ili{}
+The\ili{} function\ili{} \ili{}\verb\ili{}=AdjCN\ili{}=\ili{} lets\ili{} us\ili{} to\ili{} modify\ili{} the\ili{} noun\ili{} with\ili{} one\ili{} or\ili{} \ili{}
+more\ili{} adjectival\ili{} phrases\ili{}.\ili{} How\ili{} exactly\ili{} the\ili{} adjectival\ili{} phrases\ili{} are\ili{}
+attached\ili{} is\ili{} language\ili{} specific\ili{}.\ili{}
+\ili{}
+In\ili{} \ili{}\ili\ili{}{English}\ili{} there\ili{} is\ili{} no\ili{} gender\ili{} and\ili{} the\ili{} adjective\ili{} is\ili{} always\ili{} before\ili{} the\ili{} noun\ili{}.\ili{} The\ili{} linearizations\ili{} for\ili{} \ili{}\verb\ili{}=AdjCN\ili{}=\ili{} and\ili{} \ili{}\verb\ili{}=UseN\ili{}=\ili{} are\ili{} simply\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lincat\ili{} AP\ili{} \ili{}=\ili{} Str\ili{}
+\ili{} \ili{} lincat\ili{} CN\ili{} \ili{}=\ili{} Number\ili{} \ili{}=\ili{}>\ili{} Str\ili{}
+\ili{}
+\ili{} \ili{} lin\ili{} UseN\ili{} n\ili{} \ili{}=\ili{} n\ili{}
+\ili{} \ili{} lin\ili{} AdjCN\ili{} ap\ili{} cn\ili{} \ili{}=\ili{} table\ili{} \ili{}{Sg\ili{} \ili{}=\ili{}>\ili{} ap\ili{} \ili{}+\ili{}+\ili{} cn\ili{} \ili{}!\ili{} Sg\ili{};\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} Pl\ili{} \ili{}=\ili{}>\ili{} ap\ili{} \ili{}+\ili{}+\ili{} cn\ili{} \ili{}!\ili{} Pl}\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+Note\ili{} that\ili{} when\ili{} building\ili{} common\ili{} noun\ili{} phrases\ili{} we\ili{} still\ili{} do\ili{} not\ili{} know\ili{} whether\ili{} \ili{}
+the\ili{} \ili{}\isi\ili{}{phrase}\ili{} should\ili{} be\ili{} used\ili{} in\ili{} singular\ili{} or\ili{} in\ili{} plural\ili{}.\ili{} We\ili{} will\ili{} not\ili{} know\ili{} that\ili{}
+until\ili{} we\ili{} fix\ili{} a\ili{} determiner\ili{} and\ili{} build\ili{} a\ili{} complete\ili{} noun\ili{} \ili{}\isi\ili{}{phrase}\ili{}.\ili{} \ili{}
+For\ili{} that\ili{} purpose\ili{},\ili{} the\ili{} linearization\ili{} category\ili{} for\ili{} \ili{}\verb\ili{}=CN\ili{}=\ili{} is\ili{} \ili{}
+an\ili{} inflection\ili{} table\ili{} indexed\ili{} by\ili{} number\ili{} just\ili{} like\ili{} for\ili{} the\ili{} \ili{}
+\ili{}\verb\ili{}=N\ili{}=\ili{} category\ili{}.\ili{} Since\ili{} the\ili{} linearizations\ili{} for\ili{} \ili{}
+\ili{}\verb\ili{}=CN\ili{}=\ili{} and\ili{} \ili{}\verb\ili{}=N\ili{}=\ili{} are\ili{} the\ili{} same\ili{},\ili{} the\ili{} linearization\ili{} \ili{}\isi\ili{}{rule}\ili{} for\ili{} \ili{}
+\ili{}\verb\ili{}=UseN\ili{}=\ili{} is\ili{} just\ili{} the\ili{} identity\ili{} function\ili{}.\ili{} Since\ili{} we\ili{} have\ili{} defined\ili{} \ili{}
+the\ili{} linearization\ili{} for\ili{} adjectives\ili{} to\ili{} be\ili{} a\ili{} plain\ili{} string\ili{},\ili{} \ili{}
+the\ili{} linearization\ili{} for\ili{} \ili{}\verb\ili{}=AdjCN\ili{}=\ili{} simply\ili{} concatenates\ili{} \ili{}
+the\ili{} adjective\ili{} \ili{}\isi\ili{}{phrase}\ili{} in\ili{} front\ili{} of\ili{} the\ili{} common\ili{} noun\ili{}.\ili{} Here\ili{} the\ili{} \ili{}\verb\ili{}=\ili{}(\ili{}+\ili{}+\ili{})\ili{}=\ili{}
+operator\ili{} indicates\ili{} concatenation\ili{} of\ili{} token\ili{} sequences\ili{},\ili{} and\ili{} \ili{}
+the\ili{} exclamation\ili{} mark\ili{} \ili{}\verb\ili{}=\ili{}(\ili{}!\ili{})\ili{}=\ili{} is\ili{} used\ili{} to\ili{} fetch\ili{} the\ili{} element\ili{} \ili{}
+from\ili{} the\ili{} table\ili{} that\ili{} corresponds\ili{} to\ili{} a\ili{} given\ili{} parameter\ili{}.\ili{}
+\ili{}
+Note\ili{} that\ili{} the\ili{} two\ili{} elements\ili{} in\ili{} the\ili{} table\ili{} of\ili{} the\ili{} last\ili{} example\ili{} are\ili{} identical\ili{}
+except\ili{} that\ili{} they\ili{} select\ili{} different\ili{} numbers\ili{}.\ili{} There\ili{} is\ili{} a\ili{} handy\ili{} shorthand\ili{}
+notation\ili{} for\ili{} this\ili{} case\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lin\ili{} AdjCN\ili{} ap\ili{} cn\ili{} \ili{}=\ili{} \ili{}\\ili{}\n\ili{} \ili{}=\ili{}>\ili{} ap\ili{} \ili{}+\ili{}+\ili{} cn\ili{} \ili{}!\ili{} n\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+Here\ili{} the\ili{} \ili{}\verb\ili{}=\ili{}(\ili{}\\ili{}\\ili{})\ili{}=\ili{} operator\ili{} starts\ili{} a\ili{} table\ili{} whose\ili{} index\ili{} is\ili{} the\ili{} variable\ili{}
+\ili{}\verb\ili{}=n\ili{}=\ili{}.\ili{} After\ili{} the\ili{} double\ili{} arrow\ili{} \ili{}\verb\ili{}/\ili{}(\ili{}=\ili{}>\ili{})\ili{}/\ili{} is\ili{} the\ili{} value\ili{} itself\ili{} \ili{}
+which\ili{} is\ili{} defined\ili{} by\ili{} using\ili{} the\ili{} variable\ili{} \ili{}\verb\ili{}=n\ili{}=\ili{}.\ili{} When\ili{} we\ili{}
+substitute\ili{} \ili{}\verb\ili{}=n\ili{}=\ili{} with\ili{} \ili{}\verb\ili{}=Sg\ili{}=\ili{} and\ili{} \ili{}\verb\ili{}=Pl\ili{}=\ili{} we\ili{} get\ili{} the\ili{} same\ili{} values\ili{}
+as\ili{} in\ili{} the\ili{} previous\ili{} example\ili{}.\ili{}
+\ili{}
+In\ili{} \ili{}\ili\ili{}{French}\ili{},\ili{} the\ili{} adjectival\ili{} modification\ili{} requires\ili{} gender\ili{} and\ili{} number\ili{} agreement\ili{}.\ili{} \ili{}
+In\ili{} addition\ili{} the\ili{} adjective\ili{} is\ili{} sometimes\ili{} put\ili{} before\ili{} and\ili{} sometimes\ili{} after\ili{} the\ili{} noun\ili{}.\ili{} \ili{}
+This\ili{} means\ili{} that\ili{} we\ili{} need\ili{} a\ili{} more\ili{} complex\ili{} linearization\ili{} type\ili{} for\ili{} \ili{}\verb\ili{}=AP\ili{}=\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lincat\ili{} AP\ili{} \ili{}=\ili{} \ili{}{s\ili{} \ili{}:\ili{} Gender\ili{} \ili{}=\ili{}>\ili{} Number\ili{} \ili{}=\ili{}>\ili{} Str\ili{};\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} isPrefix\ili{} \ili{}:\ili{} Bool}\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+which\ili{} consists\ili{} of\ili{} an\ili{} inflection\ili{} table\ili{} for\ili{} the\ili{} adjective\ili{} and\ili{} a\ili{} Boolean\ili{} parameter\ili{} which\ili{} determines\ili{} whether\ili{} the\ili{} adjective\ili{} should\ili{} be\ili{} placed\ili{} before\ili{} or\ili{} after\ili{} the\ili{} noun\ili{}.\ili{} The\ili{} linearization\ili{} \ili{}\isi\ili{}{rule}\ili{} for\ili{} \ili{}\verb\ili{}=AdjCN\ili{}=\ili{} now\ili{} is\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lincat\ili{} CN\ili{} \ili{}=\ili{} \ili{}{s\ili{} \ili{}:\ili{} Number\ili{} \ili{}=\ili{}>\ili{} Str\ili{};\ili{} g\ili{} \ili{}:\ili{} Gender}\ili{}
+\ili{} \ili{} lin\ili{} AdjCN\ili{} ap\ili{} cn\ili{} \ili{}=\ili{} \ili{}{\ili{}
+\ili{} \ili{} \ili{} \ili{} s\ili{} \ili{}=\ili{} \ili{}\\ili{}\n\ili{} \ili{}=\ili{}>\ili{} let\ili{} \ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} aps\ili{} \ili{}=\ili{} ap\ili{}.s\ili{} \ili{}!\ili{} cn\ili{}.g\ili{} \ili{}!\ili{} n\ili{};\ili{} \ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} cns\ili{} \ili{}=\ili{} cn\ili{}.s\ili{} \ili{}!\ili{} n\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} in\ili{} case\ili{} ap\ili{}.isPrefix\ili{} of\ili{} \ili{}{\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} True\ili{} \ili{} \ili{}=\ili{}>\ili{} aps\ili{} \ili{}+\ili{}+\ili{} cns\ili{};\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} False\ili{} \ili{}=\ili{}>\ili{} cns\ili{} \ili{}+\ili{}+\ili{} aps\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} }\ili{}
+\ili{} \ili{} \ili{} \ili{} g\ili{} \ili{}=\ili{} cn\ili{}.g\ili{}
+\ili{} \ili{} \ili{} \ili{} }\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+Here\ili{},\ili{} in\ili{} the\ili{} \ili{}\verb\ili{}=let\ili{}=\ili{} expression\ili{} we\ili{} first\ili{} compute\ili{} the\ili{} right\ili{} forms\ili{} of\ili{} \ili{}
+the\ili{} adjective\ili{} and\ili{} of\ili{} the\ili{} basic\ili{} common\ili{} noun\ili{}.\ili{} After\ili{} that\ili{},\ili{} \ili{}
+we\ili{} concatenate\ili{} them\ili{} in\ili{} the\ili{} right\ili{} order\ili{} depending\ili{} on\ili{} \ili{}
+the\ili{} parameter\ili{} \ili{}\verb\ili{}=isPrefix\ili{}=\ili{}.\ili{} Note\ili{} that\ili{} \ili{}\verb\ili{}=cn\ili{}.g\ili{}=\ili{} \ili{}
+is\ili{} used\ili{} in\ili{} two\ili{} different\ili{} places\ili{}.\ili{} First\ili{} it\ili{} tells\ili{} us\ili{} the\ili{} right\ili{} gender\ili{} \ili{}
+to\ili{} use\ili{} for\ili{} the\ili{} adjective\ili{},\ili{} and\ili{} second\ili{} it\ili{} is\ili{} used\ili{} to\ili{} propagate\ili{} \ili{}
+the\ili{} gender\ili{} from\ili{} the\ili{} smaller\ili{} common\ili{} noun\ili{} which\ili{} is\ili{} an\ili{} \ili{}
+argument\ili{} of\ili{} \ili{}\verb\ili{}=AdjCN\ili{}=\ili{} to\ili{} the\ili{} bigger\ili{} \ili{}\isi\ili{}{phrase}\ili{}.\ili{} \ili{}
+\ili{}
+The\ili{} rest\ili{} of\ili{} the\ili{} syntax\ili{} is\ili{} built\ili{} in\ili{} a\ili{} similar\ili{} fashion\ili{} by\ili{} adding\ili{} more\ili{} \ili{}
+and\ili{} more\ili{} syntactic\ili{} combinators\ili{}.\ili{} This\ili{} section\ili{} had\ili{} the\ili{} goal\ili{} to\ili{} demonstrate\ili{}
+the\ili{} essential\ili{} features\ili{} of\ili{} GF\ili{} and\ili{} how\ili{} they\ili{} make\ili{} it\ili{} possible\ili{} to\ili{} \ili{}
+hide\ili{} language\ili{} specific\ili{} details\ili{}.\ili{} In\ili{} the\ili{} abstract\ili{} syntax\ili{} we\ili{} merely\ili{} \ili{}
+say\ili{} that\ili{} there\ili{} are\ili{} adjectives\ili{} and\ili{} nouns\ili{} and\ili{} that\ili{} those\ili{} \ili{}
+can\ili{} be\ili{} combined\ili{} together\ili{}.\ili{} How\ili{} exactly\ili{} this\ili{} happens\ili{} is\ili{} determined\ili{} by\ili{} \ili{}
+the\ili{} concrete\ili{} syntax\ili{}.\ili{} In\ili{} this\ili{} way\ili{},\ili{} the\ili{} abstract\ili{} syntax\ili{} \ili{}
+can\ili{} stay\ili{} language\ili{} independent\ili{} while\ili{} all\ili{} language\ili{} specific\ili{} features\ili{} \ili{}
+can\ili{} still\ili{} be\ili{} handled\ili{}.\ili{} It\ili{} could\ili{} be\ili{} rightfully\ili{} argued\ili{} that\ili{} \ili{}
+the\ili{} level\ili{} of\ili{} abstractness\ili{} as\ili{} it\ili{} is\ili{} presented\ili{} so\ili{} far\ili{} is\ili{} still\ili{} not\ili{} \ili{}
+sufficiently\ili{} high\ili{}.\ili{} For\ili{} example\ili{} we\ili{} still\ili{} assume\ili{} that\ili{} all\ili{} languages\ili{} \ili{}
+have\ili{} adjectives\ili{} and\ili{} nouns\ili{} which\ili{} might\ili{} be\ili{} questioned\ili{} for\ili{} some\ili{} languages\ili{}.\ili{} \ili{}
+It\ili{} did\ili{},\ili{} however\ili{},\ili{} work\ili{} for\ili{} the\ili{} 30\ili{}+\ili{} languages\ili{} that\ili{} are\ili{} already\ili{} supported\ili{} \ili{}
+in\ili{} the\ili{} framework\ili{}.\ili{} \ili{}
+\ili{}%\ili{} \ili{}(TODO\ili{}:\ili{} It\ili{} is\ili{} claimed\ili{} by\ili{} some\ili{} linguists\ili{} that\ili{} Chinese\ili{} and\ili{} Japanese\ili{} \ili{}
+\ili{}%\ili{} \ili{} doesn\ili{}’t\ili{} have\ili{} adjectives\ili{} and\ili{} instead\ili{} there\ili{} are\ili{} stative\ili{} verbs\ili{}.\ili{} \ili{}
+\ili{}%\ili{} \ili{} This\ili{} could\ili{} be\ili{} the\ili{} source\ili{} of\ili{} an\ili{} interesting\ili{} discussion\ili{} here\ili{}.\ili{} \ili{}
+\ili{}%\ili{} \ili{} We\ili{} still\ili{} treat\ili{} those\ili{} as\ili{} adjectives\ili{} in\ili{} GF\ili{})\ili{}.\ili{}
+The\ili{} more\ili{} important\ili{} problem\ili{} that\ili{} we\ili{} will\ili{} address\ili{} in\ili{} the\ili{} next\ili{} section\ili{},\ili{} \ili{}
+however\ili{},\ili{} is\ili{} that\ili{} what\ili{} is\ili{} an\ili{} adjective\ili{},\ili{} noun\ili{},\ili{} or\ili{} verb\ili{} in\ili{} \ili{}
+one\ili{} language\ili{} might\ili{} not\ili{} have\ili{} the\ili{} same\ili{} part\ili{} of\ili{} speech\ili{} in\ili{} another\ili{} language\ili{}.\ili{}
+This\ili{} is\ili{} a\ili{} source\ili{} of\ili{} non\ili{}-compositional\ili{} constructions\ili{} and\ili{} \ili{}
+multiword\ili{} expressions\ili{} that\ili{} need\ili{} to\ili{} be\ili{} handled\ili{} on\ili{} a\ili{} different\ili{} level\ili{} \ili{}
+in\ili{} the\ili{} framework\ili{}.\ili{}
+\ili{}
+\ili{}\section\ili{}{Constructions\ili{} and\ili{} Multiword\ili{} Expressions\ili{} in\ili{} GF}\ili{}
+\ili{}\label\ili{}{mwe}\ili{}
+\ili{}
+We\ili{} shall\ili{} divide\ili{} expressions\ili{} in\ili{} two\ili{} non\ili{}-overlapping\ili{} classes\ili{} since\ili{} \ili{}
+those\ili{} are\ili{} handled\ili{} differently\ili{} in\ili{} GF\ili{}.\ili{} The\ili{} first\ili{} class\ili{} are\ili{} expressions\ili{} \ili{}
+that\ili{} have\ili{} meaning\ili{} only\ili{} as\ili{} a\ili{} whole\ili{} and\ili{} that\ili{} cannot\ili{} be\ili{} understood\ili{} \ili{}
+by\ili{} interpreting\ili{} their\ili{} parts\ili{} compositionally\ili{}.\ili{} \ili{}
+Examples\ili{} for\ili{} those\ili{} are\ili{} \ili{}\textit\ili{}{by\ili{} and\ili{} large}\ili{},\ili{} \ili{}\textit\ili{}{after\ili{} all}\ili{},\ili{} \ili{}
+\ili{}\textit\ili{}{long\ili{} time\ili{} no\ili{} see}\ili{},\ili{} \ili{}\textit\ili{}{instead\ili{} of}\ili{},\ili{} \ili{}\textit\ili{}{because\ili{} of}\ili{},\ili{} etc\ili{}.\ili{}
+Those\ili{} expressions\ili{} are\ili{} composed\ili{} of\ili{} smaller\ili{} units\ili{} which\ili{} have\ili{} \ili{}
+in\ili{} general\ili{} their\ili{} own\ili{} semantic\ili{} and\ili{} syntactic\ili{} uses\ili{} but\ili{} inside\ili{} \ili{}
+the\ili{} expressions\ili{} they\ili{} are\ili{} just\ili{} tokens\ili{} constituting\ili{} a\ili{} larger\ili{} unit\ili{}.\ili{}
+Those\ili{} expressions\ili{} cannot\ili{} be\ili{} parsed\ili{} by\ili{} using\ili{} meaningful\ili{} grammatical\ili{} rules\ili{}.\ili{}
+For\ili{} instance\ili{},\ili{} in\ili{} order\ili{} to\ili{} parse\ili{} \ili{}\textit\ili{}{instead\ili{} of}\ili{} compositionally\ili{},\ili{} \ili{}
+we\ili{} would\ili{} have\ili{} to\ili{} add\ili{} a\ili{} syntactic\ili{} \ili{}\isi\ili{}{rule}\ili{} which\ili{} combines\ili{} an\ili{} adverb\ili{} and\ili{} \ili{}
+a\ili{} preposition\ili{} to\ili{} form\ili{} another\ili{} preposition\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} fun\ili{} foo\ili{} \ili{}:\ili{} Adv\ili{} \ili{}-\ili{}>\ili{} Prep\ili{} \ili{}-\ili{}>\ili{} Prep\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+A\ili{} \ili{}\isi\ili{}{rule}\ili{} like\ili{} this\ili{} would\ili{} have\ili{} no\ili{} other\ili{} use\ili{},\ili{} but\ili{} to\ili{} cover\ili{} controversial\ili{} \ili{}
+syntactic\ili{} sequences\ili{} which\ili{} does\ili{} not\ili{} have\ili{} any\ili{} compositional\ili{} meaning\ili{} anyway\ili{}.\ili{}
+This\ili{} makes\ili{} even\ili{} less\ili{} sense\ili{} in\ili{} a\ili{} multilingual\ili{} setting\ili{} since\ili{} the\ili{} internal\ili{}
+structure\ili{} of\ili{} those\ili{} expressions\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} does\ili{} not\ili{} persist\ili{} in\ili{} other\ili{}
+languages\ili{}.\ili{} In\ili{} \ili{}\ili\ili{}{Swedish}\ili{} for\ili{} instance\ili{} \ili{}\textit\ili{}{because\ili{} of}\ili{} translates\ili{} as\ili{} \ili{}
+\ili{}\textit\ili{}{p\ili{}{\ili{}\aa}\ili{} grund\ili{} av}\ili{} and\ili{} in\ili{} \ili{}\ili\ili{}{Bulgarian}\ili{} \ili{}\textit\ili{}{instead\ili{} of}\ili{} translates\ili{} \ili{}
+as\ili{} \ili{}\textit\ili{}{vmesto}\ili{}.\ili{} In\ili{} both\ili{} cases\ili{} the\ili{} translation\ili{} is\ili{} \ili{}
+another\ili{} prepositional\ili{} expression\ili{},\ili{} but\ili{} its\ili{} internal\ili{} composition\ili{} \ili{}
+is\ili{} very\ili{} different\ili{}.\ili{} The\ili{} solution\ili{} is\ili{} very\ili{} simple\ili{}:\ili{} we\ili{} ignore\ili{} \ili{}
+the\ili{} bogus\ili{} internal\ili{} composition\ili{} of\ili{} those\ili{} expressions\ili{} and\ili{} we\ili{} add\ili{} them\ili{} as\ili{} \ili{}
+multiword\ili{} units\ili{} in\ili{} the\ili{} lexicon\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} fun\ili{} instead_of_Prep\ili{},\ili{} because_of_Prep\ili{} \ili{}:\ili{} Prep\ili{}
+\ili{} \ili{} lin\ili{} instead_of_Prep\ili{} \ili{}=\ili{} mkPrep\ili{} \ili{}"instead\ili{} of\ili{}"\ili{}
+\ili{} \ili{} lin\ili{} because_of_Prep\ili{} \ili{}=\ili{} mkPrep\ili{} \ili{}"because\ili{} of\ili{}"\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+\ili{}
+The\ili{} implication\ili{} of\ili{} this\ili{} choice\ili{} is\ili{} that\ili{} the\ili{} parser\ili{} in\ili{} \ili{}
+GF\ili{} \ili{}\citep\ili{}{angelov2011mechanics}\ili{} has\ili{} to\ili{} work\ili{} not\ili{} on\ili{} the\ili{} level\ili{} of\ili{} words\ili{} \ili{}
+but\ili{} on\ili{} a\ili{} different\ili{},\ili{} more\ili{} semantic\ili{} level\ili{}.\ili{} In\ili{} the\ili{} case\ili{} of\ili{} \ili{}
+multiword\ili{} expressions\ili{},\ili{} this\ili{} is\ili{} a\ili{} cross\ili{}-words\ili{} level\ili{},\ili{} and\ili{} \ili{}
+in\ili{} agglutinative\ili{} languages\ili{} it\ili{} is\ili{} often\ili{} a\ili{} sub\ili{}-word\ili{} level\ili{} \ili{}\citep\ili{}{angelov2015orthography}\ili{}.\ili{} \ili{}
+This\ili{} complication\ili{} means\ili{},\ili{} for\ili{} instance\ili{},\ili{} that\ili{} unlike\ili{} in\ili{}
+most\ili{} other\ili{} statistical\ili{} parsers\ili{},\ili{} in\ili{} GF\ili{} parsing\ili{} is\ili{} not\ili{} done\ili{} on\ili{} top\ili{} of\ili{} \ili{}
+a\ili{} part\ili{} of\ili{} speech\ili{} tagged\ili{} input\ili{}.\ili{} Instead\ili{} the\ili{} parser\ili{} does\ili{} both\ili{} parsing\ili{}
+and\ili{} tagging\ili{},\ili{} where\ili{} a\ili{} single\ili{} tag\ili{} might\ili{} span\ili{} several\ili{} tokens\ili{} or\ili{} \ili{}
+conversely\ili{} only\ili{} a\ili{} part\ili{} of\ili{} a\ili{} token\ili{}.\ili{}
+\ili{}
+A\ili{} subclass\ili{} of\ili{} non\ili{}-compositional\ili{} expressions\ili{} is\ili{} the\ili{} class\ili{} of\ili{} phrasal\ili{} and\ili{} \ili{}
+\ili{}\isi\ili{}{prepositional\ili{} verbs}\ili{}.\ili{} Examples\ili{} of\ili{} those\ili{} were\ili{} shown\ili{} in\ili{} \ili{}
+the\ili{} previous\ili{} section\ili{}.\ili{} The\ili{} complication\ili{} in\ili{} this\ili{} case\ili{} is\ili{} that\ili{} they\ili{} are\ili{} \ili{}
+not\ili{} only\ili{} composed\ili{} of\ili{} multiple\ili{} words\ili{} but\ili{} the\ili{} words\ili{} are\ili{} not\ili{} \ili{}
+even\ili{} consecutive\ili{}.\ili{} Unlike\ili{} in\ili{} frameworks\ili{} based\ili{} on\ili{} context\ili{}-free\ili{} grammars\ili{},\ili{} \ili{}
+in\ili{} GF\ili{} this\ili{} is\ili{} a\ili{} trivial\ili{} matter\ili{}.\ili{} Discontinuous\ili{} expressions\ili{} \ili{}
+are\ili{} modelled\ili{} by\ili{} simply\ili{} using\ili{} more\ili{} than\ili{} one\ili{} string\ili{} fields\ili{} inside\ili{} a\ili{} record\ili{}.\ili{}
+On\ili{} a\ili{} low\ili{}-level\ili{} both\ili{} tables\ili{} and\ili{} records\ili{} in\ili{} GF\ili{} are\ili{} modelled\ili{} as\ili{} \ili{}
+tuples\ili{} of\ili{} strings\ili{} which\ili{} reduces\ili{} the\ili{} formalism\ili{} to\ili{} \ili{}
+a\ili{} Parallel\ili{} Multiple\ili{} Context\ili{}-Free\ili{} Grammar\ili{} \ili{}(PMCFG\ili{},\ili{} \ili{}\citealt\ili{}{seki91\ili{}:mcfg}\ili{})\ili{} \ili{}
+which\ili{} is\ili{} beyond\ili{} context\ili{}-free\ili{} grammars\ili{}.\ili{} When\ili{} an\ili{} expression\ili{} is\ili{} embedded\ili{} in\ili{} \ili{}
+a\ili{} sentence\ili{},\ili{} then\ili{} the\ili{} syntactic\ili{} rules\ili{} know\ili{} where\ili{} to\ili{} put\ili{} each\ili{} of\ili{} \ili{}
+the\ili{} constituents\ili{}.\ili{} The\ili{} assumption\ili{},\ili{} however\ili{},\ili{} is\ili{} that\ili{} \ili{}
+all\ili{} lexical\ili{} units\ili{} of\ili{} the\ili{} same\ili{} type\ili{} have\ili{} the\ili{} same\ili{} types\ili{} of\ili{} discontinuities\ili{}.\ili{} \ili{}
+For\ili{} instance\ili{},\ili{} the\ili{} linearization\ili{} type\ili{} for\ili{} all\ili{} two\ili{}-argument\ili{} verbs\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} is\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lincat\ili{} V2\ili{} \ili{}=\ili{} \ili{}{s\ili{} \ili{}:\ili{} VForm\ili{} \ili{}=\ili{}>\ili{} Str\ili{};\ili{} part\ili{} \ili{}:\ili{} Str\ili{};\ili{} prep\ili{} \ili{}:\ili{} Str}\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+Although\ili{} only\ili{} some\ili{} verbs\ili{} have\ili{} particles\ili{} and\ili{} only\ili{} some\ili{} have\ili{} prepositions\ili{}.\ili{} In\ili{} a\ili{} monolingual\ili{} grammar\ili{} it\ili{} is\ili{} possible\ili{} to\ili{} split\ili{} the\ili{} category\ili{} into\ili{} a\ili{} category\ili{} for\ili{} simple\ili{} verbs\ili{} and\ili{} a\ili{} category\ili{} for\ili{} phrasal\ili{}/\ili{}\isi\ili{}{prepositional\ili{} verbs}\ili{} but\ili{} this\ili{} does\ili{} not\ili{} scale\ili{} across\ili{} languages\ili{}.\ili{} Phrasal\ili{} verbs\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{},\ili{} for\ili{} example\ili{},\ili{} are\ili{} often\ili{} translated\ili{} to\ili{} simple\ili{} verbs\ili{} in\ili{} Slavic\ili{} languages\ili{},\ili{} where\ili{} the\ili{} information\ili{} from\ili{} the\ili{} particle\ili{} is\ili{} encoded\ili{} as\ili{} a\ili{} prefix\ili{} attached\ili{} to\ili{} the\ili{} root\ili{}.\ili{} Conversely\ili{} simple\ili{} verbs\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} might\ili{} become\ili{} \ili{}\isi\ili{}{prepositional\ili{} verbs}\ili{} in\ili{} other\ili{} languages\ili{} or\ili{} vice\ili{} versa\ili{}.\ili{}
+\ili{}
+The\ili{} second\ili{} class\ili{} of\ili{} expressions\ili{} is\ili{} those\ili{} that\ili{} have\ili{} both\ili{} a\ili{} compositional\ili{} \ili{}
+and\ili{} a\ili{} non\ili{}-compositional\ili{} meaning\ili{}.\ili{} It\ili{} is\ili{} often\ili{} the\ili{} case\ili{} that\ili{} the\ili{} second\ili{} is\ili{} \ili{}
+the\ili{} most\ili{} frequent\ili{} meaning\ili{} but\ili{} the\ili{} former\ili{} cannot\ili{} be\ili{} excluded\ili{} either\ili{}.\ili{} \ili{}
+Since\ili{} GF\ili{} is\ili{} a\ili{} multilingual\ili{} framework\ili{},\ili{} the\ili{} most\ili{} natural\ili{} way\ili{} of\ili{} \ili{}
+identifying\ili{} multiword\ili{} expressions\ili{} is\ili{} cross\ili{}-lingual\ili{}.\ili{} If\ili{} an\ili{} expression\ili{} \ili{}
+has\ili{} a\ili{} non\ili{}-compositional\ili{} meaning\ili{} then\ili{} it\ili{} is\ili{} quite\ili{} likely\ili{} that\ili{} \ili{}
+it\ili{} will\ili{} be\ili{} expressed\ili{} in\ili{} a\ili{} very\ili{} different\ili{} way\ili{} in\ili{} another\ili{} language\ili{}.\ili{} \ili{}
+This\ili{} is\ili{} a\ili{} very\ili{} empirical\ili{} criterion\ili{} which\ili{} makes\ili{} it\ili{} easier\ili{} to\ili{} detect\ili{} \ili{}
+multiword\ili{} expressions\ili{},\ili{} but\ili{} on\ili{} the\ili{} other\ili{} hand\ili{} it\ili{} fuses\ili{} \ili{}
+multiword\ili{} expressions\ili{} with\ili{} constructions\ili{}.\ili{} Basically\ili{} anything\ili{} with\ili{} \ili{}
+a\ili{} non\ili{}-compositional\ili{} abstract\ili{} syntax\ili{} across\ili{} languages\ili{} is\ili{} considered\ili{} \ili{}
+a\ili{} multiword\ili{} expression\ili{}.\ili{} This\ili{} kind\ili{} of\ili{} expressions\ili{} is\ili{} obviously\ili{} a\ili{} problem\ili{} \ili{}
+in\ili{} an\ili{} interlingua\ili{} based\ili{} system\ili{}.\ili{}
+\ili{}
+The\ili{} solution\ili{} is\ili{} to\ili{} identify\ili{} and\ili{} factorize\ili{} expressions\ili{}.\ili{} \ili{}
+Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:have_name}\ili{} shows\ili{} the\ili{} abstract\ili{} syntax\ili{} trees\ili{} for\ili{} \ili{}
+the\ili{} sentences\ili{} \ili{}\textit\ili{}{\ili{}“My\ili{} name\ili{} is\ili{} John\ili{}”}\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} \ili{}
+the\ili{} equivalent\ili{} \ili{}\textit\ili{}{\ili{}“Ich\ili{} hei\ili{}{\ili{}\ss}e\ili{} John\ili{}”}\ili{} in\ili{} \ili{}\ili\ili{}{German}\ili{}.\ili{} \ili{}
+The\ili{} translation\ili{} is\ili{} non\ili{}-compositional\ili{} because\ili{} \ili{}\ili\ili{}{English}\ili{} has\ili{} \ili{}
+no\ili{} equivalent\ili{} of\ili{} the\ili{} \ili{}\ili\ili{}{German}\ili{} verb\ili{} \ili{}\textit\ili{}{hei\ili{}{\ili{}\ss}en}\ili{}.\ili{} \ili{}
+In\ili{} a\ili{} transfer\ili{} based\ili{} translation\ili{} system\ili{},\ili{} we\ili{} would\ili{} have\ili{} to\ili{} explicitly\ili{} \ili{}
+manipulate\ili{} the\ili{} trees\ili{} to\ili{} get\ili{} the\ili{} one\ili{} from\ili{} the\ili{} other\ili{}.\ili{} \ili{}
+In\ili{} an\ili{} interlingual\ili{} system\ili{} we\ili{} can\ili{} factorize\ili{}.\ili{} \ili{}
+\ili{}
+We\ili{} add\ili{} in\ili{} the\ili{} abstract\ili{} syntax\ili{} a\ili{} new\ili{} function\ili{} which\ili{} takes\ili{} as\ili{} input\ili{} \ili{}
+all\ili{} fragments\ili{} from\ili{} the\ili{} individual\ili{} trees\ili{} that\ili{} stay\ili{} invariable\ili{}.\ili{} \ili{}
+In\ili{} each\ili{} of\ili{} the\ili{} concrete\ili{} syntaxes\ili{} we\ili{} define\ili{} that\ili{} the\ili{} function\ili{} produces\ili{} \ili{}
+the\ili{} corresponding\ili{} language\ili{} specific\ili{} trees\ili{} where\ili{} the\ili{} invariable\ili{} subtrees\ili{} \ili{}
+are\ili{} just\ili{} plugged\ili{} in\ili{} the\ili{} right\ili{} places\ili{}.\ili{} In\ili{} the\ili{} particular\ili{} case\ili{} we\ili{} would\ili{} get\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+Abstract\ili{}:\ili{}
+\ili{} \ili{} fun\ili{} have_name_Cl\ili{} \ili{} \ili{}:\ili{} NP\ili{} \ili{}-\ili{}>\ili{} PN\ili{} \ili{}-\ili{}>\ili{} Cl\ili{}
+\ili{}\ili\ili{}{English}\ili{}:\ili{}
+\ili{} \ili{} lin\ili{} have_name_Cl\ili{} p\ili{} n\ili{} \ili{}=\ili{} PredVP\ili{} \ili{}(DetCN\ili{} \ili{}(PossNP\ili{} p\ili{})\ili{} \ili{}(UseN\ili{} name_N\ili{})\ili{})\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}(UseComp\ili{} \ili{}(CompNP\ili{} \ili{}(UsePN\ili{} n\ili{})\ili{})\ili{})\ili{}
+\ili{}\ili\ili{}{German}\ili{}:\ili{}
+\ili{} \ili{} lin\ili{} have_name_Cl\ili{} p\ili{} n\ili{} \ili{}=\ili{} PredVP\ili{} p\ili{} \ili{}(CompV2\ili{} \ili{}(mkV\ili{} \ili{}"heissen\ili{}"\ili{})\ili{} \ili{}(UsePN\ili{} n\ili{})\ili{})\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure\ili{}*}\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}\centering\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}\begin\ili{}{tabular}\ili{}{ccc}\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\includegraphics\ili{}[width\ili{}=0\ili{}.35\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/engname\ili{}.png}\ili{} \ili{}&\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\includegraphics\ili{}[width\ili{}=0\ili{}.35\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/gername\ili{}.png}\ili{} \ili{}&\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\includegraphics\ili{}[width\ili{}=0\ili{}.2\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/hasname\ili{}.png}\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} a\ili{})\ili{} My\ili{} name\ili{} is\ili{} John\ili{} \ili{}&\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} b\ili{})\ili{} Ich\ili{} hei\ili{}{\ili{}\ss}e\ili{} John\ili{} \ili{}&\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} c\ili{})\ili{} Factorization\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}\caption\ili{}{An\ili{} example\ili{} for\ili{} non\ili{}-compositional\ili{} abstract\ili{} syntax}\ili{}
+\ili{} \ili{} \ili{} \ili{}\label\ili{}{fig\ili{}:have_name}\ili{}
+\ili{}\end\ili{}{figure\ili{}*}\ili{}
+\ili{}
+The\ili{} new\ili{} function\ili{} takes\ili{} as\ili{} arguments\ili{} the\ili{} subject\ili{} \ili{}(\ili{}\verb\ili{}=NP\ili{}=\ili{})\ili{} and\ili{} \ili{}
+the\ili{} proper\ili{} name\ili{} \ili{}(\ili{}\verb\ili{}=PN\ili{}=\ili{})\ili{} and\ili{} produces\ili{} a\ili{} clause\ili{} \ili{}(\ili{}\verb\ili{}=Cl\ili{}=\ili{})\ili{}.\ili{}
+In\ili{} the\ili{} \ili{}\ili\ili{}{German}\ili{} example\ili{} the\ili{} subject\ili{} is\ili{} actually\ili{} the\ili{} pronoun\ili{} \ili{}\textit\ili{}{ich}\ili{}
+with\ili{} an\ili{} abstract\ili{} syntax\ili{} \ili{}\verb\ili{}=UsePron\ili{} i_Pron\ili{}=\ili{}.\ili{} In\ili{} \ili{}\ili\ili{}{English}\ili{},\ili{} on\ili{} the\ili{}
+other\ili{} hand\ili{},\ili{} the\ili{} syntactic\ili{} subject\ili{} is\ili{} \ili{}\textit\ili{}{my\ili{} name}\ili{} but\ili{} we\ili{} are\ili{} only\ili{}
+interested\ili{} in\ili{} varying\ili{} \ili{}\textit\ili{}{my}\ili{} so\ili{} the\ili{} argument\ili{} \ili{}\verb\ili{}=UsePron\ili{} i_Pron\ili{}=\ili{}
+is\ili{} wrapped\ili{} with\ili{} \ili{}\verb\ili{}=PossNP\ili{}=\ili{} which\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} generates\ili{} a\ili{} possessive\ili{} determiner\ili{}
+from\ili{} an\ili{} \ili{}\verb\ili{}=NP\ili{}=\ili{},\ili{} i\ili{}.e\ili{}.\ili{} from\ili{} \ili{}\textit\ili{}{I}\ili{} we\ili{} get\ili{} \ili{}\textit\ili{}{my}\ili{}.\ili{} The\ili{} determiner\ili{}
+is\ili{} then\ili{} applied\ili{} to\ili{} the\ili{} noun\ili{} \ili{}\textit\ili{}{name}\ili{}.\ili{}
+The\ili{} result\ili{} is\ili{} of\ili{} category\ili{} clause\ili{} which\ili{} is\ili{} the\ili{} same\ili{} as\ili{} a\ili{} sentence\ili{} except\ili{} that\ili{} it\ili{} has\ili{} \ili{}
+variable\ili{} tense\ili{} and\ili{} word\ili{} order\ili{}.\ili{} This\ili{} makes\ili{} it\ili{} possible\ili{} to\ili{} reuse\ili{} it\ili{} for\ili{} building\ili{} \ili{}
+relative\ili{} clauses\ili{},\ili{} questions\ili{} and\ili{} sentences\ili{}.\ili{} We\ili{} can\ili{} also\ili{} inflect\ili{} it\ili{} \ili{}
+in\ili{} tense\ili{} and\ili{} polarity\ili{}.\ili{} This\ili{} means\ili{} that\ili{} it\ili{} is\ili{} enough\ili{} to\ili{} factorize\ili{} \ili{}
+the\ili{} construction\ili{} only\ili{} once\ili{} and\ili{} then\ili{} it\ili{} automatically\ili{} becomes\ili{} available\ili{} \ili{}
+in\ili{} all\ili{} possible\ili{} forms\ili{}.\ili{} Once\ili{} we\ili{} have\ili{} the\ili{} new\ili{} abstract\ili{} function\ili{} then\ili{} \ili{}
+we\ili{} can\ili{} use\ili{} a\ili{} language\ili{}-independent\ili{} tree\ili{} as\ili{} shown\ili{} on\ili{} Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:have_name}c\ili{}.\ili{}
+\ili{}
+Note\ili{} that\ili{} in\ili{} the\ili{} linearization\ili{} rules\ili{} we\ili{} did\ili{} not\ili{} use\ili{} tables\ili{} and\ili{} record\ili{} as\ili{}
+we\ili{} did\ili{} in\ili{} the\ili{} lexicon\ili{} and\ili{} in\ili{} the\ili{} syntax\ili{} of\ili{} the\ili{} grammar\ili{}.\ili{} \ili{}
+Instead\ili{} we\ili{} are\ili{} free\ili{} to\ili{} reuse\ili{} the\ili{} already\ili{} existing\ili{} syntactic\ili{} functions\ili{} \ili{}
+that\ili{} are\ili{} available\ili{} in\ili{} the\ili{} grammar\ili{}.\ili{} In\ili{} the\ili{} previous\ili{} section\ili{},\ili{} \ili{}
+we\ili{} showed\ili{} how\ili{},\ili{} for\ili{} example\ili{},\ili{} functions\ili{} like\ili{} \ili{}\verb\ili{}=AdjCN\ili{}=\ili{} and\ili{} \ili{}\verb\ili{}=UseN\ili{}=\ili{} can\ili{} be\ili{} defined\ili{}.\ili{} These\ili{} functions\ili{} can\ili{} be\ili{} used\ili{} not\ili{} only\ili{} for\ili{} parsing\ili{}/generation\ili{} of\ili{} sentences\ili{} but\ili{} also\ili{} inside\ili{} the\ili{} definitions\ili{} of\ili{} new\ili{} functions\ili{}.\ili{} This\ili{} is\ili{} exactly\ili{} what\ili{} we\ili{} do\ili{} here\ili{} and\ili{} this\ili{} saves\ili{} us\ili{} a\ili{} lot\ili{} of\ili{} low\ili{}-level\ili{} details\ili{}.\ili{}
+\ili{}
+For\ili{} lexical\ili{} units\ili{} we\ili{} can\ili{} either\ili{} reuse\ili{} existing\ili{} lexical\ili{} definitions\ili{} \ili{}
+like\ili{} \ili{}\verb\ili{}=name_N\ili{}=\ili{} or\ili{} define\ili{} locally\ili{} new\ili{} ones\ili{} like\ili{} \ili{}\verb\ili{}=mkV\ili{} \ili{}"heissen\ili{}"\ili{}=\ili{}.\ili{}
+This\ili{} is\ili{} handy\ili{} since\ili{} nouns\ili{} like\ili{} \ili{}\verb\ili{}=name_N\ili{}=\ili{} are\ili{} more\ili{} common\ili{} across\ili{} \ili{}
+languages\ili{} and\ili{} thus\ili{} we\ili{} would\ili{} probably\ili{} want\ili{} them\ili{} in\ili{} \ili{}
+the\ili{} general\ili{} lexicon\ili{} anyway\ili{}.\ili{} On\ili{} the\ili{} other\ili{} hand\ili{},\ili{} verbs\ili{} equivalent\ili{} to\ili{} \ili{}
+\ili{}\textit\ili{}{hei\ili{}{\ili{}\ss}en}\ili{} can\ili{} be\ili{} found\ili{} in\ili{} only\ili{} some\ili{} languages\ili{}.\ili{}
+\ili{}
+The\ili{} previous\ili{} example\ili{} can\ili{} be\ili{} explained\ili{} as\ili{} a\ili{} construction\ili{} which\ili{} differs\ili{}
+across\ili{} languages\ili{} because\ili{} of\ili{} a\ili{} lexical\ili{} gap\ili{},\ili{} i\ili{}.e\ili{}.\ili{} the\ili{} missing\ili{} \ili{}\textit\ili{}{hei\ili{}{\ili{}\ss}en}\ili{}
+verb\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{}.\ili{} However\ili{},\ili{} exactly\ili{} the\ili{} same\ili{} solution\ili{} can\ili{} be\ili{} used\ili{} also\ili{} for\ili{}
+pure\ili{} idioms\ili{}.\ili{} For\ili{} example\ili{},\ili{} a\ili{} prototypical\ili{} multiword\ili{} expression\ili{} like\ili{}
+\ili{}\textit\ili{}{kick\ili{} the\ili{} bucket}\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} can\ili{} be\ili{} defined\ili{} as\ili{} a\ili{} lexical\ili{} verb\ili{} \ili{}\isi\ili{}{phrase}\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+fun\ili{} kick_the_bucket_VP\ili{} \ili{}:\ili{} VP\ili{}
+lin\ili{} kick_the_bucket_VP\ili{} \ili{}=\ili{} ComplSlash\ili{} \ili{}(SlashV2a\ili{} kick_V2\ili{})\ili{} \ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}(DetCN\ili{} \ili{}(DetQuant\ili{} DefArt\ili{} NumSg\ili{})\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}(UseN\ili{} bucket_N\ili{})\ili{})\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+A\ili{} translation\ili{} to\ili{} another\ili{} language\ili{} could\ili{} be\ili{} realized\ili{} either\ili{} as\ili{} a\ili{} single\ili{}
+verb\ili{} equivalent\ili{} to\ili{} \ili{}\textit\ili{}{die}\ili{} or\ili{} as\ili{} another\ili{} idiom\ili{}.\ili{} In\ili{} either\ili{} case\ili{}
+the\ili{} translation\ili{} should\ili{} still\ili{} function\ili{} as\ili{} a\ili{} verb\ili{} \ili{}\isi\ili{}{phrase}\ili{}.\ili{} Note\ili{} that\ili{} the\ili{}
+verb\ili{} \ili{}\isi\ili{}{phrase}\ili{} above\ili{} is\ili{} not\ili{} just\ili{} a\ili{} complicated\ili{} way\ili{} to\ili{} encode\ili{} the\ili{} string\ili{} \ili{}
+\ili{}\textit\ili{}{kick\ili{} the\ili{} bucket}\ili{}.\ili{} When\ili{} the\ili{} expression\ili{} in\ili{} the\ili{} example\ili{} is\ili{} evaluated\ili{}
+it\ili{} is\ili{} reduced\ili{} to\ili{} a\ili{} complex\ili{} data\ili{} structure\ili{} which\ili{} among\ili{} other\ili{} things\ili{} contains\ili{}
+all\ili{} inflection\ili{} forms\ili{} of\ili{} \ili{}\textit\ili{}{kick}\ili{} as\ili{} well\ili{} as\ili{} all\ili{} auxiliary\ili{} verbs\ili{} that\ili{}
+must\ili{} be\ili{} used\ili{} for\ili{} forming\ili{} the\ili{} different\ili{} tenses\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{}.\ili{}
+\ili{}
+The\ili{} common\ili{} feature\ili{} between\ili{} the\ili{} last\ili{} two\ili{} examples\ili{} is\ili{} that\ili{} in\ili{} both\ili{}
+cases\ili{} we\ili{} have\ili{} to\ili{} move\ili{} from\ili{} lexical\ili{} categories\ili{} such\ili{} as\ili{} noun\ili{} and\ili{} verb\ili{}
+to\ili{} a\ili{} higher\ili{}-level\ili{} syntactic\ili{} categories\ili{}.\ili{} For\ili{} example\ili{} instead\ili{} of\ili{} assuming\ili{}
+the\ili{} existence\ili{} of\ili{} a\ili{} specific\ili{} verb\ili{} we\ili{} just\ili{} assume\ili{} that\ili{} there\ili{} is\ili{} a\ili{} specific\ili{}
+verb\ili{} \ili{}\isi\ili{}{phrase}\ili{} or\ili{} a\ili{} sentence\ili{} that\ili{} conveys\ili{} the\ili{} same\ili{} meaning\ili{}.\ili{} Similarly\ili{}
+instead\ili{} of\ili{} nouns\ili{} we\ili{} use\ili{} noun\ili{} phrases\ili{} and\ili{} instead\ili{} of\ili{} adjectives\ili{} \ili{}-\ili{} adjectival\ili{} phrases\ili{}.\ili{}
+Basically\ili{} we\ili{} move\ili{} upwards\ili{} in\ili{} the\ili{} hierarchy\ili{} of\ili{} syntactic\ili{} categories\ili{} until\ili{}
+we\ili{} reach\ili{} a\ili{} level\ili{} where\ili{} the\ili{} differences\ili{} across\ili{} languages\ili{} are\ili{} entirely\ili{}
+contained\ili{} within\ili{} the\ili{} selected\ili{} category\ili{}.\ili{} \ili{}
+\ili{}
+If\ili{} the\ili{} multiword\ili{} expression\ili{}
+contains\ili{} variable\ili{} parts\ili{} then\ili{} they\ili{} become\ili{} arguments\ili{} of\ili{} the\ili{} abstract\ili{}
+syntax\ili{} function\ili{}.\ili{} The\ili{} order\ili{} in\ili{} which\ili{} the\ili{} arguments\ili{} are\ili{} listed\ili{} in\ili{} the\ili{}
+type\ili{} of\ili{} the\ili{} function\ili{} is\ili{} completely\ili{} irrelevant\ili{} since\ili{} in\ili{} the\ili{} concrete\ili{}
+syntax\ili{} we\ili{} are\ili{} free\ili{} to\ili{} use\ili{} the\ili{} arguments\ili{} in\ili{} an\ili{} arbitrary\ili{} order\ili{} regardless\ili{} \ili{}
+of\ili{} the\ili{} order\ili{} in\ili{} which\ili{} they\ili{} are\ili{} declared\ili{}.\ili{} It\ili{} is\ili{} just\ili{} by\ili{} convention\ili{} that\ili{}
+we\ili{} usually\ili{} choose\ili{} to\ili{} use\ili{} the\ili{} order\ili{} in\ili{} which\ili{} they\ili{} are\ili{} used\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{}.\ili{}
+Note\ili{},\ili{} however\ili{},\ili{} that\ili{} this\ili{} freedom\ili{} does\ili{} not\ili{} come\ili{} for\ili{} free\ili{}.\ili{} \ili{}
+For\ili{} instance\ili{},\ili{} most\ili{} statistical\ili{} PMCFG\ili{} parsers\ili{} assume\ili{} that\ili{} \ili{}
+the\ili{} arguments\ili{} to\ili{} a\ili{} function\ili{} are\ili{} used\ili{} in\ili{} the\ili{} order\ili{} in\ili{} which\ili{} they\ili{} are\ili{} defined\ili{}.\ili{}
+This\ili{} assumption\ili{} is\ili{} always\ili{} satisfiable\ili{} if\ili{} the\ili{} grammar\ili{} is\ili{} monolingual\ili{} but\ili{} in\ili{} \ili{}
+a\ili{} multilingual\ili{} setting\ili{} there\ili{} is\ili{} simply\ili{} no\ili{} natural\ili{} order\ili{}.\ili{} Moreover\ili{},\ili{}
+the\ili{} grammar\ili{} in\ili{} a\ili{} typical\ili{} statistical\ili{} parser\ili{} is\ili{} learned\ili{} from\ili{} corpora\ili{}
+and\ili{} is\ili{} generally\ili{} not\ili{} intended\ili{} to\ili{} be\ili{} read\ili{},\ili{} so\ili{} any\ili{} argument\ili{} order\ili{}
+is\ili{} just\ili{} as\ili{} good\ili{}.\ili{} In\ili{} contrast\ili{} the\ili{} typical\ili{} GF\ili{} grammar\ili{}
+is\ili{} developed\ili{} by\ili{} a\ili{} grammarian\ili{} who\ili{} might\ili{} have\ili{} his\ili{}/her\ili{} own\ili{} aesthetic\ili{}
+preferences\ili{}.\ili{}
+\ili{}
+Using\ili{} functions\ili{} with\ili{} arguments\ili{} is\ili{} just\ili{} one\ili{} of\ili{} the\ili{} ways\ili{} to\ili{} make\ili{}
+a\ili{} multiword\ili{} expression\ili{} variable\ili{}.\ili{} Sometimes\ili{} general\ili{} modifiers\ili{} \ili{}
+are\ili{} admitted\ili{} in\ili{} the\ili{} middle\ili{} of\ili{} an\ili{} expression\ili{}.\ili{}
+Typical\ili{} examples\ili{} are\ili{} light\ili{} verb\ili{} constructions\ili{} such\ili{} as\ili{} \ili{}\textit\ili{}{I\ili{} am\ili{} back}\ili{}
+which\ili{} also\ili{} admit\ili{} modifications\ili{} like\ili{} \ili{}\textit\ili{}{I\ili{} am\ili{} \ili{}\textbf\ili{}{already}\ili{} back}\ili{}.\ili{}
+It\ili{} is\ili{} not\ili{} difficult\ili{} to\ili{} model\ili{} the\ili{} verb\ili{} \ili{}\isi\ili{}{phrase}\ili{} \ili{}\verb\ili{}=copula\ili{}+back\ili{}=\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} lin\ili{} am_back_VP\ili{} \ili{}=\ili{} UseComp\ili{} \ili{}(CompAdv\ili{} back_Adv\ili{})\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+What\ili{} is\ili{} not\ili{} visible\ili{} here\ili{},\ili{} however\ili{},\ili{} is\ili{} that\ili{} the\ili{} computed\ili{} verb\ili{} \ili{}\isi\ili{}{phrase}\ili{}
+is\ili{} discontinuous\ili{}.\ili{} The\ili{} two\ili{} important\ili{} parts\ili{} are\ili{} an\ili{} inflection\ili{} table\ili{} with\ili{}
+all\ili{} forms\ili{} of\ili{} the\ili{} copula\ili{} and\ili{} a\ili{} second\ili{} field\ili{} which\ili{} contains\ili{} the\ili{} argument\ili{}
+of\ili{} the\ili{} copula\ili{},\ili{} i\ili{}.e\ili{}.\ili{} the\ili{} adverb\ili{} \ili{}\textit\ili{}{back}\ili{}.\ili{} \ili{}
+Now\ili{} if\ili{} we\ili{} modify\ili{} the\ili{} new\ili{} lexical\ili{} verb\ili{} \ili{}\isi\ili{}{phrase}\ili{}:\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} AdVVP\ili{} already_AdV\ili{} am_back_VP\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+then\ili{} the\ili{} Resource\ili{} Grammar\ili{} automatically\ili{} knows\ili{} that\ili{} the\ili{} adverb\ili{}
+\ili{}\textit\ili{}{already}\ili{} should\ili{} be\ili{} inserted\ili{} between\ili{} the\ili{} copula\ili{} and\ili{} the\ili{} argument\ili{}.\ili{}
+The\ili{} insertion\ili{} is\ili{} possible\ili{} only\ili{} because\ili{} of\ili{} the\ili{} discontinuity\ili{} of\ili{} \ili{}
+the\ili{} verb\ili{} \ili{}\isi\ili{}{phrase}\ili{}.\ili{} Note\ili{} also\ili{} that\ili{} the\ili{} same\ili{} adverbial\ili{} modification\ili{} in\ili{} another\ili{}
+language\ili{} may\ili{} not\ili{} require\ili{} discontinuity\ili{}.\ili{} For\ili{} example\ili{} the\ili{} equivalent\ili{} in\ili{}
+\ili{}\ili\ili{}{Bulgarian}\ili{} for\ili{} \ili{}\textit\ili{}{I\ili{} am\ili{} back}\ili{} consists\ili{} of\ili{} a\ili{} single\ili{} verb\ili{} and\ili{} then\ili{} \ili{}
+the\ili{} adverb\ili{} is\ili{} placed\ili{} before\ili{} the\ili{} verb\ili{}.\ili{} None\ili{} of\ili{} this\ili{},\ili{} however\ili{},\ili{} is\ili{}
+visible\ili{} in\ili{} the\ili{} abstract\ili{} syntax\ili{}.\ili{}
+\ili{}
+In\ili{} general\ili{} the\ili{} ability\ili{} of\ili{} the\ili{} framework\ili{} to\ili{} deal\ili{} with\ili{} discontinuous\ili{} phrases\ili{}
+is\ili{} heavily\ili{} exploited\ili{} in\ili{} the\ili{} resource\ili{} grammar\ili{}.\ili{} It\ili{} is\ili{} one\ili{} of\ili{} the\ili{} most\ili{} powerful\ili{}
+features\ili{} that\ili{} lets\ili{} us\ili{} to\ili{} hide\ili{} language\ili{} specific\ili{} details\ili{} and\ili{} it\ili{} helps\ili{}
+in\ili{} the\ili{} implementation\ili{} of\ili{} some\ili{} constructions\ili{}.\ili{}
+\ili{}
+\ili{}\section\ili{}{Libraries\ili{} of\ili{} Constructions\ili{} in\ili{} GF}\ili{}
+\ili{}
+Constructions\ili{} and\ili{} multiword\ili{} expressions\ili{} are\ili{} really\ili{} abundant\ili{} in\ili{} \ili{}
+any\ili{} natural\ili{} language\ili{},\ili{} and\ili{} it\ili{} is\ili{} part\ili{} of\ili{} our\ili{} mission\ili{} to\ili{} collect\ili{} and\ili{} \ili{}
+organize\ili{} GF\ili{} resources\ili{} for\ili{} as\ili{} many\ili{} languages\ili{} as\ili{} possible\ili{}.\ili{} The\ili{} main\ili{}
+realization\ili{} of\ili{} that\ili{} mission\ili{},\ili{} so\ili{} far\ili{},\ili{} is\ili{} the\ili{} Resource\ili{} Grammars\ili{} Library\ili{}.\ili{}
+In\ili{} the\ili{} recent\ili{} years\ili{} we\ili{} have\ili{} also\ili{} started\ili{} to\ili{} collect\ili{} general\ili{} lexical\ili{}
+resources\ili{}.\ili{} Ultimately\ili{} we\ili{} would\ili{} like\ili{} to\ili{} have\ili{} a\ili{} Resource\ili{} Lexicons\ili{} Library\ili{}
+with\ili{} a\ili{} multilingual\ili{} translation\ili{} lexicon\ili{} for\ili{} many\ili{} languages\ili{}.\ili{}
+Even\ili{} that\ili{} is\ili{} not\ili{} the\ili{} end\ili{} and\ili{} we\ili{} should\ili{} also\ili{} consider\ili{} collecting\ili{} libraries\ili{}
+of\ili{} constructions\ili{}.\ili{} There\ili{} were\ili{} two\ili{} pilot\ili{} projects\ili{} in\ili{} that\ili{} direction\ili{}:\ili{}
+\ili{}\cite\ili{}{gruzitis2015formalising}\ili{} and\ili{} \ili{}\cite\ili{}{enache2014handling}\ili{}.\ili{}
+\ili{} \ili{}
+In\ili{} \ili{}\cite\ili{}{gruzitis2015formalising}\ili{} the\ili{} goal\ili{} is\ili{} to\ili{} formalize\ili{} the\ili{}
+\ili{}\ili\ili{}{Swedish}\ili{} Constructicon\ili{} \ili{}\citep\ili{}{konvens\ili{}:lyngfelt12w}\ili{}.\ili{} \ili{}
+The\ili{} original\ili{} constructicon\ili{} is\ili{} a\ili{} semi\ili{}-formal\ili{} \ili{}
+database\ili{} which\ili{} covers\ili{} common\ili{} constructions\ili{} in\ili{} \ili{}\ili\ili{}{Swedish}\ili{} relevant\ili{} for\ili{}
+second\ili{}-language\ili{} learners\ili{}.\ili{} There\ili{} is\ili{} also\ili{} an\ili{} ongoing\ili{} work\ili{} to\ili{} link\ili{} \ili{}
+the\ili{} resource\ili{} with\ili{} the\ili{} Berkeley\ili{} Constructicon\ili{} for\ili{} \ili{}\ili\ili{}{English}\ili{} \ili{}\citep\ili{}{backstrom}\ili{}.\ili{} The\ili{} focus\ili{},\ili{}
+however\ili{},\ili{} is\ili{} in\ili{} language\ili{} learning\ili{} rather\ili{} than\ili{} parsing\ili{} or\ili{} translation\ili{}.\ili{}
+As\ili{} such\ili{} it\ili{} was\ili{} not\ili{} the\ili{} primary\ili{} goal\ili{} to\ili{} organize\ili{} the\ili{} constructicon\ili{} as\ili{}
+a\ili{} formal\ili{} grammar\ili{} usable\ili{} for\ili{} automatic\ili{} processing\ili{}.\ili{} Instead\ili{} each\ili{} entry\ili{}
+in\ili{} the\ili{} resource\ili{} combines\ili{} an\ili{} informal\ili{} textual\ili{} description\ili{} with\ili{} \ili{}
+a\ili{} syntactic\ili{} pattern\ili{} written\ili{} in\ili{} a\ili{} semi\ili{}-formal\ili{} style\ili{}.\ili{} \ili{}
+The\ili{} syntactic\ili{} patterns\ili{} were\ili{} parsed\ili{} and\ili{} converted\ili{} to\ili{} GF\ili{} rules\ili{}
+which\ili{} extend\ili{} the\ili{} \ili{}\ili\ili{}{Swedish}\ili{} Resource\ili{} Grammar\ili{}.\ili{}
+\ili{}
+The\ili{} original\ili{} constructicon\ili{} contains\ili{} 374\ili{} entries\ili{} of\ili{} which\ili{} the\ili{} project\ili{}
+focused\ili{} on\ili{} the\ili{} 105\ili{} constructions\ili{} for\ili{} verb\ili{} phrases\ili{}.\ili{} Due\ili{} to\ili{} inconsistencies\ili{}
+in\ili{} the\ili{} original\ili{} resource\ili{} in\ili{} the\ili{} first\ili{} round\ili{} only\ili{} 43\ili{} out\ili{} of\ili{} \ili{}
+the\ili{} 105\ili{} constructions\ili{} were\ili{} successfully\ili{} converted\ili{}.\ili{} \ili{}
+After\ili{} several\ili{} iterations\ili{} of\ili{} manual\ili{} inspection\ili{} and\ili{} correction\ili{},\ili{} \ili{}
+the\ili{} number\ili{} of\ili{} successful\ili{} constructions\ili{} increased\ili{} to\ili{} 93\ili{}.\ili{} The\ili{} remaining\ili{}
+cases\ili{} were\ili{} consistently\ili{} annotated\ili{} but\ili{} are\ili{} corner\ili{} cases\ili{} that\ili{} are\ili{} currently\ili{}
+not\ili{} supported\ili{} by\ili{} the\ili{} conversion\ili{} algorithm\ili{}.\ili{} The\ili{} necessary\ili{} corrections\ili{}
+and\ili{} inconsistencies\ili{} were\ili{} sent\ili{} back\ili{} to\ili{} the\ili{} developers\ili{} of\ili{} the\ili{} constructicon\ili{}
+and\ili{} are\ili{} fixed\ili{} by\ili{} now\ili{}.\ili{} The\ili{} experiment\ili{},\ili{} however\ili{},\ili{} clearly\ili{} showed\ili{} the\ili{} advantage\ili{}
+of\ili{} using\ili{} a\ili{} formal\ili{} system\ili{} that\ili{} can\ili{} guard\ili{} against\ili{} accidental\ili{} errors\ili{}
+that\ili{} are\ili{} imminent\ili{} in\ili{} a\ili{} free\ili{} text\ili{} format\ili{}.\ili{}
+\ili{}
+At\ili{} the\ili{} end\ili{} each\ili{} of\ili{} the\ili{} constructions\ili{} was\ili{} converted\ili{} to\ili{} one\ili{} or\ili{} \ili{}
+more\ili{} GF\ili{} functions\ili{} which\ili{} in\ili{} total\ili{} resulted\ili{} in\ili{} 127\ili{} abstract\ili{} functions\ili{}.\ili{} \ili{}
+Out\ili{} of\ili{} these\ili{} 127\ili{} abstract\ili{} functions\ili{} for\ili{} 98\ili{} the\ili{} corresponding\ili{} \ili{}
+concrete\ili{} syntax\ili{} was\ili{} also\ili{} successfully\ili{} constructed\ili{} automatically\ili{}.\ili{}
+A\ili{} logical\ili{} continuation\ili{} of\ili{} the\ili{} project\ili{} would\ili{} be\ili{} to\ili{} also\ili{} convert\ili{} the\ili{}
+aligned\ili{} entries\ili{} from\ili{} the\ili{} Berkeley\ili{} Constructicon\ili{} and\ili{} later\ili{}
+to\ili{} add\ili{} other\ili{} languages\ili{}.\ili{}
+\ili{}
+\ili{}\cite\ili{}{enache2014handling}\ili{} started\ili{} from\ili{} a\ili{} much\ili{} lower\ili{} level\ili{} and\ili{} tried\ili{}
+to\ili{} find\ili{} candidates\ili{} for\ili{} multiword\ili{} expressions\ili{} from\ili{} \ili{}
+the\ili{} Wikitravel\ili{} \ili{}\isi\ili{}{phrase}\ili{} collection\ili{}
+in\ili{} \ili{}\ili\ili{}{English}\ili{},\ili{} \ili{}\ili\ili{}{German}\ili{},\ili{} \ili{}\ili\ili{}{French}\ili{} and\ili{} \ili{}\ili\ili{}{Swedish}\ili{}.\ili{} The\ili{} general\ili{} idea\ili{} is\ili{} that\ili{},\ili{}
+given\ili{} a\ili{} pair\ili{} of\ili{} parallel\ili{} sentences\ili{},\ili{} the\ili{} algorithm\ili{} extracts\ili{} all\ili{}
+possible\ili{} abstract\ili{} syntax\ili{} trees\ili{} for\ili{} each\ili{} sentence\ili{} and\ili{} if\ili{} there\ili{}
+is\ili{} no\ili{} common\ili{} abstract\ili{} tree\ili{} for\ili{} both\ili{} sentences\ili{},\ili{} then\ili{} the\ili{} pair\ili{} must\ili{}
+contain\ili{} a\ili{} non\ili{}-compositional\ili{} expression\ili{}.\ili{} The\ili{} candidates\ili{} are\ili{} then\ili{}
+manually\ili{} examined\ili{} and\ili{} the\ili{} new\ili{} constructions\ili{} are\ili{} added\ili{} in\ili{} a\ili{} library\ili{}
+of\ili{} constructions\ili{}.\ili{} The\ili{} majority\ili{} of\ili{} constructions\ili{} found\ili{} in\ili{} this\ili{} way\ili{}
+span\ili{} over\ili{} larger\ili{} syntactic\ili{} structures\ili{} and\ili{} are\ili{} thus\ili{} above\ili{} the\ili{} level\ili{} of\ili{}
+a\ili{} simple\ili{} lexicon\ili{}.\ili{} For\ili{} example\ili{} out\ili{} of\ili{} 171\ili{} candidates\ili{} 142\ili{} expressions\ili{}
+were\ili{} syntactic\ili{}.\ili{} They\ili{} can\ili{} be\ili{} roughly\ili{} classified\ili{} as\ili{}:\ili{} greetings\ili{},\ili{} weather\ili{}
+reports\ili{},\ili{} time\ili{} expressions\ili{},\ili{} money\ili{},\ili{} units\ili{} of\ili{} measurement\ili{} and\ili{} spatial\ili{} deixis\ili{}.\ili{}
+The\ili{} remaining\ili{} 29\ili{} expressions\ili{} are\ili{} lexical\ili{}.\ili{} For\ili{} example\ili{} \ili{}\textit\ili{}{locker}\ili{}
+in\ili{} \ili{}\ili\ili{}{English}\ili{} translates\ili{} as\ili{} \ili{}\textit\ili{}{l\ili{}{\ili{}\aa}sbart\ili{} sk\ili{}{\ili{}\aa}p}\ili{} \ili{}(lockable\ili{} closet\ili{})\ili{}
+in\ili{} \ili{}\ili\ili{}{Swedish}\ili{}.\ili{}
+\ili{}
+Another\ili{} experiment\ili{} in\ili{} \ili{}\cite\ili{}{enache2014handling}\ili{} is\ili{} to\ili{} learn\ili{}
+a\ili{} lexicon\ili{} of\ili{} compound\ili{} nouns\ili{} between\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} \ili{}\ili\ili{}{German}\ili{}.\ili{} The\ili{} method\ili{}
+uses\ili{} automatic\ili{} \ili{}\isi\ili{}{word\ili{} alignment}\ili{} in\ili{} a\ili{} parallel\ili{} corpus\ili{}.\ili{} The\ili{} candidates\ili{} for\ili{}
+compounds\ili{} are\ili{} pairs\ili{} of\ili{} phrases\ili{} where\ili{}:\ili{} the\ili{} \ili{}\ili\ili{}{English}\ili{} side\ili{} must\ili{} be\ili{} parsable\ili{}
+as\ili{} a\ili{} noun\ili{} \ili{}\isi\ili{}{phrase}\ili{} with\ili{} the\ili{} GF\ili{} grammar\ili{},\ili{} the\ili{} \ili{}\ili\ili{}{German}\ili{} side\ili{} must\ili{} consist\ili{}
+of\ili{} a\ili{} single\ili{} word\ili{},\ili{} and\ili{} finally\ili{} the\ili{} overall\ili{} probability\ili{} for\ili{} the\ili{} pair\ili{} must\ili{}
+be\ili{} above\ili{} a\ili{} fixed\ili{} threshold\ili{} level\ili{}.\ili{} The\ili{} compound\ili{} nouns\ili{} extracted\ili{} in\ili{} this\ili{}
+way\ili{} were\ili{} added\ili{} to\ili{} the\ili{} lexicon\ili{} of\ili{} a\ili{} \ili{}\isi\ili{}{statistical\ili{} machine\ili{} translation}\ili{}
+system\ili{} and\ili{} the\ili{} evaluation\ili{} showed\ili{} a\ili{} noticeable\ili{} improvement\ili{} in\ili{} the\ili{} BLEU\ili{}
+score\ili{}.\ili{}
+\ili{}
+\ili{}\section\ili{}{Application\ili{} Grammars}\ili{}
+\ili{}
+The\ili{} discussions\ili{} so\ili{} far\ili{} were\ili{} on\ili{} the\ili{} level\ili{} of\ili{} the\ili{} Resource\ili{} Grammars\ili{}.\ili{}
+The\ili{} typical\ili{} GF\ili{} applications\ili{},\ili{} however\ili{},\ili{} never\ili{} use\ili{} the\ili{} resource\ili{} grammars\ili{}
+directly\ili{}.\ili{} Instead\ili{} they\ili{} are\ili{} used\ili{} as\ili{} libraries\ili{} to\ili{} build\ili{} application\ili{} grammars\ili{}.\ili{}
+The\ili{} main\ili{} difference\ili{} is\ili{} that\ili{} while\ili{} the\ili{} abstract\ili{} syntax\ili{} of\ili{} a\ili{} resource\ili{} grammar\ili{}
+describes\ili{} some\ili{} kind\ili{} of\ili{} abstracted\ili{} syntactic\ili{} level\ili{},\ili{} the\ili{} application\ili{}
+grammar\ili{} describes\ili{} an\ili{} abstracted\ili{} domain\ili{} semantics\ili{}.\ili{} Another\ili{} way\ili{} to\ili{} see\ili{}
+the\ili{} difference\ili{} is\ili{} to\ili{} think\ili{} about\ili{} the\ili{} abstract\ili{} syntax\ili{} as\ili{} an\ili{} ontological\ili{}
+language\ili{} for\ili{} describing\ili{} the\ili{} application\ili{} domain\ili{}.\ili{} The\ili{} abstract\ili{} syntax\ili{}
+of\ili{} the\ili{} resource\ili{} grammar\ili{} on\ili{} the\ili{} other\ili{} hand\ili{} is\ili{} an\ili{} ontology\ili{} which\ili{} describes\ili{}
+the\ili{} syntactic\ili{} constructions\ili{} that\ili{} someone\ili{} would\ili{} expect\ili{} to\ili{} find\ili{} in\ili{} a\ili{} natural\ili{}
+language\ili{}.\ili{}
+\ili{}
+While\ili{} in\ili{} the\ili{} resource\ili{} grammar\ili{} we\ili{} work\ili{} with\ili{} categories\ili{} like\ili{} noun\ili{} \ili{}\isi\ili{}{phrase}\ili{}
+and\ili{} verb\ili{} \ili{}\isi\ili{}{phrase}\ili{},\ili{} in\ili{} the\ili{} application\ili{} grammar\ili{} we\ili{} switch\ili{} to\ili{} semantic\ili{}
+categories\ili{} like\ili{} person\ili{},\ili{} agent\ili{},\ili{} food\ili{},\ili{} drink\ili{},\ili{} etc\ili{}.\ili{} The\ili{} abstract\ili{} syntax\ili{}
+functions\ili{} on\ili{} the\ili{} other\ili{} hand\ili{} are\ili{} semantic\ili{} predicates\ili{} which\ili{} take\ili{} for\ili{} instance\ili{}
+an\ili{} agent\ili{} and\ili{} a\ili{} drink\ili{} and\ili{} produce\ili{} a\ili{} statement\ili{} like\ili{}:\ili{}\\ili{}\\ili{}[10pt\ili{}]\ili{}
+\ili{}%\ili{}
+\ili{}{\ili{}\phantom\ili{}{X}\ili{}\qquad\ili{}\qquad\ili{} \ili{}\textit\ili{}{someone\ili{}(\ili{}\texttt\ili{}{person}\ili{})\ili{} drinks\ili{} something\ili{}(\ili{}\texttt\ili{}{drink}\ili{})}}\ili{}\\ili{}\\ili{}[10pt\ili{}]\ili{}
+\ili{}%\ili{}
+The\ili{} main\ili{} role\ili{} of\ili{} these\ili{} new\ili{} semantic\ili{} categories\ili{} is\ili{} to\ili{} provide\ili{} \ili{}
+sortal\ili{} restrictions\ili{} on\ili{} the\ili{} types\ili{} of\ili{} nouns\ili{} that\ili{} can\ili{} be\ili{} used\ili{} for\ili{} the\ili{}
+different\ili{} arguments\ili{} of\ili{} the\ili{} predicates\ili{}.\ili{} Otherwise\ili{} the\ili{} predicates\ili{} are\ili{}
+implemented\ili{} in\ili{} a\ili{} fashion\ili{} that\ili{} is\ili{} very\ili{} similar\ili{} to\ili{} the\ili{} one\ili{} for\ili{}
+multiword\ili{} expressions\ili{} that\ili{} we\ili{} presented\ili{} in\ili{} Section\ili{} \ili{}\ref\ili{}{mwe}\ili{}.\ili{}
+In\ili{} particular\ili{} most\ili{} of\ili{} the\ili{} predicates\ili{} are\ili{} de\ili{}-lexicalized\ili{} which\ili{}
+gives\ili{} us\ili{} more\ili{} freedom\ili{} to\ili{} keep\ili{} the\ili{} abstract\ili{} syntax\ili{} language\ili{}-indepdendent\ili{}
+while\ili{} hiding\ili{} all\ili{} differences\ili{} in\ili{} the\ili{} concrete\ili{} syntax\ili{}.\ili{} \ili{}
+\ili{}
+The\ili{} sortal\ili{} restrictions\ili{} might\ili{} be\ili{} relevant\ili{} for\ili{} general\ili{}
+multiword\ili{} expressions\ili{} as\ili{} well\ili{}.\ili{} For\ili{} example\ili{} part\ili{} of\ili{} the\ili{}
+annotations\ili{} in\ili{} the\ili{} \ili{}\ili\ili{}{Swedish}\ili{} Constructicon\ili{} are\ili{} about\ili{} semantic\ili{} roles\ili{}
+such\ili{} as\ili{} \ili{}\texttt\ili{}{Actor}\ili{},\ili{} \ili{}\texttt\ili{}{Theme}\ili{},\ili{} \ili{}\texttt\ili{}{Result}\ili{},\ili{} etc\ili{}.\ili{}
+Those\ili{} were\ili{} ignored\ili{} while\ili{} converting\ili{} the\ili{} resource\ili{} to\ili{} GF\ili{},\ili{} but\ili{}
+it\ili{} is\ili{} possible\ili{} that\ili{} some\ili{} of\ili{} these\ili{} constructions\ili{} are\ili{} valid\ili{} only\ili{} when\ili{}
+the\ili{} constraints\ili{} are\ili{} satisfied\ili{}.\ili{}
+\ili{}
+There\ili{} are\ili{} several\ili{} advantages\ili{} in\ili{} working\ili{} with\ili{} application\ili{} grammars\ili{}.\ili{}
+First\ili{} they\ili{} are\ili{} typically\ili{} much\ili{} smaller\ili{} than\ili{} the\ili{} resource\ili{} grammars\ili{} which\ili{}
+also\ili{} makes\ili{} them\ili{} computationally\ili{} much\ili{} more\ili{} efficient\ili{}.\ili{} Second\ili{} since\ili{}
+the\ili{} application\ili{} grammars\ili{} cover\ili{} only\ili{} a\ili{} specific\ili{} domain\ili{},\ili{} they\ili{} can\ili{}
+guarantee\ili{} translation\ili{} with\ili{} publishing\ili{} quality\ili{} while\ili{} when\ili{} the\ili{} resource\ili{}
+grammars\ili{} are\ili{} used\ili{} directly\ili{} in\ili{} translation\ili{} then\ili{} the\ili{} quality\ili{} is\ili{} much\ili{} worse\ili{}.\ili{}
+Most\ili{} of\ili{} the\ili{} problems\ili{} can\ili{} be\ili{} attributed\ili{} to\ili{} multiword\ili{} expressions\ili{}
+which\ili{} are\ili{} simply\ili{} not\ili{} covered\ili{} by\ili{} the\ili{} vanilla\ili{} resources\ili{}.\ili{} \ili{}
+Having\ili{} a\ili{} comprehensive\ili{} grammar\ili{} of\ili{} multiword\ili{} expressions\ili{} should\ili{}
+improve\ili{} the\ili{} quality\ili{} a\ili{} lot\ili{} but\ili{} since\ili{} building\ili{} \ili{}
+a\ili{} general\ili{} and\ili{} comprehensive\ili{} resources\ili{} is\ili{} very\ili{} expensive\ili{},\ili{} we\ili{} currently\ili{}
+do\ili{} it\ili{} on\ili{} application\ili{} by\ili{} application\ili{} basis\ili{}.\ili{}
+\ili{}
+The\ili{} main\ili{} disadvantage\ili{} of\ili{} the\ili{} application\ili{} grammars\ili{} is\ili{} that\ili{} they\ili{} lack\ili{}
+robustness\ili{}.\ili{} They\ili{} can\ili{} analyse\ili{} input\ili{} conforming\ili{} to\ili{} the\ili{} grammar\ili{} but\ili{}
+fail\ili{} completely\ili{} if\ili{} there\ili{} is\ili{} even\ili{} a\ili{} minor\ili{} violation\ili{}.\ili{} For\ili{} that\ili{} reason\ili{}
+they\ili{} are\ili{} mostly\ili{} used\ili{} for\ili{} controlled\ili{} languages\ili{} \ili{}
+\ili{}\citep\ili{}{Angelov\ili{}:2009\ili{}:ICL\ili{}:1893475\ili{}.1893482}\ili{} where\ili{} the\ili{} users\ili{} must\ili{} use\ili{} \ili{}
+authoring\ili{} tools\ili{} that\ili{} help\ili{} them\ili{} to\ili{} stay\ili{} within\ili{} the\ili{} scope\ili{} of\ili{} the\ili{} grammar\ili{}.\ili{}
+A\ili{} screen\ili{}-shot\ili{} of\ili{} one\ili{} of\ili{} those\ili{} tools\ili{} \ili{}\citep\ili{}{ranta2010tools}\ili{}
+is\ili{} shown\ili{} on\ili{} Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:fridge}\ili{}.\ili{} With\ili{} this\ili{} interface\ili{} the\ili{} users\ili{}
+are\ili{} not\ili{} allowed\ili{} to\ili{} enter\ili{} free\ili{} text\ili{} but\ili{} instead\ili{} they\ili{} compose\ili{} a\ili{} sentence\ili{}
+by\ili{} choosing\ili{} words\ili{} from\ili{} a\ili{} list\ili{} of\ili{} options\ili{}.\ili{} The\ili{} sentence\ili{} is\ili{} built\ili{}
+incrementally\ili{} and\ili{} at\ili{} each\ili{} step\ili{} the\ili{} list\ili{} contains\ili{} only\ili{} words\ili{}
+that\ili{} are\ili{} permitted\ili{} as\ili{} a\ili{} possible\ili{} next\ili{} word\ili{} in\ili{} the\ili{} sentence\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\center\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=0\ili{}.9\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/fridge\ili{}-poetry\ili{}-screenshot}\ili{}
+\ili{}\caption\ili{}{An\ili{} authoring\ili{} interface\ili{} for\ili{} writing\ili{} Controlled\ili{} Languages}\ili{}
+\ili{}\label\ili{}{fig\ili{}:fridge}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+The\ili{} controlled\ili{} language\ili{} authoring\ili{} is\ili{} useful\ili{} only\ili{} when\ili{} the\ili{} grammar\ili{}
+is\ili{} restrictive\ili{}.\ili{} If\ili{} the\ili{} same\ili{} interface\ili{} is\ili{} used\ili{} with\ili{} the\ili{} resource\ili{} grammar\ili{}
+then\ili{} since\ili{} there\ili{} are\ili{} very\ili{} little\ili{} restrictions\ili{},\ili{} almost\ili{} every\ili{} word\ili{} can\ili{}
+appear\ili{} almost\ili{} everywhere\ili{}.\ili{} The\ili{} analysis\ili{} of\ili{} a\ili{} strange\ili{} combination\ili{} of\ili{} words\ili{},\ili{}
+however\ili{},\ili{} could\ili{} be\ili{} equally\ili{} strange\ili{}.\ili{} The\ili{} other\ili{} disadvantage\ili{} of\ili{} that\ili{} \ili{}
+interface\ili{} is\ili{} that\ili{} it\ili{} is\ili{} not\ili{} possible\ili{} to\ili{} get\ili{} an\ili{} overview\ili{} of\ili{} \ili{}
+all\ili{} constructions\ili{} that\ili{} are\ili{} available\ili{} in\ili{} the\ili{} grammar\ili{}.\ili{} In\ili{} a\ili{} sense\ili{} that\ili{}
+interface\ili{} gives\ili{} us\ili{} the\ili{} ant\ili{}'s\ili{} point\ili{} of\ili{} view\ili{} which\ili{} sees\ili{} each\ili{} word\ili{}
+one\ili{} by\ili{} one\ili{}.\ili{} What\ili{} we\ili{} sometimes\ili{} want\ili{} is\ili{} the\ili{} bird\ili{}'s\ili{} view\ili{} which\ili{} sees\ili{} the\ili{}
+grammar\ili{} from\ili{} the\ili{} top\ili{}.\ili{} \ili{}
+\ili{}
+One\ili{} such\ili{} interface\ili{} was\ili{} developed\ili{} in\ili{} \ili{}\cite\ili{}{parlira}\ili{}.\ili{} With\ili{} that\ili{} interface\ili{} \ili{}
+the\ili{} user\ili{} is\ili{} first\ili{} presented\ili{} with\ili{} a\ili{} list\ili{} of\ili{} all\ili{} possible\ili{} constructions\ili{}.\ili{} \ili{}
+When\ili{} a\ili{} particular\ili{} construction\ili{} is\ili{} chosen\ili{} then\ili{} he\ili{}/she\ili{} is\ili{} guided\ili{} to\ili{} \ili{}
+a\ili{} customization\ili{} interface\ili{}
+like\ili{} the\ili{} one\ili{} on\ili{} Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:parlira}\ili{}.\ili{} There\ili{} the\ili{} user\ili{} sees\ili{} an\ili{} example\ili{}
+of\ili{} the\ili{} construction\ili{} rendered\ili{} in\ili{} two\ili{} languages\ili{}.\ili{} Bellow\ili{} the\ili{} example\ili{},\ili{}
+there\ili{} is\ili{} a\ili{} list\ili{} of\ili{} options\ili{} that\ili{} can\ili{} be\ili{} used\ili{} to\ili{} customise\ili{} the\ili{} construction\ili{}.\ili{}
+On\ili{} the\ili{} figure\ili{},\ili{} the\ili{} example\ili{} is\ili{} the\ili{} construction\ili{} is\ili{} \ili{}\verb\ili{}=have_name_Cl\ili{}=\ili{} from\ili{}
+Section\ili{} \ili{}\ref\ili{}{mwe}\ili{} rendered\ili{} in\ili{} \ili{}\ili\ili{}{Swedish}\ili{} and\ili{} \ili{}\ili\ili{}{Bulgarian}\ili{}.\ili{} The\ili{} possible\ili{}
+customizations\ili{} are\ili{} to\ili{} turn\ili{} the\ili{} construction\ili{} from\ili{} a\ili{} statement\ili{} to\ili{} a\ili{} question\ili{}
+or\ili{} to\ili{} change\ili{} the\ili{} subject\ili{},\ili{} i\ili{}.e\ili{}.\ili{} \ili{}\textit\ili{}{Who\ili{} are\ili{} we\ili{} talking\ili{} about\ili{}?}\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\center\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=0\ili{}.35\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/parlira}\ili{}
+\ili{}\caption\ili{}{A\ili{} browsing\ili{} interface\ili{} for\ili{} an\ili{} application\ili{} grammar}\ili{}
+\ili{}\label\ili{}{fig\ili{}:parlira}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+This\ili{} particular\ili{} interface\ili{} is\ili{} not\ili{} restricted\ili{} to\ili{} controlled\ili{} languages\ili{}.\ili{}
+It\ili{} can\ili{} be\ili{} configured\ili{} to\ili{} work\ili{} with\ili{} any\ili{} grammar\ili{} where\ili{} the\ili{} configuration\ili{}
+describes\ili{} which\ili{} phrases\ili{} should\ili{} be\ili{} included\ili{} in\ili{} the\ili{} browser\ili{}.\ili{}
+For\ili{} example\ili{} if\ili{} it\ili{} is\ili{} coupled\ili{} with\ili{} the\ili{} resource\ili{} grammar\ili{} then\ili{} it\ili{}
+is\ili{} not\ili{} necessary\ili{} to\ili{} make\ili{} the\ili{} whole\ili{} of\ili{} the\ili{} grammar\ili{} visible\ili{}.\ili{}
+Instead\ili{} the\ili{} browser\ili{} can\ili{} only\ili{} include\ili{} phrases\ili{} that\ili{} are\ili{} relevant\ili{}
+for\ili{} a\ili{} particular\ili{} purpose\ili{}.\ili{} For\ili{} example\ili{} the\ili{} interface\ili{} is\ili{} currently\ili{} used\ili{}
+in\ili{} an\ili{} offline\ili{} mobile\ili{} translation\ili{} app\ili{} \ili{}\citep\ili{}{angelov\ili{}:android}\ili{}
+which\ili{} can\ili{} translate\ili{} free\ili{} text\ili{}.\ili{} The\ili{} browsing\ili{} interface\ili{},\ili{} however\ili{},\ili{}
+does\ili{} not\ili{} expose\ili{} the\ili{} whole\ili{} of\ili{} the\ili{} grammar\ili{},\ili{} and\ili{} instead\ili{} it\ili{} only\ili{}
+covers\ili{} common\ili{} tourist\ili{} phrases\ili{} for\ili{} which\ili{} we\ili{} can\ili{} guarantee\ili{} publishing\ili{}
+quality\ili{}.\ili{}
+\ili{}
+\ili{}\section\ili{}{Wide\ili{} Coverage\ili{} Grammars}\ili{} \ili{}
+\ili{}
+The\ili{} resource\ili{} grammars\ili{} and\ili{} the\ili{} application\ili{} grammars\ili{} are\ili{} the\ili{} two\ili{} main\ili{}
+types\ili{} of\ili{} grammars\ili{} that\ili{} we\ili{} usually\ili{} deal\ili{} with\ili{} in\ili{} GF\ili{}.\ili{} Just\ili{} in\ili{} the\ili{} last\ili{}
+few\ili{} years\ili{},\ili{} however\ili{},\ili{} we\ili{} have\ili{} started\ili{} scaling\ili{} up\ili{} the\ili{} framework\ili{} to\ili{} \ili{}
+an\ili{} open\ili{} domain\ili{}.\ili{} The\ili{} milestone\ili{} that\ili{} made\ili{} that\ili{} possible\ili{} is\ili{} the\ili{} numerous\ili{}
+improvements\ili{} in\ili{} the\ili{} compiler\ili{} and\ili{} the\ili{} interpreter\ili{} for\ili{} bigger\ili{} grammars\ili{}.\ili{}
+In\ili{} particular\ili{} the\ili{} improvements\ili{} in\ili{} the\ili{} GF\ili{} parser\ili{} \ili{}\citep\ili{}{angelov2011mechanics}\ili{}.\ili{}
+\ili{}
+There\ili{} are\ili{} two\ili{} challenges\ili{} that\ili{} we\ili{} have\ili{} to\ili{} deal\ili{} with\ili{} in\ili{} the\ili{} open\ili{} domain\ili{}.\ili{}
+The\ili{} first\ili{} is\ili{} robustness\ili{} and\ili{} the\ili{} second\ili{} disambiguation\ili{}.\ili{} We\ili{} get\ili{} the\ili{} robustness\ili{}
+by\ili{} using\ili{} a\ili{} wide\ili{} coverage\ili{} grammar\ili{} which\ili{} basically\ili{} consists\ili{} of\ili{} \ili{}
+the\ili{} resource\ili{} grammar\ili{} plus\ili{} a\ili{} large\ili{} lexicon\ili{}.\ili{} On\ili{} top\ili{} of\ili{} that\ili{} we\ili{} added\ili{}
+minor\ili{} extensions\ili{} that\ili{} deal\ili{} with\ili{} ungrammatical\ili{} input\ili{}.\ili{} The\ili{} disambiguation\ili{}
+relies\ili{} on\ili{} a\ili{} statistical\ili{} ranking\ili{} trained\ili{} on\ili{} the\ili{} Penn\ili{} Treebank\ili{} \ili{}\citep\ili{}{angelov2011mechanics}\ili{}.\ili{}
+\ili{}
+As\ili{} we\ili{} mentioned\ili{} earlier\ili{},\ili{} translation\ili{} via\ili{} the\ili{} vanilla\ili{} resource\ili{} grammar\ili{}
+is\ili{} far\ili{} from\ili{} perfect\ili{}.\ili{} We\ili{} compensate\ili{},\ili{} however\ili{},\ili{} by\ili{} plugging\ili{} a\ili{} high\ili{}-quality\ili{}
+application\ili{} grammar\ili{} for\ili{} a\ili{} particular\ili{} domain\ili{}.\ili{} By\ili{} combining\ili{} the\ili{} two\ili{}
+we\ili{} get\ili{} decent\ili{} quality\ili{} as\ili{} long\ili{} as\ili{} we\ili{} stay\ili{} close\ili{} to\ili{} the\ili{} target\ili{} domain\ili{}.\ili{}
+For\ili{} example\ili{} \ili{}\cite\ili{}{ranta2015grammar}\ili{} reports\ili{} BLEU\ili{} scores\ili{} above\ili{} 70\ili{}\\ili{}%\ili{}
+for\ili{} technical\ili{} descriptions\ili{} of\ili{} places\ili{} and\ili{} objects\ili{} related\ili{} to\ili{} accessibility\ili{}
+by\ili{} disabled\ili{} people\ili{}.\ili{}
+Translations\ili{} outside\ili{} of\ili{} the\ili{} domain\ili{} are\ili{} still\ili{} possible\ili{} thanks\ili{} to\ili{} the\ili{}
+resource\ili{} grammar\ili{}.\ili{} \ili{}
+\ili{}
+Again\ili{} one\ili{} of\ili{} the\ili{} major\ili{} roles\ili{} of\ili{} the\ili{} application\ili{} module\ili{} in\ili{} \ili{}
+the\ili{} wide\ili{}-coverage\ili{} translator\ili{} is\ili{} to\ili{} provide\ili{} proper\ili{} translations\ili{}
+for\ili{} non\ili{}-compositional\ili{} expressions\ili{}.\ili{} We\ili{} expect\ili{} that\ili{} scaling\ili{} \ili{}
+further\ili{} the\ili{} quality\ili{} of\ili{} the\ili{} generic\ili{} translator\ili{} will\ili{} also\ili{} critically\ili{}
+depend\ili{} on\ili{} the\ili{} availability\ili{} of\ili{} a\ili{} wide\ili{}-coverage\ili{} resource\ili{} of\ili{} constructions\ili{}.\ili{}
+\ili{}
+\ili{}\section\ili{}{Conclusion}\ili{}
+\ili{}
+In\ili{} general\ili{} we\ili{} have\ili{} no\ili{} doubt\ili{} that\ili{} the\ili{} Grammatical\ili{} Framework\ili{} can\ili{} cope\ili{}
+with\ili{} multiword\ili{} expressions\ili{}.\ili{} Almost\ili{} every\ili{} application\ili{} grammar\ili{} in\ili{} GF\ili{}
+must\ili{} deal\ili{} with\ili{} some\ili{} of\ili{} them\ili{}.\ili{} Moreover\ili{},\ili{} we\ili{} often\ili{} have\ili{} to\ili{} deal\ili{} with\ili{}
+constructions\ili{} across\ili{} languages\ili{}.\ili{} The\ili{} key\ili{} enabling\ili{} device\ili{} to\ili{} allow\ili{}
+variability\ili{} in\ili{} the\ili{} constructions\ili{} is\ili{} the\ili{} fact\ili{} that\ili{} the\ili{} framework\ili{}
+allows\ili{} for\ili{} discontinuities\ili{}.\ili{} The\ili{} interesting\ili{} challenge\ili{} that\ili{} we\ili{} see\ili{},\ili{}
+however\ili{},\ili{} is\ili{} how\ili{} to\ili{} collect\ili{} a\ili{} good\ili{} inventory\ili{} of\ili{} constructions\ili{}.\ili{}
+Our\ili{} current\ili{} case\ili{} by\ili{} case\ili{} solution\ili{} does\ili{} not\ili{} scale\ili{} well\ili{} for\ili{} open\ili{}-domain\ili{}
+applications\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\printbibliography\ili{}[heading\ili{}=subbibliography\ili{},notkeyword\ili{}=this\ili{}]\ili{}
+\ili{}
+\ili{}\end\ili{}{document}\ili{}
+\ili{}

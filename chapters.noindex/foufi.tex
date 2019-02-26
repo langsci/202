@@ -1,0 +1,472 @@
+\documentclass[output=paper]{langsci/langscibook} 
+
+\usepackage{commands}
+%\usepackage[greek,french,english]{babel}
+
+%\addbibresource{localbibliography.bib}
+
+\title{Multilingual parsing and {M}{W}{E} detection} 
+\author{%
+Vasiliki Foufi\affiliation{University of Geneva}\and 
+Luka Nerima\affiliation{University of Geneva}\lastand 
+Eric Wehrli\affiliation{University of Geneva}%
+}
+% \chapterDOI{} %will be filled in at production
+
+%\epigram{}
+
+\abstract{
+  Identifying multiword expressions (MWEs) in a sentence in order to ensure their proper processing in subsequent applications, like machine translation, and performing the syntactic analysis of the sentence are interrelated processes. In our approach, priority is given to parsing alternatives involving collocations, and hence collocational information helps the parser through the maze of alternatives, with the aim to lead to substantial improvements in the performance of both tasks (collocation identification and parsing), and in that of a subsequent task (machine translation).
+}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Multiword expressions (MWEs) are lexical units consisting of more than one word (in the intuitive sense of `word'). There are several types of MWEs, including idioms (\textit{a frog in the throat}, \textit{break a leg}), fixed phrases (\textit{per se}, \textit{by and large}, \textit{rock'n roll}), noun compounds (\textit{traffic lights}, \textit{cable car}), phrasal verbs (\textit{look up}, \textit{take off}), etc. While easily mastered by native speakers, their detection and/or their interpretation pose a major challenge for computational systems, due in part to their flexible and heterogeneous nature. 
+
+In our research, MWEs are categorized in five subclasses: compounds, discontinuous words, named entities, collocations and idioms. While the first three are expressions of lexical category (N, V, Adj, etc.) and can therefore be listed along with simple words, collocations and idioms are expressions of phrasal category (NPs, VPs, etc.). The identification of compounds and named entities can be achieved during the lexical analysis, but the identification of discontinuous words (e.g. particle verbs or phrasal verbs), collocations and idioms requires grammatical data and should be viewed as part of the parsing process. 
+
+In this paper, we will primarily focus on collocations, roughly defined as arbitrary and conventional associations of two words (not counting grammatical words) in a particular grammatical configuration (adjective-noun, noun-noun, verb-object, etc.). We will
+argue that the identification of collocations and parsing are interrelated processes -- in the sense that one cannot precede the other --  and we will show how this has been achieved in the Fips multilingual parser \citep{wehrli07,wn15}.%(Wehrli 2007, Wehrli \& Nerima 2015). 
+
+Section~\ref{sec2} will give a brief review of MWEs and previous work. Section~\ref{sec3} will describe how Fips handles MWEs and the way they are represented in our lexical database. Section~\ref{sec4} will be concerned with the treatment of collocation types which present a fair amount of syntactic flexibility (e.g. verb-object). For instance, verbal collocations may undergo syntactic processes such as passivization, relativization, interrogation and even pronominalization, which can leave the collocation constituents far away from each other and/or reverse their canonical order.
+
+
+\section{Multiword expressions: a brief review of related work}
+\label{sec2}
+The standard approach in dealing with MWEs in parsing is to apply a `words-with-spaces' preprocessing step, which marks the MWEs in the input sentence as units which will later be integrated as single blocks in the parse tree built during analysis \citep{brun:1998,zhang06}. This method is not really adequate for processing collocations. Unlike other expressions that are fixed or semi-fixed, several collocation types do not allow a `words-with-spaces' treatment because they have a high morphosyntactic flexibility.
+On the other hand, \cite{alegria04,villavicencio07} adopted a compositional approach to the encoding of MWEs, able to capture more morphosyntactically flexible MWEs. \cite{alegria04} showed that by using a MWE processor in the preprocessing stage, a significant improvement in the POS tagging precision is obtained. \cite{villavicencio07} found that the addition of 21 new MWEs to the lexicon led to a significant increase in the grammar coverage (from 7.1\% to 22.7\%), without altering the grammar accuracy.
+However, as argued by many researchers (e.g., \quotecite{heid94,seretan11}), collocation identification is best performed on the basis of parsed material. This is due to the fact that collocations are co-occurrences of lexical items in a specific syntactic configuration. For that reason, we have chosen the identification of collocations as soon as possible during the parse. 
+\cite{finkeljr09} have built a joint model of parsing and named entity recognition, based on discriminative feature-based constituency parser. They tested their model on the OntoNotes annotated corpus\footnote{cf. \url{www.gabormelli.com/RKB/OntoNotes_Corpus}.} and they achieved a remarkably good performance on both parsing and recognition of named entities. \cite{greenetal13} have developed two structured prediction models in the aim to identify arbitrary-length, contiguous MWEs in Arabic and French. The first is based on context-free grammars and the second uses tree substitution grammars, a formalism that can store larger syntactic fragments. They claim that these techniques can be applied to any language for which a syntactic treebank, a MWE list, and a morphological analyzer exist. \cite{nasretal15} have developed a joint parsing and MWE identification model for the detection and representation of ambiguous complex function words. \cite{constantnivre16} developed a transition-based parser which combines two factorized substructures: a standard tree representing the syntactic dependencies between the lexical elements of a sentence and a forest of lexical trees including MWEs identified in the sentence. 
+
+
+\section{The Fips parser}
+\label{sec3}
+Fips is a multilingual parser, available for several languages, i.e. French, English, German, Italian, Spanish, Modern Greek, Romanian and Portuguese. It relies on generative grammar concepts and is basically made up of a generic parsing module which can be refined in order to suit the specific needs of a particular language. Fips is a constituent parser that functions as follows: it scans an input string from left to right, without any backtracking. The parsing algorithm, iteratively, performs the following three steps:
+\vspace*{3mm}
+\renewcommand{\labelitemi}{$\bullet$}
+\begin{itemize}
+\item get the next lexical item and project the relevant phrasal category\\ (X $\rightarrow$ XP);
+\item merge XP with the structure in its left context (the structure already built);
+\item (syntactically) interpret XP, triggering procedures 
+	\begin{itemize}
+		\item to build predicate-argument structures
+		\item to create  chains linking preposed elements to their trace
+		\item to find the antecedent of (3rd person) personal pronouns
+		\item to identify collocations. 
+	\end{itemize}
+\end{itemize}
+ 
+\vspace*{3mm}
+The parsing procedure is a one pass (no pre-processing, no post-processing) scan of the input text, using rules to build up constituent structures and (syntactic) interpretation procedures to determine the dependency relations between constituents (grammatical functions, etc.), including cases of long-distance dependencies.
+One of the key components of the parser is its lexicon which contains detailed morphosyntactic and semantic information, selectional properties, valency information, and syntactico-semantic features that are likely to influence the syntactic analysis. 
+
+\subsection{The Fips lexicon}
+
+The lexicon was built manually and contains fine-grained information required by the parser. It is organized as a relational database with four main tables:
+
+\vspace*{3mm}
+\begin{itemize}
+\item \textbf{words}, representing all morphological forms (spellings) of the words of a language, grouped into inflectional paradigms; 
+\item \textbf{lexemes}, describing more abstract lexical forms which correspond to the syntactic and semantic readings of a word (a lexeme corresponds roughly to a standard dictionary entry); 
+\item \textbf{collocations}, which describe multiword expressions combining two lexical items, not counting function words;
+\item \textbf{variants}, which list all the alternatives written forms for a word, e.g. the written forms of British English vs American English, the spellings introduced by a spelling reform, presence of both literary and modern forms in Greek, etc. 
+
+\end{itemize}
+
+\subsection{Representation of MWEs in the lexicon}
+
+In the introduction we mentioned that in our research the MWEs are categorized in five subclasses, i.e. compounds, discontinuous words, named entities, collocations and idioms.
+Let's see how they are represented in the lexical database.
+
+Compounds and named entities are represented by the same structure as simple words. An entry describes the syntactic and (some) semantic properties of the word: lexical category (POS),
+type (e.g. common noun, auxiliary verb), subtype, selectional features, argument structure, semantic features, thematic roles, etc. Each entry is associated with the inflectional paradigm of the word, 
+that is all the inflected forms of the word along with the morphological features (number, gender, person, case, etc.). The possible spaces or hyphens of the compounds are processed 
+at the lexical analyzer level in order to distinguish those that are separators from those belonging to the compound.
+
+Discontinuous words, such as particle verbs or phrasal verbs, are represented in the same way as simple words as well, except that the orthographic string contains the bare verb only, 
+the particle being represented separately in a specific field. The benefit of such an approach is that the phrasal verb inherits the inflectional paradigm of the basic verb. For agglutinative languages,
+a lexical analyzer will detect and separate the particle from the basic verb.
+
+%Named entities are represented as simple word too. They have some specificities: they are proper nouns and as such they have only one or a few morphological forms. They usually have an abbreviation represented as an alternative written from, stored in the table of variants.
+
+Collocations are defined as associations of two lexical units (not counting function words) in a specific syntactic relation (for instance adjective - noun, verb - noun (object), etc.). 
+A lexical unit can be a word or a collocation. The definition is therefore recursive and enables to encode collocations that have more than two words \citep{nws10}. 
+For instance, the French collocation \textit{tomber en panne d’essence} (`to run out of gas') is composed of the word \textit{tomber} and the collocation \textit{panne d’essence}. Similarly, the English collocation 
+\textit{guaranteed minimum wage} is composed of the word \textit{guaranteed} and the collocation \textit{minimum wage}.
+
+In addition to the two lexical units, a collocation entry encodes the following information: 
+the citation form, the collocation type (i.e. the syntactic relation between its two components), the preposition (if any) and a set of syntactic frozenness constraints. 
+
+Some examples of  entries are given in (1-3):\\
+
+\hspace*{3mm}\parbox{10cm}{\makeex{
+  {\em ein Schlaglicht werfen } `to highlight' \\
+  type : verb-direct object \\
+  lexeme \#1 : {\em Schlaglicht} `spotlight', noun-noun collocation\\
+  lexeme  \#2: {\em werfen} `throw', \_ NP PP verb\\
+  preposition : $\emptyset$ \\
+  features :\{\} }
+  }
+
+%\clearpage
+
+\vspace*{2mm}
+
+\hspace*{3mm}\parbox{10cm}{\makeex{
+  {\em  κινητό τηλέφωνο} (kinitó tiléfono) `mobile phone' \\
+  type : adjective-noun \\
+  lexeme  \#1 : {\em κινητό} (kinitó) `mobile', adjective\\
+  lexeme  \#2 : {\em τηλέφωνο} (tiléfono) `phone', noun \\
+  preposition : $\emptyset$ \\
+  features : \{\} }
+  }
+  
+\vspace*{2mm}
+
+\hspace*{3mm}\parbox{11cm}{\makeex{
+  {\em banc de poissons}  `school of fish' \\
+  type : noun-prep-noun \\
+  lexeme  \#1 : {\em banc} `bench', noun \\
+  lexeme  \#2 : {\em poisson} `fish', noun \\
+  preposition :  {\em de} `of'\\
+  features : \{determiner-less complement, plural complement\} }
+  }
+
+\vspace*{2mm}
+
+
+For the time being, we represent idioms like collocations, with more restriction features (cannot passivize, no modifiers, etc.) and are, therefore, stored in the same database table. Reducing idioms to collocations with specific features though convenient and appropriate for large classes of idioms is nevertheless not general enough. In particular, it does not allow for the representation of idioms with fixed phrases, such as \textit{to get a foot in the door}. 
+
+
+
+\subsection{Fips and collocations}
+\subsubsection{Collocation identification mechanism}
+
+The collocation identification mechanism is integrated in the parser. In the pre\-sent version of Fips, collocations, if present in the lexicon, are identified in the input sentence during the analysis of that sentence, rather than at the end. In this way, priority is given to parsing alternatives involving collocations, and collocational information helps the parser through the maze of alternatives. 
+To fulfil the goal of interconnecting the parsing procedure and the identification of collocations, we have incorporated the collocation identification mechanism within the constituent attachment procedure (see next section). The Fips parser, like many grammar-based parsers, uses left attachment and right attachment rules to build respectively left subconstituents and right subconstituents. The grammar used for the computational modelling comprises rules and procedures. Attachment rules describe the conditions under which constituents can combine, while procedures compute properties such as long-distance dependencies, agreement, control properties, argument-structure building, and so on. 
+
+\subsubsection{Treatment of collocations}
+
+The identification of compounds and named entities can be achieved during the lexical analysis, but the identification of discontinuous words, collocations and idioms require grammatical data and are, therefore, part of the parsing process. The identification of a collocation occurs when the second lexical unit of the collocation is attached, either by means of a left attachment rule (e.g. adjective-noun, noun-noun) or by means of a right-attachment rule (e.g. noun-adjective, noun-prep-noun, verb-object), as shown in the following example:
+
+\makeex{Paul took up a new challenge. \\
+ \cat{TP}{\cat{DP}{Paul}\cat{VP}{took up \cat{DP}{a \cat{NP}{\cat{AP}{new} challenge}}}}
+}
+\vspace*{3mm}
+
+When the parser reads the noun \textit{challenge} and attaches it (along with the prenominal adjective) as complement of the incomplete  \cat{DP}{a} direct object of the verb \textit{take up}, the identification procedure considers iteratively all the governing nodes of the attached noun and checks whether the association of the lexical head of the governing node and the attached element constitutes an entry in the collocation database. The process stops at the first governing node of major category (noun, verb or adjective). In our example, going up from \textit{challenge}, the process stops at the verb \textit{take up}. Since \textit{take up - challenge} is an entry in the collocation database and its type (verb-object) corresponds to the syntactic configuration, the identification process succeeds.
+
+As already pointed out, in several cases the two constituents of a collocation can be very far apart, or do not appear in the expected order. We will turn to such examples in the next section. To handle them, the identification procedure sketched above must be slightly modified so that not only the attachment of a lexical item triggers the identification process, but also the attachment of the trace of a preposed lexical item. In such a case, the search will consider the antecedent of the trace. 
+This shows, again, that the main advantage provided by a syntactic parser in such a task is its ability to identify collocations even when complex grammatical processes disturb the canonical order of constituents.
+
+
+\section{Detection of collocations in free-order languages}
+\label{sec4}
+Just as other types of MWEs, collocations are problematic for NLP because they have to be recognized and treated as a whole, rather than compositionally \citep{sag02}. On the other hand, there is no systematic restriction on lexical forms which constitute a collocation, on the order of items in a collocation, or on the number of words that may intervene between these items especially in free word order languages. In such languages, the direct object of a verbal collocation can be found either before
+or after the verb, with or without intervening material. This is illustrated in the following examples with the Greek verb-object collocation {\em κάνω έκκληση} (káno éklisi)
+`to make an appeal'. 
+In (\refex{1})a, the direct object 
+%(in bold face) 
+follows the verb, while in (\refex{1})b, it precedes the verb, with several words intervening between them:
+
+\vspace*{3mm}
+\debex{Ο Υπουργός Παιδείας \textbf{έκανε έκκληση} στους διοικητικούς υπαλλήλους να σταμα\-τήσουν την απεργία. \\ 
+Ο Ιpurgós Pedías \textbf{ékane éklisi} stus diikitikús ipalílus ná stamatísun tín aperyía\\
+`The Minister of Education \textbf{made an appeal} to the administrative staff to stop the strike.'}
+
+\putex{\textbf{Έκκληση} στους διοικητικούς υπαλλήλους να σταματήσουν την απεργία \textbf{έκανε} ο Υπουργός Παιδείας.} \\ 
+\textbf{Éklisi} stus diikitikús ipalílus ná stamatísun tín aperyía \textbf{ékane} o Ιpurgós Pedías\\
+`\textbf{An appeal} to the administrative staff to stop the strike \textbf{made} the Minister of Education.'
+\finex
+
+
+
+\subsection{ Nominal collocations}
+Modifiers can often be attached within a nominal collocation, separating the two terms. For example, between the constituents of a nominal collocation in the form of adjective-noun, other lexemes may interfere. Figure~\ref{fig1} below shows a part of the analysis of a sentence where the possessive determiner {του} (tu) `his' occurs between the adjective  {παρθενικό} (parthenikό) `maiden' and the noun {ταξίδι} (taxίdi) `voyage' of the collocation {παρθενικό ταξίδι} (parthenikό taxίdi) `maiden voyage':
+
+\begin{figure}[h]
+  {\small
+\begin{tabular}{llrl}
+word & tag & position & collocation \\ \hline
+{Το} (to) `the' & DET & 1\\
+{παρθενικό} (parthenikό) `maiden' & ADJ & 4 \\
+{του } (tu) `his' & PRON & 14 \\
+{ταξίδι} (taxίdi) `voyage' & NOUN & 18 & {παρθενικό ταξίδι} \\
+& & & `maiden voyage'
+\end{tabular}
+  }
+\caption{\label{fig1}Identification of the nominal collocation {παρθενικό ταξίδι} (parthenikό taxίdi) `maiden voyage'}
+\end{figure} 
+
+
+\subsection{Verbal collocations}
+Verb-object collocations may undergo syntactic processes such as passivization, relativization, interrogation and even pronominalization, which can leave the collocation constituents far away from each other and/or reverse their canonical order.
+
+
+
+\paragraph*{Passive} {~~~} \\
+In passive constructions, the direct object is promoted to the subject position leaving an empty constituent in the direct object position. The detection of a verb-object collocation in a passive sentence is thus triggered by the insertion of the empty constituent in direct object position. The collocation identification procedure checks whether the antecedent of the (empty) direct object and the verb constitute a (verb-object) collocation.
+In the following example, the noun  {απόφαση} (apófasi) `decision' of the collocation {παίρνω απόφαση} (pérno apófasi) `to make a decision'  precedes the verb and is in the nominal case, the usual case for subjects.
+
+\makeex{ {Η απόφαση πάρθηκε.} \\ I apófasi párthike \\
+`The decision was made.'}
+ 
+
+\paragraph*{Pronominalization}  {~~~} \\
+Another transformation that can affect some collocation types, is pronominalization.  In such cases, it is important to identify the antecedent of the pronoun which can be found either in the same sentence or in the context. Example (\refex{1}) below illustrates a phrase where the pronoun \textit{it} refers to the noun \textit{money}. Since the pronoun is the subject of the passive form \textit{would be well spent}, it is interpreted as direct object of the verb and therefore stands for an occurrence of the collocation \textit{to spend money}:
+
+\makeex{
+ ...though where the money would come from, and how to ensure that\textbf{ it}
+would be well \textbf{spent}, is unclear.}
+
+In the following example, both the verb {να αναλάβουν} (na analávun) `to take' of the verb-object collocation {αναλαμβάνω ευθύνη} (analamváno efthíni) `to take responsibility' and the pronominalized object {τις} (tis) `them' are found in another sentence: 
+
+\makeex{
+{Ας αναλογιστούν τις ευθύνες τους. 	Να τις αναλάβουν.} \\ As analogistún tis efthínes tus. Na tis analávun\\
+`Let them consider their responsibilities. Should they take them.'
+}
+
+\begin{figure}[h]
+  \fittable{%
+    {\small
+\begin{tabular}{llrl}
+word & tag & position & collocation \\ \hline
+
+{Ας}	(as) `Let them' & PRT & 1 \\		
+{αναλογιστούν} (analogistún) `consider' &	VERB &	4	\\
+{τις}	(tis) `the' & DET &	17	\\	
+{\textbf{ευθύνες}} (efthínes)  `responsibilities' &	NOUN &	21 \\	
+{τους} (tus) `their' &	PRON &	21	\\
+.  & PUNC & 33 \\*[2mm]
+
+{Να}  (Na) `Should'	& CONJ & 35 \\		
+{\textbf{τις}} (tis)	`them' & PRON &	35 \\ 		
+{αναλάβουν} (analávun) `take' &	VERB &	42	& 	αναλαμβάνω την ευθύνη \\
+& & & `take responsibility'\\
+. &	PUNC &	51			
+\end{tabular}
+  }}
+ \caption{\label{fig2}Identification of a verbal collocation}
+\end{figure} 
+
+Our next example concerns French and shows again two sentences. Each one of them contains a collocation with the noun \textit{record}: \textit{établir un record} `to set up a record' in the first one,  and \textit{battre un record} `to break a record' in the second one, where the noun is pronominalized in the form of a clitic pronoun (\textit{le} `it'):
+
+\makeex{
+Ce \textbf{record} a été \textbf{établi} l'été dernier. Paul espère \textbf{le} \textbf{battre} bientôt.\\
+`This record was set up last summer. Paul hopes to break it soon.'}
+
+
+\begin{figure}[h]
+  {\small 
+\begin{tabular}{llrl}
+word & tag & position & collocation \\ \hline
+Ce &	DET &	1	\\
+record &	NOUN	 & 4	\\	
+a	& VERB & 	11	\\
+été &	VERB & 	13		\\
+établi	 & VERB	 & 17	 & 	établir un record\\
+l' &	DET & 	24	\\
+été	 & NOUN	 & 26		 & 	été dernier\\
+dernier & 	ADJ	 & 30			\\
+.	 & PUNC	 & 37		\\*[2mm]
+
+Paul & 	NOUN	 & 1\\
+espère & 	VERB & 	6	\\
+le	 & PRON & 13	\\
+battre & 	VERB	 & 16	  & 	battre un record\\
+bientôt & ADV	 & 23			\\
+.	 & PUNC & 	30			\\
+
+
+\end{tabular}
+  }
+ \caption{\label{fig3}Identification of verbal collocations, one with pronominalized object}
+\end{figure} 
+
+
+
+The parser detects collocations in which the nominal element has been pron\-ominalized thanks to the anaphora resolution component incorporated in Fips \citep{wn13}. 
+
+
+\paragraph*{\textit{Wh}-constructions} {~~~} \\
+Our parser can also cope with long-distance dependencies, such as the ones found in wh-questions\footnote{wh-words are interrogative (or relative) words such as \textit{who}, \textit{what}, \textit{which}, etc. For a general discussion of wh-constructions, see \citep{chomsky77}.}. In sentences (\refex{1}a) the direct object constituent occurs at the beginning of the sentence. Again, assuming a generative grammar analysis, we consider that such pre-posed constituents are connected to so-called canonical positions. The fronted element being a direct object, the canonical position is a post-verbal DP position immediately dominated by the VP node. The parser establishes such a link and returns the structure (\refex{1}b), where [ DP e]\ik{i} stands for the empty category (the `trace') of the preposed constituent {Ποιο ρεκόρ} (Pxó rekór) `Which record'. 
+
+
+\debex{ {Ποιο ρεκόρ θέλει να σπάσει ο Μελισσανίδης;} \\Pxó rekór théli na spási o Melisanídis\\
+`Which record does Melissanidis want to break?'}
+\putex{
+\cat{CP}{\cati{DP}{Ποιο ρεκόρ}}{i} \cat{TP}{θέλει}  \cat{CP}{να} \cat{TP}{σπάσει} \cat{VP}{\cati{DP}{e}{i}} \cat{DP}{ο Μελισσανίδης}
+}
+\finex
+
+
+\begin{figure}[h]
+  {\small 
+\begin{tabular}{llrl}
+word & tag & position & collocation \\ \hline
+{Ποιο} (Pio) `Which' & 	DET & 	1	\\
+{ρεκόρ} (rekór) `record' & NOUN & 	6 		 \\
+{θέλει}	 (théli) `wants' & VERB & 	12	 \\
+{να}	(na) `to' & CONJ	 & 18	 \\
+{σπάσει}	(spási) `break' & VERB & 	21	 & 	{σπάζω το ρεκόρ} \\ & & & `break the record'\\
+{ο}  (o) `the' & DET & 	28	 \\
+{Μελισσανίδης}	(Melisanídis) `Melisanidis' & NOUN	 & 30		 \\
+%{;}	 & other &  42
+
+\end{tabular}
+ }
+ \caption{\label{fig4}Identification of verbal collocation in a wh-question}
+\end{figure} 
+
+
+In such cases, the collocation identification process is triggered by the insertion of an empty constituent in the direct object position of the verb. Since the empty constituent is connected to the pre-posed constituent, such examples can be easily treated as a minor variant of the standard case described in section 3.3.1. All so-called wh-constructions are treated in a similar fashion, that is relative clause and topicalization. 
+
+\paragraph*{\textit{Tough}-movement constructions}  {~~~} \\
+In such constructions, the matrix subject is construed as the direct object of the infinitival verb governed by a `tough' adjective. Following %\cite{chomsky77}'s 
+Chomsky's (1977) analysis of such constructions, the parser will hypothesize an abstract wh-operator in the specifier position of the infinitival clause, which is linked to the matrix subject. Like all wh-constituents, the abstract operator will itself be connected to an empty constituent later on in the analysis, giving rise to a chain connecting the subject of the main clause and the direct object position of the infinitival clause. The structure as computed by the parser is given below, with the chain marked by the index \ik{i}:
+
+\makeex{\small
+\cat{TP}{\cati{DP}{this record}{i} seems\cat{AP}{difficult\cat{TP}{\cati{DP}{e}{i} to\cat{VP}{break\cati{DP}{e}{i}}}}}
+}
+%[ TP [ DP this record]i seems [ AP difficult [ CP [ DP e]j [ TP to [ VP break [ DP e]i ] ] ] ] ]
+
+\subsection{Complex collocations}
+As observed by \cite{heid94}, among others, collocations can involve more than two words (not counting grammatical words). Such complex expressions can be described recursively as collocations of collocations. Our identification procedure has been extended to handle such cases. For example, the Greek noun-noun collocation {απεργία πείνας} (aperyía pínas) `hunger strike', which combines with the verb {κάνω} (káno) `to do', yields the larger verb-object collocation {κάνω απεργία πείνας} (káno aperyía pínas) `to go on hunger strike', where the object is itself a noun-noun collocation. Given the strict left to right processing order assumed by the parser, the system will first identify the collocation {κάνω απεργία} (káno aperyía) `to go on strike' when attaching the word {απεργία} (aperyía) `strike'. Then, reading the last word, {πείνας} (pínas) `hunger' (here in genitive case), the parser will identify the collocation {απεργία πείνας} (aperyía pínas) `hunger strike'. The search succeeds with the verb {κάνω} (káno) `to do', and the collocation {κάνω απεργία πείνας} (káno aperyía pínas) `to go on hunger strike' is identified.
+
+Moreover, the Greek lexical database comprises nominal collocations formed by a simple noun and a collocation or by two collocations. For example, {δύναμη πολιτικής προστασίας} (dínami politikís prostasías) `civil protection force' is for\-med by a simple noun, {δύναμη} (dínami) `force', and a nominal collocation in genitive case, {πολιτικής προστασίας} (politikís prostasías) `of civil protection'. The collocation {πυρηνικός σταθμός παραγωγής ενέργειας} (pirinikós stathmós para\-goyís enéryias) `nuclear power station' is formed by the collocations {πυρηνικός σταθμός} (pirinikós stathmós) `nuclear station' and {παραγωγής ενέργειας} (para\-goyís enéry\-ias) `of energy production'.  
+
+
+\section{Collocation extraction}
+
+As already mentioned, the parser can only identify collocations that are part of its lexical database. Therefore, it is crucial to have as good a coverage of collocations as possible in the database. To help the linguist/lexicographer in the time-consuming task of inserting collocations, we have designed a collocation  extraction tool \citep{seretan11}, dubbed FipsCo. Applied to a corpus, FipsCo parses all the sentences, extracting all the pairs of lexical items which co-occur in predefined grammatical configurations (adjective-noun, noun-noun, subject-verb, verb-object, etc.). All those pairs are considered as potential collocations.
+
+Once the corpus has been completely parsed, a statistical filter  is used to rank the potential collocations according to their degree of association. By default, we use the log-likelihood ratio measure (LLR), since it was shown to be particularly suited to language data \citep{dunning93}. In our extractor, the items of each candidate expression represent base word forms (lemmas) and they are considered in the canonical order implied by the given syntactic configuration (e.g., for a verb-object candidate, the object is postverbal in subject-verb-object (SVO) languages like Greek). Even if the candidate occurs in corpus in different morphosyntactic realizations, its various occurrences are successfully identified as instances of the same type thanks to the syntactic analysis performed by the parser. 
+
+
+\begin{figure}[htbp]
+%\vspace*{-2cm}
+%\includegraphics[scale=1, clip=true, trim=0mm 20mm 20mm 20mm] {screenshot.pdf}
+  %\includegraphics[scale=0.8, clip=true, trim=0mm 110mm 20mm 10mm] {figures/FipsCoPict.pdf}
+%   \includegraphics[width=\textwidth, clip=true, trim=0mm 110mm 20mm 10mm]{figures/FipsCoPict.pdf}
+%      \includegraphics[width=\textwidth, clip=true, trim=0mm 110mm 20mm 10mm]{figures/FipsCoGUI.pdf}
+      \includegraphics[scale=0.7, clip, trim=20mm 110mm 20mm 20mm]{figures/FipsCoPict.pdf}
+%\vspace{-3cm}
+\caption{\label{figFips}Extraction of verb-object collocations}
+\end{figure}
+
+
+Figure~\ref{figFips} displays a list of verb-object collocations extracted from an English corpus taken from the magazine \textit{The Economist}. On the left, candidate collocations are listed and at the same time they are shown in their context.
+          
+ 
+Our system recognizes a large range of collocation types (more than 30 types), including several nominal and verbal collocation types. The most frequent ones are:\\
+\begin{itemize}
+\item 	Adjective-noun, e.g. \textit{nuclear war};
+\item	Noun-noun, e.g. \textit{flower shop};
+\item	Noun-preposition-noun, e.g. \textit{casco di banane} (`\textit{bunch of bananas}');
+\item	Verb-object where the object is a bare noun, e.g. \textit{take part};
+\item	Verb-preposition-noun, e.g. \textit{bring to light};
+\item	Verb-adverb, e.g. \textit{put together}.
+\end{itemize}
+\vspace{3mm}
+
+		Once filtered and ordered by means of standard association measures, the candidate collocations are manually validated and added to the lexical database. The current content of the database for six European languages is shown in the table in Figure~\ref{fig6}.
+
+\begin{figure}[htbp]
+\begin{tabular}{lrrrrrr}
+Collocation type & English	& French &	German	& Italian	& Spanish	& Greek\\ \hline
+Adjective-noun	& 3,049	& 5,935 & 	490 &	1,325	& 1,621 & 20,131	\\
+Noun-noun	& 5,671 & 	454 & 	2,476  &	131 &	66	& 471\\
+Noun-prep-noun & 555 & 7,846 & 22 & 1,246 & 988 & 11 \\
+Verb-object	 & 850 &	1,560 &	197 &	250 &	1,098	& 382\\
+Others	& 932 &	2,963 &	330 &	209	 & 592 & 126\\	\hline
+Total	& 11,057	& 18,758 &	3,515 &	3,161 &	4,365	& 21,122
+\end{tabular}
+\caption{\label{fig6}Number and types of collocations in the Fips lexical database}
+\end{figure}
+
+\section{Evaluation and results}
+The Fips parser performs well compared to other `deep' linguistic parsers (Delph-in\footnote{International consortium developing HPSG grammars and other tools, cf. \url{http://www.delph-in.net/wiki/index.php/Home}.}, ParGram\footnote{ParGram is an international consortium for the development of LFG-based grammars, see \url{http://pargram.b.uib.no}.}, etc.) in terms of speed. Parsing time depends on two main factors: (i) the type and complexity of the corpus, and (ii) the selected beam size (maximum number of alternatives allowed). By default, Fips runs with a beam size of 40 alternatives, which gives it a speed ranging from 150 to 250 tokens (word, punctuation) per second. At that pace, parsing a one million word corpus takes approximately 2-3 hours. We are going to present the experiments that were performed for Modern Greek and English in order to evaluate the performance of our parser. 
+
+\subsection{Modern Greek}
+The evaluation measures the performance of our parser to identify collocations that are lexicalized (i.e. collocations that are present in the lexical database). We also measure the impact of the collocation knowledge on the performance of the parser (in percentage of complete analyses). To achieve the evaluation, we took a small newspaper corpus of about 20,000 words  and we manually identified 638 collocations (both nominal and verbal). We ran the parser twice on the corpus: the first time before and the second time after enrichment of the collocation database. 
+On the first run, the parser achieved 43.26\% of complete analyses and identified 124 collocations. On the second run, after enrichment of the lexicon, the percentage of complete analyses increased to 44.33\% and nearly three quarters of the corpus collocations were identified (482/638). Over this small corpus, the parser achieved a 100\% precision in the collocation identification task, with a recall of 75.54\% and an F-measure of 86\%. The collocations that were not identified (156 out of 638) were part of sentences for which the parser did not achieve a complete analysis.
+	
+\subsection{English}
+We have also conducted an evaluation over a corpus of approximately 6,000 sentences taken from \textit{The Economist}. The research questions were specifically focused on the statistical significance of ambiguity resolution based on collocation knowledge and on how frequently, in a given corpus, the detection of a collocation helps the parser make the `right' decision. 
+To answer those questions, we parsed the corpus twice, first with the collocation detection component turned on and then with the component turned off. We then compared the results of both runs. Since it was difficult to compare phrase-structure representations, we used the Fips tagger, that is the Fips parser with part-of-speech output. It is indeed much easier to compare POS-tags than phrase-structures. Figures~\ref{fig7} and~\ref{fig8} below illustrate the Fips tagger output for the segment in boldface of the sentence \textit{The researchers estimated \textbf{the total worldwide labour costs} for the iPad at \$33, of which China’s share was just \$8}.
+
+The first figure gives the results obtained with the collocation detection component turned on, and the second figure the results obtained with the component turned off.
+ 
+\begin{figure}
+\begin{tabular}{llrl}
+word & tag & position & collocation \\ \hline
+the & DET & 27\\
+total & ADJ & 31 \\
+worldwide & ADJ & 37 \\
+labour & NOUN & 47 \\
+costs & \textbf{NOUN} & 54 & labour costs
+\end{tabular}
+ \caption{\label{fig7}Parser output \textbf{with} collocation knowledge}
+\end{figure} 
+ 
+
+\begin{figure}
+\begin{tabular}{llrl}
+word & tag & position & collocation \\ \hline
+the & DET & 27\\
+total & ADJ & 31 \\
+worldwide & ADJ & 37 \\
+labour & NOUN & 47 \\
+costs & \textbf{VERB} & 54 
+\end{tabular}
+ \caption{\label{fig8}Parser output \textbf{without} collocation knowledge}
+\end{figure} 
+ 
+ 
+ 
+
+The sentence segment \textit{the total worldwide labour costs} is displayed in both tables with the words in the first column, the part-of-speech tag in the second column and the position – expressed as position of the first character of each word starting from the beginning of the sentence – in the third column.  For the POS tagset, we opted for the universal tagset \citep{petrov12}. As we can see, the word \textit{costs} is taken as a noun in the first analysis, as a verb in the second. The (correct) choice of a nominal reading in the first analysis is due to the detection of the collocation \textit{labour costs}. In the second run, given the absence of collocational knowledge, the parser opts for the verbal reading. Both output files could then easily be manually compared using a specific user interface as illustrated in the screen shot given in the next page, where POS differences are displayed in red.
+
+\begin{figure}[h]
+\begin{tabular}{lcc}
+ & with collocations & without collocations \\ \hline
+ complete analyses & 73.41\% & 72.95\% \\
+ POS-tag differences & 727 \\
+ better tags & 382 & 106\\
+ number of collocations & 1,668 & -
+\end{tabular}
+ \caption{\label{fig9}POS-tagging with and without collocation knowledge}
+\end{figure}  
+
+A summary of the results of the evaluation is given in Figure~\ref{fig9}. The first line shows the number of complete analyses. Collocational knowledge increases the number of complete analysis by approximately 0.5\%, or about 30 sentences for our corpus of 6,000 sentences. 727 tags are different between the two runs. Of those, excluding differences which do not really matter (some words can be analyzed either as predicative adjectives or as adverbs without much semantic differences, etc.), in 382 cases the tags were better in the first run (with collocational knowledge), and 106 cases better in the second run (without collocational knowledge). In other words, collocational knowledge helped the parser make the better decision four times more than it penalized it. Notice finally that 1,668 collocations were detected in the corpus (more than one in four sentences), which clearly stresses the high frequency of this phenomenon in natural language.
+
+\begin{figure}[htbp]
+%\vspace{-4cm}
+%\hspace{-10cm}
+  %\includegraphics[scale=0.8, clip, trim=20mm 60mm 20mm 20mm] {figures/fips-screenshot.pdf}
+  \includegraphics[width=\textwidth, clip, trim=20mm 60mm 20mm 20mm]{figures/fips-screenshot.pdf}
+\caption{\label{figScreen}The evaluation user interface}
+\end{figure}
+
+
+
+\section{Conclusion}
+
+In this paper, we have argued in favour of a treatment of collocations, and by extension of all MWEs, fully integrated in the parsing process. The argument is rather simple. On the one hand, we have shown that the identification of collocations must be based on analyzed data, and therefore cannot be performed before parsing. On the other hand, we have also shown that collocation identification can help the parser, for instance to solve lexical as well as syntactic ambiguities, provided that the identification is done before the end of the parse. The solution to this apparent paradox -- collocation identification cannot be done before and cannot be done after parsing -- is clear: collocation identification must be part of the parsing process and be performed as early as possible, that is at the time the parser attaches the second constituent of the collocation, or insert the trace of that constituent. 
+
+%\bibliographystyle{langsci/langscibook}
+%\bibliography{lrec2014-admin} 
+
+%\section*{Abbreviations}
+%\section*{Acknowledgements}
+
+%\printbibliography{localbibliography}
+
+\printbibliography[heading=subbibliography,notkeyword=this]
+
+% \printbibliography{localbibliography}
+
+\end{document}

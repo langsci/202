@@ -1,0 +1,961 @@
+\documentclass[output=paper]{langsci/langscibook} 
+
+\title{Cross-lingual linking of multi-word entities and language-dependent learning of multi-word entity patterns} 
+
+\author{%
+  Guillaume Jacquet\affiliation{European Commission, Joint Research Centre, Ispra, Italy}\and
+  Maud Ehrmann\affiliation{Swiss Federal Institute of Technology in Lausanne (EPFL) -- Digital Humanities Laboratory}\and
+  Jakub Piskorski\affiliation{European Commission, Joint Research Centre, Ispra, Italy}\and
+  Hristo Tanev\affiliation{European Commission, Joint Research Centre, Ispra, Italy}\lastand
+  Ralf Steinberger\affiliation{European Commission, Joint Research Centre, Ispra, Italy}%
+}
+
+\lehead{G. Jacquet, M. Ehrmann, J. Piskorski, H. Tanev \& R. Steinberger}
+\shorttitlerunninghead{Cross-lingual linking of multi-word entities and learning of entity patterns}
+
+% \chapterDOI{} %will be filled in at production
+
+% \epigram{Change epigram in chapters/01.tex or remove it there }
+
+\abstract{The contribution of our work is to address multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this chapter describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities, using distributional patterns. This rule-learning approach, which has currently been tested only for English and Spanish, does not require linguistic tools such as part-of-speech taggers so that it is perfectly suitable for our highly multilingual environment. When adding these learnt patterns to an existing rule-based Named Entity Recognition (NER) system, F1 performance for Spanish increases from 42.4\% to 50\% (18\% increase) and for English from 43.4\% to 44.5\% (2.5\% increase). The purpose of our effort is to improve on current methods for Named Entity Recognition (NER) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.}
+
+\maketitle
+\begin{document}\ili{}
+\ili{}
+\ili{}\section\ili{}{Introduction}\ili{} \ili{}
+\ili{}%\ili{}\remMaud\ili{}{as\ili{} discussed\ili{} on\ili{} skype\ili{},\ili{} I\ili{} liked\ili{} the\ili{} initial\ili{} generic\ili{} frame\ili{} formulated\ili{} by\ili{} Ralf\ili{} on\ili{} going\ili{} from\ili{} unstructured\ili{} to\ili{} structured\ili{} data\ili{}/information\ili{} to\ili{} answer\ili{} the\ili{} needs\ili{} of\ili{} applications\ili{} xyz\ili{}.}\ili{}
+\ili{}
+\ili{}%In\ili{} this\ili{} chapter\ili{},\ili{} we\ili{} present\ili{} our\ili{} contribution\ili{} in\ili{} addressing\ili{} multi\ili{}-word\ili{} entity\ili{} \ili{}(MWEntity\ili{})\ili{} recognition\ili{} in\ili{} a\ili{} highly\ili{} multilingual\ili{} environment\ili{}.\ili{} The\ili{} first\ili{} part\ili{} of\ili{} this\ili{} contribution\ili{} describes\ili{} completed\ili{} work\ili{} on\ili{} recognising\ili{} MWEntities\ili{} in\ili{} large\ili{} volumes\ili{} of\ili{} text\ili{} in\ili{} 22\ili{} different\ili{} languages\ili{},\ili{} on\ili{} identifying\ili{} monolingual\ili{} variants\ili{} for\ili{} the\ili{} same\ili{} entity\ili{} and\ili{} on\ili{} linking\ili{} the\ili{} equivalent\ili{} groups\ili{} of\ili{} variants\ili{} across\ili{} all\ili{} languages\ili{}.\ili{} The\ili{} second\ili{} part\ili{} describes\ili{} our\ili{} ongoing\ili{} work\ili{} on\ili{} learning\ili{} MWEntity\ili{} recognition\ili{} rules\ili{} based\ili{} on\ili{} the\ili{} already\ili{} recognised\ili{} MWEntities\ili{}.\ili{} We\ili{} then\ili{} show\ili{} how\ili{} such\ili{} rules\ili{} can\ili{} improve\ili{} the\ili{} recognition\ili{} of\ili{} new\ili{} or\ili{} unknown\ili{} MWEntities\ili{}.\ili{} The\ili{} purpose\ili{} of\ili{} our\ili{} effort\ili{} is\ili{} to\ili{} improve\ili{} on\ili{} current\ili{} methods\ili{} for\ili{} Named\ili{} Entity\ili{} Recognition\ili{} \ili{}(NER\ili{})\ili{} in\ili{} order\ili{} to\ili{} turn\ili{} free\ili{} text\ili{} into\ili{} semi\ili{}-structured\ili{} data\ili{} that\ili{} can\ili{} be\ili{} used\ili{} for\ili{} improved\ili{} search\ili{},\ili{} for\ili{} linking\ili{} related\ili{} news\ili{} over\ili{} time\ili{} and\ili{} across\ili{} languages\ili{},\ili{} for\ili{} trend\ili{} detection\ili{} and\ili{} \ili{}–\ili{} more\ili{} generally\ili{} \ili{}–\ili{} for\ili{} a\ili{} more\ili{} advanced\ili{} intelligent\ili{} analysis\ili{} of\ili{} large\ili{} volumes\ili{} of\ili{} multilingual\ili{} text\ili{} collections\ili{}.\ili{}
+\ili{}
+\ili{}%by\ili{} addressing\ili{} the\ili{} specific\ili{} case\ili{} of\ili{} multi\ili{}-word\ili{} entities\ili{}.\ili{}
+\ili{}
+Named\ili{} Entities\ili{} \ili{}(NEs\ili{})\ili{} such\ili{} as\ili{} persons\ili{},\ili{} organisations\ili{},\ili{} locations\ili{} and\ili{} events\ili{} are\ili{} major\ili{} bearers\ili{} of\ili{} information\ili{} in\ili{} text\ili{} as\ili{} they\ili{} provide\ili{} answers\ili{} to\ili{} the\ili{} text\ili{} representation\ili{} questions\ili{} \ili{}\textit\ili{}{Who\ili{} did\ili{} What\ili{} to\ili{} Whom\ili{},\ili{} Where\ili{} and\ili{} When}\ili{}.\ili{} For\ili{} this\ili{} reason\ili{},\ili{} work\ili{} on\ili{} NER\ili{} and\ili{} Classification\ili{} is\ili{} abundant\ili{} \ili{}\citep\ili{}{Nadeau\ili{}-05}\ili{} and\ili{} NEs\ili{} have\ili{} been\ili{} linked\ili{} to\ili{} knowledge\ili{} bases\ili{} \ili{}\citep\ili{}{Rao\ili{}-13\ili{},Mcnamee\ili{}-09}\ili{}.\ili{} Major\ili{} challenges\ili{} are\ili{} homographic\ili{} entity\ili{} names\ili{} belonging\ili{} to\ili{} different\ili{} classes\ili{} or\ili{} within\ili{} the\ili{} same\ili{} class\ili{} and\ili{} the\ili{} existence\ili{} of\ili{} variant\ili{} spellings\ili{} within\ili{} the\ili{} same\ili{} or\ili{} across\ili{} different\ili{} languages\ili{},\ili{} as\ili{} well\ili{} as\ili{} morphological\ili{} inflection\ili{} \ili{}\citep\ili{}{Steinberger\ili{}-13}\ili{}.\ili{} An\ili{} additional\ili{} challenge\ili{} for\ili{} names\ili{} of\ili{} organisations\ili{} and\ili{} events\ili{} is\ili{} that\ili{} they\ili{} may\ili{} be\ili{} referred\ili{} to\ili{} as\ili{} multi\ili{}-word\ili{} expressions\ili{} or\ili{} acronyms\ili{},\ili{} e\ili{}.g\ili{}.\ili{} \ili{}\textit\ili{}{Economic\ili{} Community\ili{} of\ili{} West\ili{} African\ili{} States}\ili{} \ili{}(abbreviated\ili{} as\ili{} ECOWAS\ili{})\ili{},\ili{} and\ili{} that\ili{} name\ili{} parts\ili{} are\ili{} likely\ili{} to\ili{} be\ili{} translated\ili{},\ili{} e\ili{}.g\ili{}.\ili{} the\ili{} equivalent\ili{} Portuguese\ili{} \ili{}\textit\ili{}{Comunidade\ili{} Económica\ili{} dos\ili{} Estados\ili{} da\ili{} África\ili{} Ocidental}\ili{} \ili{}(abbreviated\ili{} as\ili{} CEDEAO\ili{})\ili{}.\ili{} Users\ili{} searching\ili{} for\ili{} such\ili{} an\ili{} entity\ili{} will\ili{} want\ili{} to\ili{} retrieve\ili{} all\ili{} mentions\ili{},\ili{} independently\ili{} of\ili{} their\ili{} spelling\ili{} or\ili{} abbreviation\ili{} or\ili{} language\ili{}.\ili{}
+\ili{}
+Our\ili{} interest\ili{} in\ili{} entity\ili{} variants\ili{} originally\ili{} stems\ili{} from\ili{} our\ili{} multiannual\ili{} work\ili{} on\ili{} the\ili{} Europe\ili{} Media\ili{} Monitor\ili{} \ili{}(EMM\ili{})\ili{},\ili{} which\ili{} is\ili{} a\ili{} freely\ili{} accessible\ili{} meta\ili{}-news\ili{} web\ili{} platform\ili{} \ili{}\footnote\ili{}{See\ili{} \ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/emm\ili{}.newsbrief\ili{}.eu\ili{}/overview\ili{}.html}\ili{} and\ili{} \ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/emm\ili{}.newsexplorer\ili{}.eu\ili{}/}}\ili{} that\ili{} has\ili{} been\ili{} online\ili{} since\ili{} 2002\ili{} \ili{}\citep\ili{}{Steinberger\ili{}-09\ili{},Steinberger\ili{}-15}\ili{}.\ili{} EMM\ili{} currently\ili{} gathers\ili{} an\ili{} average\ili{} of\ili{} 300\ili{},000\ili{} news\ili{} articles\ili{} per\ili{} day\ili{} in\ili{} about\ili{} 70\ili{} languages\ili{} from\ili{} about\ili{} 8\ili{},000\ili{} news\ili{} websites\ili{} \ili{}(HTML\ili{} pages\ili{} and\ili{} RSS\ili{} feeds\ili{})\ili{}.\ili{} News\ili{} items\ili{} are\ili{} classified\ili{} into\ili{} thousands\ili{} of\ili{} categories\ili{} \ili{}
+\ili{}%\ili{}(more\ili{} than\ili{} half\ili{} are\ili{} customer\ili{}-specific\ili{} so\ili{} that\ili{} they\ili{} are\ili{} not\ili{} available\ili{} on\ili{} the\ili{} public\ili{} website\ili{})\ili{}
+\ili{} and\ili{} related\ili{} news\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} from\ili{} different\ili{} news\ili{} sources\ili{})\ili{} are\ili{} grouped\ili{} into\ili{} clusters\ili{}.\ili{} EMM\ili{}-NewsBrief\ili{} and\ili{} the\ili{} \ili{}\textit\ili{}{Medical\ili{} Information\ili{} System}\ili{} EMM\ili{}-MedISys\ili{} group\ili{} the\ili{} newest\ili{} articles\ili{} every\ili{} ten\ili{} minutes\ili{} and\ili{} show\ili{} intra\ili{}-day\ili{} trends\ili{},\ili{} while\ili{} EMM\ili{}-NewsExplorer\ili{} groups\ili{} related\ili{} articles\ili{} published\ili{} on\ili{} the\ili{} same\ili{} calendar\ili{} day\ili{} and\ili{} follows\ili{} trends\ili{} over\ili{} longer\ili{} periods\ili{} of\ili{} time\ili{}.\ili{} For\ili{} each\ili{} news\ili{} article\ili{} and\ili{} for\ili{} each\ili{} news\ili{} cluster\ili{},\ili{} the\ili{} system\ili{} displays\ili{} extracted\ili{} meta\ili{}-information\ili{},\ili{} which\ili{} includes\ili{} the\ili{} news\ili{} category\ili{},\ili{} entity\ili{} names\ili{} found\ili{} \ili{}(persons\ili{},\ili{} organisations\ili{} and\ili{} geo\ili{}-locations\ili{})\ili{},\ili{} quotations\ili{} by\ili{} and\ili{} about\ili{} entities\ili{},\ili{} as\ili{} well\ili{} as\ili{} various\ili{} types\ili{} of\ili{} statistics\ili{},\ili{} trends\ili{} and\ili{} analysis\ili{} results\ili{}.\ili{} Entity\ili{} mentions\ili{} are\ili{} disambiguated\ili{} according\ili{} to\ili{} entity\ili{} types\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} \ili{}\textit\ili{}{Paris\ili{} Hilton}\ili{} is\ili{} a\ili{} person\ili{})\ili{} and\ili{} geographical\ili{} reference\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} there\ili{} are\ili{} about\ili{} fifteen\ili{} places\ili{} world\ili{}-wide\ili{} called\ili{} Paris\ili{})\ili{}.\ili{} Spelling\ili{} variants\ili{} of\ili{} the\ili{} same\ili{} person\ili{} or\ili{} organisation\ili{} name\ili{} are\ili{} mostly\ili{} recognised\ili{} as\ili{} belonging\ili{} to\ili{} the\ili{} same\ili{} real\ili{}-world\ili{} entity\ili{}.\ili{} For\ili{} instance\ili{},\ili{} the\ili{} spellings\ili{} \ili{}\textit\ili{}{Jean\ili{}-Claude\ili{} Juncker\ili{},\ili{} Jean\ili{} Cloud\ili{} Junker\ili{},\ili{} Jean\ili{}-Claude\ili{} Juencker\ili{},\ili{} Жан\ili{}-Клод\ili{} Юнкер\ili{},\ili{} Ζαν\ili{} Κλοντ\ili{} Γιούνκερ}\ili{} \ili{}%\ili{} \ili{}\remGuillaume\ili{}{TODO\ili{}:\ili{} Must\ili{} display\ili{} properly\ili{} chinese\ili{} and\ili{} arabic\ili{} scripts}\ili{} جونكر\ili{} كلود\ili{} جان\ili{},\ili{} Ζαν\ili{} Κλοντ\ili{} Γιούνκερ\ili{},\ili{} 让\ili{}-克洛\ili{} 德\ili{}•容克}\ili{}
+and\ili{} many\ili{} others\ili{} are\ili{} all\ili{} identified\ili{} as\ili{} referring\ili{} to\ili{} the\ili{} 12th\ili{} President\ili{} of\ili{} the\ili{} European\ili{} Commission\ili{}.\ili{} Such\ili{} multilingual\ili{} entity\ili{} variants\ili{} \ili{}–\ili{} and\ili{} also\ili{} disambiguated\ili{} place\ili{} names\ili{} \ili{}–\ili{} are\ili{} a\ili{} major\ili{} ingredient\ili{} for\ili{} the\ili{} successful\ili{} identification\ili{} of\ili{} related\ili{} news\ili{} across\ili{} languages\ili{} in\ili{} EMM\ili{}-NewsExplorer\ili{}.\ili{} The\ili{} system\ili{} was\ili{} entirely\ili{} developed\ili{} by\ili{} the\ili{} European\ili{} Commission\ili{}’s\ili{} Joint\ili{} Research\ili{} Centre\ili{} \ili{}(JRC\ili{})\ili{} with\ili{} the\ili{} purpose\ili{} of\ili{} providing\ili{} media\ili{} monitoring\ili{} functionality\ili{} for\ili{} the\ili{} European\ili{} institutions\ili{},\ili{} for\ili{} national\ili{} authorities\ili{} of\ili{} the\ili{} European\ili{} Union\ili{} \ili{}(EU\ili{})\ili{} Member\ili{} States\ili{},\ili{} for\ili{} international\ili{} organisations\ili{} such\ili{} as\ili{} the\ili{} United\ili{} Nations\ili{} or\ili{} the\ili{} African\ili{} Union\ili{},\ili{} as\ili{} well\ili{} as\ili{} for\ili{} EU\ili{} partner\ili{} country\ili{} organisations\ili{}.\ili{} However\ili{},\ili{} the\ili{} results\ili{} are\ili{} also\ili{} freely\ili{} accessible\ili{} to\ili{} the\ili{} wider\ili{} public\ili{} through\ili{} web\ili{} pages\ili{} and\ili{} as\ili{} customisable\ili{} mobile\ili{} applications\ili{}.\ili{}
+\ili{}
+\ili{} \ili{}
+\ili{}%TODO\ili{} \ili{}:\ili{} maybe\ili{} remove\ili{} the\ili{} two\ili{} next\ili{} paragraphs\ili{}
+\ili{}%In\ili{} recent\ili{} years\ili{},\ili{} EMM\ili{}’s\ili{} text\ili{} mining\ili{} capacity\ili{} has\ili{} also\ili{} been\ili{} applied\ili{} to\ili{} social\ili{} media\ili{} posts\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} \ili{}\citealt\ili{}{Zavarella\ili{}-14}\ili{})\ili{} and\ili{} to\ili{} documents\ili{} resulting\ili{} from\ili{} generic\ili{} web\ili{} searches\ili{} \ili{}\citep\ili{}{Crawley\ili{}-10}\ili{},\ili{} thus\ili{} widening\ili{} the\ili{} range\ili{} of\ili{} analysed\ili{} text\ili{} types\ili{}.\ili{} NER\ili{} software\ili{} does\ili{} not\ili{} perform\ili{} equally\ili{} well\ili{} on\ili{} all\ili{} text\ili{} types\ili{}.\ili{} We\ili{} try\ili{} to\ili{} overcome\ili{} this\ili{} limitation\ili{} by\ili{} building\ili{} up\ili{} a\ili{} large\ili{} historical\ili{} collection\ili{} of\ili{} names\ili{} previously\ili{} seen\ili{} in\ili{} hundreds\ili{} of\ili{} millions\ili{} of\ili{} news\ili{} articles\ili{} \ili{}(known\ili{} names\ili{})\ili{} that\ili{} can\ili{} then\ili{} be\ili{} recognised\ili{} through\ili{} a\ili{} simple\ili{} lookup\ili{} rather\ili{} than\ili{} re\ili{}-recognising\ili{} the\ili{} names\ili{} anew\ili{} in\ili{} every\ili{} text\ili{}.\ili{} This\ili{} should\ili{} allow\ili{} a\ili{} decent\ili{} performance\ili{} even\ili{} for\ili{} poorly\ili{} written\ili{} texts\ili{} such\ili{} as\ili{} Twitter\ili{} messages\ili{}.\ili{} Accumulated\ili{} lists\ili{} of\ili{} variants\ili{} within\ili{} the\ili{} same\ili{} and\ili{} across\ili{} different\ili{} languages\ili{} and\ili{} scripts\ili{} additionally\ili{} have\ili{} the\ili{} benefit\ili{} of\ili{} grounding\ili{} name\ili{} mentions\ili{} with\ili{} real\ili{}-world\ili{} entities\ili{} by\ili{} abstracting\ili{} away\ili{} from\ili{} the\ili{} spelling\ili{}.\ili{} It\ili{} is\ili{} our\ili{} intention\ili{} to\ili{} release\ili{} large\ili{} volumes\ili{} of\ili{} names\ili{} and\ili{} their\ili{} multilingual\ili{} spelling\ili{} variants\ili{} by\ili{} adding\ili{} them\ili{} to\ili{} the\ili{} freely\ili{} accessible\ili{} JRC\ili{}-Names\ili{} name\ili{} variant\ili{} resource\ili{} \ili{}\citep\ili{}{Ehrmann\ili{}-15\ili{},Steinberger\ili{}-11}\ili{}.\ili{}
+\ili{}%\ili{}
+\ili{}%\ili{} \ili{}
+\ili{}%\ili{}
+\ili{}%The\ili{} need\ili{} to\ili{} analyse\ili{} text\ili{} data\ili{} in\ili{} many\ili{} different\ili{} languages\ili{} is\ili{} due\ili{} to\ili{} the\ili{} observation\ili{} that\ili{} information\ili{} found\ili{} in\ili{} different\ili{} languages\ili{} is\ili{} complementary\ili{}.\ili{} \ili{}\citet\ili{}{Piskorski\ili{}-11}\ili{} showed\ili{} in\ili{} their\ili{} news\ili{} analysis\ili{} for\ili{} 618\ili{} event\ili{} descriptions\ili{} in\ili{} six\ili{} languages\ili{} that\ili{} only\ili{} 9\ili{}.8\ili{}\\ili{}%\ili{} of\ili{} all\ili{} events\ili{} were\ili{} reported\ili{} in\ili{} more\ili{} than\ili{} one\ili{} language\ili{}.\ili{}
+\ili{}
+Person\ili{} name\ili{} recognition\ili{} is\ili{} rather\ili{} well\ili{}-implemented\ili{} in\ili{} EMM\ili{},\ili{} but\ili{} the\ili{} coverage\ili{} of\ili{} multi\ili{}-word\ili{} organisation\ili{} and\ili{} event\ili{} names\ili{} has\ili{} traditionally\ili{} been\ili{} rather\ili{} poor\ili{} because\ili{} they\ili{} behave\ili{} like\ili{} free\ili{} text\ili{},\ili{} i\ili{}.e\ili{}.\ili{} they\ili{} may\ili{} include\ili{} lower\ili{}-case\ili{} words\ili{},\ili{} prepositions\ili{},\ili{} determiners\ili{},\ili{} etc\ili{}.\ili{} Recognising\ili{} such\ili{} complex\ili{} MWEntity\ili{} types\ili{} would\ili{} benefit\ili{} from\ili{} using\ili{} syntax\ili{} parsers\ili{},\ili{} part\ili{}-of\ili{}-speech\ili{} taggers\ili{},\ili{} morphological\ili{} analysers\ili{} and\ili{} generic\ili{} dictionaries\ili{},\ili{} but\ili{} EMM\ili{} cannot\ili{} use\ili{} these\ili{} because\ili{} of\ili{} its\ili{} need\ili{} to\ili{} process\ili{} very\ili{} large\ili{} volumes\ili{} of\ili{} text\ili{} data\ili{} in\ili{} near\ili{}-real\ili{} time\ili{} and\ili{} because\ili{} such\ili{} resources\ili{} are\ili{} not\ili{} easily\ili{} available\ili{} nor\ili{} quick\ili{} to\ili{} develop\ili{} \ili{}\citep\ili{}{Steinberger\ili{}-13}\ili{}.\ili{} In\ili{} response\ili{} to\ili{} this\ili{} shortcoming\ili{},\ili{} the\ili{} EMM\ili{} team\ili{} has\ili{} engaged\ili{} in\ili{} less\ili{} knowledge\ili{}-intensive\ili{} ways\ili{} of\ili{} recognising\ili{} multi\ili{}-word\ili{} entities\ili{} such\ili{} as\ili{} those\ili{} presented\ili{} in\ili{} this\ili{} chapter\ili{}.\ili{} Our\ili{} general\ili{} idea\ili{} is\ili{} to\ili{} collect\ili{} large\ili{} numbers\ili{} of\ili{} known\ili{} entities\ili{} using\ili{} patterns\ili{} to\ili{} recognise\ili{} acronyms\ili{} and\ili{} their\ili{} long\ili{}-forms\ili{} \ili{}(presented\ili{} in\ili{} Section\ili{} 3\ili{})\ili{} and\ili{} to\ili{} then\ili{} use\ili{} these\ili{} to\ili{} learn\ili{} light\ili{}-weight\ili{} recognition\ili{} patterns\ili{} for\ili{} such\ili{} complex\ili{} MWEntities\ili{} \ili{}(Section\ili{} 4\ili{})\ili{}.\ili{} In\ili{} order\ili{} to\ili{} validate\ili{} this\ili{} last\ili{} step\ili{} independently\ili{} of\ili{} the\ili{} quality\ili{} of\ili{} the\ili{} initially\ili{} automatically\ili{} created\ili{} resource\ili{},\ili{} we\ili{} did\ili{} our\ili{} first\ili{} experiments\ili{} using\ili{} MWEntity\ili{} lists\ili{} derived\ili{} from\ili{} the\ili{} BabelNet\ili{} resource\ili{} to\ili{} learn\ili{} recognition\ili{} patterns\ili{} in\ili{} a\ili{} couple\ili{} of\ili{} languages\ili{}.\ili{} This\ili{} is\ili{} what\ili{} we\ili{} present\ili{} in\ili{} this\ili{} chapter\ili{}.\ili{}
+\ili{}
+In\ili{} the\ili{} following\ili{} sections\ili{},\ili{} we\ili{} will\ili{} first\ili{} summarise\ili{} the\ili{} state\ili{}-of\ili{}-the\ili{}-art\ili{} for\ili{} the\ili{} recognition\ili{} of\ili{} acronyms\ili{} and\ili{} other\ili{} multi\ili{}-word\ili{} entities\ili{},\ili{} as\ili{} well\ili{} as\ili{} for\ili{} the\ili{} recognition\ili{} of\ili{} monolingual\ili{} and\ili{} cross\ili{}-lingual\ili{} entity\ili{} variants\ili{} \ili{}(Section\ili{} 2\ili{})\ili{}.\ili{} Section\ili{} 3\ili{} focuses\ili{} on\ili{} methods\ili{} and\ili{} results\ili{} to\ili{} recognise\ili{} acronyms\ili{} and\ili{} their\ili{} expansions\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} \ili{}\textit\ili{}{EC\ili{} \ili{}–\ili{} European\ili{} Commission}\ili{})\ili{} and\ili{} to\ili{} identify\ili{} the\ili{} variant\ili{} spellings\ili{} and\ili{} translations\ili{}.\ili{} In\ili{} Section\ili{} 4\ili{},\ili{} we\ili{} present\ili{} different\ili{} pattern\ili{} learning\ili{} methods\ili{} that\ili{} will\ili{} help\ili{} with\ili{} the\ili{} recognition\ili{} of\ili{} multi\ili{}-word\ili{} entities\ili{} that\ili{} are\ili{} not\ili{} found\ili{} next\ili{} to\ili{} their\ili{} acronyms\ili{} and\ili{} we\ili{} will\ili{} compare\ili{} their\ili{} relative\ili{} performance\ili{}.\ili{} We\ili{} will\ili{} conclude\ili{} our\ili{} chapter\ili{} with\ili{} a\ili{} summary\ili{} and\ili{} with\ili{} pointers\ili{} to\ili{} future\ili{} work\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}\section\ili{}{Related\ili{} work}\ili{}
+\ili{}\label\ili{}{soa}\ili{}
+As\ili{} mentioned\ili{} in\ili{} the\ili{} introduction\ili{},\ili{} and\ili{} developed\ili{} in\ili{} the\ili{} following\ili{} sections\ili{},\ili{} multi\ili{}-word\ili{} entity\ili{} recognition\ili{} is\ili{} strongly\ili{} related\ili{} to\ili{} acronym\ili{} recognition\ili{}.\ili{} \ili{} \ili{} \ili{}
+\ili{}
+Work\ili{} in\ili{} the\ili{} domain\ili{} of\ili{} abbreviation\ili{} processing\ili{} is\ili{} abundant\ili{},\ili{} but\ili{} it\ili{}
+mostly\ili{} focuses\ili{} on\ili{} the\ili{} biomedical\ili{} domain\ili{} and\ili{} on\ili{} the\ili{} \ili{}\ili\ili{}{English}\ili{}
+language\ili{}.\ili{} Since\ili{} the\ili{} pioneer\ili{} work\ili{} of\ili{} \ili{}\citet\ili{}{Taghva\ili{}-99}\ili{},\ili{} research\ili{} has\ili{}
+developed\ili{} into\ili{} three\ili{} main\ili{} directions\ili{},\ili{} namely\ili{}:\ili{} acronym\ili{} extraction\ili{} and\ili{}
+mapping\ili{} to\ili{} their\ili{} expansions\ili{};\ili{} acronym\ili{} variant\ili{} clustering\ili{};\ili{} and\ili{},\ili{} more\ili{}
+recently\ili{},\ili{} acronym\ili{} disambiguation\ili{}.\ili{} While\ili{} the\ili{} extraction\ili{} of\ili{}
+acronym\ili{}/expansion\ili{} pairs\ili{} corresponds\ili{} to\ili{} the\ili{} primary\ili{} stage\ili{} of\ili{} lexical\ili{}
+unit\ili{} acquisition\ili{},\ili{} variant\ili{} clustering\ili{} resembles\ili{} sense\ili{} inventory\ili{}
+organisation\ili{},\ili{} which\ili{} can\ili{} eventually\ili{} serve\ili{} as\ili{} reference\ili{} for\ili{}
+disambiguation\ili{}.\ili{} We\ili{} report\ili{} here\ili{} on\ili{} the\ili{} first\ili{} two\ili{} aspects\ili{}.\ili{}%\ili{},i\ili{}.e\ili{}.\ili{} acquisition\ili{} and\ili{} clustering\ili{}.\ili{}
+\ili{}
+With\ili{} regard\ili{} to\ili{} acronym\ili{} extraction\ili{},\ili{} existing\ili{} work\ili{} almost\ili{} exclusively\ili{}
+focuses\ili{} on\ili{} \ili{}\ili\ili{}{English}\ili{} biomedical\ili{} literature\ili{}
+\ili{}\citep\ili{}{Schwartz\ili{}-03\ili{},Okazaki\ili{}-06\ili{},Pustejovsky\ili{}-01\ili{},Wren\ili{}-02\ili{},Adar\ili{}-04\ili{},Chang\ili{}-02\ili{},Nadeau\ili{}-05}\ili{}.\ili{}
+Results\ili{} are\ili{} good\ili{} and\ili{} the\ili{} extraction\ili{}-recognition\ili{} step\ili{} can\ili{} be\ili{} considered\ili{}
+a\ili{} mature\ili{} technology\ili{} for\ili{} this\ili{} combination\ili{} of\ili{} domain\ili{} and\ili{}
+language\ili{}.\ili{} However\ili{},\ili{} there\ili{} is\ili{} very\ili{} little\ili{} work\ili{} on\ili{} other\ili{} languages\ili{}:\ili{}
+\ili{}\citet\ili{}{Kokkinakis\ili{}-06}\ili{} investigate\ili{} the\ili{} specificity\ili{} of\ili{} \ili{}\ili\ili{}{Swedish}\ili{},\ili{}
+\ili{}\citet\ili{}{Siklosi\ili{}-14}\ili{} carry\ili{} out\ili{} Hungarian\ili{} abbreviation\ili{} processing\ili{},\ili{} both\ili{}
+on\ili{} medical\ili{} texts\ili{}.\ili{} \ili{} \ili{}\citet\ili{}{Kompara\ili{}-10}\ili{} and\ili{} \ili{}\citet\ili{}{Hahn\ili{}-05}\ili{} seem\ili{} to\ili{} be\ili{}
+the\ili{} only\ili{} ones\ili{} to\ili{} work\ili{} with\ili{} acronyms\ili{} \ili{}\textit\ili{}{across}\ili{} languages\ili{},\ili{} with\ili{}
+preliminary\ili{} work\ili{} on\ili{} Slovene\ili{},\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} \ili{}\ili\ili{}{Italian}\ili{} for\ili{} the\ili{} former\ili{},\ili{} and\ili{}
+acronym\ili{} alignment\ili{} across\ili{} \ili{}\ili\ili{}{English}\ili{},\ili{} \ili{}\ili\ili{}{German}\ili{},\ili{} Portuguese\ili{} and\ili{} \ili{}\ili\ili{}{Spanish}\ili{} based\ili{}
+on\ili{} an\ili{} inter\ili{}-lingua\ili{} for\ili{} the\ili{} latter\ili{}.\ili{}
+\ili{}
+As\ili{} mentioned\ili{} previously\ili{},\ili{} the\ili{} variety\ili{} and\ili{} the\ili{} number\ili{} of\ili{} acronyms\ili{} is\ili{}
+very\ili{} large\ili{} so\ili{} that\ili{} it\ili{} is\ili{} useful\ili{} to\ili{} organise\ili{} the\ili{} acronym\ili{} dataset\ili{} on\ili{} a\ili{}
+semantic\ili{} basis\ili{} by\ili{} grouping\ili{} related\ili{} variants\ili{} under\ili{} the\ili{} same\ili{} acronym\ili{}
+identifier\ili{}.\ili{} The\ili{} aim\ili{} is\ili{} thus\ili{} \ili{}-\ili{} for\ili{} each\ili{} set\ili{} of\ili{} expansions\ili{} having\ili{} the\ili{}
+same\ili{} acronym\ili{} \ili{}-\ili{} to\ili{} identify\ili{} those\ili{} which\ili{} are\ili{} conceptually\ili{}
+related\ili{}.\ili{} Previous\ili{} related\ili{} work\ili{} focused\ili{} mainly\ili{},\ili{} anew\ili{},\ili{} on\ili{} biomedical\ili{}
+literature\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{}.\ili{} \ili{}\citet\ili{}{Adar\ili{}-04}\ili{} experimented\ili{} with\ili{} k\ili{}-means\ili{}
+clustering\ili{} based\ili{} on\ili{} an\ili{} n\ili{}-gram\ili{} similarity\ili{} measure\ili{} and\ili{} on\ili{} a\ili{} MeSH\ili{} term\ili{}
+similarity\ili{} measure\ili{}.\ili{} Results\ili{} showed\ili{} that\ili{} the\ili{} n\ili{}-gram\ili{} based\ili{} clustering\ili{}
+performs\ili{} actually\ili{} better\ili{} than\ili{} that\ili{} based\ili{} on\ili{} the\ili{} MeSH\ili{} resource\ili{}.\ili{}
+\ili{}\citet\ili{}{Okazaki\ili{}-10}\ili{} designed\ili{} a\ili{} more\ili{} complex\ili{} clustering\ili{} approach\ili{},\ili{} using\ili{}
+a\ili{} similarity\ili{} metric\ili{} based\ili{} on\ili{} a\ili{} mixture\ili{} of\ili{} several\ili{} features\ili{}.\ili{} Once\ili{} the\ili{}
+best\ili{} feature\ili{} setting\ili{} has\ili{} been\ili{} acquired\ili{} \ili{}(by\ili{} supervised\ili{} machine\ili{}
+learning\ili{})\ili{},\ili{} hierarchical\ili{} clustering\ili{} is\ili{} used\ili{} to\ili{} induce\ili{} the\ili{} final\ili{} variant\ili{}
+grouping\ili{}.\ili{} The\ili{} features\ili{} used\ili{} to\ili{} build\ili{} the\ili{} similarity\ili{} metric\ili{} are\ili{}
+themselves\ili{} similarity\ili{} measures\ili{},\ili{} such\ili{} as\ili{} character\ili{} and\ili{} word\ili{} n\ili{}-gram\ili{}
+similarity\ili{}.\ili{} \ili{} The\ili{} outcome\ili{} of\ili{} these\ili{} experiments\ili{} on\ili{} \ili{}\ili\ili{}{English}\ili{} abbreviations\ili{}
+showed\ili{} that\ili{} character\ili{} and\ili{} word\ili{} n\ili{}-gram\ili{} features\ili{} contribute\ili{} the\ili{} most\ili{} to\ili{}
+the\ili{} final\ili{} result\ili{}.\ili{} Work\ili{} on\ili{} monolingual\ili{} clustering\ili{} of\ili{} acronym\ili{} variants\ili{}
+outside\ili{} the\ili{} biomedical\ili{} domain\ili{} and\ili{} for\ili{} altogether\ili{} 22\ili{} different\ili{}
+languages\ili{} was\ili{} carried\ili{} out\ili{} in\ili{} \ili{}\citet\ili{}{Ehrmann\ili{}-13}\ili{}.\ili{} Ehrmann\ili{}'s\ili{} approach\ili{} is\ili{}
+based\ili{} on\ili{} hierarchical\ili{} group\ili{}-average\ili{} clustering\ili{},\ili{} where\ili{} cluster\ili{}
+homogeneity\ili{} is\ili{} set\ili{} using\ili{} an\ili{} empirically\ili{} determined\ili{} threshold\ili{}.\ili{} \ili{} The\ili{}
+clustering\ili{} depends\ili{} on\ili{} a\ili{} pair\ili{}-wise\ili{} string\ili{} similarity\ili{} between\ili{}
+expansions\ili{},\ili{} using\ili{} a\ili{} normalised\ili{} Levenshtein\ili{} edit\ili{} distance\ili{}.\ili{}
+\ili{}
+To\ili{} the\ili{} best\ili{} of\ili{} our\ili{} knowledge\ili{},\ili{} no\ili{} work\ili{} has\ili{} been\ili{} carried\ili{} out\ili{} for\ili{} acronym\ili{}
+clustering\ili{} \ili{}\textit\ili{}{across}\ili{} languages\ili{}.\ili{} \ili{} What\ili{} comes\ili{} closest\ili{} to\ili{} this\ili{} or\ili{},\ili{}
+more\ili{} exactly\ili{},\ili{} to\ili{} its\ili{} result\ili{},\ili{} are\ili{} multilingual\ili{} lexical\ili{} resources\ili{} such\ili{}
+as\ili{} BabelNet\ili{} \ili{}\citep\ili{}{Navigli\ili{}-12}\ili{} or\ili{} YAGO\ili{}
+\ili{}\citep\ili{}{Hoffart\ili{}-13}\ili{}.\ili{} Automatically\ili{} built\ili{} based\ili{} on\ili{} the\ili{} mapping\ili{} between\ili{}
+WordNet\ili{} and\ili{} Wikipedia\ili{} \ili{}(and\ili{} other\ili{} resources\ili{})\ili{},\ili{} these\ili{} resources\ili{} provide\ili{}
+\ili{}(among\ili{} others\ili{})\ili{} multilingual\ili{} variants\ili{} of\ili{} expansions\ili{} for\ili{} specific\ili{}
+acronyms\ili{}.\ili{} \ili{} They\ili{} are\ili{} inherited\ili{} from\ili{} cross\ili{}-lingual\ili{} and\ili{} cross\ili{}-script\ili{}
+links\ili{} provided\ili{} in\ili{} Wikipedia\ili{}.\ili{} \ili{} In\ili{} contrast\ili{},\ili{} the\ili{} work\ili{} presented\ili{} here\ili{}
+starts\ili{} from\ili{} raw\ili{} data\ili{} extracted\ili{} from\ili{} real\ili{}-life\ili{} texts\ili{}.\ili{}
+\ili{}%and\ili{} does\ili{} not\ili{} rely\ili{} on\ili{} external\ili{} resources\ili{}.\ili{} \ili{}
+\ili{}
+As\ili{} regards\ili{} learning\ili{} resources\ili{} for\ili{} the\ili{} recognition\ili{} and\ili{} classification\ili{}
+of\ili{} named\ili{} entities\ili{} and\ili{} domain\ili{}-specific\ili{} multi\ili{}-word\ili{} expressions\ili{},\ili{} a\ili{} vast\ili{}
+bulk\ili{} of\ili{} research\ili{} has\ili{} been\ili{} reported\ili{} on\ili{} using\ili{} weakly\ili{}-supervised\ili{}
+approaches\ili{}.\ili{} These\ili{} are\ili{} based\ili{},\ili{} in\ili{} particular\ili{},\ili{} on\ili{} the\ili{} bootstrapping\ili{}
+paradigm\ili{} in\ili{} which\ili{},\ili{} starting\ili{} from\ili{} an\ili{} initial\ili{} set\ili{} of\ili{} annotated\ili{} examples\ili{}
+\ili{}(or\ili{} seeds\ili{})\ili{},\ili{} the\ili{} learning\ili{} process\ili{} proceeds\ili{} without\ili{} further\ili{} supervision\ili{},\ili{}
+until\ili{} a\ili{} convergence\ili{} criterion\ili{} is\ili{} reached\ili{}.\ili{} Some\ili{} examples\ili{} of\ili{} the\ili{} work\ili{} in\ili{}
+this\ili{} field\ili{} is\ili{} presented\ili{} in\ili{} \ili{}\citet\ili{}{riloff\ili{}:aaai\ili{}-1996}\ili{}
+\ili{}\citet\ili{}{collins\ili{}-singer\ili{}:1999\ili{}-emnlp}\ili{} and\ili{} \ili{}\citet\ili{}{yangarber\ili{}:2002\ili{}-coling}\ili{}.\ili{}
+\ili{}
+With\ili{} the\ili{} emergence\ili{} of\ili{} large\ili{}-scale\ili{} knowledge\ili{} bases\ili{} and\ili{} the\ili{} availability\ili{}
+of\ili{} web\ili{}-scale\ili{} corpora\ili{} numerous\ili{} efforts\ili{} on\ili{} exploiting\ili{} such\ili{} resources\ili{} in\ili{}
+the\ili{} context\ili{} of\ili{} creation\ili{} of\ili{} named\ili{} entity\ili{} recognition\ili{} and\ili{} classification\ili{}
+tools\ili{} have\ili{} been\ili{} reported\ili{}.\ili{} For\ili{} instance\ili{},\ili{}
+\ili{}\citet\ili{}{Nothman\ili{}:2013\ili{}:LMN\ili{}:2405838\ili{}.2405915}\ili{} reports\ili{} on\ili{} a\ili{} multilingual\ili{} NER\ili{}
+approach\ili{} based\ili{} on\ili{} using\ili{} Wikipedia\ili{} links\ili{} for\ili{} automatically\ili{} annotating\ili{} a\ili{}
+huge\ili{} corpus\ili{} for\ili{} training\ili{} purposes\ili{},\ili{} whereas\ili{}
+\ili{}\citet\ili{}{Downey\ili{}:2007\ili{}:LCN\ili{}:1625275\ili{}.1625715}\ili{} presents\ili{} a\ili{} novel\ili{} method\ili{} for\ili{}
+the\ili{} detection\ili{} of\ili{} complex\ili{} \ili{}(multi\ili{}-word\ili{})\ili{} named\ili{} entities\ili{} using\ili{} solely\ili{}
+capitalisation\ili{} information\ili{} and\ili{} n\ili{}-gram\ili{} statistics\ili{} over\ili{} a\ili{} Web\ili{}
+corpus\ili{}.\ili{} This\ili{} approach\ili{} turned\ili{} to\ili{} outperform\ili{} standard\ili{} supervised\ili{} and\ili{}
+semi\ili{}-supervised\ili{} approaches\ili{} for\ili{} named\ili{}-entity\ili{} recognition\ili{} in\ili{} cases\ili{} of\ili{}
+complex\ili{} names\ili{} of\ili{} types\ili{} not\ili{} known\ili{} in\ili{} advance\ili{}.\ili{}
+\ili{}
+Our\ili{} contribution\ili{} complements\ili{} prior\ili{} work\ili{} and\ili{} focuses\ili{} on\ili{} exploiting\ili{} the\ili{}
+vast\ili{} number\ili{} of\ili{} named\ili{} entities\ili{} contained\ili{} in\ili{} BabelNet\ili{}~\ili{}\citep\ili{}{Navigli\ili{}-12}\ili{}
+for\ili{} learning\ili{} structurally\ili{} simple\ili{} and\ili{} linguistically\ili{} unsophisticated\ili{}
+patterns\ili{} for\ili{} the\ili{} recognition\ili{} of\ili{} multi\ili{}-word\ili{} named\ili{} entities\ili{} in\ili{} various\ili{}
+languages\ili{}.\ili{}
+\ili{} \ili{}
+\ili{}\section\ili{}{Creation\ili{} of\ili{} the\ili{} multilingual\ili{} MWEntity\ili{} resource}\ili{}
+In\ili{} this\ili{} section\ili{},\ili{} we\ili{} describe\ili{} a\ili{} completed\ili{} work\ili{} \ili{}\citep\ili{}{Jacquet\ili{}-16}\ili{} on\ili{} recognising\ili{} MWEntities\ili{} and\ili{} their\ili{} corresponding\ili{} acronyms\ili{} in\ili{} large\ili{} volumes\ili{} of\ili{} text\ili{} in\ili{} 22\ili{} different\ili{} languages\ili{},\ili{} on\ili{} identifying\ili{} monolingual\ili{} variants\ili{} for\ili{} the\ili{} same\ili{} entity\ili{} and\ili{} on\ili{} linking\ili{} the\ili{} equivalent\ili{} groups\ili{} of\ili{} variants\ili{} across\ili{} all\ili{} languages\ili{}.\ili{} Figure\ili{} \ili{}\ref\ili{}{acronym\ili{} linking}\ili{} illustrates\ili{} that\ili{} task\ili{} with\ili{} an\ili{} example\ili{} of\ili{} cross\ili{} lingual\ili{} linking\ili{} showing\ili{} that\ili{} we\ili{} can\ili{} neither\ili{} assume\ili{} that\ili{} entities\ili{} across\ili{} languages\ili{} have\ili{} the\ili{} same\ili{} acronym\ili{},\ili{} nor\ili{} can\ili{} we\ili{} assume\ili{} that\ili{} the\ili{} same\ili{} acronym\ili{} \ili{}(within\ili{} the\ili{} same\ili{} or\ili{} across\ili{} languages\ili{})\ili{} refers\ili{} to\ili{} only\ili{} one\ili{} entity\ili{}.\ili{}
+The\ili{} result\ili{} of\ili{} this\ili{} work\ili{} is\ili{} a\ili{} collection\ili{} of\ili{} currently\ili{} 64\ili{},000\ili{} MWEntities\ili{} plus\ili{} their\ili{} 600\ili{},000\ili{} multilingual\ili{} lexical\ili{} variants\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[scale\ili{}=0\ili{}.32\ili{}]\ili{}{figures\ili{}/multiLingAcroLinking\ili{}.png}\ili{}
+\ili{}\caption\ili{}{Example\ili{} of\ili{} multilingual\ili{} MWEntity\ili{} linking\ili{}.}\ili{}
+\ili{}\label\ili{}{acronym\ili{} linking}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Starting\ili{} point}\ili{}
+\ili{}\label\ili{}{starting}\ili{}
+\ili{}
+The\ili{} starting\ili{} point\ili{} of\ili{} our\ili{} work\ili{} is\ili{} a\ili{} large\ili{} set\ili{} of\ili{} multi\ili{}-word\ili{} entities\ili{}
+and\ili{} their\ili{} corresponding\ili{} acronyms\ili{} in\ili{} 22\ili{} Roman\ili{}-script\ili{} languages\ili{}
+\ili{}\citep\ili{}{Ehrmann\ili{}-13}\ili{}.\ili{} These\ili{} acronym\ili{}/expansion\ili{} pairs\ili{} were\ili{} extracted\ili{} from\ili{}
+the\ili{} news\ili{} stream\ili{} analysed\ili{} by\ili{} the\ili{} EMM\ili{} processing\ili{} chain\ili{} by\ili{} applying\ili{}
+patterns\ili{} similar\ili{} to\ili{} those\ili{} proposed\ili{} by\ili{} \ili{}\citet\ili{}{Schwartz\ili{}-03}\ili{}.\ili{} In\ili{} a\ili{}
+nutshell\ili{},\ili{} the\ili{} algorithm\ili{} collects\ili{} acronym\ili{}/expansion\ili{} pairs\ili{} \ili{}(such\ili{} as\ili{}
+\ili{}\textit\ili{}{expansion\ili{} \ili{}(acronym\ili{})}\ili{} and\ili{} \ili{}\textit\ili{}{acronym\ili{} \ili{}(expansion\ili{})}\ili{})\ili{} by\ili{}
+identifying\ili{} short\ili{} strings\ili{} within\ili{} parenthesis\ili{},\ili{} along\ili{} with\ili{} candidate\ili{}
+expansions\ili{} in\ili{} a\ili{} side\ili{}-window\ili{} of\ili{} a\ili{} limited\ili{} length\ili{}.\ili{} A\ili{} filtering\ili{} step\ili{} is\ili{}
+then\ili{} applied\ili{},\ili{} with\ili{} the\ili{} following\ili{} main\ili{} constraints\ili{}:\ili{} the\ili{} first\ili{} letter\ili{} of\ili{}
+the\ili{} acronym\ili{} must\ili{} be\ili{} upper\ili{}-cased\ili{},\ili{} and\ili{} the\ili{} length\ili{} of\ili{} the\ili{} expansion\ili{} must\ili{}
+be\ili{} smaller\ili{} than\ili{} \ili{}(a\ili{})\ili{} twice\ili{} as\ili{} many\ili{} words\ili{} as\ili{} there\ili{} are\ili{} characters\ili{} in\ili{} the\ili{}
+acronym\ili{},\ili{} or\ili{} \ili{}(b\ili{})\ili{} the\ili{} number\ili{} of\ili{} characters\ili{} in\ili{} the\ili{} acronym\ili{} plus\ili{} five\ili{}
+words\ili{},\ili{} whichever\ili{} is\ili{} the\ili{} smaller\ili{} \ili{}(i\ili{}.e\ili{}.\ili{} \ili{}\textit\ili{}{min}\ili{}(\ili{}$\ili{}\vert\ili{}$A\ili{}$\ili{}\vert\ili{}$\ili{}+5\ili{},\ili{}
+\ili{}$\ili{}\vert\ili{}$A\ili{}$\ili{}\vert\ili{}$\ili{}*\ili{} 2\ili{})\ili{} words\ili{},\ili{} with\ili{} \ili{}$\ili{}\vert\ili{}$A\ili{}$\ili{}\vert\ili{}$\ili{} being\ili{} the\ili{} number\ili{} of\ili{}
+characters\ili{} of\ili{} the\ili{} acronym\ili{})\ili{}.\ili{} We\ili{} refer\ili{} the\ili{} reader\ili{} to\ili{} \ili{}\citet\ili{}{Schwartz\ili{}-03}\ili{}
+for\ili{} more\ili{} details\ili{}.\ili{} \ili{} This\ili{} process\ili{} resulted\ili{} in\ili{} the\ili{} extraction\ili{} of\ili{} 1\ili{}.7\ili{}
+million\ili{} expansions\ili{} for\ili{} 0\ili{}.4\ili{} million\ili{} different\ili{} acronyms\ili{}.\ili{}
+\ili{}
+Applied\ili{} on\ili{} news\ili{} articles\ili{},\ili{} this\ili{} method\ili{} identified\ili{} acronym\ili{}/expansion\ili{}
+pairs\ili{} referring\ili{} mostly\ili{} to\ili{} organisation\ili{} names\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} \ili{} \ili{}\textit\ili{}{CP}\ili{} \ili{}–\ili{}
+\ili{}\textit\ili{}{Communist\ili{} Party}\ili{})\ili{},\ili{} but\ili{} also\ili{} events\ili{} \ili{}(\ili{}\textit\ili{}{WW2}\ili{} \ili{}–\ili{}
+\ili{}\textit\ili{}{World\ili{} War\ili{} II}\ili{})\ili{},\ili{} names\ili{} of\ili{} drugs\ili{} or\ili{} of\ili{} vaccines\ili{} \ili{}(\ili{}\textit\ili{}{MMR}\ili{} \ili{}–\ili{}
+\ili{}\textit\ili{}{measles\ili{},\ili{} mumps\ili{},\ili{} rubella}\ili{})\ili{},\ili{} organisation\ili{} types\ili{} \ili{}(\ili{}\textit\ili{}{NGO}\ili{} \ili{}–\ili{}
+\ili{}\textit\ili{}{Non\ili{}-governmental\ili{} organisation}\ili{})\ili{},\ili{} job\ili{} titles\ili{} \ili{}(\ili{}\textit\ili{}{MEP}\ili{} \ili{}–\ili{}
+\ili{}\textit\ili{}{Member\ili{} of\ili{} Parliament}\ili{})\ili{},\ili{} physical\ili{} measurement\ili{} units\ili{}
+\ili{}(\ili{}\textit\ili{}{kmh}\ili{} \ili{}–\ili{} \ili{}\textit\ili{}{kilometres\ili{} per\ili{} hour}\ili{})\ili{},\ili{} and\ili{} more\ili{}.\ili{} As\ili{} one\ili{} of\ili{} the\ili{}
+next\ili{} steps\ili{},\ili{} we\ili{} will\ili{} work\ili{} on\ili{} categorising\ili{} the\ili{} acronym\ili{}/expansion\ili{} pairs\ili{}
+into\ili{} various\ili{} semantic\ili{} categories\ili{}.\ili{}
+\ili{}
+To\ili{} automatically\ili{} determine\ili{} which\ili{} of\ili{} the\ili{} expansions\ili{} are\ili{} lexical\ili{}
+variants\ili{} of\ili{} the\ili{} same\ili{} conceptual\ili{} entity\ili{},\ili{} a\ili{} clustering\ili{} step\ili{} was\ili{} carried\ili{}
+out\ili{},\ili{} on\ili{} the\ili{} basis\ili{} of\ili{} expansions\ili{} having\ili{} the\ili{} same\ili{} language\ili{} and\ili{} the\ili{} same\ili{}
+acronym\ili{}.\ili{} This\ili{} monolingual\ili{} clustering\ili{},\ili{} based\ili{} on\ili{} a\ili{} pair\ili{}-wise\ili{} string\ili{}
+similarity\ili{},\ili{} allowed\ili{} to\ili{} distinguish\ili{} between\ili{} sets\ili{} of\ili{} conceptually\ili{}
+related\ili{} expansions\ili{},\ili{} such\ili{} as\ili{} those\ili{} referring\ili{} to\ili{} the\ili{}
+\ili{}\textit\ili{}{International\ili{} Space\ili{} Station}\ili{} and\ili{} those\ili{} referring\ili{} to\ili{} the\ili{}
+\ili{}\textit\ili{}{Institute\ili{} for\ili{} Security\ili{} of\ili{} Studies}\ili{},\ili{} both\ili{} clusters\ili{} having\ili{} the\ili{}
+acronym\ili{} \ili{}\textit\ili{}{ISS}\ili{} \ili{}(cf\ili{}.\ili{} \ili{}\ili\ili{}{English}\ili{} part\ili{} of\ili{} Figure\ili{} \ili{}\ref\ili{}{acronym\ili{}
+\ili{} \ili{} linking}\ili{})\ili{}.\ili{} \ili{} Evaluated\ili{} over\ili{} the\ili{} 10\ili{} most\ili{}-covered\ili{} languages\ili{},\ili{} this\ili{}
+monolingual\ili{} clustering\ili{} has\ili{} a\ili{} micro\ili{}-average\ili{} precision\ili{} of\ili{} 95\ili{}.2\ili{}\\ili{}%\ili{}
+\ili{}\citep\ili{}{Jacquet\ili{}-14}\ili{}.\ili{}
+\ili{}
+Out\ili{} of\ili{} this\ili{} monolingual\ili{} clustering\ili{} step\ili{},\ili{} we\ili{} selected\ili{} only\ili{} clusters\ili{}
+having\ili{} at\ili{} least\ili{} four\ili{} expansions\ili{},\ili{} resulting\ili{} in\ili{} 81\ili{},000\ili{} monolingual\ili{}
+clusters\ili{} with\ili{} an\ili{} average\ili{} of\ili{} 7\ili{}.5\ili{} expansions\ili{} per\ili{} cluster\ili{},\ili{} the\ili{} biggest\ili{}
+one\ili{} having\ili{} 232\ili{} expansions\ili{}.\ili{}
+\ili{}
+Based\ili{} on\ili{} this\ili{} data\ili{},\ili{} the\ili{} objective\ili{} is\ili{} to\ili{} go\ili{} a\ili{} step\ili{} further\ili{} by\ili{}
+identifying\ili{} cross\ili{}-lingual\ili{} multi\ili{}-word\ili{} entity\ili{} lexical\ili{} variants\ili{}.\ili{} More\ili{}
+specifically\ili{},\ili{} the\ili{} goal\ili{} is\ili{} to\ili{} link\ili{} multilingual\ili{} expansions\ili{} referring\ili{} to\ili{}
+the\ili{} same\ili{} entity\ili{} across\ili{} languages\ili{} and\ili{} regardless\ili{} of\ili{} their\ili{} acronyms\ili{}.\ili{} \ili{} To\ili{}
+this\ili{} end\ili{},\ili{} we\ili{} leverage\ili{} the\ili{} previously\ili{} computed\ili{} monolingual\ili{} clusters\ili{} and\ili{}
+attempt\ili{} to\ili{} link\ili{} them\ili{} across\ili{} languages\ili{}.\ili{} Considering\ili{} the\ili{} previous\ili{}
+example\ili{} with\ili{} the\ili{} entity\ili{} \ili{}\textit\ili{}{International\ili{} Space\ili{} Station}\ili{}
+\ili{}(cf\ili{}.\ili{} Figure\ili{} \ili{}\ref\ili{}{acronym\ili{} linking}\ili{})\ili{},\ili{} this\ili{} results\ili{} in\ili{} aggregating\ili{} the\ili{}
+monolingual\ili{} clusters\ili{} \ili{}\textit\ili{}{SSI\ili{}-Station\ili{} spatiale\ili{} internationale}\ili{}
+\ili{}(\ili{}\ili\ili{}{French}\ili{})\ili{},\ili{} \ili{}\textit\ili{}{ISS\ili{}-International\ili{} Space\ili{} Station}\ili{} \ili{}(\ili{}\ili\ili{}{English}\ili{})\ili{} and\ili{}
+\ili{}\textit\ili{}{EEI\ili{}-Estaci\ili{}\\ili{}'\ili{}{o}n\ili{} Espacial}\ili{} \ili{}(\ili{}\ili\ili{}{Spanish}\ili{})\ili{}.\ili{} \ili{} Additionally\ili{} to\ili{} linking\ili{}
+expansions\ili{} across\ili{} languages\ili{} and\ili{} independently\ili{} from\ili{} their\ili{} acronym\ili{},\ili{}
+cross\ili{}-lingual\ili{} cluster\ili{} aggregation\ili{} can\ili{} also\ili{} revise\ili{} monolingual\ili{} clusters\ili{}
+by\ili{} aggregating\ili{} those\ili{} conceptually\ili{} related\ili{} but\ili{} isolated\ili{} because\ili{} of\ili{}
+their\ili{} acronyms\ili{} \ili{}(both\ili{} pairs\ili{} \ili{}\textit\ili{}{IMF\ili{}-International\ili{} Monetary\ili{} Fund}\ili{}
+and\ili{} \ili{}\textit\ili{}{FMI\ili{}-Fondo\ili{} Monetario\ili{} Internazionale}\ili{} occur\ili{} in\ili{} \ili{}\ili\ili{}{Italian}\ili{}
+texts\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Approach}\ili{}
+\ili{}\label\ili{}{approach}\ili{}
+\ili{}
+Cluster\ili{} aggregation\ili{} can\ili{} be\ili{} cast\ili{} as\ili{} the\ili{} problem\ili{} of\ili{} identifying\ili{}
+connected\ili{} components\ili{} of\ili{} a\ili{} graph\ili{},\ili{} where\ili{} monolingual\ili{} clusters\ili{} represent\ili{}
+vertices\ili{} and\ili{} where\ili{} edges\ili{} need\ili{} to\ili{} be\ili{} computed\ili{}.\ili{} \ili{} This\ili{} section\ili{} describes\ili{}
+different\ili{} cross\ili{}-lingual\ili{} aggregation\ili{} strategies\ili{} tested\ili{} in\ili{} our\ili{}
+experiments\ili{} \ili{}(cf\ili{}.\ili{} section\ili{} \ili{}\ref\ili{}{evaluation}\ili{})\ili{} to\ili{} link\ili{} sets\ili{} of\ili{} monolingual\ili{}
+clusters\ili{} across\ili{} languages\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Cluster\ili{} aggregation\ili{} based\ili{} on\ili{} common\ili{} expansions}\ili{}
+\ili{}\label\ili{}{aggregation\ili{} clusters\ili{} based\ili{} on\ili{} common\ili{} expansions}\ili{}
+\ili{}
+The\ili{} most\ili{} straightforward\ili{} solution\ili{} to\ili{} link\ili{} related\ili{} acronyms\ili{} in\ili{}
+different\ili{} langua\ili{}\\ili{}-ges\ili{} \ili{}(hereafter\ili{} \ili{}\textit\ili{}{ExpAgg}\ili{})\ili{} is\ili{} to\ili{} merge\ili{} those\ili{}
+clusters\ili{} that\ili{} have\ili{} more\ili{} than\ili{} \ili{}\textit\ili{}{n}\ili{} expansion\ili{} forms\ili{} in\ili{} common\ili{},\ili{}
+independently\ili{} of\ili{} whether\ili{} their\ili{} acronyms\ili{} are\ili{} identical\ili{} or\ili{} not\ili{} \ili{}(in\ili{} our\ili{}
+experiments\ili{},\ili{} \ili{}\textit\ili{}{n}\ili{} was\ili{} set\ili{} to\ili{} 1\ili{})\ili{}.\ili{} This\ili{} aggregation\ili{} has\ili{} been\ili{}
+applied\ili{} both\ili{} to\ili{} improve\ili{} monolingual\ili{} clusters\ili{} \ili{}(cf\ili{}.\ili{} IMF\ili{} vs\ili{} FMI\ili{} case\ili{}
+mentioned\ili{} at\ili{} the\ili{} end\ili{} of\ili{} section\ili{} \ili{}\ref\ili{}{starting}\ili{})\ili{} and\ili{} to\ili{} aggregate\ili{}
+clusters\ili{} across\ili{} languages\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Cluster\ili{} aggregation\ili{} based\ili{} on\ili{} tokens}\ili{}
+\ili{}
+\ili{}\paragraph\ili{}*\ili{}{Cluster\ili{} representation\ili{}.}\ili{}~\ili{}\\ili{}\\ili{}
+\ili{}\label\ili{}{cluster\ili{} representation}\ili{}
+\ili{}
+For\ili{} the\ili{} two\ili{} following\ili{} aggregation\ili{} strategies\ili{},\ili{} monolingual\ili{} clusters\ili{} are\ili{}
+no\ili{} lon\ili{}\\ili{}-ger\ili{} represented\ili{} by\ili{} vectors\ili{} of\ili{} expansions\ili{},\ili{} but\ili{} by\ili{} a\ili{} vector\ili{} of\ili{} all\ili{}
+individual\ili{} tokens\ili{} appearing\ili{} in\ili{} the\ili{} expansions\ili{}.\ili{}
+\ili{}
+\ili{}$C\ili{}$\ili{} is\ili{} the\ili{} resulting\ili{} \ili{}$\ili{}(\ili{}|\ili{}\mathbb\ili{}{C}\ili{}|\ili{} \ili{}\times\ili{} \ili{}|\ili{}\mathbb\ili{}{T}\ili{}|\ili{})\ili{}$\ili{}
+Cluster\ili{}-Token\ili{} matrix\ili{} where\ili{} \ili{}$c_i\ili{} \ili{}:\ili{} i\ili{} \ili{}=\ili{} 1\ili{},\ili{}.\ili{}.\ili{}.\ili{},\ili{}|\ili{}\mathbb\ili{}{C}\ili{}|\ili{}$\ili{} is\ili{} a\ili{}
+monolingual\ili{} cluster\ili{},\ili{} and\ili{} \ili{}$t_j\ili{} \ili{}:\ili{} j\ili{} \ili{}=\ili{} 1\ili{},\ili{}.\ili{}.\ili{}.\ili{},\ili{}|\ili{}\mathbb\ili{}{T}\ili{}|\ili{}$\ili{} is\ili{} a\ili{}
+token\ili{}.\ili{} \ili{}$\ili{}\mathbb\ili{}{T}\ili{}$\ili{} contains\ili{} all\ili{} the\ili{} tokens\ili{} across\ili{} languages\ili{} which\ili{}
+appear\ili{} at\ili{} least\ili{} once\ili{} in\ili{} an\ili{} expansion\ili{}.\ili{} \ili{} If\ili{} a\ili{} token\ili{} is\ili{} present\ili{} in\ili{}
+different\ili{} languages\ili{},\ili{} such\ili{} as\ili{} \ili{}\textit\ili{}{place}\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{}
+\ili{}\textit\ili{}{place}\ili{} in\ili{} \ili{}\ili\ili{}{French}\ili{},\ili{} it\ili{} corresponds\ili{} to\ili{} different\ili{} tokens\ili{} in\ili{}
+\ili{}$\ili{}\mathbb\ili{}{T}\ili{}$\ili{}.\ili{}
+\ili{}
+Each\ili{} token\ili{} has\ili{} its\ili{} own\ili{} importance\ili{} to\ili{} describe\ili{} a\ili{} cluster\ili{}.\ili{} In\ili{} order\ili{} to\ili{}
+compare\ili{} two\ili{} clusters\ili{} on\ili{} the\ili{} basis\ili{} of\ili{} their\ili{} most\ili{} relevant\ili{} tokens\ili{},\ili{} we\ili{}
+consider\ili{} the\ili{} tf\ili{}-idf\ili{} value\ili{} of\ili{} each\ili{} token\ili{} \ili{}$t_j\ili{}$\ili{} where\ili{},\ili{} in\ili{} our\ili{} context\ili{},\ili{}
+each\ili{} cluster\ili{} \ili{}$c_i\ili{}$\ili{} is\ili{} seen\ili{} as\ili{} a\ili{} document\ili{} and\ili{} the\ili{} whole\ili{} set\ili{} of\ili{} clusters\ili{}
+\ili{}$\ili{}\mathbb\ili{}{C}\ili{}$\ili{} as\ili{} a\ili{} corpus\ili{}:\ili{}
+\ili{}\begin\ili{}{equation}\ili{}\label\ili{}{eq\ili{}:tfidf}\ili{}
+C\ili{}(c_i\ili{},t_j\ili{})\ili{} \ili{}=\ili{} tf\ili{}(t_j\ili{},c_i\ili{})\ili{} \ili{}\times\ili{} idf\ili{}(t_j\ili{},\ili{}\mathbb\ili{}{C}\ili{})\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}
+\ili{}\paragraph\ili{}*\ili{}{Cluster\ili{} aggregation\ili{} based\ili{} on\ili{} similar\ili{} tokens\ili{}.}\ili{}~\ili{}\\ili{}\\ili{}
+\ili{}\label\ili{}{similar}\ili{}
+\ili{}
+This\ili{} aggregation\ili{} \ili{}(hereafter\ili{} \ili{}\textit\ili{}{TokAgg}\ili{})\ili{} addresses\ili{} cases\ili{} where\ili{} \ili{}
+monolingual\ili{} clusters\ili{} do\ili{} not\ili{} have\ili{} identical\ili{} expansions\ili{} across\ili{} languages\ili{},\ili{} but\ili{} they\ili{} \ili{}
+have\ili{} a\ili{} significant\ili{} amount\ili{} of\ili{} highly\ili{} similar\ili{} tokens\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{}\begin\ili{}{table}\ili{}
+\ili{}%\ili{}\centering\ili{}
+\ili{}%\ili{}\resizebox\ili{}{7\ili{}.0cm}\ili{}{\ili{}!}\ili{} \ili{}{\ili{}
+\ili{}%\ili{}\begin\ili{}{tabular}\ili{}{\ili{}|c\ili{}|l\ili{}|c\ili{}|c\ili{}|}\ili{}
+\ili{}%\ili{}\hline\ili{}
+\ili{}%Clusters\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Expansion\ili{} \ili{} \ili{}&\ili{} Acronym\ili{} \ili{} \ili{}&\ili{} \ili{} Language\ili{} \ili{}\\ili{}\\ili{}\hline\ili{} \ili{}\hline\ili{}
+\ili{}%cluster\ili{} 1\ili{} \ili{} \ili{}&\ili{} \ili{} Social\ili{}-Democratic\ili{} Party\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} SDP\ili{} \ili{} \ili{}&\ili{} en\ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Social\ili{} Democratic\ili{} Party\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%cluster\ili{} 2\ili{} \ili{} \ili{}&\ili{} \ili{} Partito\ili{} Social\ili{}-Democratico\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} PSD\ili{} \ili{} \ili{}&\ili{} it\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Partito\ili{} di\ili{} socialdemocratico\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Partito\ili{} socialdemocratico\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{}
+\ili{}%\ili{}\end\ili{}{tabular}}\ili{}
+\ili{}%\ili{}\caption\ili{}{Example\ili{} of\ili{} clusters\ili{} aggregated\ili{} on\ili{} the\ili{} basis\ili{} of\ili{} similar\ili{} tokens\ili{}.}\ili{}
+\ili{}%\ili{}\label\ili{}{tab\ili{}:common\ili{} token\ili{} aggregation}\ili{}
+\ili{}%\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\centering\ili{}
+\ili{}\ra\ili{}{1\ili{}.1}\ili{}
+\ili{}\resizebox\ili{}{8\ili{}.5cm}\ili{}{\ili{}!}\ili{}{\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{\ili{}@\ili{}{}clcc\ili{}@\ili{}{}}\ili{}\toprule\ili{}
+Clusters\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Expansion\ili{} \ili{} \ili{}&\ili{} Acronym\ili{} \ili{} \ili{}&\ili{} \ili{} Language\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\midrule\ili{}
+cluster\ili{} 1\ili{} \ili{} \ili{}&\ili{} \ili{} Social\ili{}-Democratic\ili{} Party\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} SDP\ili{} \ili{} \ili{}&\ili{} en\ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Social\ili{} Democratic\ili{} Party\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\midrule\ili{}
+cluster\ili{} 2\ili{} \ili{} \ili{}&\ili{} \ili{} Partito\ili{} Social\ili{}-Democratico\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} PSD\ili{} \ili{} \ili{}&\ili{} it\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Partito\ili{} di\ili{} socialdemocratico\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Partito\ili{} socialdemocratico\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}\bottomrule\ili{}
+\ili{}\end\ili{}{tabular}}\ili{}
+\ili{}\caption\ili{}{Example\ili{} of\ili{} clusters\ili{} aggregated\ili{} on\ili{} the\ili{} basis\ili{} of\ili{} similar\ili{} tokens\ili{}.}\ili{}
+\ili{}\label\ili{}{tab\ili{}:common\ili{} token\ili{} aggregation}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}
+We\ili{} compute\ili{} the\ili{} matrix\ili{} \ili{}$\ili{}(\ili{}|\ili{}\mathbb\ili{}{T}\ili{}|\ili{} \ili{}\times\ili{} \ili{}|\ili{}\mathbb\ili{}{T}\ili{}|\ili{})\ili{}$\ili{},\ili{} hereafter\ili{}
+\ili{}$InvEdit\ili{}$\ili{},\ili{} which\ili{} corresponds\ili{} to\ili{} the\ili{} inverse\ili{} of\ili{} the\ili{} normalized\ili{}
+Levenshtein\ili{} edit\ili{} distance\ili{} where\ili{} \ili{}$t_i\ili{} \ili{}:\ili{} i\ili{} \ili{}=\ili{} 1\ili{},\ili{}.\ili{}.\ili{}.\ili{},\ili{}|\ili{}\mathbb\ili{}{T}\ili{}|\ili{}$\ili{} and\ili{}
+\ili{}$t_j\ili{} \ili{}:\ili{} j\ili{} \ili{}=\ili{} 1\ili{},\ili{}.\ili{}.\ili{}.\ili{},\ili{}|\ili{}\mathbb\ili{}{T}\ili{}|\ili{}$\ili{} are\ili{} tokens\ili{} from\ili{} all\ili{} the\ili{} addressed\ili{}
+languages\ili{}:\ili{}
+\ili{}\begin\ili{}{equation}\ili{}\label\ili{}{eq\ili{}:edit}\ili{}
+InvEdit\ili{}(t_i\ili{},t_j\ili{})\ili{} \ili{}=\ili{} 1\ili{} \ili{}-\ili{} \ili{}\frac\ili{}{Lev\ili{}(t_i\ili{},t_j\ili{})}\ili{}{max\ili{}(\ili{}|t_i\ili{}|\ili{},\ili{}|t_j\ili{}|\ili{})}\ili{} \ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}$Lev\ili{}(t_i\ili{},t_j\ili{})\ili{}$\ili{} is\ili{} the\ili{} Levenshtein\ili{} edit\ili{}-distance\ili{} between\ili{} \ili{}$t_i\ili{}$\ili{} and\ili{} \ili{}$t_j\ili{}$\ili{},\ili{} \ili{}
+and\ili{} \ili{}$\ili{}|t_i\ili{}|\ili{}$\ili{} and\ili{} \ili{}$\ili{}|t_j\ili{}|\ili{}$\ili{} are\ili{} respectively\ili{} the\ili{} length\ili{} of\ili{} the\ili{} tokens\ili{} \ili{}$t_i\ili{}$\ili{} \ili{}
+and\ili{} \ili{}$t_j\ili{}$\ili{}.\ili{} We\ili{} filter\ili{} \ili{}$InvEdit\ili{}$\ili{} using\ili{} a\ili{} threshold\ili{} \ili{}$\ili{}\delta\ili{}$\ili{} as\ili{} follows\ili{}:\ili{}\\ili{}\\ili{}
+\ili{}
+\ili{}$InvEdit\ili{}(t_i\ili{},t_j\ili{},\ili{}\delta\ili{})\ili{} \ili{}=\ili{}$\ili{}
+\ili{}\\ili{}[\ili{}\left\ili{}\\ili{}{\ili{}
+\ili{} \ili{} \ili{}\begin\ili{}{array}\ili{}{lr}\ili{}
+\ili{} \ili{} \ili{} \ili{} InvEdit\ili{}(t_i\ili{},t_j\ili{})\ili{} \ili{}&\ili{} \ili{}:\ili{} InvEdit\ili{}(t_i\ili{},t_j\ili{})\ili{} \ili{}\ge\ili{} \ili{}\delta\ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} 0\ili{} \ili{}&\ili{} \ili{}:\ili{} InvEdit\ili{}(t_i\ili{},t_j\ili{})\ili{} \ili{}<\ili{} \ili{}\delta\ili{}
+\ili{} \ili{} \ili{}\end\ili{}{array}\ili{}
+\ili{}\right\ili{}.\ili{}
+\ili{}\\ili{}]\ili{}
+\ili{}
+\ili{}
+In\ili{} this\ili{} case\ili{},\ili{} if\ili{} \ili{}$\ili{}\delta\ili{} \ili{}=\ili{} 1\ili{}$\ili{},\ili{} \ili{}$InvEdit\ili{}$\ili{} only\ili{} contains\ili{} values\ili{} for\ili{}
+exact\ili{} matching\ili{} tokens\ili{}.\ili{}
+\ili{}
+This\ili{} matrix\ili{} is\ili{} then\ili{} used\ili{} to\ili{} enrich\ili{} the\ili{} monolingual\ili{} cluster\ili{}
+representation\ili{}.\ili{} \ili{} Given\ili{} two\ili{} languages\ili{} \ili{}$l_\ili{}{1}\ili{}$\ili{} and\ili{} \ili{}$l_\ili{}{2}\ili{}$\ili{},\ili{} the\ili{}
+corresponding\ili{} monolingual\ili{} clusters\ili{} \ili{}$C_\ili{}{l_\ili{}{1}}\ili{}$\ili{} and\ili{} \ili{}$C_\ili{}{l_\ili{}{2}}\ili{}$\ili{} do\ili{} not\ili{}
+have\ili{} common\ili{} tokens\ili{} since\ili{} in\ili{} \ili{}$\ili{}\mathbb\ili{}{T}\ili{}$\ili{} tokens\ili{} are\ili{}
+language\ili{}-dependent\ili{}.\ili{} The\ili{} \ili{}$InvEdit\ili{}$\ili{} matrix\ili{} is\ili{} used\ili{} to\ili{} identify\ili{} common\ili{} or\ili{}
+similar\ili{} tokens\ili{}.\ili{} We\ili{} convert\ili{} the\ili{} obtained\ili{} matrix\ili{} \ili{}$C\ili{}\_Tok_\ili{}{l_\ili{}{1}}\ili{}$\ili{} to\ili{} a\ili{}
+binary\ili{} matrix\ili{}:\ili{}\\ili{}\\ili{}
+\ili{}
+\ili{}$C\ili{}\_Tok_\ili{}{l_\ili{}{1}}\ili{}(c_i\ili{},t_j\ili{})\ili{} \ili{}=\ili{}$\ili{}
+\ili{}\\ili{}[\ili{}\left\ili{}\\ili{}{\ili{}
+\ili{} \ili{} \ili{}\begin\ili{}{array}\ili{}{lr}\ili{}
+\ili{} \ili{} \ili{} \ili{} 1\ili{} \ili{}:\ili{} C_\ili{}{l_\ili{}{1}}\ili{}(c_i\ili{},t_j\ili{})\ili{} \ili{}\times\ili{} InvEdit\ili{}(c_i\ili{},t_j\ili{},\ili{}\delta\ili{})\ili{} \ili{}>\ili{} 0\ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} 0\ili{} \ili{}:\ili{} otherwise\ili{}
+\ili{} \ili{} \ili{}\end\ili{}{array}\ili{}
+\ili{}\right\ili{}.\ili{}
+\ili{}\\ili{}]\ili{}
+\ili{}
+This\ili{} aggregation\ili{} is\ili{} particularly\ili{} useful\ili{} when\ili{} comparing\ili{} clusters\ili{} from\ili{}
+similar\ili{} languages\ili{}.\ili{} Table\ili{} \ili{}\ref\ili{}{tab\ili{}:common\ili{} token\ili{} aggregation}\ili{}
+illustrates\ili{} such\ili{} cases\ili{},\ili{} with\ili{} the\ili{} \ili{}\ili\ili{}{English}\ili{}-\ili{}\ili\ili{}{Italian}\ili{} tokens\ili{}
+\ili{}\textit\ili{}{Party\ili{}/Partito}\ili{} and\ili{} \ili{}\textit\ili{}{Democratic\ili{}/Democratico}\ili{}.\ili{} This\ili{}
+representation\ili{} can\ili{} also\ili{} benefit\ili{} from\ili{} the\ili{} fact\ili{} that\ili{} it\ili{} is\ili{} possible\ili{} to\ili{}
+find\ili{} multi\ili{}-word\ili{} entities\ili{} of\ili{} a\ili{} given\ili{} language\ili{} in\ili{} texts\ili{} in\ili{} another\ili{}
+language\ili{} \ili{}(especially\ili{} with\ili{} names\ili{} of\ili{} international\ili{} organisations\ili{} such\ili{} as\ili{}
+\ili{}\textit\ili{}{European\ili{} Space\ili{} Agency}\ili{} which\ili{} can\ili{} be\ili{} found\ili{} in\ili{} \ili{}\ili\ili{}{German}\ili{} text\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\paragraph\ili{}*\ili{}{Cluster\ili{} aggregation\ili{} based\ili{} on\ili{} translated\ili{} tokens\ili{}.}\ili{}~\ili{}\\ili{}\\ili{}
+\ili{}\label\ili{}{translated}\ili{}
+\ili{}
+\ili{}%\ili{}\begin\ili{}{table}\ili{}
+\ili{}%\ili{}\centering\ili{}
+\ili{}%\ili{}\resizebox\ili{}{8\ili{}.0cm}\ili{}{\ili{}!}\ili{}{\ili{}
+\ili{}%\ili{}\begin\ili{}{tabular}\ili{}{\ili{}|c\ili{}|l\ili{}|c\ili{}|c\ili{}|}\ili{}
+\ili{}%\ili{}\hline\ili{}
+\ili{}%Clusters\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Expansion\ili{} \ili{} \ili{}&\ili{} Acronym\ili{} \ili{} \ili{}&\ili{} \ili{} Language\ili{} \ili{}\\ili{}\\ili{}\hline\ili{} \ili{}\hline\ili{}
+\ili{}%cluster\ili{} 1\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Russian\ili{} Academy\ili{} of\ili{} Sciences\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} RAS\ili{} \ili{} \ili{}&\ili{} en\ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Russian\ili{} of\ili{} Academy\ili{} of\ili{} Sciences\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%cluster\ili{} 2\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} russischen\ili{} Akademie\ili{} der\ili{} Wissenschaften\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} RAW\ili{} \ili{} \ili{}&\ili{} de\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Russischen\ili{} Akademie\ili{} für\ili{} Wissenschaften\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Russische\ili{} Akademie\ili{} der\ili{} Wissenschaften\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}\hline\ili{}
+\ili{}%\ili{}\end\ili{}{tabular}}\ili{}
+\ili{}%\ili{}\caption\ili{}{Example\ili{} of\ili{} clusters\ili{} aggregated\ili{} on\ili{} the\ili{} basis\ili{} of\ili{} translated\ili{} tokens\ili{}.}\ili{}
+\ili{}%\ili{}\label\ili{}{tab\ili{}:translated\ili{} token\ili{} aggregation}\ili{}
+\ili{}%\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\centering\ili{}
+\ili{}\ra\ili{}{1\ili{}.1}\ili{}
+\ili{}\resizebox\ili{}{8\ili{}.5cm}\ili{}{\ili{}!}\ili{}{\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{\ili{}@\ili{}{}clcc\ili{}@\ili{}{}}\ili{}\toprule\ili{}
+Clusters\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Expansion\ili{} \ili{} \ili{}&\ili{} Acronym\ili{} \ili{} \ili{}&\ili{} \ili{} Language\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\midrule\ili{}
+cluster\ili{} 1\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Russian\ili{} Academy\ili{} of\ili{} Sciences\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} RAS\ili{} \ili{} \ili{}&\ili{} en\ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Russian\ili{} of\ili{} Academy\ili{} of\ili{} Sciences\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}\midrule\ili{}
+cluster\ili{} 2\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} russischen\ili{} Akademie\ili{} der\ili{} Wissenschaften\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} RAW\ili{} \ili{} \ili{}&\ili{} de\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Russischen\ili{} Akademie\ili{} für\ili{} Wissenschaften\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} Russische\ili{} Akademie\ili{} der\ili{} Wissenschaften\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}\bottomrule\ili{}
+\ili{}\end\ili{}{tabular}}\ili{}
+\ili{}\caption\ili{}{Example\ili{} of\ili{} clusters\ili{} aggregated\ili{} on\ili{} the\ili{} basis\ili{} of\ili{} translated\ili{} tokens\ili{}.}\ili{}
+\ili{}\label\ili{}{tab\ili{}:translated\ili{} token\ili{} aggregation}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}
+However\ili{},\ili{} many\ili{} entities\ili{} have\ili{} different\ili{} written\ili{} forms\ili{} across\ili{} languages\ili{}
+so\ili{} that\ili{} a\ili{} string\ili{}-based\ili{} comparison\ili{} of\ili{} tokens\ili{} is\ili{} not\ili{} successful\ili{}.\ili{} We\ili{}
+therefore\ili{} complement\ili{} the\ili{} cluster\ili{} aggregation\ili{} by\ili{} using\ili{} token\ili{}
+translation\ili{} probabilities\ili{} \ili{}(hereafter\ili{} \ili{}\textit\ili{}{TransTokAgg}\ili{})\ili{}.\ili{}
+\ili{}
+They\ili{} are\ili{} produced\ili{} using\ili{} statistical\ili{} translation\ili{} models\ili{} trained\ili{} on\ili{}
+\ili{}\isi\ili{}{parallel\ili{} corpora}\ili{} built\ili{} from\ili{} Wikipedia\ili{},\ili{} by\ili{} making\ili{} use\ili{} of\ili{} redirection\ili{}
+tables\ili{} \ili{}(i\ili{}.e\ili{}.\ili{} \ili{} several\ili{} written\ili{} forms\ili{} redirecting\ili{} to\ili{} a\ili{} specific\ili{}
+page\ili{}/entity\ili{})\ili{} and\ili{} of\ili{} interlingual\ili{} links\ili{} between\ili{} pages\ili{}.\ili{} \ili{}(implementation\ili{}
+details\ili{} of\ili{} translation\ili{} models\ili{} are\ili{} provided\ili{} in\ili{} section\ili{} \ili{}\ref\ili{}{trans}\ili{})\ili{}.\ili{}
+In\ili{} order\ili{} to\ili{} separate\ili{} training\ili{} and\ili{} test\ili{} data\ili{},\ili{} any\ili{} variant\ili{} name\ili{} from\ili{}
+these\ili{} Wikipedia\ili{} tables\ili{} matching\ili{} with\ili{} one\ili{} of\ili{} the\ili{} 1\ili{}.7\ili{} million\ili{} expansions\ili{}
+or\ili{} 0\ili{}.4\ili{} million\ili{} acronyms\ili{} is\ili{} removed\ili{} from\ili{} the\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{} \ili{}(See\ili{}
+section\ili{} \ili{}\ref\ili{}{evaluation}\ili{})\ili{}.\ili{}
+\ili{}
+Let\ili{} \ili{}$TransMod\ili{}$\ili{} be\ili{} the\ili{} resulting\ili{} \ili{}$\ili{}(\ili{}|\ili{}\mathbb\ili{}{T}\ili{}|\ili{} \ili{}\times\ili{} \ili{}|\ili{}\mathbb\ili{}{T}\ili{}|\ili{})\ili{}$\ili{}
+\ili{}\isi\ili{}{translation\ili{} model}\ili{} matrix\ili{} where\ili{} \ili{}$t_i\ili{} \ili{}:\ili{} i\ili{} \ili{}=\ili{} 1\ili{},\ili{}.\ili{}.\ili{}.\ili{},\ili{}|\ili{}\mathbb\ili{}{T}\ili{}|\ili{}$\ili{} and\ili{} \ili{}$t_j\ili{}
+\ili{}:\ili{} j\ili{} \ili{}=\ili{} 1\ili{},\ili{}.\ili{}.\ili{}.\ili{},\ili{}|\ili{}\mathbb\ili{}{T}\ili{}|\ili{}$\ili{} are\ili{} tokens\ili{}.\ili{} \ili{} As\ili{} for\ili{} \ili{}$InvEdit\ili{}$\ili{} matrix\ili{},\ili{} we\ili{}
+filter\ili{} \ili{}$TransMod\ili{}$\ili{} using\ili{} a\ili{} threshold\ili{} \ili{}$\ili{}\beta\ili{}$\ili{}:\ili{}\\ili{}\\ili{}
+\ili{}
+\ili{}$TransMod\ili{}(t_i\ili{},t_j\ili{},\ili{}\beta\ili{})\ili{} \ili{}=\ili{}$\ili{}
+\ili{}\\ili{}[\ili{}\left\ili{}\\ili{}{\ili{}
+\ili{} \ili{} \ili{}\begin\ili{}{array}\ili{}{lr}\ili{}
+\ili{} \ili{} \ili{} \ili{} TransMod\ili{}(t_i\ili{},t_j\ili{})\ili{} \ili{}&\ili{} \ili{}:\ili{} TransMod\ili{}(t_i\ili{},t_j\ili{})\ili{} \ili{}\ge\ili{} \ili{}\beta\ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} 0\ili{} \ili{}&\ili{} \ili{}:\ili{} TransMod\ili{}(t_i\ili{},t_j\ili{})\ili{} \ili{}<\ili{} \ili{}\beta\ili{}
+\ili{} \ili{} \ili{}\end\ili{}{array}\ili{}
+\ili{}\right\ili{}.\ili{}
+\ili{}\\ili{}]\ili{}
+\ili{}
+This\ili{} matrix\ili{} is\ili{} then\ili{} used\ili{} to\ili{} enrich\ili{} the\ili{} monolingual\ili{} cluster\ili{}
+representation\ili{}.\ili{} \ili{} Given\ili{} a\ili{} language\ili{} \ili{}$l\ili{}$\ili{} and\ili{} its\ili{} corresponding\ili{}
+monolingual\ili{} clusters\ili{} \ili{}$C_\ili{}{l}\ili{}$\ili{},\ili{}$C\ili{}\_TransTok_\ili{}{l}\ili{}$\ili{} corresponds\ili{} to\ili{} the\ili{}
+binary\ili{} extended\ili{} matrix\ili{} based\ili{} on\ili{} a\ili{} given\ili{} \ili{}\isi\ili{}{translation\ili{} model}\ili{}:\ili{}\\ili{}\\ili{}
+\ili{}
+\ili{}$C\ili{}\_TransTok_\ili{}{l}\ili{}(c_i\ili{},t_j\ili{})\ili{} \ili{}=\ili{}$\ili{}
+\ili{}\\ili{}[\ili{}\left\ili{}\\ili{}{\ili{}
+\ili{} \ili{} \ili{}\begin\ili{}{array}\ili{}{lr}\ili{}
+\ili{} \ili{} \ili{} \ili{} 1\ili{} \ili{}:\ili{} C_\ili{}{l}\ili{}(c_i\ili{},t_j\ili{})\ili{} \ili{}\times\ili{} TransMod\ili{}(c_i\ili{},t_j\ili{},\ili{}\beta\ili{})\ili{} \ili{}>\ili{} 0\ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} 0\ili{} \ili{}:\ili{} otherwise\ili{}
+\ili{} \ili{} \ili{}\end\ili{}{array}\ili{}
+\ili{}\right\ili{}.\ili{}
+\ili{}\\ili{}]\ili{}
+\ili{}
+Table\ili{} \ili{}\ref\ili{}{tab\ili{}:translated\ili{} token\ili{} aggregation}\ili{} illustrates\ili{} a\ili{} case\ili{} of\ili{}
+such\ili{} cluster\ili{} aggregation\ili{},\ili{} thanks\ili{} to\ili{} a\ili{} high\ili{} score\ili{} in\ili{} the\ili{} \ili{}$TransMod\ili{}$\ili{}
+matrix\ili{} between\ili{} tokens\ili{} \ili{}\textit\ili{}{Science}\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{}
+\ili{}\textit\ili{}{Wissenschaften}\ili{} in\ili{} \ili{}\ili\ili{}{German}\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Aggregation\ili{} strategies}\ili{}
+\ili{}\label\ili{}{aggregation\ili{} clusters}\ili{}
+\ili{}
+\ili{} \ili{}
+We\ili{} formulate\ili{} cluster\ili{} linking\ili{} as\ili{} the\ili{} task\ili{} of\ili{} identifying\ili{} connected\ili{}
+components\ili{} in\ili{} a\ili{} graph\ili{},\ili{} where\ili{} monolingual\ili{} clusters\ili{} are\ili{} vertices\ili{} and\ili{}
+where\ili{} edges\ili{} represent\ili{} links\ili{} of\ili{} related\ili{} clusters\ili{} across\ili{}
+languages\ili{}.\ili{} Clusters\ili{} are\ili{} linked\ili{} if\ili{} their\ili{} similarity\ili{} is\ili{} above\ili{} a\ili{} certain\ili{}
+threshold\ili{} \ili{}$\ili{}\alpha\ili{}$\ili{}.\ili{} During\ili{} preliminary\ili{} experiments\ili{},\ili{} we\ili{} had\ili{} also\ili{} tested\ili{}
+\ili{}`pure\ili{}'\ili{} clustering\ili{} algorithms\ili{},\ili{} but\ili{} it\ili{} turned\ili{} out\ili{} that\ili{} the\ili{} graph\ili{}
+approach\ili{} was\ili{} more\ili{} efficient\ili{}.\ili{}
+\ili{}
+For\ili{} the\ili{} last\ili{} two\ili{} cluster\ili{} aggregation\ili{} methods\ili{} \ili{}(\ili{}\textit\ili{}{TokAgg}\ili{} and\ili{}
+\ili{}\textit\ili{}{TransTokAgg}\ili{})\ili{},\ili{} we\ili{} applied\ili{} two\ili{} similarity\ili{} measures\ili{}:\ili{} cosine\ili{} and\ili{}
+ComMNZ\ili{}.\ili{} The\ili{} latter\ili{} is\ili{} actually\ili{} a\ili{} data\ili{} fusion\ili{} algorithm\ili{} \ili{}\citep\ili{}{Fox\ili{}-94}\ili{}
+which\ili{} we\ili{} assimilate\ili{},\ili{} in\ili{} this\ili{} context\ili{},\ili{} to\ili{} a\ili{} similarity\ili{} measure\ili{}.\ili{} \ili{} This\ili{}
+algorithm\ili{} aims\ili{} at\ili{} measuring\ili{} the\ili{} similarity\ili{} between\ili{} two\ili{} objects\ili{} having\ili{}
+multiple\ili{} comparison\ili{} criteria\ili{}.\ili{} Specifically\ili{},\ili{} the\ili{} overall\ili{} similarity\ili{}
+score\ili{} between\ili{} two\ili{} objects\ili{} is\ili{} better\ili{} when\ili{} those\ili{} objects\ili{} have\ili{} reasonable\ili{}
+similarity\ili{} scores\ili{} for\ili{} all\ili{} criteria\ili{} than\ili{} when\ili{} they\ili{} have\ili{} a\ili{} very\ili{} good\ili{}
+similarity\ili{} score\ili{} for\ili{} one\ili{} criterion\ili{},\ili{} and\ili{} less\ili{} good\ili{} or\ili{} no\ili{} value\ili{} for\ili{} the\ili{}
+others\ili{}.\ili{} \ili{} In\ili{} our\ili{} case\ili{},\ili{} it\ili{} would\ili{} promote\ili{} the\ili{} similarity\ili{} between\ili{} two\ili{}
+clusters\ili{} \ili{}$c_i\ili{}$\ili{} and\ili{} \ili{}$c_j\ili{}$\ili{} if\ili{} they\ili{} have\ili{} many\ili{} similar\ili{} or\ili{} translated\ili{}
+tokens\ili{} \ili{}$t_k\ili{}$\ili{} with\ili{} a\ili{} reasonable\ili{} similarity\ili{} score\ili{},\ili{} and\ili{} it\ili{} would\ili{} decrease\ili{}
+the\ili{} similarity\ili{} between\ili{} two\ili{} clusters\ili{} \ili{}$c_i\ili{}$\ili{} and\ili{} \ili{}$c_j\ili{}$\ili{} if\ili{} they\ili{} have\ili{} few\ili{}
+similar\ili{} or\ili{} translated\ili{} tokens\ili{} \ili{}$t_k\ili{}$\ili{} with\ili{} a\ili{} very\ili{} high\ili{} similarity\ili{} score\ili{}:\ili{}
+\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+CombMNZ\ili{}(c_i\ili{},c_j\ili{})\ili{} \ili{}=\ili{} \ili{}\sum_\ili{}{t_k\ili{}\in\ili{} c_j}\ili{} \ili{}\frac\ili{}{C\ili{}(c_i\ili{},t_k\ili{})}\ili{}{\ili{}\sum_\ili{}{t_l\ili{}\in\ili{}
+\ili{} \ili{} \ili{} \ili{} c_i}\ili{} C\ili{}(c_i\ili{},t_l\ili{})}\ili{} \ili{}\times\ili{} \ili{}\sum_\ili{}{t_k\ili{}\in\ili{} c_j}\ili{} 1_\ili{}{\ili{}\\ili{}{C\ili{}(c_i\ili{},t_k\ili{})\ili{}\neq0\ili{}\}}\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Evaluation}\ili{}
+\ili{}\label\ili{}{evaluation}\ili{}
+\ili{}\subsubsection\ili{}{Evaluation\ili{} dataset}\ili{}
+\ili{}\label\ili{}{evalData}\ili{}
+\ili{}
+As\ili{} described\ili{} in\ili{} Section\ili{} \ili{}\ref\ili{}{starting}\ili{},\ili{} the\ili{} starting\ili{} point\ili{} of\ili{} our\ili{}
+experiments\ili{} is\ili{} a\ili{} set\ili{} of\ili{} 81\ili{},000\ili{} monolingual\ili{} clusters\ili{} with\ili{} one\ili{} acronym\ili{}
+per\ili{} cluster\ili{},\ili{} an\ili{} average\ili{} of\ili{} 7\ili{}.5\ili{} expansions\ili{} per\ili{} cluster\ili{},\ili{} many\ili{} of\ili{} them\ili{}
+having\ili{} few\ili{} expansions\ili{},\ili{} and\ili{} the\ili{} biggest\ili{} 232\ili{} expansions\ili{}.\ili{}
+\ili{}
+We\ili{} evaluate\ili{} cross\ili{}-lingual\ili{} cluster\ili{} aggregation\ili{} against\ili{} Wikipedia\ili{} data\ili{}
+excluding\ili{} the\ili{} part\ili{} used\ili{} for\ili{} the\ili{} translations\ili{} models\ili{} \ili{}(cf\ili{}.\ili{} previous\ili{}
+section\ili{})\ili{}.\ili{} \ili{} The\ili{} gold\ili{} standard\ili{} corresponds\ili{} to\ili{} a\ili{} set\ili{} of\ili{} Wikipedia\ili{}
+redirection\ili{} tables\ili{} and\ili{} interlingual\ili{} linking\ili{} tables\ili{},\ili{} where\ili{} we\ili{} consider\ili{}
+Wikipedia\ili{} entities\ili{}/pages\ili{} as\ili{} cross\ili{}-lingual\ili{} classes\ili{}.\ili{} \ili{} Each\ili{} class\ili{}
+contains\ili{} all\ili{} the\ili{} expressions\ili{} listed\ili{} in\ili{} the\ili{} redirection\ili{} tables\ili{} in\ili{} all\ili{}
+the\ili{} languages\ili{} linked\ili{} via\ili{} the\ili{} interlingual\ili{} linking\ili{} tables\ili{}.\ili{} Only\ili{} classes\ili{}
+having\ili{} at\ili{} least\ili{} two\ili{} expansions\ili{} were\ili{} selected\ili{},\ili{} resulting\ili{} in\ili{} a\ili{} gold\ili{}
+standard\ili{} of\ili{} 10\ili{},000\ili{} classes\ili{}.\ili{} \ili{} Considering\ili{} Wikipedia\ili{} information\ili{} as\ili{} a\ili{}
+gold\ili{} standard\ili{} is\ili{} disputable\ili{}.\ili{} \ili{} The\ili{} interlingual\ili{} linkings\ili{} should\ili{} be\ili{}
+reliable\ili{} but\ili{} this\ili{} is\ili{} less\ili{} the\ili{} case\ili{} for\ili{} the\ili{} redirection\ili{}
+tables\ili{}.\ili{} However\ili{},\ili{} a\ili{} manual\ili{} evaluation\ili{} of\ili{} the\ili{} redirection\ili{} table\ili{} quality\ili{}
+shows\ili{} that\ili{},\ili{} in\ili{} over\ili{} 160\ili{} randomly\ili{} extracted\ili{} classes\ili{} in\ili{} 4\ili{} different\ili{}
+languages\ili{} \ili{}(fr\ili{},\ili{} en\ili{},\ili{} de\ili{},\ili{} it\ili{})\ili{},\ili{} 93\ili{}.4\ili{}\\ili{}%\ili{} of\ili{} the\ili{} forms\ili{} were\ili{} correct\ili{}
+\ili{}\citep\ili{}{Jacquet\ili{}-14}\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Parameters}\ili{}
+\ili{}\label\ili{}{settings}\ili{}
+\ili{}
+Parameters\ili{} have\ili{} to\ili{} be\ili{} set\ili{} with\ili{} regards\ili{} to\ili{},\ili{} first\ili{},\ili{} the\ili{} thresholds\ili{}
+\ili{}$\ili{}\delta\ili{}$\ili{} and\ili{} \ili{}$\ili{}\beta\ili{}$\ili{} applied\ili{} to\ili{} filter\ili{} out\ili{} some\ili{} similarity\ili{} values\ili{} in\ili{}
+the\ili{} above\ili{}-mentioned\ili{} token\ili{} matrices\ili{} \ili{}(\ili{}$C\ili{}\_Tok_\ili{}{l}\ili{}$\ili{} and\ili{} \ili{}$C\ili{}\_TransTok_\ili{}{l}\ili{}$\ili{})\ili{} and\ili{},\ili{} second\ili{},\ili{}
+the\ili{} threshold\ili{} \ili{}$\ili{}\alpha\ili{}$\ili{} applied\ili{} to\ili{} the\ili{} aggregation\ili{} strategies\ili{},\ili{} i\ili{}.e\ili{}.\ili{} the\ili{}
+one\ili{} above\ili{} which\ili{} clusters\ili{} are\ili{} aggregated\ili{}.\ili{}
+\ili{}
+With\ili{} respect\ili{} to\ili{} cluster\ili{} representations\ili{} based\ili{} on\ili{} similar\ili{} tokens\ili{}
+\ili{}$C\ili{}\_Tok_\ili{}{l}\ili{}$\ili{},\ili{} the\ili{} threshold\ili{} \ili{}$\ili{}\delta\ili{}$\ili{} should\ili{} be\ili{} high\ili{} in\ili{} order\ili{} to\ili{}
+consider\ili{} two\ili{} tokens\ili{} as\ili{} similar\ili{} only\ili{} if\ili{} they\ili{} are\ili{} close\ili{} in\ili{} terms\ili{} of\ili{} edit\ili{}
+distance\ili{}.\ili{} Regarding\ili{} representations\ili{} based\ili{} on\ili{} translated\ili{} tokens\ili{}
+\ili{}$C\ili{}\_TransTok_\ili{}{l}\ili{}$\ili{},\ili{} the\ili{} threshold\ili{} \ili{}$\ili{}\beta\ili{}$\ili{} can\ili{} be\ili{} low\ili{} since\ili{} even\ili{} a\ili{} weak\ili{}
+token\ili{} similarity\ili{} could\ili{} be\ili{} a\ili{} relevant\ili{} indicator\ili{} at\ili{} the\ili{} cluster\ili{}
+level\ili{}.\ili{} For\ili{} our\ili{} experiments\ili{},\ili{} the\ili{} values\ili{} of\ili{} \ili{}$\ili{}\delta\ili{}$\ili{} and\ili{} \ili{}$\ili{}\beta\ili{}$\ili{} were\ili{}
+fixed\ili{} to\ili{} 0\ili{}.7\ili{} and\ili{} 0\ili{}.3\ili{} respectively\ili{}.\ili{}
+\ili{}
+Cluster\ili{} aggregation\ili{} is\ili{} allowed\ili{} when\ili{} the\ili{} cluster\ili{} similarity\ili{} \ili{}(either\ili{} in\ili{} terms\ili{} of\ili{} cosine\ili{} or\ili{}
+CombMNZ\ili{})\ili{} is\ili{} above\ili{} a\ili{} certain\ili{} threshold\ili{} \ili{}$\ili{}\alpha\ili{}$\ili{}.\ili{} We\ili{} experimented\ili{} with\ili{}
+different\ili{} values\ili{} for\ili{} \ili{}$\ili{}\alpha\ili{}$\ili{},\ili{} ranging\ili{} from\ili{} 0\ili{}.7\ili{} to\ili{} 1\ili{} \ili{}(cf\ili{}.\ili{} Section\ili{}
+\ili{}\ref\ili{}{results}\ili{})\ili{}.\ili{}
+\ili{}
+This\ili{} aggregation\ili{} step\ili{} is\ili{} further\ili{} regulated\ili{} with\ili{} the\ili{} addition\ili{} of\ili{} the\ili{}
+following\ili{} constraints\ili{}:\ili{} two\ili{} clusters\ili{} \ili{}$c_1\ili{}$\ili{} and\ili{} \ili{}$c_2\ili{}$\ili{} are\ili{} linked\ili{} if\ili{}
+their\ili{} similarity\ili{} is\ili{} above\ili{} \ili{}$\ili{}\alpha\ili{}$\ili{} and\ili{} if\ili{} \ili{}$c_1\ili{}$\ili{} is\ili{} in\ili{} the\ili{} \ili{}$k\ili{}$\ili{} most\ili{}
+similar\ili{} clusters\ili{} of\ili{} \ili{}$c_2\ili{}$\ili{} or\ili{} \ili{}$c_2\ili{}$\ili{} is\ili{} in\ili{} the\ili{} \ili{}$k\ili{}$\ili{} most\ili{} similar\ili{} clusters\ili{}
+of\ili{} \ili{}$c_1\ili{}$\ili{}.\ili{} This\ili{} additional\ili{} constraints\ili{} allow\ili{} to\ili{} \ili{}\isi\ili{}{rule}\ili{} out\ili{} clusters\ili{}
+having\ili{} a\ili{} high\ili{} similarity\ili{} with\ili{} a\ili{} lot\ili{} of\ili{} other\ili{} clusters\ili{}.\ili{} \ili{} This\ili{} is\ili{} the\ili{}
+case\ili{} for\ili{} short\ili{} and\ili{} frequent\ili{} expansions\ili{},\ili{} e\ili{}.g\ili{}.\ili{} \ili{}\textit\ili{}{Olympic\ili{}
+\ili{} \ili{} Committee}\ili{} which\ili{} is\ili{} highly\ili{} similar\ili{} to\ili{} a\ili{} cluster\ili{} containing\ili{}
+expansions\ili{} such\ili{} as\ili{} \ili{}\textit\ili{}{Olympic\ili{} Organizing\ili{} Committee}\ili{} or\ili{} to\ili{} another\ili{}
+containing\ili{} \ili{}\textit\ili{}{games\ili{} organising\ili{} committee}\ili{},\ili{} but\ili{} as\ili{} well\ili{} to\ili{}
+clusters\ili{} containing\ili{} more\ili{} specific\ili{} expansions\ili{} such\ili{} as\ili{} \ili{}\textit\ili{}{Vancouver\ili{}
+\ili{} \ili{} Olympic\ili{} Committee}\ili{}.\ili{} In\ili{} our\ili{} experiments\ili{},\ili{} \ili{}$k\ili{}$\ili{} equals\ili{} 3\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Translation\ili{} models}\ili{}
+\ili{}\label\ili{}{trans}\ili{}
+Cluster\ili{} representations\ili{} based\ili{} on\ili{} translated\ili{} tokens\ili{} correspond\ili{} to\ili{}
+lexical\ili{} conditional\ili{} translation\ili{} probabilities\ili{} computed\ili{} for\ili{} three\ili{}
+language\ili{} pairs\ili{},\ili{} between\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} \ili{}\ili\ili{}{French}\ili{},\ili{} \ili{}\ili\ili{}{German}\ili{} and\ili{} \ili{}\ili\ili{}{Italian}\ili{}.\ili{} The\ili{}
+translation\ili{} models\ili{} were\ili{} trained\ili{} on\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{} built\ili{} from\ili{}
+Wikipedia\ili{},\ili{} by\ili{} making\ili{} use\ili{} of\ili{} redirection\ili{} tables\ili{} \ili{}(i\ili{}.e\ili{}.\ili{} several\ili{} written\ili{}
+forms\ili{} redirecting\ili{} to\ili{} a\ili{} specific\ili{} page\ili{}/entity\ili{})\ili{} and\ili{} of\ili{} interlingual\ili{} links\ili{}
+between\ili{} pages\ili{}.\ili{} \ili{} More\ili{} specifically\ili{},\ili{} given\ili{} an\ili{} entity\ili{}/page\ili{} \ili{}$p\ili{}$\ili{} and\ili{} two\ili{}
+redirection\ili{} tables\ili{} \ili{}$rt_1\ili{}$\ili{} and\ili{} \ili{}$rt_2\ili{}$\ili{} in\ili{} languages\ili{} \ili{}$l_1\ili{}$\ili{} and\ili{} \ili{}$l_2\ili{}$\ili{},\ili{}
+each\ili{} written\ili{} form\ili{} from\ili{} \ili{}$rt_1\ili{}$\ili{} can\ili{} be\ili{} seen\ili{} as\ili{} a\ili{} translation\ili{} \ili{}$t\ili{}$\ili{} of\ili{} each\ili{}
+written\ili{} form\ili{} from\ili{} \ili{}$rt_2\ili{}$\ili{}.\ili{} For\ili{} a\ili{} given\ili{} language\ili{} pair\ili{},\ili{} the\ili{} corresponding\ili{}
+parallel\ili{} corpus\ili{} is\ili{} the\ili{} concatenation\ili{} of\ili{} all\ili{} translations\ili{} \ili{}$t\ili{}$\ili{} from\ili{} all\ili{}
+the\ili{} entities\ili{}/pages\ili{} \ili{}$p\ili{}$\ili{}.\ili{}
+\ili{}
+These\ili{} Wikipedia\ili{} tables\ili{} are\ili{} also\ili{} used\ili{} for\ili{} evaluation\ili{} purposes\ili{} \ili{}(cf\ili{}
+Section\ili{} \ili{}\ref\ili{}{evalData}\ili{})\ili{}.\ili{} As\ili{} a\ili{} consequence\ili{},\ili{} the\ili{} 1\ili{}.7\ili{} million\ili{} expansions\ili{}
+and\ili{} 0\ili{}.4\ili{} million\ili{} acronyms\ili{} on\ili{} which\ili{} the\ili{} approach\ili{} is\ili{} applied\ili{} were\ili{} removed\ili{}
+from\ili{} the\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{}.\ili{}
+\ili{}
+There\ili{} were\ili{} about\ili{} 300\ili{},000\ili{} training\ili{} examples\ili{} for\ili{} \ili{}\ili\ili{}{German}\ili{}-\ili{}-\ili{}\ili\ili{}{English}\ili{} and\ili{}
+\ili{}\ili\ili{}{French}\ili{}-\ili{}-\ili{}\ili\ili{}{English}\ili{},\ili{} and\ili{} about\ili{} 170\ili{},000\ili{} for\ili{} \ili{}\ili\ili{}{Italian}\ili{}-\ili{}-\ili{}\ili\ili{}{English}\ili{}.\ili{} \ili{} Word\ili{}
+alignments\ili{} with\ili{} many\ili{}-to\ili{}-one\ili{} links\ili{} were\ili{} generated\ili{} using\ili{} the\ili{}
+unsupervised\ili{} \ili{}{\ili{}\tt\ili{} fast\ili{}\_align}\ili{} tool\ili{} \ili{}\citep\ili{}{Dyer\ili{}-13}\ili{} in\ili{} both\ili{} directions\ili{}
+and\ili{} combined\ili{} with\ili{} the\ili{} \ili{}{\ili{}\tt\ili{} grow\ili{}-diag\ili{}-final\ili{}\\ili{}-and}\ili{} symmetrization\ili{}
+heuristic\ili{} \ili{}\citep\ili{}{Koehn\ili{}-03}\ili{}.\ili{} Lexical\ili{} translation\ili{} tables\ili{} for\ili{} the\ili{} three\ili{}
+language\ili{} pairs\ili{} in\ili{} both\ili{} directions\ili{} where\ili{} extracted\ili{} with\ili{} a\ili{} tool\ili{} from\ili{} the\ili{}
+Moses\ili{} translation\ili{} toolkit\ili{} \ili{}\citep\ili{}{Koehn\ili{}-07}\ili{}.\ili{} Tables\ili{} contain\ili{} maximum\ili{}
+likelihood\ili{} probability\ili{} estimated\ili{} for\ili{} the\ili{} conditional\ili{} word\ili{} translation\ili{}
+probabilities\ili{} \ili{}$p\ili{}(En\ili{}|\ili{}\\ili{}{Fr\ili{},De\ili{},It\ili{}\}\ili{})\ili{}$\ili{} and\ili{} \ili{}$p\ili{}(\ili{}\\ili{}{Fr\ili{},De\ili{},It\ili{}\}\ili{}|En\ili{})\ili{}$\ili{}.\ili{} Our\ili{}
+\ili{}$TransMod\ili{}$\ili{} matrix\ili{} is\ili{} constructed\ili{} based\ili{} on\ili{} the\ili{} concatenation\ili{} of\ili{} these\ili{}
+tables\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Evaluation\ili{} measures}\ili{}
+\ili{}
+Clusters\ili{} are\ili{} evaluated\ili{} against\ili{} the\ili{} gold\ili{} standard\ili{} using\ili{} micro\ili{}-average\ili{}
+Precision\ili{} and\ili{} Recall\ili{},\ili{} adopting\ili{} the\ili{} mapping\ili{} between\ili{} identified\ili{} clusters\ili{}
+and\ili{} gold\ili{} standard\ili{} clusters\ili{} which\ili{} maximised\ili{} the\ili{} \ili{}$F_1\ili{}$\ili{}
+measure\ili{}.\ili{} Micro\ili{}-average\ili{} precision\ili{} \ili{}(MAV\ili{}-P\ili{})\ili{} and\ili{} recall\ili{} \ili{}(MAV\ili{}-R\ili{})\ili{} are\ili{}
+defined\ili{} as\ili{} follows\ili{}:\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+MAV\ili{}-P\ili{} \ili{}(C\ili{})\ili{} \ili{}=\ili{} \ili{}\frac\ili{}{\ili{}\sum_\ili{}{c\ili{} \ili{}\in\ili{} C}\ili{}{EXP\ili{}(c\ili{})_\ili{}{true}}}\ili{}{\ili{}\sum_\ili{}{c\ili{} \ili{}\in\ili{} C}\ili{}{EXP\ili{}(c\ili{})_\ili{}{true}}\ili{}+\ili{}\sum_\ili{}{c\ili{} \ili{}\in\ili{}
+\ili{} C}\ili{}{EXP\ili{}(c\ili{})_\ili{}{false}}}\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+MAV\ili{}-R\ili{} \ili{}(C\ili{})\ili{} \ili{}=\ili{} \ili{}\frac\ili{}{\ili{}\sum_\ili{}{c\ili{} \ili{}\in\ili{} C}\ili{}{EXP\ili{}(c\ili{})_\ili{}{true}}}\ili{}{\ili{}\sum_\ili{}{c\ili{} \ili{}\in\ili{} C}\ili{}{EXP\ili{}(c\ili{})_\ili{}{true}}\ili{}+\ili{}\sum_\ili{}{c\ili{} \ili{}\in\ili{} C}\ili{}{EXP\ili{}(c\ili{})_\ili{}{miss}}}\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+where\ili{} \ili{}$C\ili{}$\ili{} is\ili{} the\ili{} set\ili{} of\ili{} produced\ili{} clusters\ili{},\ili{} \ili{}$EXP\ili{}(c\ili{})_\ili{}{true}\ili{}$\ili{} is\ili{} the\ili{} set\ili{}
+of\ili{} expansions\ili{} in\ili{} a\ili{} cluster\ili{} \ili{}$c\ili{}$\ili{} which\ili{} also\ili{} appear\ili{} in\ili{} the\ili{} corresponding\ili{}
+class\ili{} of\ili{} the\ili{} gold\ili{} standard\ili{},\ili{} and\ili{} \ili{}$EXP\ili{}(c\ili{})_\ili{}{false}\ili{}$\ili{} is\ili{} the\ili{} set\ili{} of\ili{}
+expansions\ili{} in\ili{} a\ili{} cluster\ili{} \ili{}$c\ili{}$\ili{} which\ili{} do\ili{} not\ili{} appear\ili{} in\ili{} the\ili{} gold\ili{}
+standard\ili{}\footnote\ili{}{We\ili{} tried\ili{} two\ili{} other\ili{} metrics\ili{}:\ili{} macro\ili{}-average\ili{} and\ili{}
+\ili{} \ili{} B\ili{}-cubed\ili{} measure\ili{} \ili{}\citep\ili{}{Bagga\ili{}-98}\ili{} but\ili{} since\ili{} results\ili{} are\ili{} comparable\ili{} we\ili{}
+\ili{} \ili{} do\ili{} not\ili{} report\ili{} them\ili{}.}\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Results\ili{} and\ili{} discussion}\ili{}
+\ili{}\label\ili{}{results}\ili{}
+\ili{}
+\ili{}%\ili{}\begin\ili{}{table}\ili{}
+\ili{}%\ili{}\centering\ili{}
+\ili{}%\ili{}\resizebox\ili{}{7cm}\ili{}{\ili{}!}\ili{}{\ili{}
+\ili{}%\ili{}\begin\ili{}{tabular}\ili{}{\ili{}|l\ili{}|c\ili{}|c\ili{}|c\ili{}|}\ili{}
+\ili{}%\ili{}\hline\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} MAV\ili{}-P\ili{} \ili{} \ili{}&\ili{} MAV\ili{}-R\ili{} \ili{} \ili{}&\ili{} \ili{} F1\ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{}\hline\ili{}
+\ili{}%Baseline\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 51\ili{}.5\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 67\ili{}.4\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%Monolingual\ili{} ExpAgg\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 96\ili{}.8\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 54\ili{}.8\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 69\ili{}.4\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{}
+\ili{}%Multilingual\ili{} ExpAgg\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 96\ili{}.9\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 65\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 78\ili{}.2\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%Cosine\ili{} measure\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}\hline\ili{} \ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%TokAgg\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 52\ili{}.5\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 68\ili{}.3\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%TransTokAgg\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.6\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 51\ili{}.8\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 67\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%\ili{}\textbf\ili{}{All\ili{} aggregations}\ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\textbf\ili{}{95\ili{}.5\ili{}\\ili{}%}\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{71\ili{}.4\ili{}\\ili{}%}\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}
+\ili{}%\ili{}\textbf\ili{}{81\ili{}.6\ili{}\\ili{}%}\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%ComMNZ\ili{} measure\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%TokAgg\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 52\ili{}.5\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 68\ili{}.3\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%TransTokAgg\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 51\ili{}.6\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 67\ili{}.6\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%\ili{}\textbf\ili{}{All\ili{} aggregations}\ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\textbf\ili{}{95\ili{}.8\ili{}\\ili{}%}\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{71\ili{}.2\ili{}\\ili{}%}\ili{} \ili{} \ili{}&\ili{} \ili{}
+\ili{}%\ili{}\textbf\ili{}{81\ili{}.6\ili{}\\ili{}%}\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{} \ili{} \ili{}
+\ili{}%\ili{}\end\ili{}{tabular}}\ili{}
+\ili{}%\ili{}\caption\ili{}{Cluster\ili{} aggregation\ili{} strategies\ili{} for\ili{} 3\ili{} language\ili{} pairs\ili{}.}\ili{}
+\ili{}%\ili{}\label\ili{}{tab\ili{}:Eval3l}\ili{}
+\ili{}%\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\centering\ili{}
+\ili{}\ra\ili{}{1\ili{}.1}\ili{}
+\ili{}\resizebox\ili{}{7cm}\ili{}{\ili{}!}\ili{}{\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{\ili{}@\ili{}{}lccc\ili{}@\ili{}{}}\ili{}\toprule\ili{}
+\ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{MAV\ili{}-P}\ili{} \ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{MAV\ili{}-R}\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{F1}\ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}\midrule\ili{}
+Baseline\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 51\ili{}.5\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 67\ili{}.4\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{} \ili{}
+Monolingual\ili{} ExpAgg\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 96\ili{}.8\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 54\ili{}.8\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 69\ili{}.4\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{}
+Multilingual\ili{} ExpAgg\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 96\ili{}.9\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 65\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 78\ili{}.2\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}\midrule\ili{}
+\ili{}\textbf\ili{}{Cosine\ili{} measure}\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}
+TokAgg\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 52\ili{}.5\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 68\ili{}.3\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{} \ili{} \ili{}
+TransTokAgg\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.6\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 51\ili{}.8\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 67\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{} \ili{}
+All\ili{} aggregations\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\textbf\ili{}{95\ili{}.5\ili{}\\ili{}%}\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{71\ili{}.4\ili{}\\ili{}%}\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}
+\ili{}\textbf\ili{}{81\ili{}.6\ili{}\\ili{}%}\ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}\midrule\ili{}
+\ili{}\textbf\ili{}{ComMNZ\ili{} measure}\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+TokAgg\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 52\ili{}.5\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 68\ili{}.3\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{} \ili{} \ili{}
+TransTokAgg\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 51\ili{}.6\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 67\ili{}.6\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{} \ili{}
+All\ili{} aggregations\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\textbf\ili{}{95\ili{}.8\ili{}\\ili{}%}\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{71\ili{}.2\ili{}\\ili{}%}\ili{} \ili{} \ili{}&\ili{} \ili{}
+\ili{}\textbf\ili{}{81\ili{}.6\ili{}\\ili{}%}\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}\bottomrule\ili{}
+\ili{}\end\ili{}{tabular}}\ili{}
+\ili{}\caption\ili{}{Cluster\ili{} aggregation\ili{} strategies\ili{} for\ili{} 3\ili{} language\ili{} pairs\ili{}.}\ili{}
+\ili{}\label\ili{}{tab\ili{}:Eval3l}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}
+Table\ili{} \ili{}\ref\ili{}{tab\ili{}:Eval3l}\ili{} reports\ili{} the\ili{} results\ili{} obtained\ili{} for\ili{} the\ili{} three\ili{} language\ili{} pairs\ili{} \ili{}
+for\ili{} which\ili{} we\ili{} have\ili{} a\ili{} \ili{}\isi\ili{}{translation\ili{} model}\ili{},\ili{} and\ili{} Table\ili{} \ili{}\ref\ili{}{tab\ili{}:Eval22l}\ili{} reports\ili{} on\ili{} a\ili{} \ili{}
+global\ili{} evaluation\ili{} for\ili{} 22\ili{} languages\ili{}.\ili{} In\ili{} both\ili{} cases\ili{},\ili{} values\ili{} were\ili{} computed\ili{} with\ili{} the\ili{} \ili{}
+aggregation\ili{} similarity\ili{} threshold\ili{} \ili{}$\ili{}\alpha\ili{}$\ili{} set\ili{} to\ili{} 0\ili{}.9\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\centering\ili{}
+\ili{}\ra\ili{}{1\ili{}.1}\ili{}
+\ili{}\resizebox\ili{}{7cm}\ili{}{\ili{}!}\ili{}{\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{\ili{}@\ili{}{}lccc\ili{}@\ili{}{}}\ili{}\toprule\ili{}
+\ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{MAV\ili{}-P}\ili{} \ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{MAV\ili{}-R}\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{F1}\ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}\midrule\ili{}
+Baseline\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 98\ili{}.2\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 40\ili{}.5\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 57\ili{}.4\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+Monolingual\ili{} ExpAgg\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 97\ili{}.0\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 44\ili{}.9\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 60\ili{}.5\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+Multilingual\ili{} ExpAgg\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.4\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 54\ili{}.6\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 70\ili{}.0\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}\midrule\ili{}
+\ili{}\textbf\ili{}{Cosine\ili{} measure}\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+TokAgg\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 98\ili{}.2\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 45\ili{}.3\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 62\ili{}.0\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{} \ili{}
+TransTokAgg\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 97\ili{}.7\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 41\ili{}.1\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 57\ili{}.9\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{}
+All\ili{} aggregations\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\textbf\ili{}{93\ili{}.1\ili{}\\ili{}%}\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{65\ili{}.9\ili{}\\ili{}%}\ili{} \ili{} \ili{}&\ili{} \ili{}
+\ili{}\textbf\ili{}{77\ili{}.2\ili{}\\ili{}%}\ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}\midrule\ili{}
+\ili{}\textbf\ili{}{ComMNZ\ili{} measure}\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+TokAgg\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 98\ili{}.2\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 45\ili{}.3\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 62\ili{}.0\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+TransTokAgg\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 98\ili{}.2\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} 40\ili{}.8\ili{}\\ili{}%\ili{} \ili{} \ili{}&\ili{} 57\ili{}.6\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{} \ili{}
+All\ili{} aggregations\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\textbf\ili{}{95\ili{}.8\ili{}\\ili{}%}\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{65\ili{}.5\ili{}\\ili{}%}\ili{} \ili{} \ili{}&\ili{} \ili{}
+\ili{}\textbf\ili{}{77\ili{}.8\ili{}\\ili{}%}\ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}\bottomrule\ili{}
+\ili{}\end\ili{}{tabular}}\ili{}
+\ili{}\caption\ili{}{Cluster\ili{} aggregation\ili{} strategies\ili{} on\ili{} 22\ili{} languages\ili{}.}\ili{}
+\ili{}\label\ili{}{tab\ili{}:Eval22l}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+We\ili{} defined\ili{} the\ili{} baseline\ili{} as\ili{} the\ili{} concatenation\ili{} of\ili{} all\ili{} monolingual\ili{}
+clusters\ili{} from\ili{} all\ili{} languages\ili{} under\ili{} consideration\ili{}.\ili{} It\ili{} has\ili{} a\ili{} high\ili{}
+precision\ili{} \ili{}(97\ili{}.7\ili{}\\ili{}%\ili{} and\ili{} 98\ili{}.2\ili{}\\ili{}%\ili{} in\ili{} Table\ili{} \ili{}\ref\ili{}{tab\ili{}:Eval3l}\ili{} and\ili{}
+\ili{}\ref\ili{}{tab\ili{}:Eval22l}\ili{} resp\ili{}.\ili{})\ili{} and\ili{} a\ili{} poor\ili{} recall\ili{} \ili{}(51\ili{}.5\ili{}\\ili{}%\ili{} and\ili{} 40\ili{}.5\ili{}\\ili{}%\ili{})\ili{} since\ili{}
+none\ili{} of\ili{} the\ili{} clusters\ili{} is\ili{} cross\ili{}-lingual\ili{}.\ili{} The\ili{} challenge\ili{} is\ili{} thus\ili{} to\ili{}
+improve\ili{} the\ili{} recall\ili{} without\ili{} affecting\ili{} too\ili{} much\ili{} the\ili{} precision\ili{}.\ili{}
+\ili{}
+In\ili{} Tables\ili{} \ili{}\ref\ili{}{tab\ili{}:Eval3l}\ili{} and\ili{} \ili{}\ref\ili{}{tab\ili{}:Eval22l}\ili{},\ili{} \ili{}\textit\ili{}{monolingual\ili{}
+\ili{} \ili{} ExpAgg}\ili{} corresponds\ili{} to\ili{} the\ili{} expansion\ili{} aggregation\ili{} strategy\ili{} applied\ili{} at\ili{}
+the\ili{} monolingual\ili{} level\ili{},\ili{} and\ili{} \ili{}\textit\ili{}{multilingual\ili{} ExpAgg}\ili{} at\ili{} the\ili{}
+multilingual\ili{} level\ili{}.\ili{} \ili{} The\ili{} \ili{}$TokAgg\ili{}$\ili{} and\ili{} \ili{}$TransTokAgg\ili{}$\ili{} lines\ili{} correspond\ili{}
+to\ili{} results\ili{} with\ili{} the\ili{} corresponding\ili{} token\ili{} aggregation\ili{} strategies\ili{} using\ili{}
+cosine\ili{} similarity\ili{} and\ili{} CombMNZ\ili{} fusion\ili{},\ili{} and\ili{} \ili{}\textit\ili{}{All\ili{} aggregations}\ili{} to\ili{}
+the\ili{} ones\ili{} obtained\ili{} when\ili{} using\ili{} the\ili{} four\ili{} aggregation\ili{} strategies\ili{} in\ili{} a\ili{}
+joint\ili{} way\ili{}.\ili{}
+\ili{}
+It\ili{} can\ili{} be\ili{} observed\ili{} that\ili{} each\ili{} aggregation\ili{} strategy\ili{} contributes\ili{} to\ili{}
+improving\ili{} the\ili{} quality\ili{} of\ili{} cross\ili{}-lingual\ili{} cluster\ili{} aggregation\ili{},\ili{} with\ili{}
+\ili{}$multilingual\ili{} ExpAgg\ili{}$\ili{} providing\ili{} the\ili{} best\ili{} improvement\ili{} \ili{}(\ili{}+10\ili{}.8\ili{} points\ili{} for\ili{}
+the\ili{} 3\ili{} language\ili{} pairs\ili{} and\ili{} \ili{}+12\ili{}.6\ili{} points\ili{} for\ili{} the\ili{} 22\ili{} languages\ili{})\ili{}.\ili{} The\ili{}
+contribution\ili{} of\ili{} the\ili{} \ili{}$TransTokAgg\ili{}$\ili{} aggregation\ili{} is\ili{} slightly\ili{}
+disappointing\ili{};\ili{} it\ili{} improves\ili{} the\ili{} baseline\ili{} in\ili{} both\ili{} language\ili{}
+configurations\ili{},\ili{} but\ili{} not\ili{} significantly\ili{}.\ili{} \ili{} Nevertheless\ili{},\ili{} when\ili{} all\ili{} the\ili{}
+aggregations\ili{} are\ili{} applied\ili{} \ili{}(bold\ili{} lines\ili{})\ili{},\ili{} results\ili{} are\ili{} better\ili{} than\ili{} the\ili{}
+addition\ili{} of\ili{} each\ili{} single\ili{} aggregation\ili{}.\ili{} It\ili{} could\ili{} mean\ili{} that\ili{} the\ili{}
+\ili{}$TransTokAgg\ili{}$\ili{} aggregation\ili{} provides\ili{} links\ili{} between\ili{} clusters\ili{} which\ili{} are\ili{}
+not\ili{} useful\ili{} in\ili{} isolation\ili{},\ili{} but\ili{} adds\ili{} relevant\ili{} bridges\ili{} between\ili{} sets\ili{} of\ili{}
+clusters\ili{} when\ili{} combined\ili{} with\ili{} other\ili{} aggregations\ili{}.\ili{} Besides\ili{},\ili{} one\ili{} should\ili{}
+notice\ili{} that\ili{} between\ili{} the\ili{} three\ili{} language\ili{} pairs\ili{} and\ili{} the\ili{} 22\ili{} languages\ili{},\ili{}
+improvements\ili{} per\ili{} aggregation\ili{} strategy\ili{} are\ili{} comparable\ili{}.\ili{} Similarly\ili{},\ili{}
+results\ili{} obtained\ili{} based\ili{} on\ili{} cosine\ili{} similarity\ili{} and\ili{} CombMNZ\ili{} fusion\ili{} are\ili{}
+comparable\ili{}.\ili{} \ili{} This\ili{} strengthens\ili{} the\ili{} reliability\ili{} of\ili{} the\ili{} obtained\ili{} results\ili{}.\ili{}
+\ili{}
+Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:Eval22l}\ili{} shows\ili{} the\ili{} impact\ili{} of\ili{} the\ili{} threshold\ili{}
+\ili{}$\ili{}\alpha\ili{}$\ili{}.\ili{} When\ili{} too\ili{} low\ili{} \ili{}(0\ili{}.7\ili{})\ili{},\ili{} the\ili{} F1\ili{} measure\ili{} can\ili{} be\ili{} below\ili{} the\ili{} baseline\ili{}
+because\ili{} too\ili{} many\ili{} links\ili{} are\ili{} established\ili{} between\ili{} clusters\ili{};\ili{} when\ili{} too\ili{} high\ili{}
+\ili{}(1\ili{}.0\ili{})\ili{},\ili{} aggregations\ili{} based\ili{} on\ili{} similar\ili{} and\ili{} translated\ili{} tokens\ili{} are\ili{} reduced\ili{}
+to\ili{} values\ili{} close\ili{} to\ili{} zero\ili{}.\ili{} \ili{} In\ili{} between\ili{},\ili{} it\ili{} has\ili{} a\ili{} clear\ili{} improvement\ili{}
+impact\ili{}.\ili{}
+\ili{}
+Overall\ili{},\ili{} all\ili{} aggregations\ili{} strongly\ili{} improve\ili{} the\ili{} baseline\ili{} by\ili{} increasing\ili{}
+the\ili{} recall\ili{} \ili{}(\ili{}+19\ili{}.7\ili{} and\ili{} \ili{}+23\ili{}.4\ili{} points\ili{} resp\ili{}.\ili{})\ili{} with\ili{} a\ili{} small\ili{} loss\ili{} in\ili{}
+precision\ili{} \ili{}(\ili{}-1\ili{}.9\ili{} and\ili{} \ili{}-2\ili{}.4\ili{} points\ili{} resp\ili{}.\ili{})\ili{}.\ili{} Eventually\ili{},\ili{} there\ili{} are\ili{} 64\ili{},000\ili{}
+cross\ili{}-lingual\ili{} connected\ili{} clusters\ili{} across\ili{} languages\ili{} instead\ili{} of\ili{} 81\ili{},000\ili{}
+monolingual\ili{} ones\ili{} for\ili{} the\ili{} 22\ili{} languages\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\includegraphics\ili{}[scale\ili{}=0\ili{}.7\ili{}]\ili{}{figures\ili{}/cosine_average_all_ln_improvment\ili{}.png}\ili{}
+\ili{}\caption\ili{}{F1\ili{} improvement\ili{} per\ili{} aggregation\ili{} type\ili{} on\ili{} 22\ili{} languages\ili{} given\ili{} \ili{}$\ili{}\alpha\ili{}$\ili{},\ili{} using\ili{} cosine\ili{} similarity}\ili{}
+\ili{}\label\ili{}{fig\ili{}:Eval22l}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\section\ili{}{Multi\ili{}-word\ili{} Entity\ili{} pattern\ili{} learning}\ili{}
+\ili{}
+The\ili{} previous\ili{} section\ili{} describes\ili{} an\ili{} approach\ili{} which\ili{} is\ili{} useful\ili{} to\ili{} recognise\ili{} frequently\ili{} mentioned\ili{} MWEntities\ili{} and\ili{} cluster\ili{} them\ili{} across\ili{} languages\ili{},\ili{} but\ili{} it\ili{} is\ili{} limited\ili{} to\ili{} MWEntities\ili{} mentioned\ili{} at\ili{} least\ili{} once\ili{} followed\ili{} or\ili{} preceded\ili{} by\ili{} its\ili{} corresponding\ili{} acronym\ili{}.\ili{} In\ili{} this\ili{} section\ili{} we\ili{} focus\ili{} on\ili{} a\ili{} complementary\ili{} approach\ili{} to\ili{} address\ili{} the\ili{} MWEntity\ili{} recognition\ili{} task\ili{}.\ili{} From\ili{} the\ili{} automatically\ili{} obtained\ili{} resource\ili{} composed\ili{} of\ili{} 64\ili{},000\ili{} entities\ili{} and\ili{} their\ili{} 600\ili{},000\ili{} multilingual\ili{} lexical\ili{} variants\ili{},\ili{} we\ili{} aim\ili{} at\ili{} learning\ili{} MWEntity\ili{} patterns\ili{} in\ili{} order\ili{} to\ili{} recognise\ili{} new\ili{} and\ili{} not\ili{} previously\ili{} mentioned\ili{} MWEntities\ili{}.\ili{} The\ili{} described\ili{} approach\ili{} is\ili{} ongoing\ili{} work\ili{}.\ili{} Consequently\ili{},\ili{} if\ili{} the\ili{} final\ili{} goal\ili{} is\ili{} to\ili{} learn\ili{} these\ili{} MWEntity\ili{} patterns\ili{} from\ili{} the\ili{} automatically\ili{} extracted\ili{} MWEntity\ili{} resource\ili{},\ili{} we\ili{} must\ili{} first\ili{} control\ili{} that\ili{} our\ili{} learning\ili{} approach\ili{} is\ili{} reliable\ili{} independently\ili{} of\ili{} the\ili{} used\ili{} MWEntity\ili{} resource\ili{}'s\ili{} quality\ili{}.\ili{} This\ili{} section\ili{} describes\ili{} the\ili{} use\ili{} of\ili{} an\ili{} existing\ili{} and\ili{} reliable\ili{} resource\ili{} to\ili{} evaluate\ili{} our\ili{} pattern\ili{} learning\ili{} approach\ili{}.\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Extraction\ili{} of\ili{} organisation\ili{} names\ili{} from\ili{} BabelNet}\ili{}
+\ili{}\label\ili{}{sec\ili{}:babelnet}\ili{}
+\ili{}
+For\ili{} the\ili{} sake\ili{} of\ili{} learning\ili{} multi\ili{}-word\ili{} entity\ili{} extraction\ili{} patterns\ili{} we\ili{} have\ili{} exploited\ili{} BabelNet\ili{}~\ili{}\citep\ili{}{Navigli\ili{}-12}\ili{},\ili{}
+a\ili{} large\ili{} multilingual\ili{} encyclopedic\ili{} dictionary\ili{} and\ili{} semantic\ili{} network\ili{},\ili{} created\ili{} by\ili{} merging\ili{} various\ili{} publicly\ili{} available\ili{} linguistic\ili{} resources\ili{},\ili{} e\ili{}.g\ili{}.\ili{},\ili{} WordNet\ili{} and\ili{} Wikipedia\ili{}.\ili{} In\ili{} particular\ili{},\ili{} BabelNet\ili{} contains\ili{} circa\ili{} 7\ili{},7\ili{} millions\ili{} of\ili{} named\ili{} entity\ili{}-related\ili{} \ili{}(NE\ili{}-related\ili{})\ili{} synsets\ili{}.\ili{} We\ili{} used\ili{} the\ili{} BabelNet\ili{} API\ili{}~\ili{}\footnote\ili{}{\ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/babelnet\ili{}.org\ili{}/guide}}\ili{} to\ili{} extract\ili{} organisation\ili{} names\ili{} for\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} \ili{}\ili\ili{}{Spanish}\ili{},\ili{} which\ili{} were\ili{} then\ili{} used\ili{} in\ili{} the\ili{} process\ili{} of\ili{} learning\ili{} patterns\ili{} in\ili{} various\ili{} ways\ili{}.\ili{} Since\ili{} the\ili{} NE\ili{}-related\ili{} BabelNet\ili{} synsets\ili{} are\ili{} not\ili{} tagged\ili{} with\ili{} a\ili{} specific\ili{} NE\ili{} tag\ili{},\ili{} the\ili{} NE\ili{} type\ili{} was\ili{} inferred\ili{} through\ili{} utilisation\ili{} of\ili{} the\ili{} hypernym\ili{} information\ili{} provided\ili{} in\ili{} BabelNet\ili{} \ili{}(i\ili{}.e\ili{}.\ili{},\ili{} using\ili{} WordNet\ili{} hypernyms\ili{} and\ili{} Wikipedia\ili{} categories\ili{})\ili{}.\ili{} To\ili{} be\ili{} more\ili{} precise\ili{},\ili{} based\ili{} on\ili{} hypernym\ili{} frequency\ili{} information\ili{} for\ili{} the\ili{} entire\ili{} set\ili{} of\ili{} named\ili{} entities\ili{} a\ili{} list\ili{} of\ili{} \ili{}\textit\ili{}{positive}\ili{} \ili{}(circa\ili{} 200\ili{})\ili{} and\ili{} \ili{}\textit\ili{}{negative}\ili{} \ili{}(circa\ili{} 20\ili{})\ili{} hypernyms\ili{} was\ili{} manually\ili{} created\ili{}.\ili{} These\ili{} lists\ili{} were\ili{} subsequently\ili{} used\ili{} to\ili{} extract\ili{} organisation\ili{} names\ili{},\ili{} i\ili{}.e\ili{}.\ili{},\ili{} a\ili{} given\ili{} synset\ili{} was\ili{} extracted\ili{} if\ili{}:\ili{} \ili{}(a\ili{})\ili{} there\ili{} was\ili{} at\ili{} least\ili{} one\ili{} hypernym\ili{} for\ili{} the\ili{} main\ili{} sense\ili{} of\ili{} the\ili{} synset\ili{} in\ili{} the\ili{} list\ili{} of\ili{} positive\ili{} hypernyms\ili{},\ili{} and\ili{} \ili{}(b\ili{})\ili{} no\ili{} hypernym\ili{} for\ili{} the\ili{} main\ili{} sense\ili{} of\ili{} the\ili{} synset\ili{} was\ili{} on\ili{} the\ili{} list\ili{} of\ili{} negative\ili{} hypernyms\ili{}.\ili{} For\ili{} instance\ili{},\ili{} the\ili{} list\ili{} of\ili{} positive\ili{} hypernyms\ili{} for\ili{} extracting\ili{} organisations\ili{} includes\ili{} terms\ili{} like\ili{}:\ili{} \ili{}\textit\ili{}{airline}\ili{},\ili{} \ili{}\textit\ili{}{enterprise}\ili{},\ili{} \ili{}\textit\ili{}{corporation}\ili{},\ili{} \ili{}\textit\ili{}{bank}\ili{},\ili{} \ili{}\textit\ili{}{local\ili{}\_government}\ili{},\ili{} \ili{}\textit\ili{}{political\ili{}\_organisation}\ili{},\ili{} \ili{}\textit\ili{}{law\ili{}\_enforcement\ili{}\_agency}\ili{},\ili{} whereas\ili{} the\ili{} list\ili{} of\ili{} negative\ili{} hypernyms\ili{} includes\ili{} terms\ili{} like\ili{} \ili{}\textit\ili{}{person}\ili{} and\ili{} \ili{}\textit\ili{}{human}\ili{}.\ili{} The\ili{} main\ili{} drive\ili{} behind\ili{} the\ili{} usage\ili{} of\ili{} negative\ili{} hypernym\ili{} list\ili{} was\ili{} to\ili{} filter\ili{} out\ili{} potentially\ili{} ambiguous\ili{} named\ili{} entity\ili{} candidates\ili{}.\ili{} In\ili{} total\ili{},\ili{} we\ili{} have\ili{} extracted\ili{} 647\ili{} 898\ili{} and\ili{} 127\ili{} 264\ili{} organisation\ili{} names\ili{} for\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} \ili{}\ili\ili{}{Spanish}\ili{} respectively\ili{}.\ili{} For\ili{} the\ili{} multi\ili{}-word\ili{} organisation\ili{} name\ili{} pattern\ili{} learning\ili{} we\ili{} exploited\ili{} only\ili{} names\ili{} that\ili{} consisted\ili{} of\ili{} at\ili{} least\ili{} two\ili{} token\ili{},\ili{} which\ili{} resulted\ili{} in\ili{} maintaining\ili{} only\ili{} 87\ili{}.0\ili{}\\ili{}%\ili{} \ili{}(557\ili{} 841\ili{})\ili{} of\ili{} the\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} 86\ili{}.1\ili{}\\ili{}%\ili{} \ili{}(127\ili{} 264\ili{})\ili{} of\ili{} the\ili{} \ili{}\ili\ili{}{Spanish}\ili{} organisation\ili{} names\ili{} extracted\ili{}.\ili{} Noteworthy\ili{},\ili{} the\ili{} resource\ili{} for\ili{} \ili{}\ili\ili{}{English}\ili{} obtained\ili{} in\ili{} this\ili{} manner\ili{} includes\ili{} a\ili{} portion\ili{} of\ili{} organisation\ili{} names\ili{} in\ili{} foreign\ili{} languages\ili{},\ili{} which\ili{} is\ili{} most\ili{} likely\ili{} due\ili{} to\ili{} the\ili{} fact\ili{} that\ili{} some\ili{} non\ili{}-\ili{}\ili\ili{}{English}\ili{} name\ili{} variants\ili{} have\ili{} been\ili{} tagged\ili{} in\ili{} BabelNet\ili{} as\ili{} variants\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{}.\ili{} Since\ili{} the\ili{} entire\ili{} procedure\ili{} for\ili{} pulling\ili{} out\ili{} organisation\ili{} names\ili{} from\ili{} BabelNet\ili{} is\ili{} automated\ili{} such\ili{} language\ili{}-specific\ili{} name\ili{} variants\ili{} have\ili{} not\ili{} been\ili{} manually\ili{} removed\ili{}.\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Learning\ili{} multi\ili{}-word\ili{} entity\ili{} patterns\ili{} based\ili{} solely\ili{} on\ili{} BabelNet\ili{} resources}\ili{}
+\ili{}\label\ili{}{sec\ili{}:babelnet\ili{}-only\ili{}-derived\ili{}-patterns}\ili{}
+\ili{}
+The\ili{} first\ili{} approach\ili{} to\ili{} learning\ili{} multi\ili{}-word\ili{} organisation\ili{} name\ili{} extraction\ili{} patterns\ili{} exploits\ili{} as\ili{} the\ili{} only\ili{} resource\ili{} the\ili{} organisation\ili{} names\ili{} extracted\ili{} from\ili{} BabelNet\ili{} \ili{}(see\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:babelnet}\ili{})\ili{}.\ili{} Therefrom\ili{} simple\ili{} linear\ili{} patterns\ili{} are\ili{} learned\ili{} that\ili{} consist\ili{} of\ili{} two\ili{} types\ili{} of\ili{} elements\ili{},\ili{} namely\ili{},\ili{} surface\ili{} forms\ili{} \ili{}(as\ili{} they\ili{} appear\ili{} in\ili{} the\ili{} organisation\ili{} names\ili{})\ili{} and\ili{} generic\ili{} token\ili{} classes\ili{},\ili{} which\ili{} will\ili{} be\ili{} referred\ili{} to\ili{} as\ili{} token\ili{} class\ili{} elements\ili{}.\ili{} The\ili{} following\ili{} example\ili{} illustrates\ili{} the\ili{} syntax\ili{} of\ili{} the\ili{} patterns\ili{}:\ili{}
+\ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} \ili{} \ili{} University\ili{} \ili{}[\ili{}]\ili{} of\ili{} \ili{}[\ili{}]\ili{} the\ili{} \ili{}[\ili{}]\ili{} \ili{}[UPP_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} in\ili{} \ili{}[\ili{}]\ili{} \ili{}[UPP_W\ili{}]\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}[ALLCAP\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[UPP_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} Construction\ili{} \ili{}[\ili{}]\ili{} Group\ili{}
+\ili{} \ili{} \ili{} \ili{} The\ili{} \ili{}[\ili{}]\ili{} \ili{}[NUM_LET\ili{}]\ili{} \ili{}[\ili{}]\ili{} Company\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}[UPP_W\ili{}]\ili{} \ili{}[DASH\ili{}]\ili{} Institute\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+\ili{}
+\ili{}\noindent\ili{} \ili{}\verb\ili{}+\ili{}[\ili{}]\ili{}+\ili{} denotes\ili{} a\ili{} whitespace\ili{} \ili{}(not\ili{} necessarily\ili{} required\ili{} to\ili{} be\ili{} included\ili{} in\ili{} the\ili{} pattern\ili{} as\ili{} illustrated\ili{} by\ili{} the\ili{} last\ili{} pattern\ili{})\ili{},\ili{} whereas\ili{} other\ili{} token\ili{} classes\ili{} are\ili{} delimited\ili{} using\ili{} square\ili{} brackets\ili{}.\ili{} There\ili{} are\ili{} 28\ili{} generic\ili{} token\ili{} classes\ili{},\ili{} out\ili{} of\ili{} which\ili{} 8\ili{} cover\ili{} natural\ili{} language\ili{} words\ili{} \ili{}(e\ili{}.g\ili{}.\ili{},\ili{} \ili{}\verb\ili{}+\ili{}[UPP_W\ili{}]\ili{}+\ili{} \ili{}-\ili{} uppercase\ili{} word\ili{},\ili{} \ili{}\verb\ili{}+\ili{}[LOW_W\ili{}]\ili{}+\ili{} \ili{}-\ili{} lowercase\ili{} word\ili{},\ili{} \ili{}\verb\ili{}+\ili{}[ALLCAP\ili{}]\ili{}+\ili{} \ili{}-\ili{} all\ili{} capital\ili{} words\ili{})\ili{},\ili{} letters\ili{} \ili{}(e\ili{}.g\ili{}.\ili{},\ili{} \ili{}\verb\ili{}+\ili{}[SINGCAP\ili{}]\ili{}+\ili{} \ili{}-\ili{} single\ili{} capital\ili{} letter\ili{})\ili{},\ili{} numbers\ili{} \ili{}(e\ili{}.g\ili{}.\ili{},\ili{} \ili{}\verb\ili{}+\ili{}[NUM\ili{}]\ili{}+\ili{})\ili{} and\ili{} combinations\ili{} thereof\ili{} \ili{}(e\ili{}.g\ili{}.\ili{},\ili{} \ili{}\verb\ili{}+\ili{}[NUM_LET\ili{}]\ili{}+\ili{} \ili{}-\ili{} sequence\ili{} of\ili{} digits\ili{} followed\ili{} by\ili{} a\ili{} sequence\ili{} of\ili{} letters\ili{},\ili{} etc\ili{}.\ili{})\ili{},\ili{} whereas\ili{} the\ili{} remaining\ili{} 20\ili{} classes\ili{} are\ili{} used\ili{} to\ili{} denote\ili{} specific\ili{} symbols\ili{} \ili{}(e\ili{}.g\ili{}.\ili{},\ili{} brackets\ili{},\ili{} commas\ili{},\ili{} dots\ili{},\ili{} colons\ili{},\ili{} etc\ili{}.\ili{})\ili{}.\ili{} \ili{}
+\ili{}
+The\ili{} pattern\ili{} learning\ili{} process\ili{} consists\ili{} of\ili{} three\ili{} main\ili{} steps\ili{}:\ili{} \ili{}(a\ili{})\ili{} acquisition\ili{} of\ili{} candidate\ili{} patterns\ili{},\ili{} \ili{}(b\ili{})\ili{} filtering\ili{} unreliable\ili{} and\ili{} ambiguous\ili{} candidate\ili{} patterns\ili{},\ili{} and\ili{} \ili{}(c\ili{})\ili{} ranking\ili{} patterns\ili{}.\ili{} These\ili{} are\ili{} described\ili{} in\ili{} more\ili{} detail\ili{} below\ili{}.\ili{}
+\ili{}
+\ili{}\vspace\ili{}{0\ili{}.3cm}\ili{}
+\ili{}\noindent\ili{}\textbf\ili{}{Acquisition\ili{} of\ili{} candidate\ili{} patterns\ili{}:}\ili{} First\ili{},\ili{} each\ili{} organisation\ili{} name\ili{} is\ili{} transformed\ili{} into\ili{} a\ili{} candidate\ili{} pattern\ili{},\ili{} i\ili{}.e\ili{}.\ili{},\ili{} each\ili{} token\ili{} which\ili{} can\ili{} be\ili{} found\ili{} in\ili{} a\ili{} set\ili{} of\ili{} predefined\ili{} surface\ili{} forms\ili{} \ili{}(consisting\ili{} of\ili{} keywords\ili{} that\ili{} trigger\ili{} organisation\ili{} names\ili{},\ili{} e\ili{}.g\ili{}.\ili{} \ili{} \ili{}\textit\ili{}{University}\ili{},\ili{} and\ili{} frequently\ili{} occurring\ili{} word\ili{} forms\ili{},\ili{} e\ili{}.g\ili{}.\ili{},\ili{} prepositions\ili{})\ili{} remains\ili{} unchanged\ili{},\ili{} whereas\ili{} all\ili{} other\ili{} tokens\ili{} are\ili{} mapped\ili{} into\ili{} a\ili{} corresponding\ili{} generic\ili{} token\ili{} class\ili{}.\ili{} Each\ili{} candidate\ili{} pattern\ili{} must\ili{} contain\ili{} at\ili{} least\ili{} one\ili{} surface\ili{} form\ili{} and\ili{} at\ili{} least\ili{} one\ili{} token\ili{}-class\ili{} element\ili{},\ili{}
+otherwise\ili{} it\ili{} is\ili{} discarded\ili{}.\ili{}
+\ili{}
+The\ili{} set\ili{} of\ili{} predefined\ili{} surface\ili{} forms\ili{} has\ili{} been\ili{} computed\ili{} automatically\ili{} and\ili{} consists\ili{} of\ili{} word\ili{} uni\ili{}-grams\ili{} that\ili{} fulfill\ili{} the\ili{} following\ili{} criteria\ili{}:\ili{} \ili{}(a\ili{})\ili{} it\ili{} appears\ili{} more\ili{} than\ili{} \ili{}$\ili{}\phi\ili{}=20\ili{}$\ili{} times\ili{} as\ili{} part\ili{} of\ili{} an\ili{} organisation\ili{} name\ili{},\ili{} \ili{}(b\ili{})\ili{} it\ili{} does\ili{} not\ili{} appear\ili{} on\ili{} a\ili{} list\ili{} of\ili{} known\ili{} toponyms\ili{}\footnote\ili{}{We\ili{} used\ili{} GeoNames\ili{} resource\ili{} at\ili{}:\ili{} \ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/www\ili{}.geonames\ili{}.org}\ili{} for\ili{} this\ili{} purpose\ili{}.}\ili{},\ili{} \ili{}(c\ili{})\ili{} it\ili{} does\ili{} not\ili{} appear\ili{} on\ili{} the\ili{} list\ili{} of\ili{} known\ili{} first\ili{} names\ili{} and\ili{} surnames\ili{}\footnote\ili{}{We\ili{} used\ili{} for\ili{} this\ili{} purpose\ili{} \ili{}{\ili{}\sc\ili{} JRC\ili{} Name\ili{} Variant\ili{} Database}\ili{} and\ili{} huge\ili{} list\ili{} of\ili{} first\ili{} names\ili{} extracted\ili{} from\ili{}~\ili{}\cite\ili{}{Piskorski\ili{}-11}}\ili{},\ili{} and\ili{} \ili{}(d\ili{})\ili{} it\ili{} is\ili{} not\ili{} an\ili{} adjective\ili{} \ili{}(unless\ili{} it\ili{} appears\ili{} very\ili{} frequently\ili{})\ili{}.\ili{} For\ili{} instance\ili{},\ili{} for\ili{} the\ili{} subset\ili{} of\ili{} \ili{}\ili\ili{}{English}\ili{} organisation\ili{} names\ili{} consisting\ili{} solely\ili{} of\ili{} company\ili{} names\ili{},\ili{} the\ili{} 10\ili{} top\ili{}-most\ili{} frequent\ili{} word\ili{} uni\ili{}-grams\ili{} that\ili{} fulfill\ili{} the\ili{} aforementioned\ili{} criteria\ili{} are\ili{}:\ili{} \ili{}\textit\ili{}{Company}\ili{},\ili{} \ili{}\textit\ili{}{and}\ili{},\ili{} \ili{}\textit\ili{}{of}\ili{},\ili{} \ili{}\textit\ili{}{The}\ili{},\ili{} \ili{}\textit\ili{}{Group}\ili{},\ili{} \ili{}\textit\ili{}{Corporation}\ili{},\ili{} \ili{}\textit\ili{}{Bank}\ili{},\ili{} \ili{}\textit\ili{}{de}\ili{},\ili{} \ili{}\textit\ili{}{Limited}\ili{} and\ili{} \ili{}\textit\ili{}{Air}\ili{}.\ili{} \ili{} \ili{}
+\ili{}
+\ili{}\vspace\ili{}{0\ili{}.3cm}\ili{}
+\ili{}\noindent\ili{}\textbf\ili{}{Filtering\ili{} candidate\ili{} patterns\ili{}:}\ili{} In\ili{} the\ili{} subsequent\ili{}
+step\ili{},\ili{} a\ili{} candidate\ili{} patterns\ili{} is\ili{} discarded\ili{} if\ili{}:\ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{}\item\ili{}[1\ili{}]\ili{} its\ili{} final\ili{} element\ili{} is\ili{} the\ili{} token\ili{} class\ili{} \ili{}\verb\ili{}+\ili{}[LOW_W\ili{}]\ili{}+\ili{} \ili{}(any\ili{}
+\ili{} \ili{} lowercase\ili{} word\ili{})\ili{},\ili{} or\ili{}
+\ili{}\item\ili{}[2\ili{}]\ili{} it\ili{} contains\ili{} only\ili{} surface\ili{} forms\ili{} which\ili{} are\ili{} single\ili{} uppercase\ili{}
+\ili{} \ili{} letters\ili{} and\ili{} it\ili{} does\ili{} not\ili{} contain\ili{} any\ili{} token\ili{}-class\ili{} element\ili{} representing\ili{}
+\ili{} \ili{} words\ili{} starting\ili{} with\ili{} an\ili{} uppercase\ili{} letter\ili{} \ili{}(e\ili{}.g\ili{}.\ili{},\ili{} \ili{}\verb\ili{}+\ili{}[UPP_W\ili{}]\ili{}+\ili{},\ili{}
+\ili{} \ili{} \ili{}\verb\ili{}+\ili{}[ALLCAP\ili{}]\ili{}+\ili{})\ili{},\ili{} or\ili{}
+\ili{}\item\ili{}[3\ili{}]\ili{} it\ili{} starts\ili{} with\ili{} an\ili{} initial\ili{} uppercase\ili{} letter\ili{},\ili{} followed\ili{} by\ili{} an\ili{}
+\ili{} \ili{} optional\ili{} dot\ili{} and\ili{} a\ili{} sequence\ili{} of\ili{} token\ili{} classes\ili{} corresponding\ili{} to\ili{} words\ili{}
+\ili{} \ili{} starting\ili{} with\ili{} uppercase\ili{} letters\ili{} \ili{}(and\ili{} \ili{}\isi\ili{}{variations}\ili{} of\ili{} this\ili{} pattern\ili{})\ili{},\ili{}
+\ili{} \ili{} e\ili{}.g\ili{}.\ili{},\ili{} the\ili{} following\ili{} candidate\ili{} pattern\ili{} would\ili{} be\ili{} discarded\ili{}:\ili{}
+\ili{} \ili{} \ili{}\verb\ili{}+A\ili{} \ili{}[\ili{}]\ili{} \ili{}[DOT\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[UPP_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[ALLCAP\ili{}]\ili{}+\ili{}
+\ili{}\end\ili{}{itemize}\ili{} \ili{}
+\ili{}
+\ili{}\noindent\ili{} The\ili{} filtering\ili{} rules\ili{} 1\ili{}-2\ili{} are\ili{} used\ili{} in\ili{} order\ili{} to\ili{} eliminate\ili{}
+unreliable\ili{} patterns\ili{},\ili{} i\ili{}.e\ili{}.\ili{},\ili{} ones\ili{} that\ili{} are\ili{} likely\ili{} to\ili{} overgenerate\ili{},\ili{}
+whereas\ili{} the\ili{} filtering\ili{} \ili{}\isi\ili{}{rule}\ili{} 3\ili{} aims\ili{} at\ili{} eliminating\ili{} candidate\ili{} patterns\ili{}
+that\ili{} are\ili{} likely\ili{} to\ili{} match\ili{} person\ili{} names\ili{}.\ili{} \ili{} The\ili{} application\ili{} of\ili{} the\ili{}
+filtering\ili{} resulted\ili{} in\ili{} maintaining\ili{} 47496\ili{} \ili{}(12966\ili{})\ili{} extraction\ili{} patterns\ili{}
+for\ili{} \ili{}\ili\ili{}{English}\ili{} \ili{}(\ili{}\ili\ili{}{Spanish}\ili{})\ili{},\ili{} where\ili{} 32\ili{},3\ili{}\\ili{}%\ili{} \ili{}(41\ili{},9\ili{}\\ili{}%\ili{})\ili{} of\ili{} these\ili{} patterns\ili{} were\ili{}
+observed\ili{} more\ili{} than\ili{} once\ili{}.\ili{} Interestingly\ili{},\ili{} only\ili{} 0\ili{},57\ili{}\\ili{}%\ili{} of\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{}
+0\ili{},35\ili{}\\ili{}%\ili{} of\ili{} the\ili{} \ili{}\ili\ili{}{Spanish}\ili{} patterns\ili{} occur\ili{} more\ili{} than\ili{} \ili{}
+100\ili{} times\ili{}.\ili{}
+\ili{}
+\ili{}\vspace\ili{}{0\ili{}.3cm}\ili{}
+\ili{}\noindent\ili{}\textbf\ili{}{Ranking\ili{} patterns\ili{}:}\ili{} In\ili{} the\ili{} final\ili{} step\ili{} candidate\ili{} patterns\ili{} are\ili{} ranked\ili{} with\ili{} respect\ili{} to\ili{} their\ili{} reliability\ili{} based\ili{} on\ili{} the\ili{}
+following\ili{} general\ili{} assumptions\ili{} related\ili{} to\ili{} their\ili{} structure\ili{}:\ili{} \ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{}\item\ili{} a\ili{} pattern\ili{} that\ili{} contains\ili{} either\ili{}:\ili{} \ili{}(a\ili{})\ili{} a\ili{} larger\ili{} fraction\ili{} of\ili{} surface\ili{} forms\ili{} vis\ili{}-a\ili{}-vis\ili{} token\ili{}-class\ili{} elements\ili{},\ili{} or\ili{} \ili{}(b\ili{})\ili{} longer\ili{} sequences\ili{} of\ili{} consecutive\ili{} surface\ili{} forms\ili{} is\ili{} deemed\ili{} more\ili{} reliable\ili{},\ili{}
+\ili{}\item\ili{} a\ili{} pattern\ili{} whose\ili{} final\ili{} element\ili{} is\ili{} a\ili{} lowercase\ili{} surface\ili{} form\ili{} is\ili{} deemed\ili{} less\ili{} reliable\ili{},\ili{}
+\ili{}\item\ili{} a\ili{} pattern\ili{} that\ili{} contains\ili{} either\ili{}:\ili{} \ili{}(a\ili{})\ili{} a\ili{} larger\ili{} fraction\ili{} of\ili{} token\ili{}-class\ili{} elements\ili{} representing\ili{} single\ili{} capital\ili{} letters\ili{} and\ili{} lowercase\ili{} words\ili{},\ili{}
+or\ili{} \ili{}(b\ili{})\ili{} longer\ili{} sequences\ili{} of\ili{} consecutive\ili{} token\ili{}-class\ili{} elements\ili{} representing\ili{} lowercase\ili{} words\ili{} is\ili{} deemed\ili{} less\ili{} reliable\ili{}.\ili{}
+\ili{}\end\ili{}{itemize}\ili{}
+\ili{}
+\ili{}\noindent\ili{} The\ili{} formal\ili{} definition\ili{} of\ili{} the\ili{} reliability\ili{} score\ili{} \ili{}(\ili{}$Rel\ili{}(p\ili{})\ili{}$\ili{})\ili{} for\ili{} a\ili{} pattern\ili{} \ili{}$p\ili{}$\ili{} is\ili{} given\ili{} below\ili{},\ili{} where\ili{} the\ili{} expressions\ili{} starting\ili{} with\ili{} \ili{}$\ili{}\\ili{}#\ili{}$\ili{} denote\ili{} the\ili{} number\ili{} of\ili{} elements\ili{} in\ili{} the\ili{} pattern\ili{} of\ili{} a\ili{} specific\ili{} type\ili{}\footnote\ili{}{\ili{}$\ili{}\\ili{}#LowerCTokens\ili{}(p\ili{})\ili{}$\ili{} denotes\ili{} the\ili{} number\ili{} of\ili{} lowercase\ili{} tokens\ili{},\ili{} while\ili{} \ili{}$\ili{}\\ili{}#NonWhitespaces\ili{}(p\ili{})\ili{}$\ili{} denotes\ili{} the\ili{} number\ili{} of\ili{} elements\ili{} in\ili{} the\ili{} pattern\ili{} which\ili{} are\ili{} not\ili{} whitespaces\ili{},\ili{} i\ili{}.e\ili{}.\ili{},\ili{} it\ili{} is\ili{} a\ili{} count\ili{} of\ili{} surface\ili{} forms\ili{} and\ili{} token\ili{}-class\ili{} elements\ili{}.\ili{} \ili{}$LastElementIsLowercaseToken\ili{}(p\ili{})\ili{}$\ili{} denotes\ili{} a\ili{} function\ili{} which\ili{} returns\ili{} 1\ili{} in\ili{} case\ili{} the\ili{} last\ili{} element\ili{} of\ili{} the\ili{} pattern\ili{} is\ili{} a\ili{} lowercase\ili{} token\ili{} class\ili{} or\ili{} 0\ili{} otherwise\ili{}.}\ili{} and\ili{} \ili{}$\ili{}\alpha\ili{}=0\ili{}.2\ili{}$\ili{},\ili{} \ili{}$\ili{}\beta\ili{}=0\ili{}.2\ili{}$\ili{},\ili{} \ili{}$\ili{}\gamma\ili{}=0\ili{}.2\ili{}$\ili{},\ili{} \ili{}$\ili{}\delta\ili{}=0\ili{}.15\ili{}$\ili{},\ili{} \ili{}$\ili{}\lambda\ili{}=0\ili{}.1\ili{}$\ili{} and\ili{} \ili{}$\ili{}\kappa\ili{}=0\ili{}.15\ili{}$\ili{} are\ili{} weighting\ili{} coefficients\ili{} for\ili{} the\ili{} various\ili{} criteria\ili{} used\ili{} in\ili{} the\ili{} reliability\ili{} ranking\ili{},\ili{} whose\ili{} values\ili{} have\ili{} been\ili{} set\ili{} based\ili{} on\ili{} empirical\ili{} observations\ili{}.\ili{} \ili{} \ili{}
+\ili{}
+\ili{}\begin\ili{}{eqnarray\ili{}*}\ili{}
+Rel\ili{}(p\ili{})\ili{} \ili{}&\ili{} \ili{}=\ili{} \ili{}&\ili{} \ili{}\frac\ili{}{\ili{}\\ili{}#SurfaceForms\ili{}(p\ili{})\ili{} \ili{}\cdot\ili{} \ili{}\alpha\ili{} \ili{}+\ili{}
+\ili{} \ili{} \ili{}\\ili{}#ConsecutiveSurfaceForms\ili{}(p\ili{})\ili{} \ili{}\cdot\ili{} \ili{}\beta}\ili{}{\ili{}\\ili{}#NonWhitespaces\ili{}(p\ili{})}\ili{} \ili{}\\ili{}\\ili{} \ili{}&\ili{}
+\ili{}-\ili{} \ili{}&\ili{} \ili{}\frac\ili{}{\ili{}(\ili{}\\ili{}#LowerCTokens\ili{}(p\ili{})\ili{} \ili{}\cdot\ili{} \ili{}\gamma\ili{} \ili{}+\ili{}
+\ili{} \ili{} \ili{}\\ili{}#ConsecutiveLowerCTokens\ili{}(p\ili{})\ili{} \ili{}\cdot\ili{} \ili{}\delta\ili{})}\ili{}{\ili{}\\ili{}#NonWhitespaces\ili{}(p\ili{})}\ili{}\\ili{}\\ili{} \ili{}&\ili{}
+\ili{}-\ili{} \ili{}&\ili{} \ili{}\frac\ili{}{\ili{}\\ili{}#SingleCapitalLetterTokens\ili{}(p\ili{})\ili{} \ili{}\cdot\ili{}
+\ili{} \ili{} \ili{}\lambda}\ili{}{\ili{}\\ili{}#NonWhitespaces\ili{}(p\ili{})}\ili{}\\ili{}\\ili{} \ili{}&\ili{} \ili{}+\ili{} \ili{}&\ili{} \ili{}\gamma\ili{} \ili{}+\ili{} \ili{}\delta\ili{} \ili{}+\ili{} \ili{}\lambda\ili{} \ili{}+\ili{} \ili{}(1\ili{}
+\ili{}-\ili{} LastElementIsLowerCToken\ili{}(p\ili{})\ili{})\ili{} \ili{}\cdot\ili{} \ili{}\kappa\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\end\ili{}{eqnarray\ili{}*}\ili{}
+\ili{}
+\ili{}\noindent\ili{} A\ili{} few\ili{} examples\ili{} of\ili{} patterns\ili{} with\ili{} various\ili{} reliability\ili{} scores\ili{}
+\ili{}(provided\ili{} in\ili{} brackets\ili{})\ili{} are\ili{} given\ili{} below\ili{}.\ili{}
+\ili{}
+\ili{}{\ili{}\small\ili{} \ili{}
+\ili{}\begin\ili{}{verbatim}\ili{}
+\ili{} \ili{} \ili{} \ili{} Ministry\ili{} \ili{}[\ili{}]\ili{} of\ili{} \ili{}[\ili{}]\ili{} Foreign\ili{} \ili{}[\ili{}]\ili{} Affairs\ili{} \ili{}[\ili{}]\ili{} of\ili{} \ili{}[\ili{}]\ili{} \ili{}[UPP_W\ili{}]\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}(0\ili{}.97\ili{})\ili{}
+\ili{} \ili{} \ili{} \ili{} Institute\ili{} \ili{}[\ili{}]\ili{} of\ili{} \ili{}[\ili{}]\ili{} \ili{}[UPP_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} Studies\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}(0\ili{}.95\ili{})\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}[UPP_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[UPP_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[ALLCAP\ili{}]\ili{} \ili{}[\ili{}]\ili{} at\ili{} \ili{}[\ili{}]\ili{} \ili{}[UPP_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} University\ili{} \ili{} \ili{}(0\ili{}.67\ili{})\ili{}
+\ili{} \ili{} \ili{} \ili{} St\ili{} \ili{}[DOT\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[LOW_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[LOW_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[LOW_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[LOW_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} school\ili{} \ili{}(0\ili{}.24\ili{})\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}[UPP_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[LOW_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[LOW_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} \ili{}[LOW_W\ili{}]\ili{} \ili{}[\ili{}]\ili{} committee\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}(0\ili{}.22\ili{})\ili{}
+\ili{}\end\ili{}{verbatim}\ili{}
+}\ili{}
+\ili{}
+Figure\ili{}~\ili{}\ref\ili{}{pattern\ili{}-distr}\ili{} depicts\ili{} the\ili{} distribution\ili{} of\ili{} patterns\ili{} with\ili{}
+respect\ili{} to\ili{} their\ili{} reliability\ili{} scores\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=\ili{}.95\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/patterns\ili{}-distr\ili{}.png}\ili{}
+\ili{}\caption\ili{}{Distribution\ili{} of\ili{} patterns\ili{} with\ili{} respect\ili{} to\ili{} their\ili{} reliability\ili{} score\ili{} for\ili{} English\ili{} and\ili{} Spanish\ili{}.\ili{} Each\ili{} of\ili{} the\ili{} bars\ili{} represents\ili{} the\ili{} fraction\ili{} of\ili{} patterns\ili{},\ili{} whose\ili{} reliability\ili{} score\ili{} is\ili{} within\ili{} the\ili{} range\ili{} \ili{}$\ili{}(x\ili{},x\ili{}+0\ili{}.5\ili{}>\ili{}$\ili{},\ili{} where\ili{} \ili{}$x\ili{} \ili{}\in\ili{} \ili{}\\ili{}{0\ili{},0\ili{}.5\ili{},\ili{}.\ili{}.\ili{}.\ili{},0\ili{}.95\ili{}\}\ili{}$\ili{}.}\ili{}
+\ili{}\label\ili{}{pattern\ili{}-distr}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Evaluation}\ili{}
+In\ili{} order\ili{} to\ili{} evaluate\ili{} the\ili{} quality\ili{} of\ili{} the\ili{} learned\ili{} patterns\ili{} we\ili{} used\ili{} two\ili{} NE\ili{} annotated\ili{} corpora\ili{} from\ili{} the\ili{} CoNLL\ili{} shared\ili{} task\ili{} for\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} \ili{}\ili\ili{}{Spanish}\ili{}\footnote\ili{}{\ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/www\ili{}.cnts\ili{}.ua\ili{}.ac\ili{}.be\ili{}/conll2002\ili{}/ner\ili{}/}\ili{} and\ili{} \ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/www\ili{}.cnts\ili{}.ua\ili{}.ac\ili{}.be\ili{}/conll2003\ili{}/ner\ili{}/}}\ili{},\ili{} which\ili{} contains\ili{} respectively\ili{} 6300\ili{} and\ili{} 7389\ili{} organisation\ili{} occurrences\ili{},\ili{} and\ili{} tested\ili{} the\ili{} performance\ili{} using\ili{} different\ili{} settings\ili{}.\ili{} In\ili{} particular\ili{},\ili{} we\ili{} compared\ili{} three\ili{} settings\ili{}:\ili{} \ili{}(a\ili{})\ili{} using\ili{} only\ili{} BabelNet\ili{}-derived\ili{} patterns\ili{} \ili{}(denoted\ili{} in\ili{} the\ili{} figures\ili{} with\ili{} PATTERNS\ili{})\ili{},\ili{} \ili{} \ili{}(b\ili{})\ili{} using\ili{} only\ili{} an\ili{} existing\ili{} rule\ili{}-based\ili{} NER\ili{} system\ili{} as\ili{} a\ili{} baseline\ili{} \ili{}(denoted\ili{} RULES\ili{})\ili{},\ili{} \ili{}(c\ili{})\ili{} combining\ili{} rule\ili{}-based\ili{} NER\ili{} system\ili{} and\ili{} BabelNet\ili{}-derived\ili{} patterns\ili{} \ili{}(denoted\ili{} in\ili{} the\ili{} figures\ili{} with\ili{} RULES\ili{}+PATTERNS\ili{})\ili{}.\ili{}
+In\ili{} our\ili{} experiments\ili{},\ili{} we\ili{} used\ili{} an\ili{} in\ili{}-house\ili{} \ili{}\isi\ili{}{rule}\ili{} based\ili{} NER\ili{} system\ili{} \ili{}\citep\ili{}{Steinberger\ili{}-11\ili{},\ili{} Ehrmann\ili{}-15}\ili{} that\ili{} is\ili{} geared\ili{} towards\ili{} high\ili{} precision\ili{}.\ili{} The\ili{} choice\ili{} of\ili{} a\ili{} specific\ili{} NER\ili{} system\ili{} is\ili{} not\ili{} decisive\ili{} for\ili{} these\ili{} experiments\ili{},\ili{} but\ili{} by\ili{} combining\ili{} an\ili{} existing\ili{} NER\ili{} system\ili{} with\ili{} our\ili{} BabelNet\ili{}-derived\ili{} patterns\ili{},\ili{} we\ili{} aim\ili{} at\ili{} testing\ili{} how\ili{} our\ili{} automatically\ili{} created\ili{} patterns\ili{} could\ili{} be\ili{} useful\ili{} to\ili{} improve\ili{} the\ili{} quality\ili{} of\ili{} the\ili{} NER\ili{} recognition\ili{}.\ili{}
+\ili{}
+Figures\ili{}~\ili{}\ref\ili{}{fig\ili{}:eval_patterns_english_precision}\ili{},\ili{}~\ili{}\ref\ili{}{fig\ili{}:eval_patterns_english_recall}\ili{},\ili{}~\ili{}\ref\ili{}{fig\ili{}:eval_patterns_spanish_precision}\ili{}
+and\ili{}~\ili{}\ref\ili{}{fig\ili{}:eval_patterns_spanish_recall}\ili{} depict\ili{} the\ili{} performance\ili{} of\ili{} applying\ili{} the\ili{} BabelNet\ili{}-derived\ili{} patterns\ili{} for\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} \ili{}\ili\ili{}{Spanish}\ili{} \ili{}
+in\ili{} terms\ili{} of\ili{} precision\ili{} and\ili{} recall\ili{}.\ili{} The\ili{} precision\ili{} and\ili{} recall\ili{} values\ili{} were\ili{} computed\ili{} for\ili{} the\ili{} varying\ili{} minimum\ili{} pattern\ili{} reliability\ili{} threshold\ili{} in\ili{} the\ili{} range\ili{} of\ili{} \ili{}$\ili{}\\ili{}{0\ili{}.10\ili{},0\ili{}.15\ili{},\ili{}.\ili{}.\ili{}.\ili{},0\ili{}.95\ili{}\}\ili{}$\ili{},\ili{} i\ili{}.e\ili{}.\ili{},\ili{} patterns\ili{} below\ili{} the\ili{} minimum\ili{} reliability\ili{} threshold\ili{} were\ili{} discarded\ili{}.\ili{}
+The\ili{} figures\ili{} are\ili{} showing\ili{} the\ili{} results\ili{} obtained\ili{} for\ili{} exact\ili{} matching\ili{} \ili{}(denoted\ili{} with\ili{} EXACT\ili{}-PATTERNS\ili{} or\ili{} EXACT\ili{}-RULES\ili{}+PATTERNS\ili{})\ili{} and\ili{} for\ili{} fuzzy\ili{} matching\ili{},\ili{} e\ili{}.g\ili{}.\ili{} when\ili{} there\ili{} is\ili{} a\ili{} matching\ili{} but\ili{} with\ili{} a\ili{} left\ili{} or\ili{} right\ili{} boundary\ili{} mismatch\ili{} \ili{}(denoted\ili{} with\ili{} FUZZY\ili{}-PATTERNS\ili{} or\ili{} FUZZY\ili{}-RULES\ili{}+PATTERNS\ili{})\ili{}.\ili{}
+We\ili{} did\ili{} not\ili{} visualise\ili{} the\ili{} results\ili{} corresponding\ili{} to\ili{} the\ili{} RULE\ili{} setting\ili{} in\ili{} the\ili{} figures\ili{} because\ili{} they\ili{} do\ili{} not\ili{} depend\ili{} on\ili{} the\ili{} reliability\ili{} threshold\ili{}.\ili{} However\ili{},\ili{} the\ili{} obtained\ili{} scores\ili{} for\ili{} this\ili{} setting\ili{} are\ili{} embraced\ili{} in\ili{} Table\ili{} \ili{}\ref\ili{}{tab\ili{}:EvalPatterns}\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=\ili{}.95\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/eval_patterns_English_precision\ili{}.jpg}\ili{}
+\ili{}\caption\ili{}{Experiments\ili{} on\ili{} English\ili{}:\ili{} Precision\ili{} curves\ili{} reflecting\ili{} the\ili{} performance\ili{} of\ili{} applying\ili{} BabelNet\ili{}-derived\ili{} patterns\ili{} and\ili{} combining\ili{} them\ili{} with\ili{} a\ili{} rule\ili{}-based\ili{} NER\ili{} system\ili{}.\ili{} }\ili{}
+\ili{}\label\ili{}{fig\ili{}:eval_patterns_english_precision}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=\ili{}.95\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/eval_patterns_English_recall\ili{}.jpg}\ili{}
+\ili{}\caption\ili{}{Experiments\ili{} on\ili{} English\ili{}:\ili{} Recall\ili{} curves\ili{} reflecting\ili{} the\ili{} performance\ili{} of\ili{} applying\ili{} BabelNet\ili{}-derived\ili{} patterns\ili{} and\ili{} combining\ili{} them\ili{} with\ili{} a\ili{} rule\ili{}-based\ili{} NER\ili{} system\ili{}.}\ili{}
+\ili{}\label\ili{}{fig\ili{}:eval_patterns_english_recall}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=\ili{}.95\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/eval_patterns_Spanish_precision\ili{}.jpg}\ili{}
+\ili{}\caption\ili{}{Experiments\ili{} on\ili{} Spanish\ili{}:\ili{} Precision\ili{} curves\ili{} reflecting\ili{} the\ili{} performance\ili{} of\ili{} applying\ili{} BabelNet\ili{}-derived\ili{} patterns\ili{} and\ili{} combining\ili{} them\ili{} with\ili{} a\ili{} rule\ili{}-based\ili{} NER\ili{} system\ili{}.}\ili{}
+\ili{}\label\ili{}{fig\ili{}:eval_patterns_spanish_precision}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=\ili{}.95\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/eval_patterns_Spanish_recall\ili{}.jpg}\ili{}
+\ili{}\caption\ili{}{Experiments\ili{} on\ili{} Spanish\ili{}:\ili{} Recall\ili{} curves\ili{} reflecting\ili{} the\ili{} performance\ili{} of\ili{} applying\ili{} BabelNet\ili{}-derived\ili{} patterns\ili{} and\ili{} combining\ili{} them\ili{} with\ili{} a\ili{} rule\ili{}-based\ili{} NER\ili{} system\ili{}.}\ili{}
+\ili{}\label\ili{}{fig\ili{}:eval_patterns_spanish_recall}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}
+Table\ili{} \ili{}\ref\ili{}{tab\ili{}:EvalPatterns}\ili{} provides\ili{} the\ili{} results\ili{} obtained\ili{} with\ili{} a\ili{} pattern\ili{}-reliability\ili{} threshold\ili{} equal\ili{} to\ili{} 0\ili{}.60\ili{},\ili{} which\ili{} corresponds\ili{} to\ili{} the\ili{} best\ili{} results\ili{} obtained\ili{} in\ili{} both\ili{} languages\ili{}.\ili{} For\ili{} the\ili{} \ili{}\textit\ili{}{EXACT}\ili{} evaluation\ili{},\ili{} an\ili{} improvement\ili{} in\ili{} terms\ili{} of\ili{} F1\ili{} of\ili{} 6\ili{}.5\ili{} points\ili{} for\ili{} \ili{}\ili\ili{}{Spanish}\ili{} could\ili{} be\ili{} observed\ili{} with\ili{} the\ili{} setting\ili{} \ili{}\textit\ili{}{RULES\ili{}+PATTERNS}\ili{} versus\ili{} the\ili{} baseline\ili{} \ili{}\textit\ili{}{RULES}\ili{}.\ili{} As\ili{} regards\ili{} \ili{}\textit\ili{}{FUZZY}\ili{} evaluation\ili{},\ili{} one\ili{} could\ili{} observe\ili{} an\ili{} improvement\ili{} of\ili{} F1\ili{} of\ili{} 7\ili{}.6\ili{} and\ili{} 1\ili{}.1\ili{} points\ili{} for\ili{} \ili{}\ili\ili{}{Spanish}\ili{} and\ili{} \ili{}\ili\ili{}{English}\ili{} respectively\ili{} when\ili{} comparing\ili{} \ili{}\textit\ili{}{RULES\ili{}+PATTERNS}\ili{} versus\ili{} the\ili{} baseline\ili{} \ili{}\textit\ili{}{RULES}\ili{} setting\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\centering\ili{}
+\ili{}\ra\ili{}{1\ili{}.1}\ili{}
+\ili{}\resizebox\ili{}{10cm}\ili{}{\ili{}!}\ili{}{\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{\ili{}@\ili{}{}l\ili{}|cccc\ili{}|ccc\ili{}@\ili{}{}}\ili{}\toprule\ili{}
+\ili{}&\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{EXACT\ili{} matching}\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{}\textbf\ili{}{FUZZY\ili{} matching}\ili{} \ili{}&\ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{P}\ili{} \ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{R}\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{F1}\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{P}\ili{} \ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{R}\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{F1}\ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}\midrule\ili{}
+\ili{}\textbf\ili{}{Spanish}\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}
+PATTERNS\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 63\ili{}.1\ili{}\\ili{}%\ili{} \ili{}&\ili{} 10\ili{}.2\ili{}\\ili{}%\ili{} \ili{}&\ili{} 17\ili{}.6\ili{}\\ili{}%\ili{} \ili{}&\ili{} \ili{} \ili{}&\ili{} 81\ili{}.4\ili{}\\ili{}%\ili{} \ili{}&\ili{} 13\ili{}.2\ili{}\\ili{}%\ili{} \ili{}&\ili{} 22\ili{}.8\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{} \ili{}
+RULES\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{79\ili{}.8\ili{}\\ili{}%}\ili{} \ili{}&\ili{} 24\ili{}.2\ili{}\\ili{}%\ili{} \ili{}&\ili{} 37\ili{}.1\ili{}\\ili{}%\ili{} \ili{}&\ili{} \ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{91\ili{}.3\ili{}\\ili{}%}\ili{} \ili{}&\ili{} 27\ili{}.6\ili{}\\ili{}%\ili{} \ili{}&\ili{} 42\ili{}.4\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{}
+RULES\ili{}+PATTERNS\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 73\ili{}.5\ili{}\\ili{}%\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{31\ili{}.0\ili{}\\ili{}%}\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{43\ili{}.6\ili{}\\ili{}%}\ili{} \ili{}&\ili{} \ili{} \ili{}&\ili{} 84\ili{}.2\ili{}\\ili{}%\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{35\ili{}.5\ili{}\\ili{}%}\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{50\ili{}.0\ili{}\\ili{}%}\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}\midrule\ili{}
+\ili{}\textbf\ili{}{English}\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}
+PATTERNS\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 48\ili{}.5\ili{}\\ili{}%\ili{} \ili{}&\ili{} 11\ili{}.4\ili{}\\ili{}%\ili{} \ili{}&\ili{} 18\ili{}.5\ili{}\\ili{}%\ili{} \ili{}&\ili{} \ili{} \ili{}&\ili{} 69\ili{}.2\ili{}\\ili{}%\ili{} \ili{}&\ili{} 16\ili{}.3\ili{}\\ili{}%\ili{} \ili{}&\ili{} 26\ili{}.4\ili{}\\ili{}%\ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{} \ili{}
+RULES\ili{} \ili{} \ili{} \ili{}&\ili{} \ili{} \ili{}\textbf\ili{}{69\ili{}.0\ili{}\\ili{}%}\ili{} \ili{}&\ili{} 25\ili{}.5\ili{}\\ili{}%\ili{} \ili{}&\ili{} 37\ili{}.3\ili{}\\ili{}%\ili{} \ili{}&\ili{} \ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{80\ili{}.4\ili{}\\ili{}%}\ili{} \ili{}&\ili{} 29\ili{}.7\ili{}\\ili{}%\ili{} \ili{}&\ili{} 43\ili{}.4\ili{}\\ili{}%\ili{} \ili{} \ili{}\\ili{}\\ili{}
+RULES\ili{}+PATTERNS\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} \ili{} 55\ili{}.9\ili{}\\ili{}%\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{28\ili{}.7\ili{}\\ili{}%}\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{37\ili{}.9\ili{}\\ili{}%}\ili{} \ili{}&\ili{} \ili{} \ili{}&\ili{} 65\ili{}.6\ili{}\\ili{}%\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{33\ili{}.6\ili{}\\ili{}%}\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{44\ili{}.5\ili{}\\ili{}%}\ili{} \ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}\bottomrule\ili{}
+\ili{}\end\ili{}{tabular}}\ili{}
+\ili{}\caption\ili{}{Results\ili{} obtained\ili{} with\ili{} pattern\ili{} reliability\ili{} threshold\ili{} \ili{}=\ili{} 0\ili{}.60}\ili{}
+\ili{}\label\ili{}{tab\ili{}:EvalPatterns}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}
+\ili{}\paragraph\ili{}*\ili{}{Mistakes\ili{} and\ili{} fuzzy\ili{} matchings\ili{}.}\ili{}~\ili{}\\ili{}\\ili{}
+Using\ili{} existing\ili{} NE\ili{} annotated\ili{} corpora\ili{} for\ili{} our\ili{} preliminary\ili{} experiments\ili{} was\ili{} the\ili{} most\ili{} obvious\ili{} choice\ili{} to\ili{} measure\ili{} the\ili{} quality\ili{} of\ili{} our\ili{} patterns\ili{}.\ili{} Nevertheless\ili{},\ili{} it\ili{} appears\ili{} that\ili{} some\ili{} MWEntities\ili{} recognised\ili{} by\ili{} the\ili{} BabelNet\ili{}-derived\ili{} patterns\ili{} considered\ili{} as\ili{} incorrectly\ili{} extracted\ili{} according\ili{} to\ili{} the\ili{} annotated\ili{} corpora\ili{},\ili{} could\ili{} still\ili{} be\ili{} considered\ili{} as\ili{} correct\ili{} extractions\ili{}.\ili{}
+Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:error_analysis}\ili{} provides\ili{} the\ili{} complete\ili{} list\ili{} of\ili{} \ili{}'wrong\ili{}'\ili{} MWEntities\ili{} \ili{}(first\ili{} column\ili{})\ili{} recognised\ili{} by\ili{} our\ili{} patterns\ili{} when\ili{} pattern\ili{} reliability\ili{} threshold\ili{} equals\ili{} 0\ili{}.90\ili{}.\ili{} Even\ili{} if\ili{} some\ili{} cases\ili{} are\ili{} clear\ili{} mistakes\ili{},\ili{} like\ili{} \ili{}\textit\ili{}{Results\ili{} of\ili{} European\ili{} Super}\ili{} or\ili{} \ili{}\textit\ili{}{Bank\ili{} on\ili{} Thursday}\ili{},\ili{} large\ili{} fraction\ili{} of\ili{} the\ili{} extractions\ili{} could\ili{} be\ili{} considered\ili{} as\ili{} valid\ili{} organisation\ili{} names\ili{}.\ili{} The\ili{} two\ili{} other\ili{} columns\ili{} show\ili{} the\ili{} partial\ili{} matches\ili{} with\ili{} the\ili{} same\ili{} reliability\ili{} threshold\ili{},\ili{} which\ili{} are\ili{} considered\ili{} as\ili{} incorrect\ili{} in\ili{} the\ili{} \ili{}\textbf\ili{}{Exact\ili{} matching}\ili{} evaluation\ili{},\ili{} and\ili{} correct\ili{} in\ili{} the\ili{} \ili{}\textbf\ili{}{Fuzzy\ili{} matching}\ili{} evaluation\ili{}.\ili{} Again\ili{},\ili{} if\ili{} some\ili{} of\ili{} them\ili{} are\ili{} clear\ili{} mismatches\ili{},\ili{} like\ili{} \ili{}\textit\ili{}{European\ili{} Commission\ili{} on\ili{} Wednesday}\ili{} or\ili{} \ili{}\textit\ili{}{NATO\ili{} and\ili{} the\ili{} European\ili{} Union}\ili{},\ili{} most\ili{} of\ili{} the\ili{} extractions\ili{} appear\ili{} to\ili{} be\ili{} consistent\ili{} entities\ili{}.\ili{}
+\ili{}
+We\ili{} expect\ili{} to\ili{} achieve\ili{} higher\ili{} precision\ili{} of\ili{} the\ili{} learned\ili{} patterns\ili{} through\ili{}
+embracing\ili{} in\ili{} the\ili{} computation\ili{} of\ili{} the\ili{} reliability\ili{} score\ili{} additional\ili{}
+external\ili{} evidence\ili{},\ili{} i\ili{}.e\ili{}.\ili{},\ili{} exploiting\ili{} contextual\ili{} information\ili{} obtained\ili{}
+from\ili{} pattern\ili{} matchings\ili{} in\ili{} a\ili{} web\ili{}-scale\ili{} corpus\ili{} to\ili{} judge\ili{} the\ili{} correctness\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[scale\ili{}=0\ili{}.54\ili{}]\ili{}{figures\ili{}/error_analysis\ili{}.png}\ili{}
+\ili{}
+\ili{}\caption\ili{}{Complete\ili{} list\ili{} of\ili{} \ili{}'wrong\ili{}'\ili{} MWEntities\ili{} and\ili{} left\ili{} or\ili{} right\ili{} boundary\ili{} mismatching\ili{} with\ili{} pattern\ili{} reliability\ili{} threshold\ili{} \ili{}=\ili{} 0\ili{}.90}\ili{}
+\ili{}\label\ili{}{fig\ili{}:error_analysis}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}
+\ili{}\section\ili{}{Conclusion\ili{} and\ili{} future\ili{} work}\ili{}
+The\ili{} methods\ili{} described\ili{} in\ili{} this\ili{} chapter\ili{} have\ili{} produced\ili{} a\ili{} large\ili{} 22\ili{}-language\ili{} resource\ili{} containing\ili{} Multi\ili{}-word\ili{} entities\ili{} of\ili{} different\ili{} types\ili{} and\ili{} a\ili{} number\ili{} of\ili{} automatically\ili{} learned\ili{} patterns\ili{} to\ili{} recognise\ili{} newly\ili{} occurring\ili{} MWEntities\ili{}.\ili{} We\ili{} intend\ili{} to\ili{} integrate\ili{} these\ili{} recognition\ili{} patterns\ili{},\ili{} together\ili{} with\ili{} the\ili{} variant\ili{} matching\ili{} techniques\ili{},\ili{} into\ili{} the\ili{} workflow\ili{} of\ili{} the\ili{} Europe\ili{} Media\ili{} Monitor\ili{}.\ili{} An\ili{} interesting\ili{} feature\ili{} of\ili{} this\ili{} collection\ili{} and\ili{} the\ili{} patterns\ili{} is\ili{} that\ili{} all\ili{} MWEntity\ili{} forms\ili{} were\ili{} found\ili{} in\ili{} real\ili{}-world\ili{} text\ili{} and\ili{} that\ili{} large\ili{} numbers\ili{} of\ili{} variants\ili{} were\ili{} identified\ili{},\ili{} including\ili{} typos\ili{},\ili{} simplifications\ili{} of\ili{} longer\ili{} names\ili{},\ili{} syntactic\ili{} and\ili{} morphological\ili{} variants\ili{} and\ili{} translational\ili{} equivalences\ili{}.\ili{}
+\ili{}
+The\ili{} results\ili{} obtained\ili{} in\ili{} MWEntity\ili{} recognition\ili{} with\ili{} the\ili{} patterns\ili{} automatically\ili{} derived\ili{} from\ili{} BabelNet\ili{} are\ili{} promising\ili{} when\ili{} applied\ili{} to\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} \ili{}\ili\ili{}{Spanish}\ili{},\ili{} although\ili{} the\ili{} reported\ili{} approach\ili{} and\ili{} evaluation\ili{} figures\ili{} reflect\ili{} only\ili{} our\ili{} preliminary\ili{} research\ili{} in\ili{} this\ili{} area\ili{}.\ili{} Expanding\ili{} the\ili{} pattern\ili{} learning\ili{} to\ili{} other\ili{} languages\ili{} is\ili{} part\ili{} of\ili{} our\ili{} future\ili{} work\ili{}.\ili{} We\ili{} also\ili{} envisage\ili{} applying\ili{} the\ili{} same\ili{} pattern\ili{} learning\ili{} approach\ili{} from\ili{} the\ili{} automatically\ili{} created\ili{} MWEntity\ili{} resource\ili{}.\ili{} This\ili{} would\ili{} require\ili{} to\ili{} categorise\ili{} the\ili{} MWEntity\ili{} sets\ili{} into\ili{} some\ili{} broad\ili{} semantic\ili{} classes\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} organisations\ili{},\ili{} events\ili{},\ili{} measurements\ili{},\ili{} and\ili{} others\ili{})\ili{} which\ili{} is\ili{} a\ili{} task\ili{} we\ili{} are\ili{} currently\ili{} working\ili{} on\ili{}.\ili{}
+\ili{}
+Furthermore\ili{},\ili{} we\ili{} are\ili{} also\ili{} working\ili{} on\ili{} expanding\ili{} the\ili{} patterns\ili{} we\ili{} learned\ili{} based\ili{} on\ili{} a\ili{} distributional\ili{} approach\ili{}.\ili{} It\ili{} consists\ili{} of\ili{} replacing\ili{} meaningful\ili{} surface\ili{} forms\ili{} from\ili{} each\ili{} pattern\ili{} by\ili{} a\ili{} cluster\ili{} of\ili{} surface\ili{} forms\ili{} that\ili{} would\ili{} belong\ili{} to\ili{} the\ili{} same\ili{} semantic\ili{} class\ili{}.\ili{} In\ili{} such\ili{} a\ili{} way\ili{},\ili{} similar\ili{} words\ili{} like\ili{} \ili{}\textit\ili{}{company}\ili{},\ili{} \ili{}\textit\ili{}{firm}\ili{},\ili{} \ili{}\textit\ili{}{corporation}\ili{},\ili{} etc\ili{}.\ili{},\ili{} will\ili{} be\ili{} part\ili{} of\ili{} the\ili{} same\ili{} cluster\ili{} because\ili{} they\ili{} have\ili{} a\ili{} high\ili{} distributional\ili{} similarity\ili{}.\ili{} Finally\ili{},\ili{} the\ili{} pattern\ili{} reliability\ili{} scoring\ili{} could\ili{} be\ili{} extended\ili{} through\ili{} inclusion\ili{} of\ili{} additional\ili{} statistics\ili{} when\ili{} applying\ili{} the\ili{} patterns\ili{} on\ili{} web\ili{}-scale\ili{} corpora\ili{}.\ili{}
+\ili{}
+\ili{}%\ili{}\section\ili{}*\ili{}{Abbreviations}\ili{}
+\ili{}%\ili{}\section\ili{}*\ili{}{Acknowledgements}\ili{}
+\ili{}
+\ili{}\printbibliography\ili{}[heading\ili{}=subbibliography\ili{},notkeyword\ili{}=this\ili{}]\ili{}
+\ili{}
+\ili{}\end\ili{}{document}\ili{}
+\ili{}

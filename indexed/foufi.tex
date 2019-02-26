@@ -1,0 +1,473 @@
+\documentclass[output=paper]{langsci/langscibook} 
+
+\usepackage{commands}
+%\usepackage[greek,french,english]{babel}
+
+%\addbibresource{localbibliography.bib}
+
+\title{Multilingual parsing and {M}{W}{E} detection} 
+\author{%
+Vasiliki Foufi\affiliation{University of Geneva}\and 
+Luka Nerima\affiliation{University of Geneva}\lastand 
+Eric Wehrli\affiliation{University of Geneva}%
+}
+% \chapterDOI{} %will be filled in at production
+
+%\epigram{}
+
+\abstract{
+  Identifying multiword expressions (MWEs) in a sentence in order to ensure their proper processing in subsequent applications, like machine translation, and performing the syntactic analysis of the sentence are interrelated processes. In our approach, priority is given to parsing alternatives involving collocations, and hence collocational information helps the parser through the maze of alternatives, with the aim to lead to substantial improvements in the performance of both tasks (\isi{collocation} identification and parsing), and in that of a subsequent task (machine translation).
+}
+
+\begin{document}\ili{}
+\ili{}\maketitle\ili{}
+\ili{}
+\ili{}\section\ili{}{Introduction}\ili{}
+\ili{}
+Multiword\ili{} expressions\ili{} \ili{}(MWEs\ili{})\ili{} are\ili{} lexical\ili{} units\ili{} consisting\ili{} of\ili{} more\ili{} than\ili{} one\ili{} word\ili{} \ili{}(in\ili{} the\ili{} intuitive\ili{} sense\ili{} of\ili{} \ili{}`word\ili{}'\ili{})\ili{}.\ili{} There\ili{} are\ili{} several\ili{} types\ili{} of\ili{} MWEs\ili{},\ili{} including\ili{} idioms\ili{} \ili{}(\ili{}\textit\ili{}{a\ili{} frog\ili{} in\ili{} the\ili{} throat}\ili{},\ili{} \ili{}\textit\ili{}{break\ili{} a\ili{} leg}\ili{})\ili{},\ili{} fixed\ili{} phrases\ili{} \ili{}(\ili{}\textit\ili{}{per\ili{} se}\ili{},\ili{} \ili{}\textit\ili{}{by\ili{} and\ili{} large}\ili{},\ili{} \ili{}\textit\ili{}{rock\ili{}'n\ili{} roll}\ili{})\ili{},\ili{} noun\ili{} compounds\ili{} \ili{}(\ili{}\textit\ili{}{traffic\ili{} lights}\ili{},\ili{} \ili{}\textit\ili{}{cable\ili{} car}\ili{})\ili{},\ili{} \ili{}\isi\ili{}{phrasal\ili{} verbs}\ili{} \ili{}(\ili{}\textit\ili{}{look\ili{} up}\ili{},\ili{} \ili{}\textit\ili{}{take\ili{} off}\ili{})\ili{},\ili{} etc\ili{}.\ili{} While\ili{} easily\ili{} mastered\ili{} by\ili{} native\ili{} speakers\ili{},\ili{} their\ili{} detection\ili{} and\ili{}/or\ili{} their\ili{} interpretation\ili{} pose\ili{} a\ili{} major\ili{} challenge\ili{} for\ili{} computational\ili{} systems\ili{},\ili{} due\ili{} in\ili{} part\ili{} to\ili{} their\ili{} flexible\ili{} and\ili{} heterogeneous\ili{} nature\ili{}.\ili{} \ili{}
+\ili{}
+In\ili{} our\ili{} research\ili{},\ili{} MWEs\ili{} are\ili{} categorized\ili{} in\ili{} five\ili{} subclasses\ili{}:\ili{} compounds\ili{},\ili{} discontinuous\ili{} words\ili{},\ili{} named\ili{} entities\ili{},\ili{} collocations\ili{} and\ili{} idioms\ili{}.\ili{} While\ili{} the\ili{} first\ili{} three\ili{} are\ili{} expressions\ili{} of\ili{} lexical\ili{} category\ili{} \ili{}(N\ili{},\ili{} V\ili{},\ili{} Adj\ili{},\ili{} etc\ili{}.\ili{})\ili{} and\ili{} can\ili{} therefore\ili{} be\ili{} listed\ili{} along\ili{} with\ili{} simple\ili{} words\ili{},\ili{} collocations\ili{} and\ili{} idioms\ili{} are\ili{} expressions\ili{} of\ili{} phrasal\ili{} category\ili{} \ili{}(NPs\ili{},\ili{} VPs\ili{},\ili{} etc\ili{}.\ili{})\ili{}.\ili{} The\ili{} identification\ili{} of\ili{} compounds\ili{} and\ili{} named\ili{} entities\ili{} can\ili{} be\ili{} achieved\ili{} during\ili{} the\ili{} lexical\ili{} analysis\ili{},\ili{} but\ili{} the\ili{} identification\ili{} of\ili{} discontinuous\ili{} words\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} particle\ili{} verbs\ili{} or\ili{} \ili{}\isi\ili{}{phrasal\ili{} verbs}\ili{})\ili{},\ili{} collocations\ili{} and\ili{} idioms\ili{} requires\ili{} grammatical\ili{} data\ili{} and\ili{} should\ili{} be\ili{} viewed\ili{} as\ili{} part\ili{} of\ili{} the\ili{} parsing\ili{} process\ili{}.\ili{} \ili{}
+\ili{}
+In\ili{} this\ili{} paper\ili{},\ili{} we\ili{} will\ili{} primarily\ili{} focus\ili{} on\ili{} collocations\ili{},\ili{} roughly\ili{} defined\ili{} as\ili{} arbitrary\ili{} and\ili{} conventional\ili{} associations\ili{} of\ili{} two\ili{} words\ili{} \ili{}(not\ili{} counting\ili{} grammatical\ili{} words\ili{})\ili{} in\ili{} a\ili{} particular\ili{} grammatical\ili{} configuration\ili{} \ili{}(adjective\ili{}-noun\ili{},\ili{} noun\ili{}-noun\ili{},\ili{} verb\ili{}-object\ili{},\ili{} etc\ili{}.\ili{})\ili{}.\ili{} We\ili{} will\ili{}
+argue\ili{} that\ili{} the\ili{} identification\ili{} of\ili{} collocations\ili{} and\ili{} parsing\ili{} are\ili{} interrelated\ili{} processes\ili{} \ili{}-\ili{}-\ili{} in\ili{} the\ili{} sense\ili{} that\ili{} one\ili{} cannot\ili{} precede\ili{} the\ili{} other\ili{} \ili{}-\ili{}-\ili{} \ili{} and\ili{} we\ili{} will\ili{} show\ili{} how\ili{} this\ili{} has\ili{} been\ili{} achieved\ili{} in\ili{} the\ili{} Fips\ili{} \ili{}\isi\ili{}{multilingual\ili{} parser}\ili{} \ili{}\citep\ili{}{wehrli07\ili{},wn15}\ili{}.\ili{}%\ili{}(Wehrli\ili{} 2007\ili{},\ili{} Wehrli\ili{} \ili{}\\ili{}&\ili{} Nerima\ili{} 2015\ili{})\ili{}.\ili{} \ili{}
+\ili{}
+Section\ili{}~\ili{}\ref\ili{}{sec2}\ili{} will\ili{} give\ili{} a\ili{} brief\ili{} review\ili{} of\ili{} MWEs\ili{} and\ili{} previous\ili{} work\ili{}.\ili{} Section\ili{}~\ili{}\ref\ili{}{sec3}\ili{} will\ili{} describe\ili{} how\ili{} Fips\ili{} handles\ili{} MWEs\ili{} and\ili{} the\ili{} way\ili{} they\ili{} are\ili{} represented\ili{} in\ili{} our\ili{} lexical\ili{} database\ili{}.\ili{} Section\ili{}~\ili{}\ref\ili{}{sec4}\ili{} will\ili{} be\ili{} concerned\ili{} with\ili{} the\ili{} treatment\ili{} of\ili{} collocation\ili{} types\ili{} which\ili{} present\ili{} a\ili{} fair\ili{} amount\ili{} of\ili{} syntactic\ili{} flexibility\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} verb\ili{}-object\ili{})\ili{}.\ili{} For\ili{} instance\ili{},\ili{} verbal\ili{} collocations\ili{} may\ili{} undergo\ili{} syntactic\ili{} processes\ili{} such\ili{} as\ili{} \ili{}\isi\ili{}{passivization}\ili{},\ili{} \ili{}\isi\ili{}{relativization}\ili{},\ili{} interrogation\ili{} and\ili{} even\ili{} \ili{}\isi\ili{}{pronominalization}\ili{},\ili{} which\ili{} can\ili{} leave\ili{} the\ili{} collocation\ili{} constituents\ili{} far\ili{} away\ili{} from\ili{} each\ili{} other\ili{} and\ili{}/or\ili{} reverse\ili{} their\ili{} canonical\ili{} order\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\section\ili{}{Multiword\ili{} expressions\ili{}:\ili{} a\ili{} brief\ili{} review\ili{} of\ili{} related\ili{} work}\ili{}
+\ili{}\label\ili{}{sec2}\ili{}
+The\ili{} standard\ili{} approach\ili{} in\ili{} dealing\ili{} with\ili{} MWEs\ili{} in\ili{} parsing\ili{} is\ili{} to\ili{} apply\ili{} a\ili{} \ili{}`words\ili{}-with\ili{}-spaces\ili{}'\ili{} preprocessing\ili{} step\ili{},\ili{} which\ili{} marks\ili{} the\ili{} MWEs\ili{} in\ili{} the\ili{} input\ili{} sentence\ili{} as\ili{} units\ili{} which\ili{} will\ili{} later\ili{} be\ili{} integrated\ili{} as\ili{} single\ili{} blocks\ili{} in\ili{} the\ili{} parse\ili{} tree\ili{} built\ili{} during\ili{} analysis\ili{} \ili{}\citep\ili{}{brun\ili{}:1998\ili{},zhang06}\ili{}.\ili{} This\ili{} method\ili{} is\ili{} not\ili{} really\ili{} adequate\ili{} for\ili{} processing\ili{} collocations\ili{}.\ili{} Unlike\ili{} other\ili{} expressions\ili{} that\ili{} are\ili{} fixed\ili{} or\ili{} semi\ili{}-fixed\ili{},\ili{} several\ili{} collocation\ili{} types\ili{} do\ili{} not\ili{} allow\ili{} a\ili{} \ili{}`words\ili{}-with\ili{}-spaces\ili{}'\ili{} treatment\ili{} because\ili{} they\ili{} have\ili{} a\ili{} high\ili{} morphosyntactic\ili{} flexibility\ili{}.\ili{}
+On\ili{} the\ili{} other\ili{} hand\ili{},\ili{} \ili{}\cite\ili{}{alegria04\ili{},villavicencio07}\ili{} adopted\ili{} a\ili{} compositional\ili{} approach\ili{} to\ili{} the\ili{} encoding\ili{} of\ili{} MWEs\ili{},\ili{} able\ili{} to\ili{} capture\ili{} more\ili{} morphosyntactically\ili{} flexible\ili{} MWEs\ili{}.\ili{} \ili{}\cite\ili{}{alegria04}\ili{} showed\ili{} that\ili{} by\ili{} using\ili{} a\ili{} MWE\ili{} processor\ili{} in\ili{} the\ili{} preprocessing\ili{} stage\ili{},\ili{} a\ili{} significant\ili{} improvement\ili{} in\ili{} the\ili{} POS\ili{} tagging\ili{} precision\ili{} is\ili{} obtained\ili{}.\ili{} \ili{}\cite\ili{}{villavicencio07}\ili{} found\ili{} that\ili{} the\ili{} addition\ili{} of\ili{} 21\ili{} new\ili{} MWEs\ili{} to\ili{} the\ili{} lexicon\ili{} led\ili{} to\ili{} a\ili{} significant\ili{} increase\ili{} in\ili{} the\ili{} grammar\ili{} coverage\ili{} \ili{}(from\ili{} 7\ili{}.1\ili{}\\ili{}%\ili{} to\ili{} 22\ili{}.7\ili{}\\ili{}%\ili{})\ili{},\ili{} without\ili{} altering\ili{} the\ili{} grammar\ili{} accuracy\ili{}.\ili{}
+However\ili{},\ili{} as\ili{} argued\ili{} by\ili{} many\ili{} researchers\ili{} \ili{}(e\ili{}.g\ili{}.\ili{},\ili{} \ili{}\quotecite\ili{}{heid94\ili{},seretan11}\ili{})\ili{},\ili{} collocation\ili{} identification\ili{} is\ili{} best\ili{} performed\ili{} on\ili{} the\ili{} basis\ili{} of\ili{} parsed\ili{} material\ili{}.\ili{} This\ili{} is\ili{} due\ili{} to\ili{} the\ili{} fact\ili{} that\ili{} collocations\ili{} are\ili{} co\ili{}-occurrences\ili{} of\ili{} lexical\ili{} items\ili{} in\ili{} a\ili{} specific\ili{} syntactic\ili{} configuration\ili{}.\ili{} For\ili{} that\ili{} reason\ili{},\ili{} we\ili{} have\ili{} chosen\ili{} the\ili{} identification\ili{} of\ili{} collocations\ili{} as\ili{} soon\ili{} as\ili{} possible\ili{} during\ili{} the\ili{} parse\ili{}.\ili{} \ili{}
+\ili{}\cite\ili{}{finkeljr09}\ili{} have\ili{} built\ili{} a\ili{} joint\ili{} model\ili{} of\ili{} parsing\ili{} and\ili{} named\ili{} entity\ili{} recognition\ili{},\ili{} based\ili{} on\ili{} discriminative\ili{} feature\ili{}-based\ili{} constituency\ili{} parser\ili{}.\ili{} They\ili{} tested\ili{} their\ili{} model\ili{} on\ili{} the\ili{} OntoNotes\ili{} annotated\ili{} corpus\ili{}\footnote\ili{}{cf\ili{}.\ili{} \ili{}\url\ili{}{www\ili{}.gabormelli\ili{}.com\ili{}/RKB\ili{}/OntoNotes_Corpus}\ili{}.}\ili{} and\ili{} they\ili{} achieved\ili{} a\ili{} remarkably\ili{} good\ili{} performance\ili{} on\ili{} both\ili{} parsing\ili{} and\ili{} recognition\ili{} of\ili{} named\ili{} entities\ili{}.\ili{} \ili{}\cite\ili{}{greenEtAl13}\ili{} have\ili{} developed\ili{} two\ili{} structured\ili{} prediction\ili{} models\ili{} in\ili{} the\ili{} aim\ili{} to\ili{} identify\ili{} arbitrary\ili{}-length\ili{},\ili{} contiguous\ili{} MWEs\ili{} in\ili{} Arabic\ili{} and\ili{} \ili{}\ili\ili{}{French}\ili{}.\ili{} The\ili{} first\ili{} is\ili{} based\ili{} on\ili{} context\ili{}-free\ili{} grammars\ili{} and\ili{} the\ili{} second\ili{} uses\ili{} tree\ili{} substitution\ili{} grammars\ili{},\ili{} a\ili{} formalism\ili{} that\ili{} can\ili{} store\ili{} larger\ili{} syntactic\ili{} fragments\ili{}.\ili{} They\ili{} claim\ili{} that\ili{} these\ili{} techniques\ili{} can\ili{} be\ili{} applied\ili{} to\ili{} any\ili{} language\ili{} for\ili{} which\ili{} a\ili{} syntactic\ili{} treebank\ili{},\ili{} a\ili{} MWE\ili{} list\ili{},\ili{} and\ili{} a\ili{} morphological\ili{} analyzer\ili{} exist\ili{}.\ili{} \ili{}\cite\ili{}{nasrEtAl15}\ili{} have\ili{} developed\ili{} a\ili{} joint\ili{} parsing\ili{} and\ili{} MWE\ili{} identification\ili{} model\ili{} for\ili{} the\ili{} detection\ili{} and\ili{} representation\ili{} of\ili{} ambiguous\ili{} complex\ili{} function\ili{} words\ili{}.\ili{} \ili{}\cite\ili{}{constantNivre16}\ili{} developed\ili{} a\ili{} transition\ili{}-based\ili{} parser\ili{} which\ili{} combines\ili{} two\ili{} factorized\ili{} substructures\ili{}:\ili{} a\ili{} standard\ili{} tree\ili{} representing\ili{} the\ili{} syntactic\ili{} dependencies\ili{} between\ili{} the\ili{} lexical\ili{} elements\ili{} of\ili{} a\ili{} sentence\ili{} and\ili{} a\ili{} forest\ili{} of\ili{} lexical\ili{} trees\ili{} including\ili{} MWEs\ili{} identified\ili{} in\ili{} the\ili{} sentence\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}\section\ili{}{The\ili{} Fips\ili{} parser}\ili{}
+\ili{}\label\ili{}{sec3}\ili{}
+Fips\ili{} is\ili{} a\ili{} \ili{}\isi\ili{}{multilingual\ili{} parser}\ili{},\ili{} available\ili{} for\ili{} several\ili{} languages\ili{},\ili{} i\ili{}.e\ili{}.\ili{} \ili{}\ili\ili{}{French}\ili{},\ili{} \ili{}\ili\ili{}{English}\ili{},\ili{} \ili{}\ili\ili{}{German}\ili{},\ili{} \ili{}\ili\ili{}{Italian}\ili{},\ili{} \ili{}\ili\ili{}{Spanish}\ili{},\ili{} \ili{}\ili\ili{}{Modern\ili{} Greek}\ili{},\ili{} \ili{}\ili\ili{}{Romanian}\ili{} and\ili{} Portuguese\ili{}.\ili{} It\ili{} relies\ili{} on\ili{} generative\ili{} grammar\ili{} concepts\ili{} and\ili{} is\ili{} basically\ili{} made\ili{} up\ili{} of\ili{} a\ili{} generic\ili{} parsing\ili{} module\ili{} which\ili{} can\ili{} be\ili{} refined\ili{} in\ili{} order\ili{} to\ili{} suit\ili{} the\ili{} specific\ili{} needs\ili{} of\ili{} a\ili{} particular\ili{} language\ili{}.\ili{} Fips\ili{} is\ili{} a\ili{} constituent\ili{} parser\ili{} that\ili{} functions\ili{} as\ili{} follows\ili{}:\ili{} it\ili{} scans\ili{} an\ili{} input\ili{} string\ili{} from\ili{} left\ili{} to\ili{} right\ili{},\ili{} without\ili{} any\ili{} backtracking\ili{}.\ili{} The\ili{} parsing\ili{} algorithm\ili{},\ili{} iteratively\ili{},\ili{} performs\ili{} the\ili{} following\ili{} three\ili{} steps\ili{}:\ili{}
+\ili{}\vspace\ili{}*\ili{}{3mm}\ili{}
+\ili{}\renewcommand\ili{}{\ili{}\labelitemi}\ili{}{\ili{}$\ili{}\bullet\ili{}$}\ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{}\item\ili{} get\ili{} the\ili{} next\ili{} lexical\ili{} item\ili{} and\ili{} project\ili{} the\ili{} relevant\ili{} phrasal\ili{} category\ili{}\\ili{}\\ili{} \ili{}(X\ili{} \ili{}$\ili{}\rightarrow\ili{}$\ili{} XP\ili{})\ili{};\ili{}
+\ili{}\item\ili{} merge\ili{} XP\ili{} with\ili{} the\ili{} structure\ili{} in\ili{} its\ili{} left\ili{} context\ili{} \ili{}(the\ili{} structure\ili{} already\ili{} built\ili{})\ili{};\ili{}
+\ili{}\item\ili{} \ili{}(syntactically\ili{})\ili{} interpret\ili{} XP\ili{},\ili{} triggering\ili{} procedures\ili{} \ili{}
+\ili{}	\ili{}\begin\ili{}{itemize}\ili{}
+\ili{}	\ili{}	\ili{}\item\ili{} to\ili{} build\ili{} predicate\ili{}-argument\ili{} structures\ili{}
+\ili{}	\ili{}	\ili{}\item\ili{} to\ili{} create\ili{} \ili{} chains\ili{} linking\ili{} preposed\ili{} elements\ili{} to\ili{} their\ili{} trace\ili{}
+\ili{}	\ili{}	\ili{}\item\ili{} to\ili{} find\ili{} the\ili{} antecedent\ili{} of\ili{} \ili{}(3rd\ili{} person\ili{})\ili{} personal\ili{} pronouns\ili{}
+\ili{}	\ili{}	\ili{}\item\ili{} to\ili{} identify\ili{} collocations\ili{}.\ili{} \ili{}
+\ili{}	\ili{}\end\ili{}{itemize}\ili{}
+\ili{}\end\ili{}{itemize}\ili{}
+\ili{} \ili{}
+\ili{}\vspace\ili{}*\ili{}{3mm}\ili{}
+The\ili{} parsing\ili{} procedure\ili{} is\ili{} a\ili{} one\ili{} pass\ili{} \ili{}(no\ili{} pre\ili{}-processing\ili{},\ili{} no\ili{} post\ili{}-processing\ili{})\ili{} scan\ili{} of\ili{} the\ili{} input\ili{} text\ili{},\ili{} using\ili{} rules\ili{} to\ili{} build\ili{} up\ili{} constituent\ili{} structures\ili{} and\ili{} \ili{}(syntactic\ili{})\ili{} interpretation\ili{} procedures\ili{} to\ili{} determine\ili{} the\ili{} dependency\ili{} relations\ili{} between\ili{} constituents\ili{} \ili{}(grammatical\ili{} functions\ili{},\ili{} etc\ili{}.\ili{})\ili{},\ili{} including\ili{} cases\ili{} of\ili{} \ili{}\isi\ili{}{long\ili{}-distance\ili{} dependencies}\ili{}.\ili{}
+One\ili{} of\ili{} the\ili{} key\ili{} components\ili{} of\ili{} the\ili{} parser\ili{} is\ili{} its\ili{} lexicon\ili{} which\ili{} contains\ili{} detailed\ili{} morphosyntactic\ili{} and\ili{} semantic\ili{} information\ili{},\ili{} selectional\ili{} properties\ili{},\ili{} valency\ili{} information\ili{},\ili{} and\ili{} syntactico\ili{}-semantic\ili{} features\ili{} that\ili{} are\ili{} likely\ili{} to\ili{} influence\ili{} the\ili{} syntactic\ili{} analysis\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}\subsection\ili{}{The\ili{} Fips\ili{} lexicon}\ili{}
+\ili{}
+The\ili{} lexicon\ili{} was\ili{} built\ili{} manually\ili{} and\ili{} contains\ili{} fine\ili{}-grained\ili{} information\ili{} required\ili{} by\ili{} the\ili{} parser\ili{}.\ili{} It\ili{} is\ili{} organized\ili{} as\ili{} a\ili{} relational\ili{} database\ili{} with\ili{} four\ili{} main\ili{} tables\ili{}:\ili{}
+\ili{}
+\ili{}\vspace\ili{}*\ili{}{3mm}\ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{}\item\ili{} \ili{}\textbf\ili{}{words}\ili{},\ili{} representing\ili{} all\ili{} morphological\ili{} forms\ili{} \ili{}(spellings\ili{})\ili{} of\ili{} the\ili{} words\ili{} of\ili{} a\ili{} language\ili{},\ili{} grouped\ili{} into\ili{} inflectional\ili{} paradigms\ili{};\ili{} \ili{}
+\ili{}\item\ili{} \ili{}\textbf\ili{}{lexemes}\ili{},\ili{} describing\ili{} more\ili{} abstract\ili{} lexical\ili{} forms\ili{} which\ili{} correspond\ili{} to\ili{} the\ili{} syntactic\ili{} and\ili{} semantic\ili{} readings\ili{} of\ili{} a\ili{} word\ili{} \ili{}(a\ili{} lexeme\ili{} corresponds\ili{} roughly\ili{} to\ili{} a\ili{} standard\ili{} dictionary\ili{} entry\ili{})\ili{};\ili{} \ili{}
+\ili{}\item\ili{} \ili{}\textbf\ili{}{collocations}\ili{},\ili{} which\ili{} describe\ili{} multiword\ili{} expressions\ili{} combining\ili{} two\ili{} lexical\ili{} items\ili{},\ili{} not\ili{} counting\ili{} function\ili{} words\ili{};\ili{}
+\ili{}\item\ili{} \ili{}\textbf\ili{}{variants}\ili{},\ili{} which\ili{} list\ili{} all\ili{} the\ili{} alternatives\ili{} written\ili{} forms\ili{} for\ili{} a\ili{} word\ili{},\ili{} e\ili{}.g\ili{}.\ili{} the\ili{} written\ili{} forms\ili{} of\ili{} British\ili{} \ili{}\ili\ili{}{English}\ili{} vs\ili{} American\ili{} \ili{}\ili\ili{}{English}\ili{},\ili{} the\ili{} spellings\ili{} introduced\ili{} by\ili{} a\ili{} spelling\ili{} reform\ili{},\ili{} presence\ili{} of\ili{} both\ili{} literary\ili{} and\ili{} modern\ili{} forms\ili{} in\ili{} Greek\ili{},\ili{} etc\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}\end\ili{}{itemize}\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Representation\ili{} of\ili{} MWEs\ili{} in\ili{} the\ili{} lexicon}\ili{}
+\ili{}
+In\ili{} the\ili{} introduction\ili{} we\ili{} mentioned\ili{} that\ili{} in\ili{} our\ili{} research\ili{} the\ili{} MWEs\ili{} are\ili{} categorized\ili{} in\ili{} five\ili{} subclasses\ili{},\ili{} i\ili{}.e\ili{}.\ili{} compounds\ili{},\ili{} discontinuous\ili{} words\ili{},\ili{} named\ili{} entities\ili{},\ili{} collocations\ili{} and\ili{} idioms\ili{}.\ili{}
+Let\ili{}'s\ili{} see\ili{} how\ili{} they\ili{} are\ili{} represented\ili{} in\ili{} the\ili{} lexical\ili{} database\ili{}.\ili{}
+\ili{}
+Compounds\ili{} and\ili{} named\ili{} entities\ili{} are\ili{} represented\ili{} by\ili{} the\ili{} same\ili{} structure\ili{} as\ili{} simple\ili{} words\ili{}.\ili{} An\ili{} entry\ili{} describes\ili{} the\ili{} syntactic\ili{} and\ili{} \ili{}(some\ili{})\ili{} semantic\ili{} properties\ili{} of\ili{} the\ili{} word\ili{}:\ili{} lexical\ili{} category\ili{} \ili{}(POS\ili{})\ili{},\ili{}
+type\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} common\ili{} noun\ili{},\ili{} auxiliary\ili{} verb\ili{})\ili{},\ili{} subtype\ili{},\ili{} selectional\ili{} features\ili{},\ili{} argument\ili{} structure\ili{},\ili{} semantic\ili{} features\ili{},\ili{} thematic\ili{} roles\ili{},\ili{} etc\ili{}.\ili{} Each\ili{} entry\ili{} is\ili{} associated\ili{} with\ili{} the\ili{} inflectional\ili{} paradigm\ili{} of\ili{} the\ili{} word\ili{},\ili{} \ili{}
+that\ili{} is\ili{} all\ili{} the\ili{} inflected\ili{} forms\ili{} of\ili{} the\ili{} word\ili{} along\ili{} with\ili{} the\ili{} morphological\ili{} features\ili{} \ili{}(number\ili{},\ili{} gender\ili{},\ili{} person\ili{},\ili{} case\ili{},\ili{} etc\ili{}.\ili{})\ili{}.\ili{} The\ili{} possible\ili{} spaces\ili{} or\ili{} hyphens\ili{} of\ili{} the\ili{} compounds\ili{} are\ili{} processed\ili{} \ili{}
+at\ili{} the\ili{} lexical\ili{} analyzer\ili{} level\ili{} in\ili{} order\ili{} to\ili{} distinguish\ili{} those\ili{} that\ili{} are\ili{} separators\ili{} from\ili{} those\ili{} belonging\ili{} to\ili{} the\ili{} compound\ili{}.\ili{}
+\ili{}
+Discontinuous\ili{} words\ili{},\ili{} such\ili{} as\ili{} particle\ili{} verbs\ili{} or\ili{} \ili{}\isi\ili{}{phrasal\ili{} verbs}\ili{},\ili{} are\ili{} represented\ili{} in\ili{} the\ili{} same\ili{} way\ili{} as\ili{} simple\ili{} words\ili{} as\ili{} well\ili{},\ili{} except\ili{} that\ili{} the\ili{} orthographic\ili{} string\ili{} contains\ili{} the\ili{} bare\ili{} verb\ili{} only\ili{},\ili{} \ili{}
+the\ili{} particle\ili{} being\ili{} represented\ili{} separately\ili{} in\ili{} a\ili{} specific\ili{} field\ili{}.\ili{} The\ili{} benefit\ili{} of\ili{} such\ili{} an\ili{} approach\ili{} is\ili{} that\ili{} the\ili{} phrasal\ili{} verb\ili{} inherits\ili{} the\ili{} inflectional\ili{} paradigm\ili{} of\ili{} the\ili{} basic\ili{} verb\ili{}.\ili{} For\ili{} agglutinative\ili{} languages\ili{},\ili{}
+a\ili{} lexical\ili{} analyzer\ili{} will\ili{} detect\ili{} and\ili{} separate\ili{} the\ili{} particle\ili{} from\ili{} the\ili{} basic\ili{} verb\ili{}.\ili{}
+\ili{}
+\ili{}%Named\ili{} entities\ili{} are\ili{} represented\ili{} as\ili{} simple\ili{} word\ili{} too\ili{}.\ili{} They\ili{} have\ili{} some\ili{} specificities\ili{}:\ili{} they\ili{} are\ili{} proper\ili{} nouns\ili{} and\ili{} as\ili{} such\ili{} they\ili{} have\ili{} only\ili{} one\ili{} or\ili{} a\ili{} few\ili{} morphological\ili{} forms\ili{}.\ili{} They\ili{} usually\ili{} have\ili{} an\ili{} abbreviation\ili{} represented\ili{} as\ili{} an\ili{} alternative\ili{} written\ili{} from\ili{},\ili{} stored\ili{} in\ili{} the\ili{} table\ili{} of\ili{} variants\ili{}.\ili{}
+\ili{}
+Collocations\ili{} are\ili{} defined\ili{} as\ili{} associations\ili{} of\ili{} two\ili{} lexical\ili{} units\ili{} \ili{}(not\ili{} counting\ili{} function\ili{} words\ili{})\ili{} in\ili{} a\ili{} specific\ili{} syntactic\ili{} relation\ili{} \ili{}(for\ili{} instance\ili{} adjective\ili{} \ili{}-\ili{} noun\ili{},\ili{} verb\ili{} \ili{}-\ili{} noun\ili{} \ili{}(object\ili{})\ili{},\ili{} etc\ili{}.\ili{})\ili{}.\ili{} \ili{}
+A\ili{} lexical\ili{} unit\ili{} can\ili{} be\ili{} a\ili{} word\ili{} or\ili{} a\ili{} \ili{}\isi\ili{}{collocation}\ili{}.\ili{} The\ili{} definition\ili{} is\ili{} therefore\ili{} recursive\ili{} and\ili{} enables\ili{} to\ili{} encode\ili{} collocations\ili{} that\ili{} have\ili{} more\ili{} than\ili{} two\ili{} words\ili{} \ili{}\citep\ili{}{nws10}\ili{}.\ili{} \ili{}
+For\ili{} instance\ili{},\ili{} the\ili{} \ili{}\ili\ili{}{French}\ili{} collocation\ili{} \ili{}\textit\ili{}{tomber\ili{} en\ili{} panne\ili{} d\ili{}’essence}\ili{} \ili{}(\ili{}`to\ili{} run\ili{} out\ili{} of\ili{} gas\ili{}'\ili{})\ili{} is\ili{} composed\ili{} of\ili{} the\ili{} word\ili{} \ili{}\textit\ili{}{tomber}\ili{} and\ili{} the\ili{} collocation\ili{} \ili{}\textit\ili{}{panne\ili{} d\ili{}’essence}\ili{}.\ili{} Similarly\ili{},\ili{} the\ili{} \ili{}\ili\ili{}{English}\ili{} collocation\ili{} \ili{}
+\ili{}\textit\ili{}{guaranteed\ili{} minimum\ili{} wage}\ili{} is\ili{} composed\ili{} of\ili{} the\ili{} word\ili{} \ili{}\textit\ili{}{guaranteed}\ili{} and\ili{} the\ili{} collocation\ili{} \ili{}\textit\ili{}{minimum\ili{} wage}\ili{}.\ili{}
+\ili{}
+In\ili{} addition\ili{} to\ili{} the\ili{} two\ili{} lexical\ili{} units\ili{},\ili{} a\ili{} collocation\ili{} entry\ili{} encodes\ili{} the\ili{} following\ili{} information\ili{}:\ili{} \ili{}
+the\ili{} citation\ili{} form\ili{},\ili{} the\ili{} collocation\ili{} type\ili{} \ili{}(i\ili{}.e\ili{}.\ili{} the\ili{} syntactic\ili{} relation\ili{} between\ili{} its\ili{} two\ili{} components\ili{})\ili{},\ili{} the\ili{} preposition\ili{} \ili{}(if\ili{} any\ili{})\ili{} and\ili{} a\ili{} set\ili{} of\ili{} syntactic\ili{} frozenness\ili{} constraints\ili{}.\ili{} \ili{}
+\ili{}
+Some\ili{} examples\ili{} of\ili{} \ili{} entries\ili{} are\ili{} given\ili{} in\ili{} \ili{}(1\ili{}-3\ili{})\ili{}:\ili{}\\ili{}\\ili{}
+\ili{}
+\ili{}\hspace\ili{}*\ili{}{3mm}\ili{}\parbox\ili{}{10cm}\ili{}{\ili{}\makeex\ili{}{\ili{}
+\ili{} \ili{} \ili{}{\ili{}\em\ili{} ein\ili{} Schlaglicht\ili{} werfen\ili{} }\ili{} \ili{}`to\ili{} highlight\ili{}'\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} type\ili{} \ili{}:\ili{} verb\ili{}-direct\ili{} object\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} lexeme\ili{} \ili{}\\ili{}#1\ili{} \ili{}:\ili{} \ili{}{\ili{}\em\ili{} Schlaglicht}\ili{} \ili{}`spotlight\ili{}'\ili{},\ili{} noun\ili{}-noun\ili{} collocation\ili{}\\ili{}\\ili{}
+\ili{} \ili{} lexeme\ili{} \ili{} \ili{}\\ili{}#2\ili{}:\ili{} \ili{}{\ili{}\em\ili{} werfen}\ili{} \ili{}`throw\ili{}'\ili{},\ili{} \ili{}\_\ili{} NP\ili{} PP\ili{} verb\ili{}\\ili{}\\ili{}
+\ili{} \ili{} preposition\ili{} \ili{}:\ili{} \ili{}$\ili{}\emptyset\ili{}$\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} features\ili{} \ili{}:\ili{}\\ili{}{\ili{}\}\ili{} }\ili{}
+\ili{} \ili{} }\ili{}
+\ili{}
+\ili{}%\ili{}\clearpage\ili{}
+\ili{}
+\ili{}\vspace\ili{}*\ili{}{2mm}\ili{}
+\ili{}
+\ili{}\hspace\ili{}*\ili{}{3mm}\ili{}\parbox\ili{}{10cm}\ili{}{\ili{}\makeex\ili{}{\ili{}
+\ili{} \ili{} \ili{}{\ili{}\em\ili{} \ili{} κινητό\ili{} τηλέφωνο}\ili{} \ili{}(kinitó\ili{} tiléfono\ili{})\ili{} \ili{}`mobile\ili{} phone\ili{}'\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} type\ili{} \ili{}:\ili{} adjective\ili{}-noun\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} lexeme\ili{} \ili{} \ili{}\\ili{}#1\ili{} \ili{}:\ili{} \ili{}{\ili{}\em\ili{} κινητό}\ili{} \ili{}(kinitó\ili{})\ili{} \ili{}`mobile\ili{}'\ili{},\ili{} adjective\ili{}\\ili{}\\ili{}
+\ili{} \ili{} lexeme\ili{} \ili{} \ili{}\\ili{}#2\ili{} \ili{}:\ili{} \ili{}{\ili{}\em\ili{} τηλέφωνο}\ili{} \ili{}(tiléfono\ili{})\ili{} \ili{}`phone\ili{}'\ili{},\ili{} noun\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} preposition\ili{} \ili{}:\ili{} \ili{}$\ili{}\emptyset\ili{}$\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} features\ili{} \ili{}:\ili{} \ili{}\\ili{}{\ili{}\}\ili{} }\ili{}
+\ili{} \ili{} }\ili{}
+\ili{} \ili{} \ili{}
+\ili{}\vspace\ili{}*\ili{}{2mm}\ili{}
+\ili{}
+\ili{}\hspace\ili{}*\ili{}{3mm}\ili{}\parbox\ili{}{11cm}\ili{}{\ili{}\makeex\ili{}{\ili{}
+\ili{} \ili{} \ili{}{\ili{}\em\ili{} banc\ili{} de\ili{} poissons}\ili{} \ili{} \ili{}`school\ili{} of\ili{} fish\ili{}'\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} type\ili{} \ili{}:\ili{} noun\ili{}-prep\ili{}-noun\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} lexeme\ili{} \ili{} \ili{}\\ili{}#1\ili{} \ili{}:\ili{} \ili{}{\ili{}\em\ili{} banc}\ili{} \ili{}`bench\ili{}'\ili{},\ili{} noun\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} lexeme\ili{} \ili{} \ili{}\\ili{}#2\ili{} \ili{}:\ili{} \ili{}{\ili{}\em\ili{} poisson}\ili{} \ili{}`fish\ili{}'\ili{},\ili{} noun\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} preposition\ili{} \ili{}:\ili{} \ili{} \ili{}{\ili{}\em\ili{} de}\ili{} \ili{}`of\ili{}'\ili{}\\ili{}\\ili{}
+\ili{} \ili{} features\ili{} \ili{}:\ili{} \ili{}\\ili{}{determiner\ili{}-less\ili{} complement\ili{},\ili{} plural\ili{} complement\ili{}\}\ili{} }\ili{}
+\ili{} \ili{} }\ili{}
+\ili{}
+\ili{}\vspace\ili{}*\ili{}{2mm}\ili{}
+\ili{}
+\ili{}
+For\ili{} the\ili{} time\ili{} being\ili{},\ili{} we\ili{} represent\ili{} idioms\ili{} like\ili{} collocations\ili{},\ili{} with\ili{} more\ili{} restriction\ili{} features\ili{} \ili{}(cannot\ili{} passivize\ili{},\ili{} no\ili{} modifiers\ili{},\ili{} etc\ili{}.\ili{})\ili{} and\ili{} are\ili{},\ili{} therefore\ili{},\ili{} stored\ili{} in\ili{} the\ili{} same\ili{} database\ili{} table\ili{}.\ili{} Reducing\ili{} idioms\ili{} to\ili{} collocations\ili{} with\ili{} specific\ili{} features\ili{} though\ili{} convenient\ili{} and\ili{} appropriate\ili{} for\ili{} large\ili{} classes\ili{} of\ili{} idioms\ili{} is\ili{} nevertheless\ili{} not\ili{} general\ili{} enough\ili{}.\ili{} In\ili{} particular\ili{},\ili{} it\ili{} does\ili{} not\ili{} allow\ili{} for\ili{} the\ili{} representation\ili{} of\ili{} idioms\ili{} with\ili{} fixed\ili{} phrases\ili{},\ili{} such\ili{} as\ili{} \ili{}\textit\ili{}{to\ili{} get\ili{} a\ili{} foot\ili{} in\ili{} the\ili{} door}\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Fips\ili{} and\ili{} collocations}\ili{}
+\ili{}\subsubsection\ili{}{Collocation\ili{} identification\ili{} mechanism}\ili{}
+\ili{}
+The\ili{} collocation\ili{} identification\ili{} mechanism\ili{} is\ili{} integrated\ili{} in\ili{} the\ili{} parser\ili{}.\ili{} In\ili{} the\ili{} pre\ili{}\\ili{}-sent\ili{} version\ili{} of\ili{} Fips\ili{},\ili{} collocations\ili{},\ili{} if\ili{} present\ili{} in\ili{} the\ili{} lexicon\ili{},\ili{} are\ili{} identified\ili{} in\ili{} the\ili{} input\ili{} sentence\ili{} during\ili{} the\ili{} analysis\ili{} of\ili{} that\ili{} sentence\ili{},\ili{} rather\ili{} than\ili{} at\ili{} the\ili{} end\ili{}.\ili{} In\ili{} this\ili{} way\ili{},\ili{} priority\ili{} is\ili{} given\ili{} to\ili{} parsing\ili{} alternatives\ili{} involving\ili{} collocations\ili{},\ili{} and\ili{} collocational\ili{} information\ili{} helps\ili{} the\ili{} parser\ili{} through\ili{} the\ili{} maze\ili{} of\ili{} alternatives\ili{}.\ili{} \ili{}
+To\ili{} fulfil\ili{} the\ili{} goal\ili{} of\ili{} interconnecting\ili{} the\ili{} parsing\ili{} procedure\ili{} and\ili{} the\ili{} identification\ili{} of\ili{} collocations\ili{},\ili{} we\ili{} have\ili{} incorporated\ili{} the\ili{} collocation\ili{} identification\ili{} mechanism\ili{} within\ili{} the\ili{} constituent\ili{} attachment\ili{} procedure\ili{} \ili{}(see\ili{} next\ili{} section\ili{})\ili{}.\ili{} The\ili{} Fips\ili{} parser\ili{},\ili{} like\ili{} many\ili{} grammar\ili{}-based\ili{} parsers\ili{},\ili{} uses\ili{} left\ili{} attachment\ili{} and\ili{} right\ili{} attachment\ili{} rules\ili{} to\ili{} build\ili{} respectively\ili{} left\ili{} subconstituents\ili{} and\ili{} right\ili{} subconstituents\ili{}.\ili{} The\ili{} grammar\ili{} used\ili{} for\ili{} the\ili{} computational\ili{} modelling\ili{} comprises\ili{} rules\ili{} and\ili{} procedures\ili{}.\ili{} Attachment\ili{} rules\ili{} describe\ili{} the\ili{} conditions\ili{} under\ili{} which\ili{} constituents\ili{} can\ili{} combine\ili{},\ili{} while\ili{} procedures\ili{} compute\ili{} properties\ili{} such\ili{} as\ili{} \ili{}\isi\ili{}{long\ili{}-distance\ili{} dependencies}\ili{},\ili{} agreement\ili{},\ili{} control\ili{} properties\ili{},\ili{} argument\ili{}-structure\ili{} building\ili{},\ili{} and\ili{} so\ili{} on\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Treatment\ili{} of\ili{} collocations}\ili{}
+\ili{}
+The\ili{} identification\ili{} of\ili{} compounds\ili{} and\ili{} named\ili{} entities\ili{} can\ili{} be\ili{} achieved\ili{} during\ili{} the\ili{} lexical\ili{} analysis\ili{},\ili{} but\ili{} the\ili{} identification\ili{} of\ili{} discontinuous\ili{} words\ili{},\ili{} collocations\ili{} and\ili{} idioms\ili{} require\ili{} grammatical\ili{} data\ili{} and\ili{} are\ili{},\ili{} therefore\ili{},\ili{} part\ili{} of\ili{} the\ili{} parsing\ili{} process\ili{}.\ili{} The\ili{} identification\ili{} of\ili{} a\ili{} collocation\ili{} occurs\ili{} when\ili{} the\ili{} second\ili{} lexical\ili{} unit\ili{} of\ili{} the\ili{} collocation\ili{} is\ili{} attached\ili{},\ili{} either\ili{} by\ili{} means\ili{} of\ili{} a\ili{} left\ili{} attachment\ili{} \ili{}\isi\ili{}{rule}\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} adjective\ili{}-noun\ili{},\ili{} noun\ili{}-noun\ili{})\ili{} or\ili{} by\ili{} means\ili{} of\ili{} a\ili{} right\ili{}-attachment\ili{} \ili{}\isi\ili{}{rule}\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} noun\ili{}-adjective\ili{},\ili{} noun\ili{}-prep\ili{}-noun\ili{},\ili{} verb\ili{}-object\ili{})\ili{},\ili{} as\ili{} shown\ili{} in\ili{} the\ili{} following\ili{} example\ili{}:\ili{}
+\ili{}
+\ili{}\makeex\ili{}{Paul\ili{} took\ili{} up\ili{} a\ili{} new\ili{} challenge\ili{}.\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{}\cat\ili{}{TP}\ili{}{\ili{}\cat\ili{}{DP}\ili{}{Paul}\ili{}\cat\ili{}{VP}\ili{}{took\ili{} up\ili{} \ili{}\cat\ili{}{DP}\ili{}{a\ili{} \ili{}\cat\ili{}{NP}\ili{}{\ili{}\cat\ili{}{AP}\ili{}{new}\ili{} challenge}}}}\ili{}
+}\ili{}
+\ili{}\vspace\ili{}*\ili{}{3mm}\ili{}
+\ili{}
+When\ili{} the\ili{} parser\ili{} reads\ili{} the\ili{} noun\ili{} \ili{}\textit\ili{}{challenge}\ili{} and\ili{} attaches\ili{} it\ili{} \ili{}(along\ili{} with\ili{} the\ili{} prenominal\ili{} adjective\ili{})\ili{} as\ili{} complement\ili{} of\ili{} the\ili{} incomplete\ili{} \ili{} \ili{}\cat\ili{}{DP}\ili{}{a}\ili{} direct\ili{} object\ili{} of\ili{} the\ili{} verb\ili{} \ili{}\textit\ili{}{take\ili{} up}\ili{},\ili{} the\ili{} identification\ili{} procedure\ili{} considers\ili{} iteratively\ili{} all\ili{} the\ili{} governing\ili{} nodes\ili{} of\ili{} the\ili{} attached\ili{} noun\ili{} and\ili{} checks\ili{} whether\ili{} the\ili{} association\ili{} of\ili{} the\ili{} lexical\ili{} head\ili{} of\ili{} the\ili{} governing\ili{} node\ili{} and\ili{} the\ili{} attached\ili{} element\ili{} constitutes\ili{} an\ili{} entry\ili{} in\ili{} the\ili{} collocation\ili{} database\ili{}.\ili{} The\ili{} process\ili{} stops\ili{} at\ili{} the\ili{} first\ili{} governing\ili{} node\ili{} of\ili{} major\ili{} category\ili{} \ili{}(noun\ili{},\ili{} verb\ili{} or\ili{} adjective\ili{})\ili{}.\ili{} In\ili{} our\ili{} example\ili{},\ili{} going\ili{} up\ili{} from\ili{} \ili{}\textit\ili{}{challenge}\ili{},\ili{} the\ili{} process\ili{} stops\ili{} at\ili{} the\ili{} verb\ili{} \ili{}\textit\ili{}{take\ili{} up}\ili{}.\ili{} Since\ili{} \ili{}\textit\ili{}{take\ili{} up\ili{} \ili{}-\ili{} challenge}\ili{} is\ili{} an\ili{} entry\ili{} in\ili{} the\ili{} collocation\ili{} database\ili{} and\ili{} its\ili{} type\ili{} \ili{}(verb\ili{}-object\ili{})\ili{} corresponds\ili{} to\ili{} the\ili{} syntactic\ili{} configuration\ili{},\ili{} the\ili{} identification\ili{} process\ili{} succeeds\ili{}.\ili{}
+\ili{}
+As\ili{} already\ili{} pointed\ili{} out\ili{},\ili{} in\ili{} several\ili{} cases\ili{} the\ili{} two\ili{} constituents\ili{} of\ili{} a\ili{} collocation\ili{} can\ili{} be\ili{} very\ili{} far\ili{} apart\ili{},\ili{} or\ili{} do\ili{} not\ili{} appear\ili{} in\ili{} the\ili{} expected\ili{} order\ili{}.\ili{} We\ili{} will\ili{} turn\ili{} to\ili{} such\ili{} examples\ili{} in\ili{} the\ili{} next\ili{} section\ili{}.\ili{} To\ili{} handle\ili{} them\ili{},\ili{} the\ili{} identification\ili{} procedure\ili{} sketched\ili{} above\ili{} must\ili{} be\ili{} slightly\ili{} modified\ili{} so\ili{} that\ili{} not\ili{} only\ili{} the\ili{} attachment\ili{} of\ili{} a\ili{} lexical\ili{} item\ili{} triggers\ili{} the\ili{} identification\ili{} process\ili{},\ili{} but\ili{} also\ili{} the\ili{} attachment\ili{} of\ili{} the\ili{} trace\ili{} of\ili{} a\ili{} preposed\ili{} lexical\ili{} item\ili{}.\ili{} In\ili{} such\ili{} a\ili{} case\ili{},\ili{} the\ili{} search\ili{} will\ili{} consider\ili{} the\ili{} antecedent\ili{} of\ili{} the\ili{} trace\ili{}.\ili{} \ili{}
+This\ili{} shows\ili{},\ili{} again\ili{},\ili{} that\ili{} the\ili{} main\ili{} advantage\ili{} provided\ili{} by\ili{} a\ili{} syntactic\ili{} parser\ili{} in\ili{} such\ili{} a\ili{} task\ili{} is\ili{} its\ili{} ability\ili{} to\ili{} identify\ili{} collocations\ili{} even\ili{} when\ili{} complex\ili{} grammatical\ili{} processes\ili{} disturb\ili{} the\ili{} canonical\ili{} order\ili{} of\ili{} constituents\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\section\ili{}{Detection\ili{} of\ili{} collocations\ili{} in\ili{} free\ili{}-order\ili{} languages}\ili{}
+\ili{}\label\ili{}{sec4}\ili{}
+Just\ili{} as\ili{} other\ili{} types\ili{} of\ili{} MWEs\ili{},\ili{} collocations\ili{} are\ili{} problematic\ili{} for\ili{} NLP\ili{} because\ili{} they\ili{} have\ili{} to\ili{} be\ili{} recognized\ili{} and\ili{} treated\ili{} as\ili{} a\ili{} whole\ili{},\ili{} rather\ili{} than\ili{} compositionally\ili{} \ili{}\citep\ili{}{Sag02}\ili{}.\ili{} On\ili{} the\ili{} other\ili{} hand\ili{},\ili{} there\ili{} is\ili{} no\ili{} systematic\ili{} restriction\ili{} on\ili{} lexical\ili{} forms\ili{} which\ili{} constitute\ili{} a\ili{} collocation\ili{},\ili{} on\ili{} the\ili{} order\ili{} of\ili{} items\ili{} in\ili{} a\ili{} collocation\ili{},\ili{} or\ili{} on\ili{} the\ili{} number\ili{} of\ili{} words\ili{} that\ili{} may\ili{} intervene\ili{} between\ili{} these\ili{} items\ili{} especially\ili{} in\ili{} free\ili{} word\ili{} order\ili{} languages\ili{}.\ili{} In\ili{} such\ili{} languages\ili{},\ili{} the\ili{} direct\ili{} object\ili{} of\ili{} a\ili{} verbal\ili{} \ili{}\isi\ili{}{collocation}\ili{} can\ili{} be\ili{} found\ili{} either\ili{} before\ili{}
+or\ili{} after\ili{} the\ili{} verb\ili{},\ili{} with\ili{} or\ili{} without\ili{} intervening\ili{} material\ili{}.\ili{} This\ili{} is\ili{} illustrated\ili{} in\ili{} the\ili{} following\ili{} examples\ili{} with\ili{} the\ili{} Greek\ili{} verb\ili{}-object\ili{} collocation\ili{} \ili{}{\ili{}\em\ili{} κάνω\ili{} έκκληση}\ili{} \ili{}(káno\ili{} éklisi\ili{})\ili{}
+\ili{}`to\ili{} make\ili{} an\ili{} appeal\ili{}'\ili{}.\ili{} \ili{}
+In\ili{} \ili{}(\ili{}\refex\ili{}{1}\ili{})a\ili{},\ili{} the\ili{} direct\ili{} object\ili{} \ili{}
+\ili{}%\ili{}(in\ili{} bold\ili{} face\ili{})\ili{} \ili{}
+follows\ili{} the\ili{} verb\ili{},\ili{} while\ili{} in\ili{} \ili{}(\ili{}\refex\ili{}{1}\ili{})b\ili{},\ili{} it\ili{} precedes\ili{} the\ili{} verb\ili{},\ili{} with\ili{} several\ili{} words\ili{} intervening\ili{} between\ili{} them\ili{}:\ili{}
+\ili{}
+\ili{}\vspace\ili{}*\ili{}{3mm}\ili{}
+\ili{}\debex\ili{}{Ο\ili{} Υπουργός\ili{} Παιδείας\ili{} \ili{}\textbf\ili{}{έκανε\ili{} έκκληση}\ili{} στους\ili{} διοικητικούς\ili{} υπαλλήλους\ili{} να\ili{} σταμα\ili{}\\ili{}-τήσουν\ili{} την\ili{} απεργία\ili{}.\ili{} \ili{}\\ili{}\\ili{} \ili{}
+Ο\ili{} Ιpurgós\ili{} Pedías\ili{} \ili{}\textbf\ili{}{ékane\ili{} éklisi}\ili{} stus\ili{} diikitikús\ili{} ipalílus\ili{} ná\ili{} stamatísun\ili{} tín\ili{} aperyía\ili{}\\ili{}\\ili{}
+\ili{}`The\ili{} Minister\ili{} of\ili{} Education\ili{} \ili{}\textbf\ili{}{made\ili{} an\ili{} appeal}\ili{} to\ili{} the\ili{} administrative\ili{} staff\ili{} to\ili{} stop\ili{} the\ili{} strike\ili{}.\ili{}'}\ili{}
+\ili{}
+\ili{}\putex\ili{}{\ili{}\textbf\ili{}{Έκκληση}\ili{} στους\ili{} διοικητικούς\ili{} υπαλλήλους\ili{} να\ili{} σταματήσουν\ili{} την\ili{} απεργία\ili{} \ili{}\textbf\ili{}{έκανε}\ili{} ο\ili{} Υπουργός\ili{} Παιδείας\ili{}.}\ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}\textbf\ili{}{Éklisi}\ili{} stus\ili{} diikitikús\ili{} ipalílus\ili{} ná\ili{} stamatísun\ili{} tín\ili{} aperyía\ili{} \ili{}\textbf\ili{}{ékane}\ili{} o\ili{} Ιpurgós\ili{} Pedías\ili{}\\ili{}\\ili{}
+\ili{}`\ili{}\textbf\ili{}{An\ili{} appeal}\ili{} to\ili{} the\ili{} administrative\ili{} staff\ili{} to\ili{} stop\ili{} the\ili{} strike\ili{} \ili{}\textbf\ili{}{made}\ili{} the\ili{} Minister\ili{} of\ili{} Education\ili{}.\ili{}'\ili{}
+\ili{}\finex\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{\ili{} Nominal\ili{} collocations}\ili{}
+Modifiers\ili{} can\ili{} often\ili{} be\ili{} attached\ili{} within\ili{} a\ili{} nominal\ili{} collocation\ili{},\ili{} separating\ili{} the\ili{} two\ili{} terms\ili{}.\ili{} For\ili{} example\ili{},\ili{} between\ili{} the\ili{} constituents\ili{} of\ili{} a\ili{} nominal\ili{} collocation\ili{} in\ili{} the\ili{} form\ili{} of\ili{} adjective\ili{}-noun\ili{},\ili{} other\ili{} lexemes\ili{} may\ili{} interfere\ili{}.\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig1}\ili{} below\ili{} shows\ili{} a\ili{} part\ili{} of\ili{} the\ili{} analysis\ili{} of\ili{} a\ili{} sentence\ili{} where\ili{} the\ili{} possessive\ili{} determiner\ili{} \ili{}{του}\ili{} \ili{}(tu\ili{})\ili{} \ili{}`his\ili{}'\ili{} occurs\ili{} between\ili{} the\ili{} adjective\ili{} \ili{} \ili{}{παρθενικό}\ili{} \ili{}(parthenikό\ili{})\ili{} \ili{}`maiden\ili{}'\ili{} and\ili{} the\ili{} noun\ili{} \ili{}{ταξίδι}\ili{} \ili{}(taxίdi\ili{})\ili{} \ili{}`voyage\ili{}'\ili{} of\ili{} the\ili{} collocation\ili{} \ili{}{παρθενικό\ili{} ταξίδι}\ili{} \ili{}(parthenikό\ili{} taxίdi\ili{})\ili{} \ili{}`maiden\ili{} voyage\ili{}'\ili{}:\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[h\ili{}]\ili{}
+\ili{} \ili{} \ili{}{\ili{}\small\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{llrl}\ili{}
+word\ili{} \ili{}&\ili{} tag\ili{} \ili{}&\ili{} position\ili{} \ili{}&\ili{} collocation\ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{}
+\ili{}{Το}\ili{} \ili{}(to\ili{})\ili{} \ili{}`the\ili{}'\ili{} \ili{}&\ili{} DET\ili{} \ili{}&\ili{} 1\ili{}\\ili{}\\ili{}
+\ili{}{παρθενικό}\ili{} \ili{}(parthenikό\ili{})\ili{} \ili{}`maiden\ili{}'\ili{} \ili{}&\ili{} ADJ\ili{} \ili{}&\ili{} 4\ili{} \ili{}\\ili{}\\ili{}
+\ili{}{του\ili{} }\ili{} \ili{}(tu\ili{})\ili{} \ili{}`his\ili{}'\ili{} \ili{}&\ili{} PRON\ili{} \ili{}&\ili{} 14\ili{} \ili{}\\ili{}\\ili{}
+\ili{}{ταξίδι}\ili{} \ili{}(taxίdi\ili{})\ili{} \ili{}`voyage\ili{}'\ili{} \ili{}&\ili{} NOUN\ili{} \ili{}&\ili{} 18\ili{} \ili{}&\ili{} \ili{}{παρθενικό\ili{} ταξίδι}\ili{} \ili{}\\ili{}\\ili{}
+\ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}`maiden\ili{} voyage\ili{}'\ili{}
+\ili{}\end\ili{}{tabular}\ili{}
+\ili{} \ili{} }\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{fig1}Identification\ili{} of\ili{} the\ili{} nominal\ili{} collocation\ili{} \ili{}{παρθενικό\ili{} ταξίδι}\ili{} \ili{}(parthenikό\ili{} taxίdi\ili{})\ili{} \ili{}`maiden\ili{} voyage\ili{}'}\ili{}
+\ili{}\end\ili{}{figure}\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Verbal\ili{} collocations}\ili{}
+Verb\ili{}-object\ili{} collocations\ili{} may\ili{} undergo\ili{} syntactic\ili{} processes\ili{} such\ili{} as\ili{} \ili{}\isi\ili{}{passivization}\ili{},\ili{} \ili{}\isi\ili{}{relativization}\ili{},\ili{} interrogation\ili{} and\ili{} even\ili{} \ili{}\isi\ili{}{pronominalization}\ili{},\ili{} which\ili{} can\ili{} leave\ili{} the\ili{} collocation\ili{} constituents\ili{} far\ili{} away\ili{} from\ili{} each\ili{} other\ili{} and\ili{}/or\ili{} reverse\ili{} their\ili{} canonical\ili{} order\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\paragraph\ili{}*\ili{}{Passive}\ili{} \ili{}{\ili{}~\ili{}~\ili{}~}\ili{} \ili{}\\ili{}\\ili{}
+In\ili{} passive\ili{} constructions\ili{},\ili{} the\ili{} direct\ili{} object\ili{} is\ili{} promoted\ili{} to\ili{} the\ili{} subject\ili{} position\ili{} leaving\ili{} an\ili{} empty\ili{} constituent\ili{} in\ili{} the\ili{} direct\ili{} object\ili{} position\ili{}.\ili{} The\ili{} detection\ili{} of\ili{} a\ili{} verb\ili{}-object\ili{} collocation\ili{} in\ili{} a\ili{} passive\ili{} sentence\ili{} is\ili{} thus\ili{} triggered\ili{} by\ili{} the\ili{} insertion\ili{} of\ili{} the\ili{} empty\ili{} constituent\ili{} in\ili{} direct\ili{} object\ili{} position\ili{}.\ili{} The\ili{} collocation\ili{} identification\ili{} procedure\ili{} checks\ili{} whether\ili{} the\ili{} antecedent\ili{} of\ili{} the\ili{} \ili{}(empty\ili{})\ili{} direct\ili{} object\ili{} and\ili{} the\ili{} verb\ili{} constitute\ili{} a\ili{} \ili{}(verb\ili{}-object\ili{})\ili{} collocation\ili{}.\ili{}
+In\ili{} the\ili{} following\ili{} example\ili{},\ili{} the\ili{} noun\ili{} \ili{} \ili{}{απόφαση}\ili{} \ili{}(apófasi\ili{})\ili{} \ili{}`decision\ili{}'\ili{} of\ili{} the\ili{} collocation\ili{} \ili{}{παίρνω\ili{} απόφαση}\ili{} \ili{}(pérno\ili{} apófasi\ili{})\ili{} \ili{}`to\ili{} make\ili{} a\ili{} decision\ili{}'\ili{} \ili{} precedes\ili{} the\ili{} verb\ili{} and\ili{} is\ili{} in\ili{} the\ili{} nominal\ili{} case\ili{},\ili{} the\ili{} usual\ili{} case\ili{} for\ili{} subjects\ili{}.\ili{}
+\ili{}
+\ili{}\makeex\ili{}{\ili{} \ili{}{Η\ili{} απόφαση\ili{} πάρθηκε\ili{}.}\ili{} \ili{}\\ili{}\\ili{} I\ili{} apófasi\ili{} párthike\ili{} \ili{}\\ili{}\\ili{}
+\ili{}`The\ili{} decision\ili{} was\ili{} made\ili{}.\ili{}'}\ili{}
+\ili{} \ili{}
+\ili{}
+\ili{}\paragraph\ili{}*\ili{}{Pronominalization}\ili{} \ili{} \ili{}{\ili{}~\ili{}~\ili{}~}\ili{} \ili{}\\ili{}\\ili{}
+Another\ili{} transformation\ili{} that\ili{} can\ili{} affect\ili{} some\ili{} collocation\ili{} types\ili{},\ili{} is\ili{} \ili{}\isi\ili{}{pronominalization}\ili{}.\ili{} \ili{} In\ili{} such\ili{} cases\ili{},\ili{} it\ili{} is\ili{} important\ili{} to\ili{} identify\ili{} the\ili{} antecedent\ili{} of\ili{} the\ili{} pronoun\ili{} which\ili{} can\ili{} be\ili{} found\ili{} either\ili{} in\ili{} the\ili{} same\ili{} sentence\ili{} or\ili{} in\ili{} the\ili{} context\ili{}.\ili{} Example\ili{} \ili{}(\ili{}\refex\ili{}{1}\ili{})\ili{} below\ili{} illustrates\ili{} a\ili{} \ili{}\isi\ili{}{phrase}\ili{} where\ili{} the\ili{} pronoun\ili{} \ili{}\textit\ili{}{it}\ili{} refers\ili{} to\ili{} the\ili{} noun\ili{} \ili{}\textit\ili{}{money}\ili{}.\ili{} Since\ili{} the\ili{} pronoun\ili{} is\ili{} the\ili{} subject\ili{} of\ili{} the\ili{} passive\ili{} form\ili{} \ili{}\textit\ili{}{would\ili{} be\ili{} well\ili{} spent}\ili{},\ili{} it\ili{} is\ili{} interpreted\ili{} as\ili{} direct\ili{} object\ili{} of\ili{} the\ili{} verb\ili{} and\ili{} therefore\ili{} stands\ili{} for\ili{} an\ili{} occurrence\ili{} of\ili{} the\ili{} collocation\ili{} \ili{}\textit\ili{}{to\ili{} spend\ili{} money}\ili{}:\ili{}
+\ili{}
+\ili{}\makeex\ili{}{\ili{}
+\ili{} \ili{}.\ili{}.\ili{}.though\ili{} where\ili{} the\ili{} money\ili{} would\ili{} come\ili{} from\ili{},\ili{} and\ili{} how\ili{} to\ili{} ensure\ili{} that\ili{}\textbf\ili{}{\ili{} it}\ili{}
+would\ili{} be\ili{} well\ili{} \ili{}\textbf\ili{}{spent}\ili{},\ili{} is\ili{} unclear\ili{}.}\ili{}
+\ili{}
+In\ili{} the\ili{} following\ili{} example\ili{},\ili{} both\ili{} the\ili{} verb\ili{} \ili{}{να\ili{} αναλάβουν}\ili{} \ili{}(na\ili{} analávun\ili{})\ili{} \ili{}`to\ili{} take\ili{}'\ili{} of\ili{} the\ili{} verb\ili{}-object\ili{} collocation\ili{} \ili{}{αναλαμβάνω\ili{} ευθύνη}\ili{} \ili{}(analamváno\ili{} efthíni\ili{})\ili{} \ili{}`to\ili{} take\ili{} responsibility\ili{}'\ili{} and\ili{} the\ili{} pronominalized\ili{} object\ili{} \ili{}{τις}\ili{} \ili{}(tis\ili{})\ili{} \ili{}`them\ili{}'\ili{} are\ili{} found\ili{} in\ili{} another\ili{} sentence\ili{}:\ili{} \ili{}
+\ili{}
+\ili{}\makeex\ili{}{\ili{}
+\ili{}{Ας\ili{} αναλογιστούν\ili{} τις\ili{} ευθύνες\ili{} τους\ili{}.\ili{} \ili{}	Να\ili{} τις\ili{} αναλάβουν\ili{}.}\ili{} \ili{}\\ili{}\\ili{} As\ili{} analogistún\ili{} tis\ili{} efthínes\ili{} tus\ili{}.\ili{} Na\ili{} tis\ili{} analávun\ili{}\\ili{}\\ili{}
+\ili{}`Let\ili{} them\ili{} consider\ili{} their\ili{} responsibilities\ili{}.\ili{} Should\ili{} they\ili{} take\ili{} them\ili{}.\ili{}'\ili{}
+}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[h\ili{}]\ili{}
+\ili{} \ili{} \ili{}\fittable\ili{}{\ili{}%\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}{\ili{}\small\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{llrl}\ili{}
+word\ili{} \ili{}&\ili{} tag\ili{} \ili{}&\ili{} position\ili{} \ili{}&\ili{} collocation\ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{}
+\ili{}
+\ili{}{Ας}\ili{}	\ili{}(as\ili{})\ili{} \ili{}`Let\ili{} them\ili{}'\ili{} \ili{}&\ili{} PRT\ili{} \ili{}&\ili{} 1\ili{} \ili{}\\ili{}\\ili{}	\ili{}	\ili{}
+\ili{}{αναλογιστούν}\ili{} \ili{}(analogistún\ili{})\ili{} \ili{}`consider\ili{}'\ili{} \ili{}&\ili{}	VERB\ili{} \ili{}&\ili{}	4\ili{}	\ili{}\\ili{}\\ili{}
+\ili{}{τις}\ili{}	\ili{}(tis\ili{})\ili{} \ili{}`the\ili{}'\ili{} \ili{}&\ili{} DET\ili{} \ili{}&\ili{}	17\ili{}	\ili{}\\ili{}\\ili{}	\ili{}
+\ili{}{\ili{}\textbf\ili{}{ευθύνες}}\ili{} \ili{}(efthínes\ili{})\ili{} \ili{} \ili{}`responsibilities\ili{}'\ili{} \ili{}&\ili{}	NOUN\ili{} \ili{}&\ili{}	21\ili{} \ili{}\\ili{}\\ili{}	\ili{}
+\ili{}{τους}\ili{} \ili{}(tus\ili{})\ili{} \ili{}`their\ili{}'\ili{} \ili{}&\ili{}	PRON\ili{} \ili{}&\ili{}	21\ili{}	\ili{}\\ili{}\\ili{}
+\ili{}.\ili{} \ili{} \ili{}&\ili{} PUNC\ili{} \ili{}&\ili{} 33\ili{} \ili{}\\ili{}\\ili{}*\ili{}[2mm\ili{}]\ili{}
+\ili{}
+\ili{}{Να}\ili{} \ili{} \ili{}(Na\ili{})\ili{} \ili{}`Should\ili{}'\ili{}	\ili{}&\ili{} CONJ\ili{} \ili{}&\ili{} 35\ili{} \ili{}\\ili{}\\ili{}	\ili{}	\ili{}
+\ili{}{\ili{}\textbf\ili{}{τις}}\ili{} \ili{}(tis\ili{})\ili{}	\ili{}`them\ili{}'\ili{} \ili{}&\ili{} PRON\ili{} \ili{}&\ili{}	35\ili{} \ili{}\\ili{}\\ili{} \ili{}	\ili{}	\ili{}
+\ili{}{αναλάβουν}\ili{} \ili{}(analávun\ili{})\ili{} \ili{}`take\ili{}'\ili{} \ili{}&\ili{}	VERB\ili{} \ili{}&\ili{}	42\ili{}	\ili{}&\ili{} \ili{}	αναλαμβάνω\ili{} την\ili{} ευθύνη\ili{} \ili{}\\ili{}\\ili{}
+\ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}`take\ili{} responsibility\ili{}'\ili{}\\ili{}\\ili{}
+\ili{}.\ili{} \ili{}&\ili{}	PUNC\ili{} \ili{}&\ili{}	51\ili{}	\ili{}	\ili{}	\ili{}
+\ili{}\end\ili{}{tabular}\ili{}
+\ili{} \ili{} }}\ili{}
+\ili{} \ili{}\caption\ili{}{\ili{}\label\ili{}{fig2}Identification\ili{} of\ili{} a\ili{} verbal\ili{} collocation}\ili{}
+\ili{}\end\ili{}{figure}\ili{} \ili{}
+\ili{}
+Our\ili{} next\ili{} example\ili{} concerns\ili{} \ili{}\ili\ili{}{French}\ili{} and\ili{} shows\ili{} again\ili{} two\ili{} sentences\ili{}.\ili{} Each\ili{} one\ili{} of\ili{} them\ili{} contains\ili{} a\ili{} collocation\ili{} with\ili{} the\ili{} noun\ili{} \ili{}\textit\ili{}{record}\ili{}:\ili{} \ili{}\textit\ili{}{établir\ili{} un\ili{} record}\ili{} \ili{}`to\ili{} set\ili{} up\ili{} a\ili{} record\ili{}'\ili{} in\ili{} the\ili{} first\ili{} one\ili{},\ili{} \ili{} and\ili{} \ili{}\textit\ili{}{battre\ili{} un\ili{} record}\ili{} \ili{}`to\ili{} break\ili{} a\ili{} record\ili{}'\ili{} in\ili{} the\ili{} second\ili{} one\ili{},\ili{} where\ili{} the\ili{} noun\ili{} is\ili{} pronominalized\ili{} in\ili{} the\ili{} form\ili{} of\ili{} a\ili{} clitic\ili{} pronoun\ili{} \ili{}(\ili{}\textit\ili{}{le}\ili{} \ili{}`it\ili{}'\ili{})\ili{}:\ili{}
+\ili{}
+\ili{}\makeex\ili{}{\ili{}
+Ce\ili{} \ili{}\textbf\ili{}{record}\ili{} a\ili{} été\ili{} \ili{}\textbf\ili{}{établi}\ili{} l\ili{}'été\ili{} dernier\ili{}.\ili{} Paul\ili{} espère\ili{} \ili{}\textbf\ili{}{le}\ili{} \ili{}\textbf\ili{}{battre}\ili{} bientôt\ili{}.\ili{}\\ili{}\\ili{}
+\ili{}`This\ili{} record\ili{} was\ili{} set\ili{} up\ili{} last\ili{} summer\ili{}.\ili{} Paul\ili{} hopes\ili{} to\ili{} break\ili{} it\ili{} soon\ili{}.\ili{}'}\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[h\ili{}]\ili{}
+\ili{} \ili{} \ili{}{\ili{}\small\ili{} \ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{llrl}\ili{}
+word\ili{} \ili{}&\ili{} tag\ili{} \ili{}&\ili{} position\ili{} \ili{}&\ili{} collocation\ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{}
+Ce\ili{} \ili{}&\ili{}	DET\ili{} \ili{}&\ili{}	1\ili{}	\ili{}\\ili{}\\ili{}
+record\ili{} \ili{}&\ili{}	NOUN\ili{}	\ili{} \ili{}&\ili{} 4\ili{}	\ili{}\\ili{}\\ili{}	\ili{}
+a\ili{}	\ili{}&\ili{} VERB\ili{} \ili{}&\ili{} \ili{}	11\ili{}	\ili{}\\ili{}\\ili{}
+été\ili{} \ili{}&\ili{}	VERB\ili{} \ili{}&\ili{} \ili{}	13\ili{}	\ili{}	\ili{}\\ili{}\\ili{}
+établi\ili{}	\ili{} \ili{}&\ili{} VERB\ili{}	\ili{} \ili{}&\ili{} 17\ili{}	\ili{} \ili{}&\ili{} \ili{}	établir\ili{} un\ili{} record\ili{}\\ili{}\\ili{}
+l\ili{}'\ili{} \ili{}&\ili{}	DET\ili{} \ili{}&\ili{} \ili{}	24\ili{}	\ili{}\\ili{}\\ili{}
+été\ili{}	\ili{} \ili{}&\ili{} NOUN\ili{}	\ili{} \ili{}&\ili{} 26\ili{}	\ili{}	\ili{} \ili{}&\ili{} \ili{}	été\ili{} dernier\ili{}\\ili{}\\ili{}
+dernier\ili{} \ili{}&\ili{} \ili{}	ADJ\ili{}	\ili{} \ili{}&\ili{} 30\ili{}	\ili{}	\ili{}	\ili{}\\ili{}\\ili{}
+\ili{}.\ili{}	\ili{} \ili{}&\ili{} PUNC\ili{}	\ili{} \ili{}&\ili{} 37\ili{}	\ili{}	\ili{}\\ili{}\\ili{}*\ili{}[2mm\ili{}]\ili{}
+\ili{}
+Paul\ili{} \ili{}&\ili{} \ili{}	NOUN\ili{}	\ili{} \ili{}&\ili{} 1\ili{}\\ili{}\\ili{}
+espère\ili{} \ili{}&\ili{} \ili{}	VERB\ili{} \ili{}&\ili{} \ili{}	6\ili{}	\ili{}\\ili{}\\ili{}
+le\ili{}	\ili{} \ili{}&\ili{} PRON\ili{} \ili{}&\ili{} 13\ili{}	\ili{}\\ili{}\\ili{}
+battre\ili{} \ili{}&\ili{} \ili{}	VERB\ili{}	\ili{} \ili{}&\ili{} 16\ili{}	\ili{} \ili{} \ili{}&\ili{} \ili{}	battre\ili{} un\ili{} record\ili{}\\ili{}\\ili{}
+bientôt\ili{} \ili{}&\ili{} ADV\ili{}	\ili{} \ili{}&\ili{} 23\ili{}	\ili{}	\ili{}	\ili{}\\ili{}\\ili{}
+\ili{}.\ili{}	\ili{} \ili{}&\ili{} PUNC\ili{} \ili{}&\ili{} \ili{}	30\ili{}	\ili{}	\ili{}	\ili{}\\ili{}\\ili{}
+\ili{}
+\ili{}
+\ili{}\end\ili{}{tabular}\ili{}
+\ili{} \ili{} }\ili{}
+\ili{} \ili{}\caption\ili{}{\ili{}\label\ili{}{fig3}Identification\ili{} of\ili{} verbal\ili{} collocations\ili{},\ili{} one\ili{} with\ili{} pronominalized\ili{} object}\ili{}
+\ili{}\end\ili{}{figure}\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}
+The\ili{} parser\ili{} detects\ili{} collocations\ili{} in\ili{} which\ili{} the\ili{} nominal\ili{} element\ili{} has\ili{} been\ili{} pron\ili{}\\ili{}-ominalized\ili{} thanks\ili{} to\ili{} the\ili{} anaphora\ili{} resolution\ili{} component\ili{} incorporated\ili{} in\ili{} Fips\ili{} \ili{}\citep\ili{}{wn13}\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}\paragraph\ili{}*\ili{}{\ili{}\textit\ili{}{Wh}\ili{}-constructions}\ili{} \ili{}{\ili{}~\ili{}~\ili{}~}\ili{} \ili{}\\ili{}\\ili{}
+Our\ili{} parser\ili{} can\ili{} also\ili{} cope\ili{} with\ili{} \ili{}\isi\ili{}{long\ili{}-distance\ili{} dependencies}\ili{},\ili{} such\ili{} as\ili{} the\ili{} ones\ili{} found\ili{} in\ili{} \ili{}\isi\ili{}{wh\ili{}-questions}\ili{}\footnote\ili{}{wh\ili{}-words\ili{} are\ili{} interrogative\ili{} \ili{}(or\ili{} relative\ili{})\ili{} words\ili{} such\ili{} as\ili{} \ili{}\textit\ili{}{who}\ili{},\ili{} \ili{}\textit\ili{}{what}\ili{},\ili{} \ili{}\textit\ili{}{which}\ili{},\ili{} etc\ili{}.\ili{} For\ili{} a\ili{} general\ili{} discussion\ili{} of\ili{} wh\ili{}-constructions\ili{},\ili{} see\ili{} \ili{}\citep\ili{}{chomsky77}\ili{}.}\ili{}.\ili{} In\ili{} sentences\ili{} \ili{}(\ili{}\refex\ili{}{1}a\ili{})\ili{} the\ili{} direct\ili{} object\ili{} constituent\ili{} occurs\ili{} at\ili{} the\ili{} beginning\ili{} of\ili{} the\ili{} sentence\ili{}.\ili{} Again\ili{},\ili{} assuming\ili{} a\ili{} generative\ili{} grammar\ili{} analysis\ili{},\ili{} we\ili{} consider\ili{} that\ili{} such\ili{} pre\ili{}-posed\ili{} constituents\ili{} are\ili{} connected\ili{} to\ili{} so\ili{}-called\ili{} canonical\ili{} positions\ili{}.\ili{} The\ili{} fronted\ili{} element\ili{} being\ili{} a\ili{} direct\ili{} object\ili{},\ili{} the\ili{} canonical\ili{} position\ili{} is\ili{} a\ili{} post\ili{}-verbal\ili{} DP\ili{} position\ili{} immediately\ili{} dominated\ili{} by\ili{} the\ili{} VP\ili{} node\ili{}.\ili{} The\ili{} parser\ili{} establishes\ili{} such\ili{} a\ili{} link\ili{} and\ili{} returns\ili{} the\ili{} structure\ili{} \ili{}(\ili{}\refex\ili{}{1}b\ili{})\ili{},\ili{} where\ili{} \ili{}[\ili{} DP\ili{} e\ili{}]\ili{}\ik\ili{}{i}\ili{} stands\ili{} for\ili{} the\ili{} empty\ili{} category\ili{} \ili{}(the\ili{} \ili{}`trace\ili{}'\ili{})\ili{} of\ili{} the\ili{} preposed\ili{} constituent\ili{} \ili{}{Ποιο\ili{} ρεκόρ}\ili{} \ili{}(Pxó\ili{} rekór\ili{})\ili{} \ili{}`Which\ili{} record\ili{}'\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}\debex\ili{}{\ili{} \ili{}{Ποιο\ili{} ρεκόρ\ili{} θέλει\ili{} να\ili{} σπάσει\ili{} ο\ili{} Μελισσανίδης\ili{};}\ili{} \ili{}\\ili{}\Pxó\ili{} rekór\ili{} théli\ili{} na\ili{} spási\ili{} o\ili{} Melisanídis\ili{}\\ili{}\\ili{}
+\ili{}`Which\ili{} record\ili{} does\ili{} Melissanidis\ili{} want\ili{} to\ili{} break\ili{}?\ili{}'}\ili{}
+\ili{}\putex\ili{}{\ili{}
+\ili{}\cat\ili{}{CP}\ili{}{\ili{}\cati\ili{}{DP}\ili{}{Ποιο\ili{} ρεκόρ}}\ili{}{i}\ili{} \ili{}\cat\ili{}{TP}\ili{}{θέλει}\ili{} \ili{} \ili{}\cat\ili{}{CP}\ili{}{να}\ili{} \ili{}\cat\ili{}{TP}\ili{}{σπάσει}\ili{} \ili{}\cat\ili{}{VP}\ili{}{\ili{}\cati\ili{}{DP}\ili{}{e}\ili{}{i}}\ili{} \ili{}\cat\ili{}{DP}\ili{}{ο\ili{} Μελισσανίδης}\ili{}
+}\ili{}
+\ili{}\finex\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[h\ili{}]\ili{}
+\ili{} \ili{} \ili{}{\ili{}\small\ili{} \ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{llrl}\ili{}
+word\ili{} \ili{}&\ili{} tag\ili{} \ili{}&\ili{} position\ili{} \ili{}&\ili{} collocation\ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{}
+\ili{}{Ποιο}\ili{} \ili{}(Pio\ili{})\ili{} \ili{}`Which\ili{}'\ili{} \ili{}&\ili{} \ili{}	DET\ili{} \ili{}&\ili{} \ili{}	1\ili{}	\ili{}\\ili{}\\ili{}
+\ili{}{ρεκόρ}\ili{} \ili{}(rekór\ili{})\ili{} \ili{}`record\ili{}'\ili{} \ili{}&\ili{} NOUN\ili{} \ili{}&\ili{} \ili{}	6\ili{} \ili{}	\ili{}	\ili{} \ili{}\\ili{}\\ili{}
+\ili{}{θέλει}\ili{}	\ili{} \ili{}(théli\ili{})\ili{} \ili{}`wants\ili{}'\ili{} \ili{}&\ili{} VERB\ili{} \ili{}&\ili{} \ili{}	12\ili{}	\ili{} \ili{}\\ili{}\\ili{}
+\ili{}{να}\ili{}	\ili{}(na\ili{})\ili{} \ili{}`to\ili{}'\ili{} \ili{}&\ili{} CONJ\ili{}	\ili{} \ili{}&\ili{} 18\ili{}	\ili{} \ili{}\\ili{}\\ili{}
+\ili{}{σπάσει}\ili{}	\ili{}(spási\ili{})\ili{} \ili{}`break\ili{}'\ili{} \ili{}&\ili{} VERB\ili{} \ili{}&\ili{} \ili{}	21\ili{}	\ili{} \ili{}&\ili{} \ili{}	\ili{}{σπάζω\ili{} το\ili{} ρεκόρ}\ili{} \ili{}\\ili{}\\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}&\ili{} \ili{}`break\ili{} the\ili{} record\ili{}'\ili{}\\ili{}\\ili{}
+\ili{}{ο}\ili{} \ili{} \ili{}(o\ili{})\ili{} \ili{}`the\ili{}'\ili{} \ili{}&\ili{} DET\ili{} \ili{}&\ili{} \ili{}	28\ili{}	\ili{} \ili{}\\ili{}\\ili{}
+\ili{}{Μελισσανίδης}\ili{}	\ili{}(Melisanídis\ili{})\ili{} \ili{}`Melisanidis\ili{}'\ili{} \ili{}&\ili{} NOUN\ili{}	\ili{} \ili{}&\ili{} 30\ili{}	\ili{}	\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{}{\ili{};}\ili{}	\ili{} \ili{}&\ili{} other\ili{} \ili{}&\ili{} \ili{} 42\ili{}
+\ili{}
+\ili{}\end\ili{}{tabular}\ili{}
+\ili{} }\ili{}
+\ili{} \ili{}\caption\ili{}{\ili{}\label\ili{}{fig4}Identification\ili{} of\ili{} verbal\ili{} collocation\ili{} in\ili{} a\ili{} wh\ili{}-question}\ili{}
+\ili{}\end\ili{}{figure}\ili{} \ili{}
+\ili{}
+\ili{}
+In\ili{} such\ili{} cases\ili{},\ili{} the\ili{} collocation\ili{} identification\ili{} process\ili{} is\ili{} triggered\ili{} by\ili{} the\ili{} insertion\ili{} of\ili{} an\ili{} empty\ili{} constituent\ili{} in\ili{} the\ili{} direct\ili{} object\ili{} position\ili{} of\ili{} the\ili{} verb\ili{}.\ili{} Since\ili{} the\ili{} empty\ili{} constituent\ili{} is\ili{} connected\ili{} to\ili{} the\ili{} pre\ili{}-posed\ili{} constituent\ili{},\ili{} such\ili{} examples\ili{} can\ili{} be\ili{} easily\ili{} treated\ili{} as\ili{} a\ili{} minor\ili{} variant\ili{} of\ili{} the\ili{} standard\ili{} case\ili{} described\ili{} in\ili{} section\ili{} 3\ili{}.3\ili{}.1\ili{}.\ili{} All\ili{} so\ili{}-called\ili{} wh\ili{}-constructions\ili{} are\ili{} treated\ili{} in\ili{} a\ili{} similar\ili{} fashion\ili{},\ili{} that\ili{} is\ili{} relative\ili{} clause\ili{} and\ili{} topicalization\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}\paragraph\ili{}*\ili{}{\ili{}\textit\ili{}{Tough}\ili{}-movement\ili{} constructions}\ili{} \ili{} \ili{}{\ili{}~\ili{}~\ili{}~}\ili{} \ili{}\\ili{}\\ili{}
+In\ili{} such\ili{} constructions\ili{},\ili{} the\ili{} matrix\ili{} subject\ili{} is\ili{} construed\ili{} as\ili{} the\ili{} direct\ili{} object\ili{} of\ili{} the\ili{} infinitival\ili{} verb\ili{} governed\ili{} by\ili{} a\ili{} \ili{}`tough\ili{}'\ili{} adjective\ili{}.\ili{} Following\ili{} \ili{}%\ili{}\cite\ili{}{chomsky77}\ili{}'s\ili{} \ili{}
+Chomsky\ili{}'s\ili{} \ili{}(1977\ili{})\ili{} analysis\ili{} of\ili{} such\ili{} constructions\ili{},\ili{} the\ili{} parser\ili{} will\ili{} hypothesize\ili{} an\ili{} abstract\ili{} wh\ili{}-operator\ili{} in\ili{} the\ili{} specifier\ili{} position\ili{} of\ili{} the\ili{} infinitival\ili{} clause\ili{},\ili{} which\ili{} is\ili{} linked\ili{} to\ili{} the\ili{} matrix\ili{} subject\ili{}.\ili{} Like\ili{} all\ili{} wh\ili{}-constituents\ili{},\ili{} the\ili{} abstract\ili{} operator\ili{} will\ili{} itself\ili{} be\ili{} connected\ili{} to\ili{} an\ili{} empty\ili{} constituent\ili{} later\ili{} on\ili{} in\ili{} the\ili{} analysis\ili{},\ili{} giving\ili{} rise\ili{} to\ili{} a\ili{} chain\ili{} connecting\ili{} the\ili{} subject\ili{} of\ili{} the\ili{} main\ili{} clause\ili{} and\ili{} the\ili{} direct\ili{} object\ili{} position\ili{} of\ili{} the\ili{} infinitival\ili{} clause\ili{}.\ili{} The\ili{} structure\ili{} as\ili{} computed\ili{} by\ili{} the\ili{} parser\ili{} is\ili{} given\ili{} below\ili{},\ili{} with\ili{} the\ili{} chain\ili{} marked\ili{} by\ili{} the\ili{} index\ili{} \ili{}\ik\ili{}{i}\ili{}:\ili{}
+\ili{}
+\ili{}\makeex\ili{}{\ili{}\small\ili{}
+\ili{}\cat\ili{}{TP}\ili{}{\ili{}\cati\ili{}{DP}\ili{}{this\ili{} record}\ili{}{i}\ili{} seems\ili{}\cat\ili{}{AP}\ili{}{difficult\ili{}\cat\ili{}{TP}\ili{}{\ili{}\cati\ili{}{DP}\ili{}{e}\ili{}{i}\ili{} to\ili{}\cat\ili{}{VP}\ili{}{break\ili{}\cati\ili{}{DP}\ili{}{e}\ili{}{i}}}}}\ili{}
+}\ili{}
+\ili{}%\ili{}[\ili{} TP\ili{} \ili{}[\ili{} DP\ili{} this\ili{} record\ili{}]i\ili{} seems\ili{} \ili{}[\ili{} AP\ili{} difficult\ili{} \ili{}[\ili{} CP\ili{} \ili{}[\ili{} DP\ili{} e\ili{}]j\ili{} \ili{}[\ili{} TP\ili{} to\ili{} \ili{}[\ili{} VP\ili{} break\ili{} \ili{}[\ili{} DP\ili{} e\ili{}]i\ili{} \ili{}]\ili{} \ili{}]\ili{} \ili{}]\ili{} \ili{}]\ili{} \ili{}]\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Complex\ili{} collocations}\ili{}
+As\ili{} observed\ili{} by\ili{} \ili{}\cite\ili{}{heid94}\ili{},\ili{} among\ili{} others\ili{},\ili{} collocations\ili{} can\ili{} involve\ili{} more\ili{} than\ili{} two\ili{} words\ili{} \ili{}(not\ili{} counting\ili{} grammatical\ili{} words\ili{})\ili{}.\ili{} Such\ili{} complex\ili{} expressions\ili{} can\ili{} be\ili{} described\ili{} recursively\ili{} as\ili{} collocations\ili{} of\ili{} collocations\ili{}.\ili{} Our\ili{} identification\ili{} procedure\ili{} has\ili{} been\ili{} extended\ili{} to\ili{} handle\ili{} such\ili{} cases\ili{}.\ili{} For\ili{} example\ili{},\ili{} the\ili{} Greek\ili{} noun\ili{}-noun\ili{} collocation\ili{} \ili{}{απεργία\ili{} πείνας}\ili{} \ili{}(aperyía\ili{} pínas\ili{})\ili{} \ili{}`hunger\ili{} strike\ili{}'\ili{},\ili{} which\ili{} combines\ili{} with\ili{} the\ili{} verb\ili{} \ili{}{κάνω}\ili{} \ili{}(káno\ili{})\ili{} \ili{}`to\ili{} do\ili{}'\ili{},\ili{} yields\ili{} the\ili{} larger\ili{} verb\ili{}-object\ili{} collocation\ili{} \ili{}{κάνω\ili{} απεργία\ili{} πείνας}\ili{} \ili{}(káno\ili{} aperyía\ili{} pínas\ili{})\ili{} \ili{}`to\ili{} go\ili{} on\ili{} hunger\ili{} strike\ili{}'\ili{},\ili{} where\ili{} the\ili{} object\ili{} is\ili{} itself\ili{} a\ili{} noun\ili{}-noun\ili{} collocation\ili{}.\ili{} Given\ili{} the\ili{} strict\ili{} left\ili{} to\ili{} right\ili{} processing\ili{} order\ili{} assumed\ili{} by\ili{} the\ili{} parser\ili{},\ili{} the\ili{} system\ili{} will\ili{} first\ili{} identify\ili{} the\ili{} collocation\ili{} \ili{}{κάνω\ili{} απεργία}\ili{} \ili{}(káno\ili{} aperyía\ili{})\ili{} \ili{}`to\ili{} go\ili{} on\ili{} strike\ili{}'\ili{} when\ili{} attaching\ili{} the\ili{} word\ili{} \ili{}{απεργία}\ili{} \ili{}(aperyía\ili{})\ili{} \ili{}`strike\ili{}'\ili{}.\ili{} Then\ili{},\ili{} reading\ili{} the\ili{} last\ili{} word\ili{},\ili{} \ili{}{πείνας}\ili{} \ili{}(pínas\ili{})\ili{} \ili{}`hunger\ili{}'\ili{} \ili{}(here\ili{} in\ili{} genitive\ili{} case\ili{})\ili{},\ili{} the\ili{} parser\ili{} will\ili{} identify\ili{} the\ili{} collocation\ili{} \ili{}{απεργία\ili{} πείνας}\ili{} \ili{}(aperyía\ili{} pínas\ili{})\ili{} \ili{}`hunger\ili{} strike\ili{}'\ili{}.\ili{} The\ili{} search\ili{} succeeds\ili{} with\ili{} the\ili{} verb\ili{} \ili{}{κάνω}\ili{} \ili{}(káno\ili{})\ili{} \ili{}`to\ili{} do\ili{}'\ili{},\ili{} and\ili{} the\ili{} collocation\ili{} \ili{}{κάνω\ili{} απεργία\ili{} πείνας}\ili{} \ili{}(káno\ili{} aperyía\ili{} pínas\ili{})\ili{} \ili{}`to\ili{} go\ili{} on\ili{} hunger\ili{} strike\ili{}'\ili{} is\ili{} identified\ili{}.\ili{}
+\ili{}
+Moreover\ili{},\ili{} the\ili{} Greek\ili{} lexical\ili{} database\ili{} comprises\ili{} nominal\ili{} collocations\ili{} formed\ili{} by\ili{} a\ili{} simple\ili{} noun\ili{} and\ili{} a\ili{} collocation\ili{} or\ili{} by\ili{} two\ili{} collocations\ili{}.\ili{} For\ili{} example\ili{},\ili{} \ili{}{δύναμη\ili{} πολιτικής\ili{} προστασίας}\ili{} \ili{}(dínami\ili{} politikís\ili{} prostasías\ili{})\ili{} \ili{}`civil\ili{} protection\ili{} force\ili{}'\ili{} is\ili{} for\ili{}\\ili{}-med\ili{} by\ili{} a\ili{} simple\ili{} noun\ili{},\ili{} \ili{}{δύναμη}\ili{} \ili{}(dínami\ili{})\ili{} \ili{}`force\ili{}'\ili{},\ili{} and\ili{} a\ili{} nominal\ili{} collocation\ili{} in\ili{} genitive\ili{} case\ili{},\ili{} \ili{}{πολιτικής\ili{} προστασίας}\ili{} \ili{}(politikís\ili{} prostasías\ili{})\ili{} \ili{}`of\ili{} civil\ili{} protection\ili{}'\ili{}.\ili{} The\ili{} collocation\ili{} \ili{}{πυρηνικός\ili{} σταθμός\ili{} παραγωγής\ili{} ενέργειας}\ili{} \ili{}(pirinikós\ili{} stathmós\ili{} para\ili{}\\ili{}-goyís\ili{} enéryias\ili{})\ili{} \ili{}`nuclear\ili{} power\ili{} station\ili{}'\ili{} is\ili{} formed\ili{} by\ili{} the\ili{} collocations\ili{} \ili{}{πυρηνικός\ili{} σταθμός}\ili{} \ili{}(pirinikós\ili{} stathmós\ili{})\ili{} \ili{}`nuclear\ili{} station\ili{}'\ili{} and\ili{} \ili{}{παραγωγής\ili{} ενέργειας}\ili{} \ili{}(para\ili{}\\ili{}-goyís\ili{} enéry\ili{}\\ili{}-ias\ili{})\ili{} \ili{}`of\ili{} energy\ili{} production\ili{}'\ili{}.\ili{} \ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}\section\ili{}{Collocation\ili{} extraction}\ili{}
+\ili{}
+As\ili{} already\ili{} mentioned\ili{},\ili{} the\ili{} parser\ili{} can\ili{} only\ili{} identify\ili{} collocations\ili{} that\ili{} are\ili{} part\ili{} of\ili{} its\ili{} lexical\ili{} database\ili{}.\ili{} Therefore\ili{},\ili{} it\ili{} is\ili{} crucial\ili{} to\ili{} have\ili{} as\ili{} good\ili{} a\ili{} coverage\ili{} of\ili{} collocations\ili{} as\ili{} possible\ili{} in\ili{} the\ili{} database\ili{}.\ili{} To\ili{} help\ili{} the\ili{} linguist\ili{}/lexicographer\ili{} in\ili{} the\ili{} time\ili{}-consuming\ili{} task\ili{} of\ili{} inserting\ili{} collocations\ili{},\ili{} we\ili{} have\ili{} designed\ili{} a\ili{} collocation\ili{} \ili{} extraction\ili{} tool\ili{} \ili{}\citep\ili{}{seretan11}\ili{},\ili{} dubbed\ili{} FipsCo\ili{}.\ili{} Applied\ili{} to\ili{} a\ili{} corpus\ili{},\ili{} FipsCo\ili{} parses\ili{} all\ili{} the\ili{} sentences\ili{},\ili{} extracting\ili{} all\ili{} the\ili{} pairs\ili{} of\ili{} lexical\ili{} items\ili{} which\ili{} co\ili{}-occur\ili{} in\ili{} predefined\ili{} grammatical\ili{} configurations\ili{} \ili{}(adjective\ili{}-noun\ili{},\ili{} noun\ili{}-noun\ili{},\ili{} subject\ili{}-verb\ili{},\ili{} verb\ili{}-object\ili{},\ili{} etc\ili{}.\ili{})\ili{}.\ili{} All\ili{} those\ili{} pairs\ili{} are\ili{} considered\ili{} as\ili{} potential\ili{} collocations\ili{}.\ili{}
+\ili{}
+Once\ili{} the\ili{} corpus\ili{} has\ili{} been\ili{} completely\ili{} parsed\ili{},\ili{} a\ili{} statistical\ili{} filter\ili{} \ili{} is\ili{} used\ili{} to\ili{} rank\ili{} the\ili{} potential\ili{} collocations\ili{} according\ili{} to\ili{} their\ili{} degree\ili{} of\ili{} association\ili{}.\ili{} By\ili{} default\ili{},\ili{} we\ili{} use\ili{} the\ili{} log\ili{}-likelihood\ili{} ratio\ili{} measure\ili{} \ili{}(LLR\ili{})\ili{},\ili{} since\ili{} it\ili{} was\ili{} shown\ili{} to\ili{} be\ili{} particularly\ili{} suited\ili{} to\ili{} language\ili{} data\ili{} \ili{}\citep\ili{}{dunning93}\ili{}.\ili{} In\ili{} our\ili{} extractor\ili{},\ili{} the\ili{} items\ili{} of\ili{} each\ili{} candidate\ili{} expression\ili{} represent\ili{} base\ili{} word\ili{} forms\ili{} \ili{}(lemmas\ili{})\ili{} and\ili{} they\ili{} are\ili{} considered\ili{} in\ili{} the\ili{} canonical\ili{} order\ili{} implied\ili{} by\ili{} the\ili{} given\ili{} syntactic\ili{} configuration\ili{} \ili{}(e\ili{}.g\ili{}.\ili{},\ili{} for\ili{} a\ili{} verb\ili{}-object\ili{} candidate\ili{},\ili{} the\ili{} object\ili{} is\ili{} postverbal\ili{} in\ili{} subject\ili{}-verb\ili{}-object\ili{} \ili{}(SVO\ili{})\ili{} languages\ili{} like\ili{} Greek\ili{})\ili{}.\ili{} Even\ili{} if\ili{} the\ili{} candidate\ili{} occurs\ili{} in\ili{} corpus\ili{} in\ili{} different\ili{} morphosyntactic\ili{} realizations\ili{},\ili{} its\ili{} various\ili{} occurrences\ili{} are\ili{} successfully\ili{} identified\ili{} as\ili{} instances\ili{} of\ili{} the\ili{} same\ili{} type\ili{} thanks\ili{} to\ili{} the\ili{} syntactic\ili{} analysis\ili{} performed\ili{} by\ili{} the\ili{} parser\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[htbp\ili{}]\ili{}
+\ili{}%\ili{}\vspace\ili{}*\ili{}{\ili{}-2cm}\ili{}
+\ili{}%\ili{}\includegraphics\ili{}[scale\ili{}=1\ili{},\ili{} clip\ili{}=true\ili{},\ili{} trim\ili{}=0mm\ili{} 20mm\ili{} 20mm\ili{} 20mm\ili{}]\ili{} \ili{}{screenshot\ili{}.pdf}\ili{}
+\ili{} \ili{} \ili{}%\ili{}\includegraphics\ili{}[scale\ili{}=0\ili{}.8\ili{},\ili{} clip\ili{}=true\ili{},\ili{} trim\ili{}=0mm\ili{} 110mm\ili{} 20mm\ili{} 10mm\ili{}]\ili{} \ili{}{figures\ili{}/FipsCoPict\ili{}.pdf}\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{}\includegraphics\ili{}[width\ili{}=\ili{}\textwidth\ili{},\ili{} clip\ili{}=true\ili{},\ili{} trim\ili{}=0mm\ili{} 110mm\ili{} 20mm\ili{} 10mm\ili{}]\ili{}{figures\ili{}/FipsCoPict\ili{}.pdf}\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\includegraphics\ili{}[width\ili{}=\ili{}\textwidth\ili{},\ili{} clip\ili{}=true\ili{},\ili{} trim\ili{}=0mm\ili{} 110mm\ili{} 20mm\ili{} 10mm\ili{}]\ili{}{figures\ili{}/FipsCoGUI\ili{}.pdf}\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\includegraphics\ili{}[scale\ili{}=0\ili{}.7\ili{},\ili{} clip\ili{},\ili{} trim\ili{}=20mm\ili{} 110mm\ili{} 20mm\ili{} 20mm\ili{}]\ili{}{figures\ili{}/FipsCoPict\ili{}.pdf}\ili{}
+\ili{}%\ili{}\vspace\ili{}{\ili{}-3cm}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{figFips}Extraction\ili{} of\ili{} verb\ili{}-object\ili{} collocations}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}
+Figure\ili{}~\ili{}\ref\ili{}{figFips}\ili{} displays\ili{} a\ili{} list\ili{} of\ili{} verb\ili{}-object\ili{} collocations\ili{} extracted\ili{} from\ili{} an\ili{} \ili{}\ili\ili{}{English}\ili{} corpus\ili{} taken\ili{} from\ili{} the\ili{} magazine\ili{} \ili{}\textit\ili{}{The\ili{} Economist}\ili{}.\ili{} On\ili{} the\ili{} left\ili{},\ili{} candidate\ili{} collocations\ili{} are\ili{} listed\ili{} and\ili{} at\ili{} the\ili{} same\ili{} time\ili{} they\ili{} are\ili{} shown\ili{} in\ili{} their\ili{} context\ili{}.\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}
+\ili{} \ili{}
+Our\ili{} system\ili{} recognizes\ili{} a\ili{} large\ili{} range\ili{} of\ili{} collocation\ili{} types\ili{} \ili{}(more\ili{} than\ili{} 30\ili{} types\ili{})\ili{},\ili{} including\ili{} several\ili{} nominal\ili{} and\ili{} verbal\ili{} collocation\ili{} types\ili{}.\ili{} The\ili{} most\ili{} frequent\ili{} ones\ili{} are\ili{}:\ili{}\\ili{}\\ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{}\item\ili{} \ili{}	Adjective\ili{}-noun\ili{},\ili{} e\ili{}.g\ili{}.\ili{} \ili{}\textit\ili{}{nuclear\ili{} war}\ili{};\ili{}
+\ili{}\item\ili{}	Noun\ili{}-noun\ili{},\ili{} e\ili{}.g\ili{}.\ili{} \ili{}\textit\ili{}{flower\ili{} shop}\ili{};\ili{}
+\ili{}\item\ili{}	Noun\ili{}-preposition\ili{}-noun\ili{},\ili{} e\ili{}.g\ili{}.\ili{} \ili{}\textit\ili{}{casco\ili{} di\ili{} banane}\ili{} \ili{}(\ili{}`\ili{}\textit\ili{}{bunch\ili{} of\ili{} bananas}\ili{}'\ili{})\ili{};\ili{}
+\ili{}\item\ili{}	Verb\ili{}-object\ili{} where\ili{} the\ili{} object\ili{} is\ili{} a\ili{} bare\ili{} noun\ili{},\ili{} e\ili{}.g\ili{}.\ili{} \ili{}\textit\ili{}{take\ili{} part}\ili{};\ili{}
+\ili{}\item\ili{}	Verb\ili{}-preposition\ili{}-noun\ili{},\ili{} e\ili{}.g\ili{}.\ili{} \ili{}\textit\ili{}{bring\ili{} to\ili{} light}\ili{};\ili{}
+\ili{}\item\ili{}	Verb\ili{}-adverb\ili{},\ili{} e\ili{}.g\ili{}.\ili{} \ili{}\textit\ili{}{put\ili{} together}\ili{}.\ili{}
+\ili{}\end\ili{}{itemize}\ili{}
+\ili{}\vspace\ili{}{3mm}\ili{}
+\ili{}
+\ili{}	\ili{}	Once\ili{} filtered\ili{} and\ili{} ordered\ili{} by\ili{} means\ili{} of\ili{} standard\ili{} association\ili{} measures\ili{},\ili{} the\ili{} candidate\ili{} collocations\ili{} are\ili{} manually\ili{} validated\ili{} and\ili{} added\ili{} to\ili{} the\ili{} lexical\ili{} database\ili{}.\ili{} The\ili{} current\ili{} content\ili{} of\ili{} the\ili{} database\ili{} for\ili{} six\ili{} European\ili{} languages\ili{} is\ili{} shown\ili{} in\ili{} the\ili{} table\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig6}\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[htbp\ili{}]\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{lrrrrrr}\ili{}
+Collocation\ili{} type\ili{} \ili{}&\ili{} \ili{}\ili\ili{}{English}\ili{}	\ili{}&\ili{} \ili{}\ili\ili{}{French}\ili{} \ili{}&\ili{}	\ili{}\ili\ili{}{German}\ili{}	\ili{}&\ili{} \ili{}\ili\ili{}{Italian}\ili{}	\ili{}&\ili{} \ili{}\ili\ili{}{Spanish}\ili{}	\ili{}&\ili{} Greek\ili{}\\ili{}\\ili{} \ili{}\hline\ili{}
+Adjective\ili{}-noun\ili{}	\ili{}&\ili{} 3\ili{},049\ili{}	\ili{}&\ili{} 5\ili{},935\ili{} \ili{}&\ili{} \ili{}	490\ili{} \ili{}&\ili{}	1\ili{},325\ili{}	\ili{}&\ili{} 1\ili{},621\ili{} \ili{}&\ili{} 20\ili{},131\ili{}	\ili{}\\ili{}\\ili{}
+Noun\ili{}-noun\ili{}	\ili{}&\ili{} 5\ili{},671\ili{} \ili{}&\ili{} \ili{}	454\ili{} \ili{}&\ili{} \ili{}	2\ili{},476\ili{} \ili{} \ili{}&\ili{}	131\ili{} \ili{}&\ili{}	66\ili{}	\ili{}&\ili{} 471\ili{}\\ili{}\\ili{}
+Noun\ili{}-prep\ili{}-noun\ili{} \ili{}&\ili{} 555\ili{} \ili{}&\ili{} 7\ili{},846\ili{} \ili{}&\ili{} 22\ili{} \ili{}&\ili{} 1\ili{},246\ili{} \ili{}&\ili{} 988\ili{} \ili{}&\ili{} 11\ili{} \ili{}\\ili{}\\ili{}
+Verb\ili{}-object\ili{}	\ili{} \ili{}&\ili{} 850\ili{} \ili{}&\ili{}	1\ili{},560\ili{} \ili{}&\ili{}	197\ili{} \ili{}&\ili{}	250\ili{} \ili{}&\ili{}	1\ili{},098\ili{}	\ili{}&\ili{} 382\ili{}\\ili{}\\ili{}
+Others\ili{}	\ili{}&\ili{} 932\ili{} \ili{}&\ili{}	2\ili{},963\ili{} \ili{}&\ili{}	330\ili{} \ili{}&\ili{}	209\ili{}	\ili{} \ili{}&\ili{} 592\ili{} \ili{}&\ili{} 126\ili{}\\ili{}\\ili{}	\ili{}\hline\ili{}
+Total\ili{}	\ili{}&\ili{} 11\ili{},057\ili{}	\ili{}&\ili{} 18\ili{},758\ili{} \ili{}&\ili{}	3\ili{},515\ili{} \ili{}&\ili{}	3\ili{},161\ili{} \ili{}&\ili{}	4\ili{},365\ili{}	\ili{}&\ili{} 21\ili{},122\ili{}
+\ili{}\end\ili{}{tabular}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{fig6}Number\ili{} and\ili{} types\ili{} of\ili{} collocations\ili{} in\ili{} the\ili{} Fips\ili{} lexical\ili{} database}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\section\ili{}{Evaluation\ili{} and\ili{} results}\ili{}
+The\ili{} Fips\ili{} parser\ili{} performs\ili{} well\ili{} compared\ili{} to\ili{} other\ili{} \ili{}`deep\ili{}'\ili{} linguistic\ili{} parsers\ili{} \ili{}(Delph\ili{}-in\ili{}\footnote\ili{}{International\ili{} consortium\ili{} developing\ili{} HPSG\ili{} grammars\ili{} and\ili{} other\ili{} tools\ili{},\ili{} cf\ili{}.\ili{} \ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/www\ili{}.delph\ili{}-in\ili{}.net\ili{}/wiki\ili{}/index\ili{}.php\ili{}/Home}\ili{}.}\ili{},\ili{} ParGram\ili{}\footnote\ili{}{ParGram\ili{} is\ili{} an\ili{} international\ili{} consortium\ili{} for\ili{} the\ili{} development\ili{} of\ili{} LFG\ili{}-based\ili{} grammars\ili{},\ili{} see\ili{} \ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/pargram\ili{}.b\ili{}.uib\ili{}.no}\ili{}.}\ili{},\ili{} etc\ili{}.\ili{})\ili{} in\ili{} terms\ili{} of\ili{} speed\ili{}.\ili{} Parsing\ili{} time\ili{} depends\ili{} on\ili{} two\ili{} main\ili{} factors\ili{}:\ili{} \ili{}(i\ili{})\ili{} the\ili{} type\ili{} and\ili{} complexity\ili{} of\ili{} the\ili{} corpus\ili{},\ili{} and\ili{} \ili{}(ii\ili{})\ili{} the\ili{} selected\ili{} beam\ili{} size\ili{} \ili{}(maximum\ili{} number\ili{} of\ili{} alternatives\ili{} allowed\ili{})\ili{}.\ili{} By\ili{} default\ili{},\ili{} Fips\ili{} runs\ili{} with\ili{} a\ili{} beam\ili{} size\ili{} of\ili{} 40\ili{} alternatives\ili{},\ili{} which\ili{} gives\ili{} it\ili{} a\ili{} speed\ili{} ranging\ili{} from\ili{} 150\ili{} to\ili{} 250\ili{} tokens\ili{} \ili{}(word\ili{},\ili{} punctuation\ili{})\ili{} per\ili{} second\ili{}.\ili{} At\ili{} that\ili{} pace\ili{},\ili{} parsing\ili{} a\ili{} one\ili{} million\ili{} word\ili{} corpus\ili{} takes\ili{} approximately\ili{} 2\ili{}-3\ili{} hours\ili{}.\ili{} We\ili{} are\ili{} going\ili{} to\ili{} present\ili{} the\ili{} experiments\ili{} that\ili{} were\ili{} performed\ili{} for\ili{} \ili{}\ili\ili{}{Modern\ili{} Greek}\ili{} and\ili{} \ili{}\ili\ili{}{English}\ili{} in\ili{} order\ili{} to\ili{} evaluate\ili{} the\ili{} performance\ili{} of\ili{} our\ili{} parser\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}\subsection\ili{}{Modern\ili{} Greek}\ili{}
+The\ili{} evaluation\ili{} measures\ili{} the\ili{} performance\ili{} of\ili{} our\ili{} parser\ili{} to\ili{} identify\ili{} collocations\ili{} that\ili{} are\ili{} lexicalized\ili{} \ili{}(i\ili{}.e\ili{}.\ili{} collocations\ili{} that\ili{} are\ili{} present\ili{} in\ili{} the\ili{} lexical\ili{} database\ili{})\ili{}.\ili{} We\ili{} also\ili{} measure\ili{} the\ili{} impact\ili{} of\ili{} the\ili{} collocation\ili{} knowledge\ili{} on\ili{} the\ili{} performance\ili{} of\ili{} the\ili{} parser\ili{} \ili{}(in\ili{} percentage\ili{} of\ili{} complete\ili{} analyses\ili{})\ili{}.\ili{} To\ili{} achieve\ili{} the\ili{} evaluation\ili{},\ili{} we\ili{} took\ili{} a\ili{} small\ili{} newspaper\ili{} corpus\ili{} of\ili{} about\ili{} 20\ili{},000\ili{} words\ili{} \ili{} and\ili{} we\ili{} manually\ili{} identified\ili{} 638\ili{} collocations\ili{} \ili{}(both\ili{} nominal\ili{} and\ili{} verbal\ili{})\ili{}.\ili{} We\ili{} ran\ili{} the\ili{} parser\ili{} twice\ili{} on\ili{} the\ili{} corpus\ili{}:\ili{} the\ili{} first\ili{} time\ili{} before\ili{} and\ili{} the\ili{} second\ili{} time\ili{} after\ili{} enrichment\ili{} of\ili{} the\ili{} collocation\ili{} database\ili{}.\ili{} \ili{}
+On\ili{} the\ili{} first\ili{} run\ili{},\ili{} the\ili{} parser\ili{} achieved\ili{} 43\ili{}.26\ili{}\\ili{}%\ili{} of\ili{} complete\ili{} analyses\ili{} and\ili{} identified\ili{} 124\ili{} collocations\ili{}.\ili{} On\ili{} the\ili{} second\ili{} run\ili{},\ili{} after\ili{} enrichment\ili{} of\ili{} the\ili{} lexicon\ili{},\ili{} the\ili{} percentage\ili{} of\ili{} complete\ili{} analyses\ili{} increased\ili{} to\ili{} 44\ili{}.33\ili{}\\ili{}%\ili{} and\ili{} nearly\ili{} three\ili{} quarters\ili{} of\ili{} the\ili{} corpus\ili{} collocations\ili{} were\ili{} identified\ili{} \ili{}(482\ili{}/638\ili{})\ili{}.\ili{} Over\ili{} this\ili{} small\ili{} corpus\ili{},\ili{} the\ili{} parser\ili{} achieved\ili{} a\ili{} 100\ili{}\\ili{}%\ili{} precision\ili{} in\ili{} the\ili{} collocation\ili{} identification\ili{} task\ili{},\ili{} with\ili{} a\ili{} recall\ili{} of\ili{} 75\ili{}.54\ili{}\\ili{}%\ili{} and\ili{} an\ili{} F\ili{}-measure\ili{} of\ili{} 86\ili{}\\ili{}%\ili{}.\ili{} The\ili{} collocations\ili{} that\ili{} were\ili{} not\ili{} identified\ili{} \ili{}(156\ili{} out\ili{} of\ili{} 638\ili{})\ili{} were\ili{} part\ili{} of\ili{} sentences\ili{} for\ili{} which\ili{} the\ili{} parser\ili{} did\ili{} not\ili{} achieve\ili{} a\ili{} complete\ili{} analysis\ili{}.\ili{}
+\ili{}	\ili{}
+\ili{}\subsection\ili{}{English}\ili{}
+We\ili{} have\ili{} also\ili{} conducted\ili{} an\ili{} evaluation\ili{} over\ili{} a\ili{} corpus\ili{} of\ili{} approximately\ili{} 6\ili{},000\ili{} sentences\ili{} taken\ili{} from\ili{} \ili{}\textit\ili{}{The\ili{} Economist}\ili{}.\ili{} The\ili{} research\ili{} questions\ili{} were\ili{} specifically\ili{} focused\ili{} on\ili{} the\ili{} statistical\ili{} significance\ili{} of\ili{} ambiguity\ili{} resolution\ili{} based\ili{} on\ili{} collocation\ili{} knowledge\ili{} and\ili{} on\ili{} how\ili{} frequently\ili{},\ili{} in\ili{} a\ili{} given\ili{} corpus\ili{},\ili{} the\ili{} detection\ili{} of\ili{} a\ili{} collocation\ili{} helps\ili{} the\ili{} parser\ili{} make\ili{} the\ili{} \ili{}`right\ili{}'\ili{} decision\ili{}.\ili{} \ili{}
+To\ili{} answer\ili{} those\ili{} questions\ili{},\ili{} we\ili{} parsed\ili{} the\ili{} corpus\ili{} twice\ili{},\ili{} first\ili{} with\ili{} the\ili{} collocation\ili{} detection\ili{} component\ili{} turned\ili{} on\ili{} and\ili{} then\ili{} with\ili{} the\ili{} component\ili{} turned\ili{} off\ili{}.\ili{} We\ili{} then\ili{} compared\ili{} the\ili{} results\ili{} of\ili{} both\ili{} runs\ili{}.\ili{} Since\ili{} it\ili{} was\ili{} difficult\ili{} to\ili{} compare\ili{} phrase\ili{}-structure\ili{} representations\ili{},\ili{} we\ili{} used\ili{} the\ili{} Fips\ili{} tagger\ili{},\ili{} that\ili{} is\ili{} the\ili{} Fips\ili{} parser\ili{} with\ili{} part\ili{}-of\ili{}-speech\ili{} output\ili{}.\ili{} It\ili{} is\ili{} indeed\ili{} much\ili{} easier\ili{} to\ili{} compare\ili{} POS\ili{}-tags\ili{} than\ili{} phrase\ili{}-structures\ili{}.\ili{} Figures\ili{}~\ili{}\ref\ili{}{fig7}\ili{} and\ili{}~\ili{}\ref\ili{}{fig8}\ili{} below\ili{} illustrate\ili{} the\ili{} Fips\ili{} tagger\ili{} output\ili{} for\ili{} the\ili{} \ili{}\isi\ili{}{segment}\ili{} in\ili{} boldface\ili{} of\ili{} the\ili{} sentence\ili{} \ili{}\textit\ili{}{The\ili{} researchers\ili{} estimated\ili{} \ili{}\textbf\ili{}{the\ili{} total\ili{} worldwide\ili{} labour\ili{} costs}\ili{} for\ili{} the\ili{} iPad\ili{} at\ili{} \ili{}\\ili{}$33\ili{},\ili{} of\ili{} which\ili{} China\ili{}’s\ili{} share\ili{} was\ili{} just\ili{} \ili{}\\ili{}$8}\ili{}.\ili{}
+\ili{}
+The\ili{} first\ili{} figure\ili{} gives\ili{} the\ili{} results\ili{} obtained\ili{} with\ili{} the\ili{} collocation\ili{} detection\ili{} component\ili{} turned\ili{} on\ili{},\ili{} and\ili{} the\ili{} second\ili{} figure\ili{} the\ili{} results\ili{} obtained\ili{} with\ili{} the\ili{} component\ili{} turned\ili{} off\ili{}.\ili{}
+\ili{} \ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{llrl}\ili{}
+word\ili{} \ili{}&\ili{} tag\ili{} \ili{}&\ili{} position\ili{} \ili{}&\ili{} collocation\ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{}
+the\ili{} \ili{}&\ili{} DET\ili{} \ili{}&\ili{} 27\ili{}\\ili{}\\ili{}
+total\ili{} \ili{}&\ili{} ADJ\ili{} \ili{}&\ili{} 31\ili{} \ili{}\\ili{}\\ili{}
+worldwide\ili{} \ili{}&\ili{} ADJ\ili{} \ili{}&\ili{} 37\ili{} \ili{}\\ili{}\\ili{}
+labour\ili{} \ili{}&\ili{} NOUN\ili{} \ili{}&\ili{} 47\ili{} \ili{}\\ili{}\\ili{}
+costs\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{NOUN}\ili{} \ili{}&\ili{} 54\ili{} \ili{}&\ili{} labour\ili{} costs\ili{}
+\ili{}\end\ili{}{tabular}\ili{}
+\ili{} \ili{}\caption\ili{}{\ili{}\label\ili{}{fig7}Parser\ili{} output\ili{} \ili{}\textbf\ili{}{with}\ili{} collocation\ili{} knowledge}\ili{}
+\ili{}\end\ili{}{figure}\ili{} \ili{}
+\ili{} \ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{llrl}\ili{}
+word\ili{} \ili{}&\ili{} tag\ili{} \ili{}&\ili{} position\ili{} \ili{}&\ili{} collocation\ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{}
+the\ili{} \ili{}&\ili{} DET\ili{} \ili{}&\ili{} 27\ili{}\\ili{}\\ili{}
+total\ili{} \ili{}&\ili{} ADJ\ili{} \ili{}&\ili{} 31\ili{} \ili{}\\ili{}\\ili{}
+worldwide\ili{} \ili{}&\ili{} ADJ\ili{} \ili{}&\ili{} 37\ili{} \ili{}\\ili{}\\ili{}
+labour\ili{} \ili{}&\ili{} NOUN\ili{} \ili{}&\ili{} 47\ili{} \ili{}\\ili{}\\ili{}
+costs\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{VERB}\ili{} \ili{}&\ili{} 54\ili{} \ili{}
+\ili{}\end\ili{}{tabular}\ili{}
+\ili{} \ili{}\caption\ili{}{\ili{}\label\ili{}{fig8}Parser\ili{} output\ili{} \ili{}\textbf\ili{}{without}\ili{} collocation\ili{} knowledge}\ili{}
+\ili{}\end\ili{}{figure}\ili{} \ili{}
+\ili{} \ili{}
+\ili{} \ili{}
+\ili{} \ili{}
+\ili{}
+The\ili{} sentence\ili{} \ili{}\isi\ili{}{segment}\ili{} \ili{}\textit\ili{}{the\ili{} total\ili{} worldwide\ili{} labour\ili{} costs}\ili{} is\ili{} displayed\ili{} in\ili{} both\ili{} tables\ili{} with\ili{} the\ili{} words\ili{} in\ili{} the\ili{} first\ili{} column\ili{},\ili{} the\ili{} part\ili{}-of\ili{}-speech\ili{} tag\ili{} in\ili{} the\ili{} second\ili{} column\ili{} and\ili{} the\ili{} position\ili{} \ili{}–\ili{} expressed\ili{} as\ili{} position\ili{} of\ili{} the\ili{} first\ili{} character\ili{} of\ili{} each\ili{} word\ili{} starting\ili{} from\ili{} the\ili{} beginning\ili{} of\ili{} the\ili{} sentence\ili{} \ili{}–\ili{} in\ili{} the\ili{} third\ili{} column\ili{}.\ili{} \ili{} For\ili{} the\ili{} POS\ili{} tagset\ili{},\ili{} we\ili{} opted\ili{} for\ili{} the\ili{} universal\ili{} tagset\ili{} \ili{}\citep\ili{}{petrov12}\ili{}.\ili{} As\ili{} we\ili{} can\ili{} see\ili{},\ili{} the\ili{} word\ili{} \ili{}\textit\ili{}{costs}\ili{} is\ili{} taken\ili{} as\ili{} a\ili{} noun\ili{} in\ili{} the\ili{} first\ili{} analysis\ili{},\ili{} as\ili{} a\ili{} verb\ili{} in\ili{} the\ili{} second\ili{}.\ili{} The\ili{} \ili{}(correct\ili{})\ili{} choice\ili{} of\ili{} a\ili{} nominal\ili{} reading\ili{} in\ili{} the\ili{} first\ili{} analysis\ili{} is\ili{} due\ili{} to\ili{} the\ili{} detection\ili{} of\ili{} the\ili{} collocation\ili{} \ili{}\textit\ili{}{labour\ili{} costs}\ili{}.\ili{} In\ili{} the\ili{} second\ili{} run\ili{},\ili{} given\ili{} the\ili{} absence\ili{} of\ili{} collocational\ili{} knowledge\ili{},\ili{} the\ili{} parser\ili{} opts\ili{} for\ili{} the\ili{} verbal\ili{} reading\ili{}.\ili{} Both\ili{} output\ili{} files\ili{} could\ili{} then\ili{} easily\ili{} be\ili{} manually\ili{} compared\ili{} using\ili{} a\ili{} specific\ili{} user\ili{} interface\ili{} as\ili{} illustrated\ili{} in\ili{} the\ili{} screen\ili{} shot\ili{} given\ili{} in\ili{} the\ili{} next\ili{} page\ili{},\ili{} where\ili{} POS\ili{} differences\ili{} are\ili{} displayed\ili{} in\ili{} red\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[h\ili{}]\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{lcc}\ili{}
+\ili{} \ili{}&\ili{} with\ili{} collocations\ili{} \ili{}&\ili{} without\ili{} collocations\ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{}
+\ili{} complete\ili{} analyses\ili{} \ili{}&\ili{} 73\ili{}.41\ili{}\\ili{}%\ili{} \ili{}&\ili{} 72\ili{}.95\ili{}\\ili{}%\ili{} \ili{}\\ili{}\\ili{}
+\ili{} POS\ili{}-tag\ili{} differences\ili{} \ili{}&\ili{} 727\ili{} \ili{}\\ili{}\\ili{}
+\ili{} better\ili{} tags\ili{} \ili{}&\ili{} 382\ili{} \ili{}&\ili{} 106\ili{}\\ili{}\\ili{}
+\ili{} number\ili{} of\ili{} collocations\ili{} \ili{}&\ili{} 1\ili{},668\ili{} \ili{}&\ili{} \ili{}-\ili{}
+\ili{}\end\ili{}{tabular}\ili{}
+\ili{} \ili{}\caption\ili{}{\ili{}\label\ili{}{fig9}POS\ili{}-tagging\ili{} with\ili{} and\ili{} without\ili{} collocation\ili{} knowledge}\ili{}
+\ili{}\end\ili{}{figure}\ili{} \ili{} \ili{}
+\ili{}
+A\ili{} summary\ili{} of\ili{} the\ili{} results\ili{} of\ili{} the\ili{} evaluation\ili{} is\ili{} given\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig9}\ili{}.\ili{} The\ili{} first\ili{} line\ili{} shows\ili{} the\ili{} number\ili{} of\ili{} complete\ili{} analyses\ili{}.\ili{} Collocational\ili{} knowledge\ili{} increases\ili{} the\ili{} number\ili{} of\ili{} complete\ili{} analysis\ili{} by\ili{} approximately\ili{} 0\ili{}.5\ili{}\\ili{}%\ili{},\ili{} or\ili{} about\ili{} 30\ili{} sentences\ili{} for\ili{} our\ili{} corpus\ili{} of\ili{} 6\ili{},000\ili{} sentences\ili{}.\ili{} 727\ili{} tags\ili{} are\ili{} different\ili{} between\ili{} the\ili{} two\ili{} runs\ili{}.\ili{} Of\ili{} those\ili{},\ili{} excluding\ili{} differences\ili{} which\ili{} do\ili{} not\ili{} really\ili{} matter\ili{} \ili{}(some\ili{} words\ili{} can\ili{} be\ili{} analyzed\ili{} either\ili{} as\ili{} predicative\ili{} adjectives\ili{} or\ili{} as\ili{} adverbs\ili{} without\ili{} much\ili{} semantic\ili{} differences\ili{},\ili{} etc\ili{}.\ili{})\ili{},\ili{} in\ili{} 382\ili{} cases\ili{} the\ili{} tags\ili{} were\ili{} better\ili{} in\ili{} the\ili{} first\ili{} run\ili{} \ili{}(with\ili{} collocational\ili{} knowledge\ili{})\ili{},\ili{} and\ili{} 106\ili{} cases\ili{} better\ili{} in\ili{} the\ili{} second\ili{} run\ili{} \ili{}(without\ili{} collocational\ili{} knowledge\ili{})\ili{}.\ili{} In\ili{} other\ili{} words\ili{},\ili{} collocational\ili{} knowledge\ili{} helped\ili{} the\ili{} parser\ili{} make\ili{} the\ili{} better\ili{} decision\ili{} four\ili{} times\ili{} more\ili{} than\ili{} it\ili{} penalized\ili{} it\ili{}.\ili{} Notice\ili{} finally\ili{} that\ili{} 1\ili{},668\ili{} collocations\ili{} were\ili{} detected\ili{} in\ili{} the\ili{} corpus\ili{} \ili{}(more\ili{} than\ili{} one\ili{} in\ili{} four\ili{} sentences\ili{})\ili{},\ili{} which\ili{} clearly\ili{} stresses\ili{} the\ili{} high\ili{} frequency\ili{} of\ili{} this\ili{} phenomenon\ili{} in\ili{} natural\ili{} language\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[htbp\ili{}]\ili{}
+\ili{}%\ili{}\vspace\ili{}{\ili{}-4cm}\ili{}
+\ili{}%\ili{}\hspace\ili{}{\ili{}-10cm}\ili{}
+\ili{} \ili{} \ili{}%\ili{}\includegraphics\ili{}[scale\ili{}=0\ili{}.8\ili{},\ili{} clip\ili{},\ili{} trim\ili{}=20mm\ili{} 60mm\ili{} 20mm\ili{} 20mm\ili{}]\ili{} \ili{}{figures\ili{}/fips\ili{}-screenshot\ili{}.pdf}\ili{}
+\ili{} \ili{} \ili{}\includegraphics\ili{}[width\ili{}=\ili{}\textwidth\ili{},\ili{} clip\ili{},\ili{} trim\ili{}=20mm\ili{} 60mm\ili{} 20mm\ili{} 20mm\ili{}]\ili{}{figures\ili{}/fips\ili{}-screenshot\ili{}.pdf}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{figScreen}The\ili{} evaluation\ili{} user\ili{} interface}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\section\ili{}{Conclusion}\ili{}
+\ili{}
+In\ili{} this\ili{} paper\ili{},\ili{} we\ili{} have\ili{} argued\ili{} in\ili{} favour\ili{} of\ili{} a\ili{} treatment\ili{} of\ili{} collocations\ili{},\ili{} and\ili{} by\ili{} extension\ili{} of\ili{} all\ili{} MWEs\ili{},\ili{} fully\ili{} integrated\ili{} in\ili{} the\ili{} parsing\ili{} process\ili{}.\ili{} The\ili{} argument\ili{} is\ili{} rather\ili{} simple\ili{}.\ili{} On\ili{} the\ili{} one\ili{} hand\ili{},\ili{} we\ili{} have\ili{} shown\ili{} that\ili{} the\ili{} identification\ili{} of\ili{} collocations\ili{} must\ili{} be\ili{} based\ili{} on\ili{} analyzed\ili{} data\ili{},\ili{} and\ili{} therefore\ili{} cannot\ili{} be\ili{} performed\ili{} before\ili{} parsing\ili{}.\ili{} On\ili{} the\ili{} other\ili{} hand\ili{},\ili{} we\ili{} have\ili{} also\ili{} shown\ili{} that\ili{} collocation\ili{} identification\ili{} can\ili{} help\ili{} the\ili{} parser\ili{},\ili{} for\ili{} instance\ili{} to\ili{} solve\ili{} lexical\ili{} as\ili{} well\ili{} as\ili{} syntactic\ili{} ambiguities\ili{},\ili{} provided\ili{} that\ili{} the\ili{} identification\ili{} is\ili{} done\ili{} before\ili{} the\ili{} end\ili{} of\ili{} the\ili{} parse\ili{}.\ili{} The\ili{} solution\ili{} to\ili{} this\ili{} apparent\ili{} paradox\ili{} \ili{}-\ili{}-\ili{} collocation\ili{} identification\ili{} cannot\ili{} be\ili{} done\ili{} before\ili{} and\ili{} cannot\ili{} be\ili{} done\ili{} after\ili{} parsing\ili{} \ili{}-\ili{}-\ili{} is\ili{} clear\ili{}:\ili{} collocation\ili{} identification\ili{} must\ili{} be\ili{} part\ili{} of\ili{} the\ili{} parsing\ili{} process\ili{} and\ili{} be\ili{} performed\ili{} as\ili{} early\ili{} as\ili{} possible\ili{},\ili{} that\ili{} is\ili{} at\ili{} the\ili{} time\ili{} the\ili{} parser\ili{} attaches\ili{} the\ili{} second\ili{} constituent\ili{} of\ili{} the\ili{} collocation\ili{},\ili{} or\ili{} insert\ili{} the\ili{} trace\ili{} of\ili{} that\ili{} constituent\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}%\ili{}\bibliographystyle\ili{}{langsci\ili{}/langscibook}\ili{}
+\ili{}%\ili{}\bibliography\ili{}{lrec2014\ili{}-admin}\ili{} \ili{}
+\ili{}
+\ili{}%\ili{}\section\ili{}*\ili{}{Abbreviations}\ili{}
+\ili{}%\ili{}\section\ili{}*\ili{}{Acknowledgements}\ili{}
+\ili{}
+\ili{}%\ili{}\printbibliography\ili{}{localbibliography}\ili{}
+\ili{}
+\ili{}\printbibliography\ili{}[heading\ili{}=subbibliography\ili{},notkeyword\ili{}=this\ili{}]\ili{}
+\ili{}
+\ili{}%\ili{} \ili{}\printbibliography\ili{}{localbibliography}\ili{}
+\ili{}
+\ili{}\end\ili{}{document}\ili{}
+\ili{}

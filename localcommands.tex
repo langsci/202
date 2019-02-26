@@ -1,0 +1,273 @@
+%add all your local new commands to this file
+\counterwithout{equation}{chapter} % remove the chapter number
+
+\newcommand{\tobi}[2]{%
+\parbox{0cm}{\raisebox{.3cm}[0cm]{#2}}#1}
+
+\renewcommand{\H}[1]{\tobi{#1}{\textsc{h}}}
+\renewcommand{\L}[1]{\tobi{#1}{\textsc{l}}}
+\newcommand{\E}[1]{\tobi{#1}{\textsc{!}}}
+\renewcommand{\P}[1]{\tobi{#1}{\textsc{\%}}}
+\renewcommand{\S}[1]{\tobi{#1}{\textsc{*}}}
+
+%DELHONEUX
+\newcommand{\subscript}[1]{\raisebox{-.4ex}{\scriptsize #1}}
+\newcommand{\modelB}{\textit{model\subscript{B}}}
+\newcommand{\modelA}{\textit{model\subscript{A}}}
+\newcommand{\citepos}[1]{\citeauthor{#1}'s (\citeyear{#1})}
+
+%CONSTANT
+\newcommand{\asu}{UAS}
+\newcommand{\asl}{LAS}
+\newcommand{\asuo}{UAS$_{OA}$}
+\newcommand{\aslo}{LAS$_{OA}$}
+\newcommand{\asus}{UAS$_{surr}$}
+\newcommand{\asls}{LAS$_{surr}$}
+\newcommand{\ww}{$WW_U$}
+\newcommand{\main}[1]{\textit{#1}}
+\newcommand{\expl}[1]{\emph{#1}}
+\newcommand{\carlos}[1]{\textcolor{green}{#1}}
+% UNCOMMENT FOR FINAL VERSION!
+\renewcommand{\todo}[1]{}
+\renewcommand{\carlos}[1]{#1}
+
+%WEHRLI
+\newcommand{\cat}[2]{ [\nolinebreak[4]\begin{footnotesize}
+	\hspace{-2mm}     \raisebox{-2mm}[2.8mm][2.8mm]{\texttt{{}#1}}
+	 \end{footnotesize}\/#2 ]}
+\newcommand{\cati}[3]{\texttt{[\nolinebreak[4]}\begin{footnotesize}
+	\hspace{-1mm}  \raisebox{-2mm}[2.8mm][2.8mm]{\texttt{{}#1}}
+	 \end{footnotesize}\/#2\texttt{]$_{#3}$}}
+\newcommand{\ik}[1]{$_{#1}$}
+%% \newcounter{example}
+%% \newcounter{examplebis}
+%% \newcounter{exampleref}
+%% \newcommand{\refex}[1]{\setcounter{exampleref}{\value{example}}\addtocounter{exampleref}{#1}\arabic{exampleref}}
+%% \newcommand{\emptyex}{\stepcounter{example}\noindent \\
+%%   \makebox[0.9cm][r]{(\theexample)}}
+%% \newcommand{\debex}[1]{\setcounter{examplebis}{1}
+%%   \begin{list}{}{\vspace{-0.4cm}
+%%       \setlength{\labelwidth}{1cm}}
+%%     \addex{\alph{examplebis}.}{#1}}
+%% \newcommand{\finex}{\vspace{-0.2cm} \noindent\end{list}}
+%% \newcommand{\addex}[2]{\stepcounter{example}
+%%           \item[(\theexample)#1] #2}
+%% \newcommand{\putex}[1]{\stepcounter{examplebis}
+%%           \item[\alph{examplebis}.] #1}
+%% \newcommand{\makeex}[1]{\begin{list}{}{\vspace{-0.2cm}}
+%%           \stepcounter{example}
+%%           \item[(\theexample)] #1 \finex}
+%% \newcommand{\textel}[1]{{#1}}
+
+%SHEINFUX
+\renewcommand{\emph}{\textit}
+%For hebrew transliteration with and without glosses:
+\newcommand{\textnl}{}%\textsl}
+\newcommand{\textgl}[1]{`#1'}
+\newcommand{\heb}[1]{\textnl{#1}}
+%\newcommand{\hebgloss}[2]{\textit{#1} (`\textnl{#2}')}
+\newcommand{\hebgloss}[2]{\textit{#1} `#2'}
+\newcommand{\idgloss}[3]{\textit{\textnl{#1} \textgl{#2}~$\rightarrow$~\textgl{#3}}}
+\newcommand{\reff}[1]{(\ref{#1})}
+\newcommand{\quotecite}[1]{\citeauthor{#1}'s (\citeyear{#1})}
+\newcommand{\undbf}[1]{\underline{\textbf{#1}}}
+%For Hebrew transcription
+\newcommand{\alef}{ʔ}
+\newcommand{\alefB}{\textbf{ʔ}}
+\newcommand{\ayin}{ʕ}
+\newcommand{\ayinB}{\textbf{ʕ}}
+\newcommand{\shin}{ʃ}
+\newcommand{\shinB}{\textbf{ʃ}}
+\newcommand{\het}{ħ}
+\newcommand{\hetB}{\textbf{ħ}}
+\newcommand{\tet}{\d{t}}
+\newcommand{\tetB}{\d{t}}
+\newcommand{\spacebr}[1]{\hphantom{\{}}
+
+%LICHTE
+%%%%%%%%%%%%%%%%%%%%%%
+%   AVM SETTINGS     % 
+%%%%%%%%%%%%%%%%%%%%%%
+
+\avmoptions{center}	
+\avmfont{\sc}
+\avmvalfont{\rm}
+\avmsortfont{\it}
+
+\newenvironment{topbot}{   	% more flexible than /newcommand ?
+	\avmvskip{0.2ex} 
+	\hspace{-1.5em}
+	\begin{avm}
+	\avml
+	}
+	%%%
+	{
+	\avmr
+    \end{avm}
+    \hspace{-0.5em}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+%   TIKZ SETTINGS    % 
+%%%%%%%%%%%%%%%%%%%%%%
+
+\tikzset{every tree node/.style={align=center,anchor=north}}	% to allow linebreaks
+\usetikzlibrary{calc} % for positioning arrows with ($(t.center)-(1,0)$)
+\usetikzlibrary{shapes,snakes}
+\usetikzlibrary{backgrounds,fit}
+\usetikzlibrary{arrows}
+\usetikzlibrary{matrix}
+\usetikzlibrary{positioning}
+
+% Define box and box title style (see http://www.texample.net/tikz/examples/boxes-with-text-and-math/)
+\tikzstyle{mybox} = [draw=gray, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=17pt,yshift=3pt]
+\tikzstyle{fancytitle} =[draw=gray, very thick, fill=white,
+    rectangle, rounded corners, inner sep=5pt, inner ysep=5pt]
+    
+\tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    box/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           text width=10em,
+           minimum height=2em,
+           text centered},
+    % Define arrow style
+    arrow/.style={
+           ->,
+           thick,
+           	shorten <=2pt,
+           shorten >=2pt,}
+}
+
+\newcommand\centertikz[1]{\tikz[baseline=(current bounding box.center)]{#1}}
+
+    
+
+%%%%%%%%%%%%%%%%%%%%%%
+%   MISCELLANEOUS    % 
+%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+    \node[shape=circle,draw,inner sep=.15ex] (char) {#1};}}
+\newcommand{\svar}[1]
+   {\setbox2=\hbox{$\scriptstyle #1$}\lower.2ex\vbox{\hrule
+     \hbox{\vrule\kern1.25pt 
+     \vbox{\kern1.25pt\box2\kern1.25pt}\kern1.25pt\vrule}\hrule}}
+\newcommand{\ssvar}[1]
+   {\setbox2=\hbox{\scalebox{.5}{$#1$}}\lower.2ex\vbox{\hrule
+     \hbox{\vrule\kern1.25pt 
+     \vbox{\kern1.25pt\box2\kern1.25pt}\kern1.25pt\vrule}\hrule}}
+\newcommand{\trace}[0]{\underline{$~~~$}}
+
+\newcommand{\prule}[3]{
+      $\begin{array}{c} #1\\ \hline
+         #2\end{array} ~~ #3$}
+     
+%% already defined in langsci.cls 
+% \newlength{\stmueTmp}
+% \newcommand*{\hspaceThis}[1]{\settowidth{\stmueTmp}{#1}\hspace*{\stmueTmp}}
+
+\newcommand{\minitab}[2][c]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+
+\newenvironment{changemargin}[2]{%
+  \begin{list}{}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\leftmargin}{#1}%
+    \setlength{\rightmargin}{#2}%
+    \setlength{\listparindent}{\parindent}%
+    \setlength{\itemindent}{\parindent}%
+    \setlength{\parsep}{\parskip}%
+  }%
+  \item[]}{\end{list}}
+  
+% \newtheorem{definition}{Definition}
+% \newtheorem{corollary}{Corollary}
+% \newtheorem{theorem}{Theorem}
+
+%% \newcounter{sitem-zaehler}
+%% \newenvironment{sitem}{\begin{list}{$\bullet$}
+%%     {\usecounter{sitem-zaehler}
+%%       \setlength{\itemindent}{0pt}
+%%       \setlength{\labelwidth}{3ex}
+%%       \setlength{\leftmargin}{3ex}
+%%       \setlength{\topsep}{0ex plus0ex minus0ex}
+%%       \setlength{\parsep}{0.3ex plus0ex minus0ex}
+%%       \setlength{\itemsep}{0ex plus0ex minus0ex}
+%%     }}{\end{list}}
+
+
+\newcommand{\tl}[1]{\todo[color=red!30]{TL:\enspace#1}}
+\newcommand{\simon}[1]{\todo[color=blue!30]{SP:\enspace#1}}
+\newcommand{\jw}[1]{\todo[color=orange!70]{JW:\enspace#1}}
+\newcommand{\as}[1]{\todo[color=green!30]{AS:\enspace#1}}
+
+%In-line examples with translations, e.g. \textit{einjagen} lit. 'inchase'=>'chase in’                                                                         
+\newcommand{\textex}{\textsl}
+\newcommand{\textlit}[1]{(lit. \textsl{#1})} %literal meaning                   
+\newcommand{\texttr}[1]{`#1'} %translation (idiomatic meaning)                  
+\newcommand{\ile}[1]{\textex{#1}} %inline example, e.g. einjagen                
+\newcommand{\ilet}[2]{\textex{#1} \texttr{#2}} %inline example with translation, e.g. einjagen 'chase in'                                                      
+\newcommand{\ilel}[2]{\textex{#1} \textlit{#2}} %inline example with literal meaning, e.g. einjagen (lit. in-chase)                                            
+\newcommand{\ilelt}[3]{\textex{#1} \textlit{#2}\,\texttr{#3}} %inline example with literal meaning and tran
+
+\definecolor{lightgray}{gray}{0.7}
+
+\lstnewenvironment{xmg}{%                                                       
+  \lstset{language=,
+    numbers=left,numbersep=8pt,numberstyle=\color{lightgray},
+        % frame=l,                                                              
+        basicstyle=\small\ttfamily,%                                            
+    xleftmargin=0.7cm,framexleftmargin=12pt,%                                   
+    framerule=0.5mm,rulecolor=\color{lightgray},%                               
+    escapeinside={|\%}{\%|},%                                                   
+    commentstyle=\color{lightgray},
+    literate={->}{{{\textbf{->}}}}1 {\{}{{{\textbf{\{}}}}1 {\}}{{{\textbf{\}}}}}1 {\;}{{{\textbf{;}}}}1 {|}{{{\textbf{|}}}}1 {=}{{{\textbf{=}}}}1 {[}{{{\textbf{[}}}}1 {]}{{{\textbf{]}}}}1 {<}{{{\textbf{<}}}}1 {>}{{{\textbf{>}}}}1 {!}{{{\textbf{!}}}}1 {?}{{{\textbf{?}}}}1 {*=}{{{\textbf{*=}}}}1,%                     
+    morekeywords={node,type,feature,include,class,import,export,declare,syn,sem,frame,morph,value, use, with, dims}}}{}
+
+\lstnewenvironment{duelme}{%                                                    
+  \lstset{language=,
+    numbers=left,numbersep=8pt,numberstyle=\color{lightgray},
+    % frame=l,                                                                  
+    basicstyle=\small\ttfamily,%                                                
+    xleftmargin=0.7cm,framexleftmargin=12pt,%                                   
+    framerule=0.5mm,rulecolor=\color{lightgray},%                               
+    escapeinside={|\%}{\%|},%                                                   
+    commentstyle=\color{lightgray},
+    morekeywords={PATERN,NAME,POS,PATTERN,MAPPING,EXAMPLE,MWE,SENTENCE,DESCRIPTION,COMMENT,LISTA,LISTB,SUBJECT,OBJECT,MODIFIER,RPRON,CONJUGATION,POLARITY,EXPRESSION,CL}}}{}
+
+\lstnewenvironment{patr-listing}{%                                              
+  \lstset{language=,
+    numbers=left,numbersep=8pt,numberstyle=\color{lightgray},
+    % frame=l,                                                                  
+    basicstyle=\small\ttfamily,%                                                
+    xleftmargin=0.7cm,framexleftmargin=12pt,%                                   
+    framerule=0.5mm,rulecolor=\color{lightgray},%                               
+    escapeinside={|\%}{\%|},%                                                   
+    commentstyle=\color{lightgray},
+    literate={:}{{{\textbf{:}}}}1 {\{}{{{\textbf{\{}}}}1 {\}}{{{\textbf{\}}}}}1 {=}{{{\textbf{=}}}}1 {[}{{{\textbf{[}}}}1 {]}{{{\textbf{]}}}}1 {<}{{{\textbf{<}}}}1 {>}{{{\textbf{>}}}}1 {!}{{{\textbf{!}}}}1,
+    morekeywords={Define,as,Word}}}{}
+
+\newcommand{\ixmg}{%                                                            
+  \lstinline[language=,keepspaces,%                                             
+  literate={->}{{{\textbf{->}}}}1 {\{}{{{\textbf{\{}}}}1 {\}}{{{\textbf{\}}}}}1 {\;}{{{\textbf{;}}}}1 {|}{{{\textbf{|}}}}1 {=}{{{\textbf{=}}}}1 {[}{{{\textbf{[}}}}1 {]}{{{\textbf{]}}}}1 {<}{{{\textbf{<}}}}1 {>}{{{\textbf{>}}}}1 {!}{{{\textbf{!}}}}1 {?}{{{\textbf{?}}}}1 {*=}{{{\textbf{*=}}}}1,%                       
+  morekeywords={node,type,feature,include,class,import,export,declare,syn,sem,frame,morph,value, use, with, dims}
+  ]}
+
+\newcommand{\needsrevision}[1]{{\color{gray}#1}}
+
+%% JACQUET
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+\definecolor{orange}{rgb}{0.64,0.16,0.16}
+\newcommand{\remJakub}[1]{\textcolor{orange}{JP : #1}}
+
+\definecolor{bleu}{rgb}{0.16,0.16,0.64}
+\newcommand{\remGuillaume}[1]{\textcolor{bleu}{GJ : #1}}
+
+\definecolor{vert}{rgb}{0.16,0.64,0.16}
+\newcommand{\remMaud}[1]{\textcolor{vert}{ME : #1}}
