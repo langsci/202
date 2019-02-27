@@ -205,9 +205,10 @@ The verb head of MWE (\ref{mar:basicexample}): %\\
 Τhe filter consists of two parts: the filter lexicon and the filtering part proper. 
 
 \subsection{The filter lexicon}
-The filter consults the filter lexicon where each MWE entry is specified for the following: \\
+The filter consults the filter lexicon where each MWE entry is specified for the following:
 
-1. Compositionality: Certain MWEs can take a compositional interpretation. For instance, the free subject verbal MWE in (\ref{mar:basicexample}) has no compositional interpretation while the semi-fixed MWE in (\ref{mar:tis arpazo}) can also take the compositional interpretation `I grab them.\textsc{fem}’. 
+\begin{enumerate}
+\item Compositionality: Certain MWEs can take a compositional interpretation. For instance, the free subject verbal MWE in (\ref{mar:basicexample}) has no compositional interpretation while the semi-fixed MWE in (\ref{mar:tis arpazo}) can also take the compositional interpretation `I grab them.\textsc{fem}’. 
 
 \ea\label{mar:tis arpazo}
 \gll tis                  arpazo\\
@@ -215,7 +216,7 @@ them.\textsc{fem} grab.\textsc{1sg}\\
 \glt `I am beaten up.’
 \z
 
-2. The ‘signifier’: the lemma of the substring of an MWE that instructs the filter to look at the appropriate filter lexicon entries. For the MWE in (\ref{mar:basicexample}), the signifier is the lemma \textit{kano} `make, do'. If the expression is fixed as in (\ref{mar:perno pente}) the symbol ``\textasciitilde{}'' is used as a signifier.  (\ref{mar:perno pente}) has no translation, it is a kind of swearing (often accompanied with an offensive gesture) meaning that someone has made a serious mistake or is totally idiot:
+\item The ‘signifier’: the lemma of the substring of an MWE that instructs the filter to look at the appropriate filter lexicon entries. For the MWE in (\ref{mar:basicexample}), the signifier is the lemma \textit{kano} `make, do'. If the expression is fixed as in (\ref{mar:perno pente}) the symbol ``\textasciitilde{}'' is used as a signifier.  (\ref{mar:perno pente}) has no translation, it is a kind of swearing (often accompanied with an offensive gesture) meaning that someone has made a serious mistake or is totally idiot:
   
  \ea\label{mar:perno pente}
 \gll pare pente\\
@@ -223,18 +224,21 @@ take.\textsc{2sg}.\textsc{imp} five\\
 %\glt `I am beaten up.’
 \z
 
-3. The lemmatised form of  ``words with spaces'' (WWSs) whether they are independent fixed MWEs as in (\ref{mar:perno pente}) or substrings of an MWE as in (\ref{mar:basicexample}). In the case of (\ref{mar:perno pente}) the lemmatised WWS would be \textit{perno pente} `take five'. In the case of (\ref{mar:basicexample}) the fixed part is \textit{mavra matia} `black eyes' and the corresponding lemmatised form is \textit{mavros mati} `black eye'.\\
+\item The lemmatised form of  ``words with spaces'' (WWSs) whether they are independent fixed MWEs as in (\ref{mar:perno pente}) or substrings of an MWE as in (\ref{mar:basicexample}). In the case of (\ref{mar:perno pente}) the lemmatised WWS would be \textit{perno pente} `take five'. In the case of (\ref{mar:basicexample}) the fixed part is \textit{mavra matia} `black eyes' and the corresponding lemmatised form is \textit{mavros mati} `black eye'.\\
 
-4. PoS and morphological constraints on the parts of the WWS. For the fixed part of (1) \textit{mavra matia} the constraints would be: \textit{mavros}: adjective, plural, accusative, basic; \textit{mati}: noun, common, plural, accusative. 
+\item PoS and morphological constraints on the parts of the WWS. For the fixed part of (1) \textit{mavra matia} the constraints would be: \textit{mavros}: adjective, plural, accusative, basic; \textit{mati}: noun, common, plural, accusative. 
+\end{enumerate}
 
 \subsection{The filtering part}
 The filter proper, implemented in Perl, reads the tagged sentence from an \textsc{XML} file (the output of the tagger) and stores it. Then, it checks whether a signifier exists and, \\
-A1. If no signifier is found, the string is copied as it is on the formatter. \\
-A2. If a signifier is found, the filter lexicon is scanned for some WWS entry. The filter checks whether the morphological constraints on the filter lexicon entries (headword and remaining words) match the lemma and the tags on the input string and:\\
-B1. If they do not match, the input string is copied as it is on the formatter.\\
-B2. If they match, the filter consults the filter lexicon whether the MWE can take a compositional reading and, \\
-C1. if it can, it sends to the formatter the input string and goes to step C2\\
-C2. if it cannot, the part of the string that has been recognized is replaced with the corresponding WWS and morphological constraints and the resulting new string is sent to the formatter.\\
+\begin{enumerate}
+\item[A1.] If no signifier is found, the string is copied as it is on the formatter. 
+\item[A2.] If a signifier is found, the filter lexicon is scanned for some WWS entry. The filter checks whether the morphological constraints on the filter lexicon entries (headword and remaining words) match the lemma and the tags on the input string and:
+\item[B1.] If they do not match, the input string is copied as it is on the formatter.
+\item[B2.] If they match, the filter consults the filter lexicon whether the MWE can take a compositional reading and, 
+\item[C1.] if it can, it sends to the formatter the input string and goes to step C2
+\item[C2.] if it cannot, the part of the string that has been recognized is replaced with the corresponding WWS and morphological constraints and the resulting new string is sent to the formatter.
+\end{enumerate}
 
 \section{The LFG analysis (implemented with XLE grammars)}
 The output of the formatter is processed with an \isi{LFG} \isi{grammar} of \ili{Modern Greek} with sub-lexical rules that can parse the output of the tagger. The \isi{grammar} runs on XLE, a parsing environment dedicated to writing, running and debugging \isi{LFG} grammars.\footnote{XLE is the basis for the Parallel Grammar Project, which is developing industrial-strength grammars for \ili{English}, \ili{French}, \ili{German}, \ili{Norwegian}, Japanese, and Urdu. XLE is written in C and uses Tcl/Tk for the user interface. It currently runs on Solaris Unix, Linux, and Mac OS X.} The trees generated by the sub-lexical rules can be seen in the c-structure of Figure~\ref{mar:Sfig6}. 
@@ -272,7 +276,7 @@ With the approach described here, the lexicon has to be enriched with verb-like 
   &
   F
   \\
-  \hline
+  \midrule
   \textbf{2}
   &
   tis arpazo \newline
@@ -288,7 +292,7 @@ With the approach described here, the lexicon has to be enriched with verb-like 
   &
   SF
   \\
-  \hline
+  \midrule
   \textbf{3}
   &
   tin pernao zachari \newline
@@ -305,7 +309,7 @@ With the approach described here, the lexicon has to be enriched with verb-like 
   &
   FL
   \\
-  \hline
+  \midrule
   \textbf{4}
   &
   richni touloumia nero \newline
@@ -322,7 +326,7 @@ With the approach described here, the lexicon has to be enriched with verb-like 
   &
   FL
   \\
-  \hline
+  \midrule
   \textbf{5}
   &
   troo to ksilo tis chronias mou \newline
@@ -343,7 +347,7 @@ With the approach described here, the lexicon has to be enriched with verb-like 
   &
   FL
   \\
-  \hline
+  \midrule
   \textbf{6}
   &
   meno stili alatos \newline
@@ -361,7 +365,7 @@ With the approach described here, the lexicon has to be enriched with verb-like 
   &
   FL
   \\
-  \hline
+  \midrule
   \textbf{7}
   &
   meno tapi ke psichremos \newline
@@ -380,7 +384,7 @@ With the approach described here, the lexicon has to be enriched with verb-like 
   &
   FL
   \\
-  \hline
+  \midrule
   \textbf{8}
   &
   echi yousto na S \newline
@@ -398,7 +402,7 @@ With the approach described here, the lexicon has to be enriched with verb-like 
   &
   SF
   \\
-  \hline
+  \midrule
   \textbf{9}
   &
   richno adia na piaso yemata \newline
@@ -419,7 +423,7 @@ With the approach described here, the lexicon has to be enriched with verb-like 
   &
   FL
   \\
-  \hline
+  \midrule
   \textbf{10}
   &
   kano mavra matia na do NP \newline
@@ -441,7 +445,7 @@ With the approach described here, the lexicon has to be enriched with verb-like 
   & 
   FL
   %\\
-  %\hline
+  %\midrule
   \tabularnewline
   \lspbottomrule
 \end{tabular}

@@ -368,7 +368,7 @@ The parser detects collocations in which the nominal element has been pron\-omin
 %\paragraph*{\textit{Wh}-constructions} {~~~} \\
 \subsubsection{\textit{Wh}-constructions}
 Our parser can also cope with \isi{long-distance dependencies}, such as the ones found in \isi{wh-questions}.\footnote{wh-words are interrogative (or relative) words such as \textit{who}, \textit{what}, \textit{which}, etc. For a general discussion of wh-constructions, see \citep{chomsky77}.} In sentence (\ref{fou:exWhich}) %(\refex{1})
-and Table~\ref{fou:fig4}, the direct object constituent occurs at the beginning of the sentence. Again, assuming a generative \isi{grammar} analysis, we consider that such pre-posed constituents are connected to so-called canonical positions. The fronted element being a direct object, the canonical position is a post-verbal DP position immediately dominated by the VP node. The parser establishes such a link and returns the structure from~(\ref{fou:exWhich}), where [ DP e]\ik{i} stands for the empty category (the `trace') of the preposed constituent {Ποιο ρεκόρ} (Pxó rekór) `Which record'. 
+and Table~\ref{fou:fig4}, the direct object constituent occurs at the beginning of the sentence. Again, assuming a generative \isi{grammar} analysis, we consider that such pre-posed constituents are connected to so-called canonical positions. The fronted element being a direct object, the canonical position is a post-verbal DP position immediately dominated by the VP node. The parser establishes such a link and returns the structure from~(\ref{fou:exWhich}), where [DP e]\ik{i} stands for the empty category (the `trace') of the preposed constituent {Ποιο ρεκόρ} (Pxó rekór) `Which record'. 
 
 %% \makeex{%%  {Ποιο ρεκόρ θέλει να σπάσει ο Μελισσανίδης;} \\Pxó rekór théli na spási o Melisanídis\\
 %%   %% `Which record does Melissanidis want to break?'}
@@ -379,7 +379,7 @@ and Table~\ref{fou:fig4}, the direct object constituent occurs at the beginning 
 \ea\label{fou:exWhich}
 \gll Ποιο ρεκόρ θέλει να σπάσει ο Μελισσανίδης? \\
 Pxó rekór théli na spási o Melisanídis\\
-{\small \cat{CP}{\cati{DP}{Ποιο ρεκόρ}}{i} \cat{TP}{θέλει}  \cat{CP}{να} \cat{TP}{σπάσει} \cat{VP}{\cati{DP}{e}{i}} \cat{DP}{ο Μελισσανίδης} }
+{\small\cat{CP}{\cati{DP}{Ποιο ρεκόρ}{i}} \cat{TP}{θέλει}  \cat{CP}{να} \cat{TP}{σπάσει} \cat{VP}{\cati{DP}{e}{i}} \cat{DP}{ο Μελισσανίδης}}
 \glt `Which record does Melissanidis want to break?'
 \z
 
@@ -541,17 +541,17 @@ Table~\ref{fou:fig7} gives the results obtained with the \isi{collocation detect
 The sentence \isi{segment} \textit{the total worldwide labour costs} is displayed in both tables with the words in the first column, the part-of-speech tag in the second column and the position – expressed as position of the first character of each word starting from the beginning of the sentence – in the third column. As we can see, the word \textit{costs} is taken as a noun in the first analysis, as a verb in the second. The (correct) choice of a nominal reading in the first analysis is due to the detection of the collocation \textit{labour costs}. In the second run, given the absence of collocational knowledge, the parser opts for the verbal reading. Both output files could easily be manually compared using a specific user interface as illustrated in the screenshot in Figure~\ref{fou:figScreen}, where POS differences are displayed in red.
 
 \begin{table}[h]
-  \begin{tabular}{lcc}
+  \begin{tabular}{lSS}
     \lsptoprule
-    & with collocations & without collocations \\ %\hline
+    & \multicolumn{1}{c}{with collocations} & \multicolumn{1}{c}{without collocations} \\ %\hline
     \midrule
     complete analyses & 73.41\% & 72.95\% \\
     POS-tag differences & 727 \\
     better tags & 382 & 106\\
-    number of collocations & 1,668 & $-$ \tabularnewline
+    number of collocations & 1668 & \multicolumn{1}{c}{-} \tabularnewline
     \lspbottomrule
   \end{tabular}
-  \caption{\label{fou:fig9}POS-tagging with and without collocation knowledge}
+  \caption{\label{fou:fig9}POS-tagging with and without collocation knowledge\todo[inline]{value missing in row 2, col 3?}}
 \end{table}  
 
 A summary of the results of the evaluation is given in Table~\ref{fou:fig9}. The first line shows the number of complete analyses. Collocational knowledge increases the number of complete analysis by approximately 0.5\%, or about 30 sentences for our corpus of 6,000 sentences. 727 tags are different between the two runs. Of those, excluding differences which do not really matter (some words can be analyzed either as predicative adjectives or as adverbs without much semantic differences, etc.), in 382 cases the tags were better in the first run (with collocational knowledge), and 106 cases better in the second run (without collocational knowledge). In other words, collocational knowledge helped the parser make the better decision four times more than it penalized it. Notice finally that 1,668 collocations were detected in the corpus (more than one in four sentences), which clearly stresses the high frequency of this phenomenon in natural language.

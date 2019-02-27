@@ -46,12 +46,8 @@
 \renewcommand{\carlos}[1]{#1}
 
 %WEHRLI
-\newcommand{\cat}[2]{ [\nolinebreak[4]\begin{footnotesize}
-	\hspace{-2mm}     \raisebox{-2mm}[2.8mm][2.8mm]{\texttt{{}#1}}
-	 \end{footnotesize}\/#2 ]}
-\newcommand{\cati}[3]{\texttt{[\nolinebreak[4]}\begin{footnotesize}
-	\hspace{-1mm}  \raisebox{-2mm}[2.8mm][2.8mm]{\texttt{{}#1}}
-	 \end{footnotesize}\/#2\texttt{]$_{#3}$}}
+\newcommand{\cat}[2]{[\nolinebreak[4]\textsubscript{\texttt{{}#1}} #2]}
+\newcommand{\cati}[3]{\texttt{[\nolinebreak[4]}\textsubscript{\texttt{{}#1}} #2\texttt{]$_{#3}$}}
 \newcommand{\ik}[1]{$_{#1}$}
 %% \newcounter{example}
 %% \newcounter{examplebis}

@@ -604,11 +604,11 @@ For instance, such lexicon of newly discovered MWEs can be subsequently used for
 used automatically parsed data for discovering MWEs of different types, including idiomatic verb + prepositional \isi{phrase} (PP) combinations and light-verb constructions {in English}. These cases involved the use of different {\isi{collocation extraction} scores}.
 
 \begin{table}
-\begin{tabular}{llllS[table-format=1.5]S[table-format=1.5e+1]}
+\begin{tabular}{*{4}{>{\itshape}l}S[table-format=1.5]S[table-format=1.5e+1]}
 %\includegraphics[width=180pt,height=160pt]{VOPN_OE.png}
   %\hline \hline
   \lsptoprule
-  verb & object & prep & desc. noun & \multicolumn{1}{c}{T-score} & \multicolumn{1}{c}{O/E} \\ %\hline
+  \normalfont verb & \normalfont object & \normalfont prep & \normalfont desc. noun & \multicolumn{1}{c}{T-score} & \multicolumn{1}{c}{O/E} \\ %\hline
   \midrule
   send & shiver & down & spine & 5.74456 & 2.21477e8\\
   tap & esc & for & escape & 6.40312 & 2.1134e8\\
@@ -859,11 +859,11 @@ Having discussed the effect of lexical resources on parsing accuracy, we now tur
 The first is to use MWE lexicons to alleviate the low coverage of MWEs in the training dataset. The idea is to perform an MWE pre-segmentation of the input text by lexicon lookup. The pre-segmentation, encoded in an IOB-like format, is then used as source of features during MWE-aware parsing, either in the parser itself for joint approaches \citep{candito2014strategies}, or in the MWE tagger applied before parsing in pipeline approaches \citep{constant12acl,constant13mwe}.  
 
 One advantage of using soft constraints like features is their ability to handle ambiguous MWEs.
-Let us take the sequence \expl{up to}, which can be either a complex preposition (\expl{no more than}) or an accidental co-occurrence (\expl{look up to the sky}). A naive segmentation will systematically consider it to be an MWE, independently of the context. However, a better decision can be made taking the context (i.e., the set of other features) into account. Using a joint approach on the \ili{French} treebank, \citet{candito2014strategies} managed to gain around 4 points in terms of tagged MWE identification F-score using such lexicon-based features: F1=74.5 (with) vs. F1=70.7 (without). We should recall, however, that their approach is limited to continuous MWEs.
+Let us take the sequence \expl{up to}, which can be either a complex preposition (\expl{no more than}) or an accidental co-occurrence (\expl{look up to the sky}). A naive segmentation will systematically consider it to be an MWE, independently of the context. However, a better decision can be made taking the context (i.e., the set of other features) into account. Using a joint approach on the \ili{French} treebank, \citet{candito2014strategies} managed to gain around 4 points in terms of tagged MWE identification F-score using such lexicon-based features: $\text{F}1=74.5$ (with) vs.\ $\text{F}1=70.7$ (without). We should recall, however, that their approach is limited to continuous MWEs.
 
 
 A second method proposed by \citet{nasretal15} is to incorporate \isi{subcategorization} frame information, derived from a syntactic lexicon, as features in a joint parser. This was used to improve the resolution of ambiguities between grammatical compound MWEs and accidental co-occurrences.
-An example is the \ili{French} sequence \expl{bien que} which is either a multiword conjunction (\expl{although}) or  an adverb (\expl{well}) followed by a relative conjunction (\expl{that}), as exemplified in Subsection~\ref{con:ssec:joint:data}. This ambiguity may be resolved using information about the verb in the syntactic neighborhood. The authors included specific features indicating whether a given verb accepts a given complement: \expl{manger (to eat)} -QUE -DE, \expl{penser (to think)} +QUE -DE, \expl{boire (to drink)} -QUE -DE, \expl{parler (to speak)} -QUE +DE. 
+An example is the \ili{French} sequence \expl{bien que} which is either a multiword conjunction (\expl{although}) or  an adverb (\expl{well}) followed by a relative conjunction (\expl{that}), as exemplified in Subsection~\ref{con:ssec:joint:data}. This ambiguity may be resolved using information about the verb in the syntactic neighborhood. The authors included specific features indicating whether a given verb accepts a given complement: \expl{manger (to eat)} \textminus QUE \textminus DE, \expl{penser (to think)} +QUE \textminus DE, \expl{boire (to drink)} \textminus QUE \textminus DE, \expl{parler (to speak)} \textminus QUE +DE. 
 In particular, they show for \ili{French} that there is a 1-point gain in F-score, 85.24 (without) vs. 86.41 (with), for MWEs of the form ADV+\expl{que} (ADV+\expl{that}). The effect is spectacular for compounds of the form \expl{de}+DET, that display a 15-point gain : 75.00 (without) vs. 84.67 (with).
 
   
@@ -906,13 +906,13 @@ In the remaining settings, an MWE identifier is run over the given sequence befo
 Both the overall unlabeled accuracy \asuo{} and the accuracy of the surrounding structures \asus{} are provided next to the trees. Examples ``(B)'', ``(C)'' and ``(D)'' show the correctly detected relations by applying an MWE identifier prior to the \isi{syntactic parsing}. In ``(C)'' and ``(D)'', the detected MWE is combined into a single unit (w$_4$w$_5$w$_6$) whereas in ``(B)'', the detected MWE is represented as a subtree. % \isi{constraint} to the \isi{syntactic parsing}.
 
 %One may notice from this example that i
-In ``(A)'', ``(B)'' and ``(C)'', although the parser success does not change on detecting the syntactic dependencies, \asuo~ is affected by the total number of evaluated dependencies, whereas \asus~ remains stable, as expected.
+In ``(A)'', ``(B)'' and ``(C)'', although the parser success does not change on detecting the syntactic dependencies, \asuo{} is affected by the total number of evaluated dependencies, whereas \asus~ remains stable, as expected.
 In ``(D)'', MWE identification helps the parser to detect one more dependency relation, which is reflected in \asus{}.
 Similarly, in ``(F)'', the pre-identification of  ``w$_3$ - w$_6$'' MWE has no impact on the parser's performance.
 %\mycyan{
-Although this can be directly observed by \asus~(60\%), \asuo~ mistakenly gives the impression of an improvement in parsing performance (50\%$\Rightarrow$66.6\%). This is because  in this setting (second column of Figure~\ref{con:fig:example})
+Although this can be directly observed by \asus~(60\%), \asuo{} mistakenly gives the impression of an improvement in parsing performance ($50\%\Rightarrow66.6\%$). This is because  in this setting (second column of Figure~\ref{con:fig:example})
 %2nd column non-continuous MWE elements), 
-\asuo~ evaluates the performance of MWE pre-identification and \isi{dependency parsing} as a whole.
+\asuo{} evaluates the performance of MWE pre-identification and \isi{dependency parsing} as a whole.
 %}
 In ``(G)'', the parser performs better after MWE identification, which is again reflected in the surrounding structure evaluation.
 
