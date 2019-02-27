@@ -404,8 +404,9 @@ In general, classes that correspond to irregular or weakly regular properties of
 
 Remember that the descriptions in \texttt{<syn>} are tree descriptions, which are able to express the usual, potentially underspecified node relations regarding dominance and precedence. For example, \texttt{>{}>+} (cf. Lines 3, 7 and 8 in Figure~\ref{lic:fig:waarnemen:xmg}) expresses the transitive, non-reflexive precedence relation between two nodes of a tree. As the tree descriptions can be underspecified in this way, the denotation can be a set of trees. XMG comes with a solver for these descriptions, and a viewer, both of which are available online.\footnote{\url{http://xmg.phil.hhu.de/}} Hence, the solutions can be inspected independently of a specific application belonging to some specific framework.
 
-The preliminary XMG encoding of (PL) \ile{dobrze [KOMUS] z oczu patrzy} is presented in Figure~\ref{lic:fig:dobrze:xmg}.\footnote{ We owe the frame semantic representation in Figure~\ref{lic:fig:dobrze:xmg} to Rainer Osswald.}
-\begin{figure}[ht]
+The preliminary XMG encoding of (PL) \ile{dobrze [KOMUS] z oczu patrzy} is presented in Figure~\ref{lic:fig:dobrze:xmg}.\footnote{We owe the frame semantic representation in Figure~\ref{lic:fig:dobrze:xmg} to Rainer Osswald.}
+
+\begin{figure}[H]
 \begin{xmg}
 class impers_intransitive
 export ?VP ?V
@@ -440,8 +441,10 @@ import impers_intransitive[] ind_object[] pp_object[] adverb[]
   \caption{XMG encoding of \textit{dobrze} [KOMUŚ] \textit{z oczu patrzy} (`someone looks like a good person') }
   \label{lic:fig:dobrze:xmg} 
 \end{figure}
+
 Again, the class that corresponds to the MWE, \texttt{dobrze\_z\_oczu\_patrzy[]}, inherits from more abstract (and ``regular'') classes, which can be also seen from the inheritance hierarchy in Figure~\ref{lic:fig:dobrze:xmg:hierarchy}.
-\begin{figure}[ht]
+
+\begin{figure}[t]
   \centering
   \setlength{\tabcolsep}{2mm}
       \Forest{
