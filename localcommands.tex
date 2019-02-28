@@ -74,12 +74,11 @@
 %SHEINFUX
 \renewcommand{\emph}{\textit}
 %For hebrew transliteration with and without glosses:
-\newcommand{\textnl}{}%\textsl}
 \newcommand{\textgl}[1]{`#1'}
-\newcommand{\heb}[1]{\textnl{#1}}
-%\newcommand{\hebgloss}[2]{\textit{#1} (`\textnl{#2}')}
+\newcommand{\heb}[1]{\textit{#1}}
+%\newcommand{\hebgloss}[2]{\textit{#1} (`\textit{#2}')}
 \newcommand{\hebgloss}[2]{\textit{#1} `#2'}
-\newcommand{\idgloss}[3]{\textit{\textnl{#1} \textgl{#2}~$\rightarrow$~\textgl{#3}}}
+\newcommand{\idgloss}[3]{\textit{\textit{#1}} \textgl{#2}~→ \textgl{#3}}
 \newcommand{\reff}[1]{(\ref{#1})}
 \newcommand{\quotecite}[1]{\citeauthor{#1}'s (\citeyear{#1})}
 \newcommand{\undbf}[1]{\underline{\textbf{#1}}}
