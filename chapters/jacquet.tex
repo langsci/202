@@ -359,7 +359,7 @@ C\_\CTok_{l_{1}}(c_i,t_j) =
 \left\{
   \begin{array}{lr}
     1 : C_{l_{1}}(c_i,t_j) \times \InvEdit(c_i,t_j,\delta) > 0\\
-    0 : otherwise
+    0 : \text{otherwise}
   \end{array}
 \right.
 %\]
@@ -398,7 +398,7 @@ language (especially with names of international organisations such as
 \begin{table}[h]
 \centering
 %\ra{1.1}
-%\resizebox{9.5cm}{!}{
+\resizebox{\textwidth}{!}{
 \begin{tabular}{clcc}\lsptoprule
 Clusters    &  Expansion  & Acronym  &  Language \\
 \midrule
@@ -410,7 +410,7 @@ cluster 2   &  russischen Akademie der Wissenschaften   &  RAW  & de \\
                     &  Russische Akademie der Wissenschaften    &         &    \\
 \lspbottomrule
 \end{tabular}
-%}
+}
 \caption{Example of clusters aggregated on the basis of translated tokens}
 \label{jac:tab:translated token aggregation}
 \end{table}
@@ -459,7 +459,7 @@ C\_\TransTok_{l}(c_i,t_j) =
 \left\{
   \begin{array}{lr}
     1 : C_{l}(c_i,t_j) \times \TransMod(c_i,t_j,\beta) > 0\\
-    0 : otherwise
+    0 : \text{otherwise}
   \end{array}
 \right.
 %\]
@@ -759,7 +759,7 @@ impact.
 
 Overall, all aggregations strongly improve the baseline by increasing
 the recall (+19.7 and +23.4 points resp.) with a small loss in
-precision (-1.9 and -2.4 points resp.). Eventually, there are 64,000
+precision (\textminus1.9 and \textminus2.4 points resp.). Eventually, there are 64,000
 cross-lingual connected clusters across languages instead of 81,000
 monolingual ones for the 22 languages.
 
@@ -777,7 +777,7 @@ The previous section describes an approach which is useful to recognise frequent
 \label{jac:sec:babelnet}
 
 For the sake of learning multi-word entity extraction patterns we have exploited BabelNet~\citep{navigli-12},
-a large multilingual encyclopedic dictionary and semantic network, created by merging various publicly available linguistic resources, e.g., WordNet and Wikipedia. In particular, BabelNet contains circa 7,7 millions of named entity-related (NE-related) synsets. We used the BabelNet API~\footnote{\url{http://babelnet.org/guide}} to extract organisation names for \ili{English} and \ili{Spanish}, which were then used in the process of learning patterns in various ways. Since the NE-related BabelNet synsets are not tagged with a specific NE tag, the NE type was inferred through utilisation of the hypernym information provided in BabelNet (i.e., using WordNet hypernyms and Wikipedia categories). To be more precise, based on hypernym frequency information for the entire set of named entities a list of \textit{positive} (circa 200) and \textit{negative} (circa 20) hypernyms was manually created. These lists were subsequently used to extract organisation names, i.e., a given synset was extracted if: (a) there was at least one hypernym for the main sense of the synset in the list of positive hypernyms, and (b) no hypernym for the main sense of the synset was on the list of negative hypernyms. For instance, the list of positive hypernyms for extracting organisations includes terms like: \textit{airline}, \textit{enterprise}, \textit{corporation}, \textit{bank}, \textit{local\_government}, \textit{political\_organisation}, \textit{law\_enforcement\_agency}, whereas the list of negative hypernyms includes terms like \textit{person} and \textit{human}. The main drive behind the usage of negative hypernym list was to filter out potentially ambiguous named entity candidates. In total, we have extracted 647 898 and 127 264 organisation names for \ili{English} and \ili{Spanish} respectively. We exploited only names that consisted of at least two tokens for the multi-word organisation name pattern learning, which resulted in maintaining only 87.0\% (557 841) of the \ili{English} and 86.1\% (127 264) of the \ili{Spanish} organisation names extracted. Noteworthy, the resource for \ili{English} obtained in this manner includes a portion of organisation names in foreign languages, which is most likely due to the fact that some non-\ili{English} name variants have been tagged in BabelNet as variants in \ili{English}. Since the entire procedure for pulling out organisation names from BabelNet is automated such language-specific name variants have not been manually removed.
+a large multilingual encyclopedic dictionary and semantic network, created by merging various publicly available linguistic resources, e.g., WordNet and Wikipedia. In particular, BabelNet contains circa 7,7 millions of named entity-related (NE-related) synsets. We used the BabelNet API\footnote{\url{http://babelnet.org/guide}} to extract organisation names for \ili{English} and \ili{Spanish}, which were then used in the process of learning patterns in various ways. Since the NE-related BabelNet synsets are not tagged with a specific NE tag, the NE type was inferred through utilisation of the hypernym information provided in BabelNet (i.e., using WordNet hypernyms and Wikipedia categories). To be more precise, based on hypernym frequency information for the entire set of named entities a list of \textit{positive} (circa 200) and \textit{negative} (circa 20) hypernyms was manually created. These lists were subsequently used to extract organisation names, i.e., a given synset was extracted if: (a) there was at least one hypernym for the main sense of the synset in the list of positive hypernyms, and (b) no hypernym for the main sense of the synset was on the list of negative hypernyms. For instance, the list of positive hypernyms for extracting organisations includes terms like: \textit{airline}, \textit{enterprise}, \textit{corporation}, \textit{bank}, \textit{local\_government}, \textit{political\_organisation}, \textit{law\_enforcement\_agency}, whereas the list of negative hypernyms includes terms like \textit{person} and \textit{human}. The main drive behind the usage of negative hypernym list was to filter out potentially ambiguous named entity candidates. In total, we have extracted 647 898 and 127 264 organisation names for \ili{English} and \ili{Spanish} respectively. We exploited only names that consisted of at least two tokens for the multi-word organisation name pattern learning, which resulted in maintaining only 87.0\% (557 841) of the \ili{English} and 86.1\% (127 264) of the \ili{Spanish} organisation names extracted. Noteworthy, the resource for \ili{English} obtained in this manner includes a portion of organisation names in foreign languages, which is most likely due to the fact that some non-\ili{English} name variants have been tagged in BabelNet as variants in \ili{English}. Since the entire procedure for pulling out organisation names from BabelNet is automated such language-specific name variants have not been manually removed.
 
 \subsection{Learning multi-word entity patterns based solely on BabelNet resources}
 \label{jac:sec:babelnet-only-derived-patterns}
@@ -828,9 +828,9 @@ unreliable patterns, i.e., ones that are likely to overgenerate,
 whereas the filtering rule 3 aims at eliminating candidate patterns
 that are likely to match person names.  The application of the
 filtering resulted in maintaining 47,496 (12,966) extraction patterns
-for \ili{English} (\ili{Spanish}), where 32,3\% (41,9\%) of these patterns were
-observed more than once. Interestingly, only 0,57\% of \ili{English} and
-0,35\% of the \ili{Spanish} patterns occur more than 
+for \ili{English} (\ili{Spanish}), where 32.3\% (41.9\%) of these patterns were
+observed more than once. Interestingly, only 0.57\% of \ili{English} and
+0.35\% of the \ili{Spanish} patterns occur more than 
 100 times.
 
 %\vspace{0.3cm}
@@ -875,7 +875,7 @@ respect to their reliability scores.
 \begin{figure}
 \centering
 \includegraphics[width=.95\textwidth]{figures/patterns-distr.png}
-\caption{\label{jac:pattern-distr}Distribution of patterns with respect to their reliability score for English and Spanish. Each of the bars represents the fraction of patterns, whose reliability score is within the range $(x,x+0.5>$, where $x \in \{0,0.5,...,0.95\}$}
+\caption{\label{jac:pattern-distr}Distribution of patterns with respect to their reliability score for English and Spanish. Each of the bars represents the fraction of patterns, whose reliability score is within the range $(x,x+0.5>$, where $x \in \{0,0.5,...,0.95\}$.\todo[inline]{Please check the expression $(x,x+0.5>$, esp. the closing angle bracket}}
 \end{figure}
 
 \subsection{Evaluation}

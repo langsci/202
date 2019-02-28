@@ -38,6 +38,7 @@ Other approaches proposed to use machine translation to translate MWEs candidate
 
 % \isi{Multiword Expressions}
 \section{Multiword expressions}
+\todo[inline]{Section 3 has only one subsection on the first level. Please add another subsection 3.2 or remove subsection 3.1}
 In NLP, a multiword expression  refers to a non-composi\-tional sequence of words whose exact and unambiguous meaning, connotation and syntactic properties cannot be derived from the meaning or connotation of its components \citep{choueka1988looking,sag02}.
 MWEs are frequently used in written texts and constitute a significant part of the language lexicon.
 
@@ -63,7 +64,7 @@ In a decreasing order of lexical rigidity, these MWEs are broken down into three
 
 \subsubsubsection{Fixed expressions}
 Fixed expressions are non-compositional sequences of words.
-They are syntactically and morphologically rigid and undergo neither internal modification nor morphological and syntactical \isi{variations} (e.g. ``nest of vipers'' in \ili{English} or ``pom\-me de terre'' in  \ili{French}).
+They are syntactically and morphologically rigid and undergo neither internal modification nor morphological and syntactical \isi{variations} (e.g. ``nest of vipers'' in \ili{English} or ``pom\-me de terre'' in  \ili{French}).\todo{it for object lang throughout chapter}
 To determine whether or not a sequence of words is a fixed expression, we can use linguistic criteria such as using synonyms or adding words between its components (cf. ``nest of many black vipers'' in \ili{English} or ``pomme de jolie terre lointaine'' in \ili{French}).
 Fixed expressions can be considered as single entries in the dictionary.
 
@@ -620,7 +621,7 @@ The goal of these experiments is to study in what respect MWEs are useful to imp
 In order to study the impact of the \isi{bilingual lexicon} of MWEs on the performance of Moses, we conducted our experiments on two \ili{English}-\ili{French} \isi{parallel corpora} (Table~\ref{sem:tab:data}): Europarl (European Parliament Proceedings) and Emea (European Medicines Agency Documents). These corpora were extracted from the open parallel corpus OPUS \citep{tiedemann2012parallel}. For each \isi{MWE alignment} approach, we achieved three runs and two test experiments for each run: In-Domain and Out-Of-Domain. For this, we randomly extracted 500 parallel sentences from Europarl as an In-Domain corpus and 500 pairs of sentences from Emea as Out-Of-Domain corpus. The \isi{domain vocabulary} is represented in the case of our baseline (Moses) respectively by the specialized parallel corpus Emea which is added to the training data (Europarl). Afterwards, we extracted bilingual MWEs from the training corpus and applied the three methods described above. For the three integration methods (CORPUS, TABLE, FEATURE), the \isi{domain vocabulary} is identified by a \isi{bilingual lexicon} which is extracted automatically from the specialized parallel corpus Emea using the different MWEs \isi{alignment} approaches.
 
 \begin{table}
-\caption{Europarl and Emea corpora details used to train language and translation models of Moses (K refers to $10^3$)}
+\caption{Europarl and Emea corpora details used to train language and translation models of Moses (K refers to 10\textsuperscript{3})}
 \label{sem:tab:data}
 %\scriptsize
 \centering
@@ -638,7 +639,7 @@ In order to study the impact of the \isi{bilingual lexicon} of MWEs on the perfo
 
 \subsubsection{Results and discussion}
 The performance of the SMT system Moses is evaluated using the BLEU score \citep{papineni2002bleu} on the two test sets for the three runs described in the previous section. 
-Note that we consider one reference per sentence. The obtained results are reported in tables~\ref{sem:tab:SMT1},~\ref{sem:tab:SMT2},~\ref{sem:tab:SMT3} and~\ref{sem:tab:SMT4}.
+Note that we consider one reference per sentence. The obtained results are reported in Tables~\ref{sem:tab:SMT1},~\ref{sem:tab:SMT2},~\ref{sem:tab:SMT3} and~\ref{sem:tab:SMT4}.
 
 \begin{table}
 \caption{BLEU scores of Moses when using the results of the statistical approach}
@@ -648,7 +649,7 @@ Note that we consider one reference per sentence. The obtained results are repor
 \centering
  \begin{tabular}{lcccccccc} 
   \lsptoprule
-  Run n°. & \multicolumn{4}{c}{In-Domain (Europarl)} & \multicolumn{4}{c}{Out-Of-Domain (Emea)} \\
+  Run n°. & \multicolumn{4}{c}{In-Domain (Europarl)} & \multicolumn{4}{c}{Out-Of-Domain (Emea)} \\\cmidrule(lr){2-5}\cmidrule(lr){6-9}
  & Baseline & CORPUS & TABLE & FEATURE & Baseline & CORPUS & TABLE & FEATURE \\
   \midrule
 1 & 32.62 & 32.41 & 32.36 & 32.55 & 22.96 & 22.82 & 22.75 & 22.91 \\
@@ -667,7 +668,7 @@ Note that we consider one reference per sentence. The obtained results are repor
 \label{sem:tab:SMT2}
  \begin{tabular}{lcccccccc} 
   \lsptoprule
-  Run n°. & \multicolumn{4}{c}{In-Domain (Europarl)} & \multicolumn{4}{c}{Out-Of-Domain (Emea)} \\
+  Run n°. & \multicolumn{4}{c}{In-Domain (Europarl)} & \multicolumn{4}{c}{Out-Of-Domain (Emea)} \\\cmidrule(lr){2-5}\cmidrule(lr){6-9}
  & Baseline & CORPUS & TABLE & FEATURE & Baseline & CORPUS & TABLE & FEATURE \\
   \midrule
 1 & 32.62 & 32.82 & 32.15 & 32.88 & 22.96 & 23.45 & 23.11 & 23.69 \\
@@ -686,7 +687,7 @@ Note that we consider one reference per sentence. The obtained results are repor
 \label{sem:tab:SMT3}
  \begin{tabular}{lcccccccc} 
   \lsptoprule
-  Run n°. & \multicolumn{4}{c}{In-Domain (Europarl)} & \multicolumn{4}{c}{Out-Of-Domain (Emea)} \\
+  Run n°. & \multicolumn{4}{c}{In-Domain (Europarl)} & \multicolumn{4}{c}{Out-Of-Domain (Emea)} \\\cmidrule(lr){2-5}\cmidrule(lr){6-9}
  & Baseline & CORPUS & TABLE & FEATURE & Baseline & CORPUS & TABLE & FEATURE \\
   \midrule
 1 & 32.62 & 32.69 & 32.64 & 32.72 & 22.96 & 23.03 & 22.97 & 23.06 \\
@@ -706,7 +707,7 @@ Note that we consider one reference per sentence. The obtained results are repor
 \centering
  \begin{tabular}{lcccccccc} 
   \lsptoprule
-  Run n°. & \multicolumn{4}{c}{In-Domain (Europarl)} & \multicolumn{4}{c}{Out-Of-Domain (Emea)} \\
+  Run n°. & \multicolumn{4}{c}{In-Domain (Europarl)} & \multicolumn{4}{c}{Out-Of-Domain (Emea)} \\\cmidrule(lr){2-5}\cmidrule(lr){6-9}
  & Baseline & CORPUS & TABLE & FEATURE & Baseline & CORPUS & TABLE & FEATURE \\
   \midrule
 1 & 32.62 & 32.71 & 32.68 & 32.73 & 22.96 & 23.06 & 22.97 & 23.07 \\
@@ -717,7 +718,7 @@ Note that we consider one reference per sentence. The obtained results are repor
  }
 \end{table}
 
-As shown in tables 6, 7, 8 and 9, for In-Domain texts, Moses achieve a relatively high BLEU score and the scores of Moses when using the results of the hybrid approach based on morpho-syntactic patterns are better in all the runs. The best improvement is achieved using the ``FEATURE'' method. %This method (when compared to the baseline system) reports a gain of +0.42 points in BLEU score for In-Domain texts and +0.93 points for the Out-Of-Domain sentences (Table 7, Run 3).
+As shown in Tables~\ref{sem:tab:data}, \ref{sem:tab:SMT1}, \ref{sem:tab:SMT2} and \ref{sem:tab:SMT3}, for In-Domain texts, Moses achieve a relatively high BLEU score and the scores of Moses when using the results of the hybrid approach based on morpho-syntactic patterns are better in all the runs. The best improvement is achieved using the ``FEATURE'' method. %This method (when compared to the baseline system) reports a gain of +0.42 points in BLEU score for In-Domain texts and +0.93 points for the Out-Of-Domain sentences (Table 7, Run 3).
 The ``CORPUS''method (when compared to the baseline system) comes next with a slightly higher BLEU score with an improvement %of +0.39 points
 for In-Domain sentences and %+0.88 points for the
 Out-Of-Domain texts.
