@@ -20,6 +20,13 @@
 \usepackage{langsci/styles/langsci-linguex}
 \usepackage{morewrites} 
 
+\makeatletter
+\let\pgfmathModX=\pgfmathMod@
+\usepackage{pgfplots,pgfplotstable}%
+\let\pgfmathMod@=\pgfmathModX
+\makeatother
+\usepgfplotslibrary{colorbrewer,groupplots}
+
 \usepackage{siunitx}
 \sisetup{output-decimal-marker={.},detect-weight=true, detect-family=true, detect-all, input-symbols={\%}, uncertainty-separator={\,},group-digits=false,detect-inline-weight=math}
 \DeclareSIUnit[number-unit-product={}]{\percent}{\%}
