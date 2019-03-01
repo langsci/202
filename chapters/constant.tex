@@ -635,7 +635,45 @@ For discovering light-verb constructions, the t-score was used together with a n
 An example of analysis is shown in Figure~\ref{con:discover-lightverbs}, showing a precision and recall plot by candidate list length. The vertical axis shows precision and recall, respectively, the horizontal axis (which is logarithmic) gives the cutoff in the ranked list of candidates to be included in the evaluation. For the cutoff at 20, the reported candidates for \emph{give}+object, precision is 100\%, while recall is 10\%. At rank 2560, about 88\% of all instances in the gold standard were found.
 
 \begin{figure}
-\includegraphics[width=240pt,height=160pt]{figures/ICAME_2013_27_BW1}
+% \includegraphics[width=240pt,height=160pt]{figures/ICAME_2013_27_BW1}
+\begin{tikzpicture}
+\begin{axis}[
+        width=\textwidth,
+        height=8cm,
+        symbolic x coords={10,20,40,80,160,320,640,1280,2560},
+        xtick=data,
+        legend style={font=\footnotesize,at={(0.5,-0.1)},anchor=north},
+        legend columns=-1,
+        axis lines*=left
+        ]
+    \addplot+[color=black,smooth,mark=square*,mark options={scale=1.25,fill=black,draw=black}] table[x=BNCX,y=P] {
+BNCX	P
+10	1
+20	1
+40	0.95
+80	0.7625
+160	0.5375
+320	0.359375
+640	0.215625
+1280	0.1234375
+2560	0.083093179634966
+};
+\addlegendentry{P}
+    \addplot+[color=black,smooth,mark=triangle*,mark options={scale=1.25,fill=black,draw=black}] table[x=BNCX,y=R] {
+BNCX		R
+10		0.050505050505051
+20		0.101010101010101
+40		0.191919191919192
+80		0.308080808080808
+160		0.434343434343434
+320		0.580808080808081
+640		0.702020202020202
+1280		0.803030303030303
+2560		0.878787878787879
+};
+\addlegendentry{R}
+\end{axis}
+\end{tikzpicture}
 \caption{Precision vs. recall curve of the light verb \expl{give} in the British National Corpus, using t-score \citep{ronan_schneider_mwe_15}}
 \label{con:discover-lightverbs}
 \end{figure}
