@@ -10,8 +10,7 @@
 
 % \epigram{}
 
-\abstract{This chapter aims at presenting different strategies that have been designed to incorporate multiword expression (MWE) identification in the process of syntactic parsing using statistical approaches. We discuss MWE representation in treebanks, pipeline and joint orchestrations, the integration of external lexicons and the evaluation of MWE-aware parsers, concluding with our suggestions for future research.% Volume: 10-15 pages
-}
+\abstract{This chapter aims at presenting different strategies that have been designed to incorporate multiword expression (MWE) identification in the process of syntactic parsing using statistical approaches. We discuss MWE representation in treebanks, pipeline and joint orchestrations, the integration of external lexicons and the evaluation of MWE-aware parsers, concluding with our suggestions for future research.}% Volume: 10-15 pages
 
 \begin{document}
 \maketitle
@@ -19,35 +18,35 @@
 %\input{constantetal/01-intro}
 \section{Introduction}
 
-Supervised \main{statistical parsing} is nowadays an important and challenging field of \main{natural language processing (NLP)}. 
-It consists in predicting the most probable \isi{syntactic structure} of a new sentence, given a statistical model that has been trained on a \main{treebank}, that is, a syntactically annotated corpus.
-Since the seminal works of \citet{nivre04b} for \isi{dependency parsing} and \citet{arun05} for \isi{constituency parsing}, a new research line has emerged: incorporating the analysis of \main{multiword expressions (MWEs)} in such parsers.
+Supervised \textsc{statistical parsing} is nowadays an important and challenging field of natural language processing (NLP). 
+It consists in predicting the most probable \isi{syntactic structure} of a new sentence, given a statistical model that has been trained on a \textsc{treebank}, that is, a syntactically annotated corpus.
+Since the seminal works of \citet{nivre04b} for \isi{dependency parsing} and \citet{arun05} for \isi{constituency parsing}, a new research line has emerged: incorporating the analysis of multiword expressions (MWEs) in such parsers.
 The main objective of this chapter is to present different approaches that have been developed and evaluated for statistical MWE-aware parsing systems. 
 
 
 The design of MWE-aware parsers must address the following questions:
 How are MWEs represented in combination with syntactic trees? 
 When is MWE identification performed with respect to parsing? 
-What algorithms and machine learning techniques are to be used for the two tasks? 
+What algorithms and machine\linebreak learning techniques are to be used for the two tasks? 
 How can external lexical resources be integrated to improve MWE coverage? 
 How are systems evaluated?
 
 
-Answering the question about MWE \main{representation} is fundamental as it enables the definition of a system's output. Hence, it influences the design of datasets used for training and testing, including \isi{treebanks}, as shown in Section~\ref{con:sec:representation}.
+Answering the question about MWE \textsc{representation} is fundamental as it enables the definition of a system's output. Hence, it influences the design of datasets used for training and testing, including \isi{treebanks}, as shown in Section~\ref{con:sec:representation}.
 
 % \item 
-The \main{orchestration} issue is also crucial in order to position MWE identification with respect to parsing: should it be performed before, during, or after it? The answer is not straightforward as it might depend on the type of MWE \citep{eryigit:2011:multiword}. Orchestration also implies determining how the two components interact. 
-For instance, in pipeline strategies (before or after) discussed in Section~\ref{con:sec:pipeline}, should the intermediate input/output be computed using MWE concatenation strategies or MWE substitution ones? 
-Joint strategies (during)  discussed in Section~\ref{con:sec:joint} alongside n-best strategies, might involve different methods like adapting a grammatical formalism for constituency parsing \citep{green13} or concatenating arc labels in \isi{dependency parsing} \citep{vincze13}.
+The \textsc{orchestration} issue is also crucial in order to position MWE identification with respect to parsing: should it be performed before, during, or after it? The answer is not straightforward as it might depend on the type of MWE \citep{eryigit:2011:multiword}. Orchestration also implies determining how the two components interact. 
+For instance, in pipeline strategies (before or after) discussed in Section~\ref{con:sec:pipeline}, should the intermediate input\slash output be computed using MWE concatenation strategies or MWE substitution ones? 
+Joint strategies (during)  discussed in Section~\ref{con:sec:joint} alongside $n$-best strategies, might involve different methods like adapting a grammatical formalism for constituency parsing \citep{green13} or concatenating arc labels in \isi{dependency parsing} \citep{vincze13}.
 % \item 
 
-Concerning \main{algorithms} and machine learning, most techniques use worka\-round approaches by adapting the MWE-aware representation to existing representations directly exploitable by off-the-shelf tools \citep{nasretal15}. Nonetheless, new parsing algorithms have been recently proposed that include specific handling of MWEs, notably when using joint strategies \citep{nivre:2014}. 
+Concerning \textsc{algorithms} and machine learning, most techniques use worka\-round approaches by adapting the MWE-aware representation to existing representations directly exploitable by off-the-shelf tools \citep{nasretal15}. Nonetheless, new parsing algorithms have been recently proposed that include specific handling of MWEs, notably when using joint strategies \citep{nivre:2014}. 
 % \item 
 
-The integration of \main{exogenous lexical knowledge} in the system, discussed in  Section~\ref{con:sec:resources}, is non-trivial but potentially helpful. Indeed, supervised systems are trained on datasets of limited size. Therefore, one drawback of such systems is the limited coverage in terms of MWEs. One possible solution consists in integrating knowledge coming from large-scale MWE lexicons, either manually built and/or validated \citep{candito2014strategies} or automatically acquired \citep{schneider:2012}.
+The integration of \textsc{exogenous lexical knowledge} in the system, discussed in  Section~\ref{con:sec:resources}, is non-trivial but potentially helpful. Indeed, supervised systems are trained on datasets of limited size. Therefore, one drawback of such systems is the limited coverage in terms of MWEs. One possible solution consists in integrating knowledge coming from large-scale MWE lexicons, either manually built and\slash or validated \citep{candito2014strategies} or automatically acquired \citep{schneider:2012}.
 
 % \item 
-The last issue concerns \main{evaluation}: what is the impact of MWE identification on \isi{syntactic parsing} and vice-versa? What types of measure are adequate to quantify this impact? We try to answer these questions in Section~\ref{con:sec:evaluation}.
+The last issue concerns \textsc{evaluation}: what is the impact of MWE identification on \isi{syntactic parsing} and vice-versa? What types of measure are adequate to quantify this impact? We try to answer these questions in Section~\ref{con:sec:evaluation}.
 % \end{enumerate}
 
 
@@ -61,36 +60,36 @@ The outline of this chapter is as follows. First, we briefly explain some basic 
 
 Parsing, also referred as syntactic analysis, is the process of assigning a \isi{syntactic structure} to a given input sentence.
 The analysis is aimed at producing a valid syntactic tree conforming to a hand-written or automatically induced language \isi{grammar}.
-With the emergence of manually annotated datasets (i.e. \isi{treebanks}) and machine learning techniques,
+With the emergence of manually annotated datasets (i.e.\ \isi{treebanks}) and machine learning techniques,
 \isi{statistical parsing} \citep{collins1996new,charniak2000maximum} has become the dominant approach in the parsing literature. 
 
 Statistical parsing aims at selecting the most probable parse tree from the set of all possible parse trees for a given sentence. 
 These data-driven parsing models may be basically grouped under generative or discriminative approaches.
-\main{Generative} parsing models generally rely on a grammatical formalism whereas \main{discriminative} ones are usually performed without any underlying \isi{grammar}.
-There exist also joint approaches where a discriminative model is used to rerank the top n candidates of a generative parser.
+\textsc{Generative} parsing models generally rely on a grammatical formalism whereas \textsc{discriminative} ones are usually performed without any underlying \isi{grammar}.
+There exist also joint approaches where a discriminative model is used to rerank the top $n$ candidates of a generative parser.
 
 Constituency and dependency formalisms are the two most common parsing formalisms used in \isi{statistical parsing}.
 Figure~\ref{con:fig:wws} and Figure~\ref{con:fig:flat} each provide constituency and dependency parse tree samples
-for the sentence \expl{The prime minister made a few good decisions.} 
+for the sentence \textit{The prime minister made a few good decisions.} 
 
-In the \main{constituency formalism}, a sentence is regarded as being composed of phrases and parsing is the task of determining the underlying \emph{\isi{phrase} structure}.
+In the \textsc{constituency formalism}, a sentence is regarded as being composed of phrases and parsing is the task of determining the underlying \isi{phrase} structure.
 For example, a statistical generative constituency parser aims to assign probabilities to a parse tree by combining the probabilities of each of its sub-phrases.
-In the \main{dependency formalism}, parsing is defined as correctly determining the dependency relations between words of an input sentence. More precisely,
+In the \textsc{dependency formalism}, parsing is defined as correctly determining the dependency relations between words of an input sentence. More precisely,
 the aim of \isi{dependency parsing} is to correctly determine the dependent-head relationships between words and also the type of these relationships such as subject, object, predicate.
 Dependency parsing is nowadays strikingly more popular than \isi{constituency parsing} and attracts the attention of an ever-growing community in NLP.
 Furthermore, most existing MWE-aware parsers are developed in the dependency framework.
-Therefore, in this chapter, we focus mainly on different orchestration scenarios applied for different \emph{statistical dependency parsing} approaches.
+Therefore, in this chapter, we focus mainly on different orchestration scenarios applied for different statistical dependency parsing approaches.
 
 
 The two commonly used approaches for statistical \isi{dependency parsing} in the literature are transition-based \citep{yamada2003statistical,nivre2007maltparser} and graph-based \citep{eisner1996three,mcdonald-lerman-pereira:2006:conll-x,nakagawa:2007:emnlp-conll2007}. 
-\main{Transition-based} approaches treat the \isi{dependency parsing} task as the determination of parsing actions (such as push/pop operations in a shift-reduce parser) by the use of a machine learning classifier. \main{Graph-based} approaches treat parsing as finding the most likely path within a graph, such as the highest-scoring directed spanning tree in a complete graph. Most MWE-aware parsing strategies are adaptations of standard parsers experimenting with various models of orchestration concerning the scheduling of MWE identification with respect to syntactic analysis.
+\textsc{Transition-based} approaches treat the \isi{dependency parsing} task as the determination of parsing actions (such as push\slash pop operations in a shift-reduce parser) by the use of a machine learning classifier. \textsc{Graph-based} approaches treat parsing as finding the most likely path within a graph, such as the highest-scoring directed spanning tree in a complete graph. Most MWE-aware parsing strategies are adaptations of standard parsers experimenting with various models of orchestration concerning the scheduling of MWE identification with respect to syntactic analysis.
 
-MWEs pose \main{challenges} for all areas of NLP, and \isi{statistical parsing} is not an exception.
-An MWE may be \main{ambiguous} among accidental co-occurrence, literal, and idiomatic uses. The possible surface forms of an MWE \main{vary}, especially due to morphological \isi{variations} which may become radical in morphologically rich languages. MWE components do not have to appear in consecutive locations within a sentence and it is hard to correctly identify a \main{discontinuous} MWE by ignoring the intervening words. 
-The syntactic \main{non-compositionality} of MWEs may result in irregular parse trees.
+\todo[inline]{Italics or small caps for terms in this par?}MWEs pose \textit{challenges} for all areas of NLP, and \isi{statistical parsing} is not an exception.
+An MWE may be \textit{ambiguous} among accidental co-occurrence, literal, and idiomatic uses. The possible surface forms of an MWE \textit{vary}, especially due to morphological \isi{variations} which may become radical in morphologically rich languages. MWE components do not have to appear in consecutive locations within a sentence and it is hard to correctly identify a \textit{discontinuous} MWE by ignoring the intervening words. 
+The syntactic \textit{non-compositionality} of MWEs may result in irregular parse trees.
 The ambiguous, discontinuous, non-compositional and variable nature of MWEs needs to be carefully handled during parsing in order to produce a valid \isi{syntactic structure}. 
 Additionally, annotated datasets (\isi{treebanks}) are crucial resources for the training of data-driven statistical parsers. 
-The \main{scarcity and limited size} of MWE-annotated \isi{treebanks} is a great challenge faced by MWE-aware parsing. 
+The \textit{scarcity and limited size} of MWE-annotated \isi{treebanks} is a great challenge faced by MWE-aware parsing. 
 
 
 %\input{constantetal/03-representation}
@@ -99,7 +98,7 @@ The \main{scarcity and limited size} of MWE-annotated \isi{treebanks} is a great
 
 
 The choice of an appropriate \isi{MWE representation} is crucial, with strong consequences on the format of \isi{treebanks}. Representational choices that have affected existing \isi{treebanks} in this way range
-from words-with-spaces -- e.g., the \ili{French} Treebank \citep{candito:2009} -- to the use of special MWE syntactic relations -- e.g., the Universal Dependencies project \citep{nivre16}. Some \isi{treebanks} may not even contain MWE representations at all, 
+from words-with-spaces -- e.g., the \ili{French} treebank \citep{candito:2009} -- to the use of special MWE syntactic relations -- e.g., the Universal Dependencies project \citep{nivre16}. Some \isi{treebanks} may not even contain MWE representations at all, 
 while others may have sophisticated multi-layer representations 
 \citep{prague}. 
 
@@ -132,24 +131,24 @@ so performance on verb complements for example is much higher than on verb adjun
 \subsection{Words-with-spaces representation}
 \label{con:ssec:wws}
 
-A simple representation consists in considering MWEs as single nodes of the syntactic tree \citep{sag02}, such as in the strategy adopted in the \isi{LFG}/XLE parser described in Chapter~4. This \main{words-with-spaces} representation implies that MWEs have an atomic interpretation. In the constituency framework, the MWE forms are leafs. Their parent nodes correspond to their parts-of-speech (POS) category, as shown in Figure~\ref{con:fig:wws}. For instance, \expl{prime minister} has a noun parent node and \expl{a few} has a determiner parent node. 
+A simple representation consists in considering MWEs as single nodes of the syntactic tree \citep{sag02}, such as in the strategy adopted in the \isi{LFG}/XLE parser described in Chapter~4.\todo{Do you want to cite Angelov, this volume, here?} This \textit{words-with-spaces} representation implies that MWEs have an atomic interpretation. In the constituency framework, the MWE forms are leafs. Their parent nodes correspond to their parts-of-speech (POS) category, as shown in Figure~\ref{con:fig:wws}. For instance, \textit{prime minister} has a noun parent node and \textit{a few} has a determiner parent node. 
 A concrete example where MWEs are represented this way is the first version of the \ili{French} treebank distributed for parsing \citep{candito:2009}. 
-In the dependency framework, the MWE node has the same linguistic attributes as a single word token: POS tag, lemma and morphological features. For instance, \expl{hot dogs} would be a noun in plural, whose lemma is \expl{hot dog}. Such representations imply that MWEs have been pre-identified and represented as word-with-space tokens before parsing. Moreover, they have several drawbacks in terms of linguistic expressiveness. First, discontinuous MWEs like the light-verb construction \expl{make decisions} in Figure~\ref{con:fig:wws} cannot be represented this way. Then, the semantic processing of semi-compositional MWEs might be problematic as the internal \isi{syntactic structure} is impossible to retrieve.%\todo{link to chapter 4 - wws representations in \isi{LFG}/XLE}
+In the dependency framework, the MWE node has the same linguistic attributes as a single word token: POS tag, lemma and morphological features. For instance, \textit{hot dogs} would be a noun in plural, whose lemma is \textit{hot dog}. Such representations imply that MWEs have been pre-identified and represented as word-with-space tokens before parsing. Moreover, they have several drawbacks in terms of linguistic expressiveness. First, discontinuous MWEs like the light-verb construction \textit{make decisions} in Figure~\ref{con:fig:wws} cannot be represented this way. Then, the semantic processing of semi-compositional MWEs might be problematic as the internal \isi{syntactic structure} is impossible to retrieve.%\todo{link to chapter 4 - wws representations in \isi{LFG}/XLE}
 
 \subsection {Chunking representations}
 \label{con:ssec:chunking}
 
-Another way of representing MWEs uses \main{chunking}. 
+Another way of representing MWEs uses \textsc{chunking}. 
 Chunks are a polysemous concept, but its two meanings are related. 
 On the one hand, chunks are seen as psycholinguistic units that are partly or fully lexicalized, that is, stored as one entity in the mental lexicon \citep{miller56,pawley-syder83,tomasello98,wray08}. 
 On the other hand, they are 
 %an operationalisation 
 the concrete output of applying finite-state technology to obtain base-NPs and verb groups deterministically. While the psycholinguistic and the computational concepts are related, the latter has the drawback that chunks need to be continuous.
 
-\citet{abney1991procedure} pointed out that dependency grammars are particularly suited to model chunks and parse between heads of chunks. 
+\citet{abney1991procedure} pointed out that dependency grammars are particularly suit\-ed to model chunks and parse between heads of chunks. 
 In fact, chunks are close to Tesnière's original conception of nucleus, which is typically not a single word \citep{tesniere:1959}. Some dependency parsers following this scheme exist, for example \citet{schneiderphd}. \citet{nivre:2014} has proposed a transition-based parser that performs MWE merging as it syntactically parses a sentence. This operation can be seen as MWE chunking. 
 
-A standard way of representing chunks in tagging systems is the IOB annotation scheme \citep{ramshaw1995}.\footnote{Tokens are tagged as B for \emph{begin}, I for \emph{inside} and O for \emph{outside} a chunk.} Such representations have been successfully adapted to named entity recognition \citep{tjong2002} and MWE identification \citep{vincze11,constant12acl}. For MWEs, there are variants covering continuous MWEs \citep{blunsom-baldwin:2006:emnlp} and gappy ones \citep{schneider14mwe}.
+A standard way of representing chunks in tagging systems is the IOB annotation scheme \citep{ramshaw1995}.\footnote{Tokens are tagged as ``B'' for \textit{begin}, ``I'' for \textit{inside} and ``O'' for \textit{outside} a chunk.} Such representations have been successfully adapted to named entity recognition \citep{tjong2002} and MWE identification \citep{vincze11,constant12acl}. For MWEs, there are variants covering continuous MWEs \citep{blunsom-baldwin:2006:emnlp} and gappy ones \citep{schneider14mwe}.
 For instance, \citet{schneider14mwe} use a 6-tag set (with additional lowercased tags in order to emphasize nested MWE structures) to represent MWEs enabling 1-level nesting, as shown in Figure~\ref{con:fig:iob}. Such representations can be used in \isi{treebanks} for training pipeline MWE-aware systems (Section~\ref{con:sec:pipeline}) and joint MWE-aware parsers (Section~\ref{con:sec:joint}).
 
 
@@ -224,9 +223,9 @@ the \& \color{red}{prime} \& \color{red}{minister} \& \color{blue}{made} \& \col
 \subsection{Subtree representations}
 \label{con:ssec:subtrees}
 
-Another way of representing MWEs is to annotate them as \main{subtrees} made of several nodes of the syntactic tree. Many \isi{treebanks} using such representations can be found in \citet{rosen:2015}. Several types of subtree MWE representations were proposed in \isi{treebanks}, according to the language, MWE type and syntactic formalism.
+Another way of representing MWEs is to annotate them as \textit{subtrees} made of several nodes of the syntactic tree. Many \isi{treebanks} using such representations can be found in \citet{rosen:2015}. Several types of subtree MWE representations were proposed in \isi{treebanks}, according to the language, MWE type and syntactic formalism.
 
-For processing purposes, words-with-spaces representations have often been automatically converted into flat subtrees. In the constituency framework, an MWE is considered as a special constituent with a given POS tag. MWE components are leaves of the MWE subtree, as shown in Figure~\ref{con:fig:green}.\footnote{MWE-related symbols \texttt{MWN} and \texttt{MWD} respectively stand for multiword noun and determiner.} There exist different variants for constituency \isi{treebanks} \citep{gowiska:2010}. This representation has been used by \citet{arun05} and \citet{green11}, especially for compounds. 
+For processing purposes, words-with-spaces representations have often been automatically converted into flat subtrees. In the constituency framework, an MWE is considered as a special constituent with a given POS tag. MWE components are leaves of the MWE subtree, as shown in Figure~\ref{con:fig:green}.\footnote{MWE-related symbols MWN and MWD respectively stand for \textit{multiword noun} and \textit{determiner}.} There exist different variants for constituency \isi{treebanks} \citep{gowiska:2010}. This representation has been used by \citet{arun05} and \citet{green11}, especially for compounds. 
 In the dependency framework, flat subtrees can be either head-initial, that is, the root of the subtree is the first token \citep{nivre04,seddah13}, or head-final, with the root being the last token of the MWE \citep{eryigit:2011:multiword}. All other MWE component tokens depend on this arbitrarily defined head, as shown in Figure~\ref{con:fig:flat}. This representation is used, for example, in the Universal Dependencies \isi{treebanks} \citep{nivre16}.
 
 \begin{figure}[t]
@@ -256,7 +255,7 @@ the \& \color{red}{prime} \& \color{red}{minister} \& \color{blue}{made} \& \col
 Flat subtree representations have a disadvantage: the internal \isi{syntactic structure} of MWEs, required for semi-fixed MWEs in particular, is lost, like for words-with-spaces representation. To retain the internal \isi{syntactic structure} as well as the MWE status, some authors propose representing an MWE with its syntactic subtree, where arc labels are extended with MWE tags, as shown in Figure~\ref{con:fig:extended-labels}. This kind of representation has been used, for instance, for annotating light-verb constructions \citep{vincze13} and continuous MWEs \citep{candito2014strategies}. 
 
 %In fact, 
-\citet{candito2014strategies} adopt a hybrid representation scheme to distinguish regular from irregular MWEs. Regular MWEs have a regular \isi{syntactic structure}\footnote{The distinction between irregular and regular MWEs is arbitrary, being defined by a manually-built set of POS patterns.} whereas they display semantic irregularity. They are represented with structured MWE subtrees, as in Figure~\ref{con:fig:extended-labels}. Irregular MWEs display an irregular \isi{syntactic structure} (e.g., \expl{by and large} is the coordination of a preposition and an adjective) and therefore cannot be analysed syntactically in a compositional way. They are represented with flat subtrees, as in Figure~\ref{con:fig:flat}.
+\citet{candito2014strategies} adopt a hybrid representation scheme to distinguish regular from irregular MWEs. Regular MWEs have a regular \isi{syntactic structure}\footnote{The distinction between irregular and regular MWEs is arbitrary, being defined by a manually-built set of POS patterns.} whereas they display semantic irregularity. They are represented with structured MWE subtrees, as in Figure~\ref{con:fig:extended-labels}. Irregular MWEs display an irregular \isi{syntactic structure} (e.g., \textit{by and large} is the coordination of a preposition and an adjective) and therefore cannot be analysed syntactically in a compositional way. They are represented with flat subtrees, as in Figure~\ref{con:fig:flat}.
 
 %% \begin{comment}
 
@@ -461,19 +460,14 @@ One of the most interesting \isi{MWE representations} combined with (deep) synta
 
 Though less linguistically expressive, other multilayer representations have been proposed on top of a combined lexical and syntactic parser. The proposal of \citet{constant16deep} is to have two distinct layers for representing lexical and syntactic analysis in the form of dependency trees. The two layers share the same nodes, that correspond to the tokens, as shown in Figure~\ref{con:fig:2-dim}. 
 The syntactic layer represents the \isi{syntactic structure} in the dependency framework. The lexical layer represents the lexical segmentation in the form of a tree. 
-Arcs in MWE subtrees have a special label \expl{mwe}. For instance, the MWE \expl{prime minister} corresponds to a subtree whose root is \expl{prime} and which is composed of an \expl{mwe} arc from \expl{prime} to \expl{minister}.  In order to form a unique tree for the lexical layer, lexical units are sequentially related via arcs labeled \expl{lex}. For instance, the MWE \expl{prime minister} is linked to the following lexical unit \expl{made decisions}. 
-This dual representation has several advantages. First, syntactic and lexical analyses are explicitly separated. In the case of regular MWEs, there is a clear distinction between the syntactic and the semantic status (regular \isi{syntactic structure} vs. irregular semantics). In addition, the representation enables not only nested MWEs to be annotated (e.g.,  \expl{a few} in \expl{made a few good decisions}) but also fully overlapping expressions (e.g., the noun compound \expl{rain check} inside the light verb construction \expl{to take a rain check}). 
-On the down side, irregular MWEs are duplicated on the two layers because there is no possible compositional syntactic analysis (e.g., \expl{a few}). Additionally, arcs linking lexical units could be made implicit, as they can straightforwardly be computed from their positions in the sequence.
+Arcs in MWE subtrees have a special label ``mwe''. For instance, the MWE \textit{prime minister} corresponds to a subtree whose root is \textit{prime} and which is composed of an ``mwe'' arc from \textit{prime} to \textit{minister}.  In order to form a unique tree for the lexical layer, lexical units are sequentially related via arcs labeled ``lex''. For instance, the MWE \textit{prime minister} is linked to the following lexical unit \textit{made decisions}. 
+This dual representation has several advantages. First, syntactic and lexical analyses are explicitly separated. In the case of regular MWEs, there is a clear distinction between the syntactic and the semantic status (regular \isi{syntactic structure} vs. irregular semantics). In addition, the representation enables not only nested MWEs to be annotated (e.g.,  \textit{a few} in \textit{made a few good decisions}) but also fully overlapping expressions (e.g., the noun compound \textit{rain check} inside the light verb construction \textit{to take a rain check}). 
+On the down side, irregular MWEs are duplicated on the two layers because there is no possible compositional syntactic analysis (e.g., \textit{a few}). Additionally, arcs linking lexical units could be made implicit, as they can straightforwardly be computed from their positions in the sequence.
 
 \citet{constantnivre16} correct the main drawbacks of the previous two-layer representation by making it more compact and more factorized. The representation is still composed of two layers, but the lexical layer is a forest of constituent-like trees representing complex lexical units like MWEs, as shown in Figure~\ref{con:fig:combined}.
-Here, the discontinuous MWE \expl{made decisions} is represented by a tree whose root corresponds to a new lexical node having linguistic attributes like any token: a form (\expl{made decisions}), a lemma (\expl{make decision}), a POS tag (verb) and morphological features (past tense).
+Here, the discontinuous MWE \textit{made decisions} is represented by a tree whose root corresponds to a new lexical node having linguistic attributes like any token: a form (\textit{made decisions}), a lemma (\textit{make decision}), a POS tag (verb) and morphological features (past tense).
 It is straightforward to elegantly represent embedded and fully overlapping MWEs, as lexical units are trees.
-Irregular MWEs like \expl{a few} and simple words are called syntactic nodes. The syntactic layer is a dependency tree over such nodes. Therefore, irregular MWE nodes and simple word nodes are shared by the two layers. For example, there is a \expl{det} arc from \expl{decisions} to \expl{a few}, as it is compositionally modified by the complex determiner.  This representation is not without some limitations: the lexical layer cannot represent an MWE that strictly requires a graph (and not a tree). For instance, it is impossible to represent the coordinated MWEs \expl{had shower} and \expl{had bath} in the sentence \expl{John had$_{1,2}$ a shower$_1$ then a bath$_2$}. 
-
-
-
-
-
+Irregular MWEs like \textit{a few} and simple words are called \textsc{syntactic nodes}. The syntactic layer is a dependency tree over such nodes. Therefore, irregular MWE nodes and simple word nodes are shared by the two layers. For example, there is a ``det'' arc from \textit{decisions} to \textit{a few}, as it is compositionally modified by the complex determiner.  This representation is not without some limitations: the lexical layer cannot represent an MWE that strictly requires a graph (and not a tree). For instance, it is impossible to represent the coordinated MWEs \textit{had shower} and \textit{had bath} in the sentence \textit{John had\textsubscript{\normalfont1,\,2} a shower\textsubscript{\normalfont1} then a bath\textsubscript{\normalfont2}}. 
 
 %\input{constantetal/04-pipeline}
 \section{Pipeline approaches}
@@ -489,18 +483,18 @@ Preprocessing means that the MWE identification task takes place before parsing.
 \subsubsection{Concatenation approach}
 \label{con:ssec:concat}
 
-A widely used pipeline approach to statistical MWE-aware parsing is to have a \emph{retokenization} phase before parsing. It consists in first pre-identifying MWEs, then concatenating their components in one single token, and finally applying  a syntactic parser trained on a treebank where MWEs have a words-with-spaces representation (Section~\ref{con:ssec:wws}). Note that this approach is limited to continuous MWEs. 
+A widely used pipeline approach to statistical MWE-aware parsing is to have a \textsc{retokenization} phase before parsing. It consists in first pre-identifying MWEs, then concatenating their components in one single token, and finally applying  a syntactic parser trained on a treebank where MWEs have a words-with-spaces representation (Section~\ref{con:ssec:wws}). Note that this approach is limited to continuous MWEs. 
 
-For example, given the input token sequence \expl{The prime minister made a few good decisions}, the MWEs \expl{prime minister} and \expl{a few} are first pre-identified. Each of them is then merged by concatenating its components into a single token. The sequence is retokenized as \expl{The prime\_minister made a\_few good decisions} and is then parsed.
+For example, given the input token sequence \textit{The prime minister made a few good decisions}, the MWEs \textit{prime minister} and \textit{a few} are first pre-identified. Each of them is then merged by concatenating its components into a single token. The sequence is retokenized as \textit{The prime\_minister made a\_few good decisions} and is then parsed.
 This approach has the advantage of reducing the token-count of the sentence and hence reducing the search space of the parser. However, it may not be realistic to recognize some types of MWEs without access to morpho-syntactic information.
 
 Seminal studies 
 on gold MWE identification performed before either consti\-tuency parsing \citep{arun05} or \isi{dependency parsing} \citep{nivre04,eryigit:2011:multiword} showed that it may have a great impact on parsing accuracy.
 Other studies confirmed that more realistic MWE pre-identification actually helps parsing. 
-\citet{korkontzelosetal2010} evaluated MWE pre-identification using Wordnet 3.0 for lexicon lookup before shallow parsing. The set of MWEs was limited to two-word continuous compound nominals, proper names, and adjective-noun constructions. The authors showed that the approach improves shallow parsing accuracy. For instance, 
+\citet{korkontzelosetal2010} evaluated MWE pre-iden\-ti\-fi\-ca\-tion using Wordnet 3.0 for lexicon lookup before shallow parsing. The set of MWEs was limited to two-word continuous compound nominals, proper names, and adjective-noun constructions. The authors showed that the approach improves shallow parsing accuracy. For instance, 
 without  MWE pre-identification,
 %the sentence 
-\expl{he threw the fire wheel up into the air} is erroneously parsed as: \expl{(he) (threw) (the fire) (wheel up) (into) (the air)}, whereas with MWE pre-identification the result is: \expl{(he) (threw) (the fire\_wheel) (up) (into) (the air)}. \citet{cafferkey07} carried out similar experiments with a probabilistic constituency parser. MWEs were automatically identified by applying a named entity recognizer and list of prepositional MWEs. A slight but statistically significant improvement was observed. We should note that in the above studies, MWE identification itself was not evaluated. 
+\textit{he threw the fire wheel up into the air} is erroneously parsed as: \textit{(he) (threw) (the fire) (wheel up) (into) (the air)}, whereas with MWE pre-identification the result is: \textit{(he) (threw) (the fire\_wheel) (up) (into) (the air)}. \citet{cafferkey07} carried out similar experiments with a probabilistic constituency parser. MWEs were automatically identified by applying a named entity recognizer and list of prepositional MWEs. A slight but statistically significant improvement was observed. We should note that in the above studies, MWE identification itself was not evaluated. 
 
 
 The SPMRL shared task \citep{seddah13} had a special track dedicated to MWE-aware parsing in \ili{French}. The provided treebank included continuous MWE annotations represented as flat subtrees (Figure~\ref{con:fig:flat}). All but one competing team did not develop special treatments for MWEs. The winning team was the only one to have a preprocessing stage to identify MWEs using a tagger based on linear conditional random fields \citep{constant13mwe}. The tagger model also incorporated features based on an MWE lexicon (Section~\ref{con:ssec:lex-help-mwe}).
@@ -511,28 +505,28 @@ The SPMRL shared task \citep{seddah13} had a special track dedicated to MWE-awar
 
 Another approach is to use substitution: whenever an MWE from the lexicon 
 matches, it is replaced by its head word. Such approach is employed by \cite{weeds-ea07} for technical terms (Section~\ref{con:ssec:mwe-help-parse}), and by \citet{schneiderphd} on all chunks.
-In a typical substitution approach, for example, the term \expl{natural language processing} would be replaced by \expl{processing} before parsing. 
+In a typical substitution approach, for example, the term \textit{natural language processing} would be replaced by \textit{processing} before parsing. 
 
 The advantage of keeping the lexical head is that resources taking lexical relations into account, such as bi-lexical disambiguation \citep{collins99}, can use the lexical information. Thus, potential sparsity problems are reduced in comparison to the concatenation approach. For example, the prepositional \isi{phrase} attachment ambiguity in 
-\expl{We help users with natural language processing} 
-can be resolved properly, even if \expl{natural language processing} is unseen in the training data. As long as \expl{processing} exists in the training corpus, the ambiguity can be solved because the combination \expl{help-with-processing} is more likely than \expl{user-with-processing}. 
+\textit{We help users with natural language processing} 
+can be resolved properly, even if \textit{natural language processing} is unseen in the training data. As long as \textit{processing} exists in the training corpus, the ambiguity can be solved because the combination \textit{help-with-processing} is more likely than \textit{user-with-processing}. 
 
 The potential drawbacks of this approach are that, on the one hand, strings may be ambiguous, and on the other hand non-compositionality may affect the results. 
 Ambiguous strings are illustrated below: while the first sentence of each example is an MWE, the second is accidental cooccurrence. The last example involves light verbs, for which \citet{tu-roth:2011:mwe} use token-wise disambiguation, as ambiguity is relatively frequent. 
 
 %% \begin{itemize}
-%% \item \expl{I saw her, and \textbf{by the way} she went there on foot}
+%% \item \textit{I saw her, and \textbf{by the way} she went there on foot}
 %% %
 %% vs. \\
-%% \expl{I recognized her \textbf{by the way} she walks} 
-%% \item \expl{In \textbf{natural language processing}, humans are also challenged}
+%% \textit{I recognized her \textbf{by the way} she walks} 
+%% \item \textit{In \textbf{natural language processing}, humans are also challenged}
 %% %
 %% vs. \\
-%% \expl{In \textbf{natural language processing} can be difficult}
-%% \item \expl{The politician \textbf{took} a strong \textbf{position} on the issue}
+%% \textit{In \textbf{natural language processing} can be difficult}
+%% \item \textit{The politician \textbf{took} a strong \textbf{position} on the issue}
 %% %
 %% vs. \\
-%% \expl{The soldier \textbf{took} a vanguard \textbf{position} on the mountain top}
+%% \textit{The soldier \textbf{took} a vanguard \textbf{position} on the mountain top}
 %% \end{itemize}
 
 \begin{exe} 
@@ -556,8 +550,8 @@ Ambiguous strings are illustrated below: while the first sentence of each exampl
 Non-compositionality may lead to situations in which the head is semantically so different that attachment preferences are also affected.
 
 %% \begin{itemize}
-%% \item \expl{I saw the road with the \textbf{torch light}} vs. \\
-%% \expl{I saw the road with the \textbf{traffic light}}
+%% \item \textit{I saw the road with the \textbf{torch light}} vs. \\
+%% \textit{I saw the road with the \textbf{traffic light}}
 %% \end{itemize}
 \begin{exe}
   \ex
@@ -567,14 +561,14 @@ Non-compositionality may lead to situations in which the head is semantically so
   \end{xlist}
 \end{exe}
 
-If the MWE \expl{traffic light} is reduced to \expl{light}, the chances are that the prepositional \isi{phrase} is erroneously attached to the verb, as \expl{see-with-light} is likely. If \expl{traffic light} is treated as an MWE, bi-lexical disambiguation can only profit if very large annotated resources exist. Unless a backoff method to treat MWE components is included, the increased data sparseness may easily lead to worse results.
+If the MWE \textit{traffic light} is reduced to \textit{light}, the chances are that the prepositional \isi{phrase} is erroneously attached to the verb, as \textit{see-with-light} is likely. If \textit{traffic light} is treated as an MWE, bi-lexical disambiguation can only profit if very large annotated resources exist. Unless a backoff method to treat MWE components is included, the increased data sparseness may easily lead to worse results.
 
 
 
 \subsection{Postprocessing approach}
 \label{con:ssec:postproc}
 
-In this section, we present approaches where parsing precedes MWE processing. We make a distinction between MWE identification and discovery. We define \emph{identification} as the process of recognizing MWEs in context, that is, as tokens inside running text. On the other hand, \emph{discovery} aims at creating a lexicon of MWE types from the corpus. This lexicon can later be used to guide MWE identification and parsing. In this section, we describe approaches for identification after parsing (Section\ref{con:ssec:idpost}) and for discovery after parsing (Section~\ref{con:ssec:discopost}), focusing on works in which the result of discovery was later employed for identification.
+In this section, we present approaches where parsing precedes MWE processing. We make a distinction between MWE identification and discovery. We define \textsc{identification} as the process of recognizing MWEs in context, that is, as tokens inside running text. On the other hand, \textsc{discovery} aims at creating a lexicon of MWE types from the corpus. This lexicon can later be used to guide MWE identification and parsing. In this section, we describe approaches for identification after parsing (Section~\ref{con:ssec:idpost}) and for discovery after parsing (Section~\ref{con:ssec:discopost}), focusing on works in which the result of discovery was later employed for identification.
 
 
 
@@ -582,26 +576,27 @@ In this section, we present approaches where parsing precedes MWE processing. We
 \subsubsection{Post-parsing MWE identification}
 \label{con:ssec:idpost}
 
-Identifying MWEs after \isi{syntactic parsing} is a natural approach to MWE-aware parsing as an MWE generally constitutes a syntactic constituent. In the dependency framework, there is usually a path continuously linking the MWE components in the syntactic tree. As a consequence, pre-parsing is particularly relevant for detecting discontinuous MWEs, that is, MWEs that include alien elements, by employing adapted lexicon lookup methods. In Figure~\ref{con:fig:combined}, the MWE \expl{made decisions} is discontinuous. As there is an object arc from \expl{made} to \expl{decisions}, the two words are \emph{syntactically} adjacent. A matching procedure taking the \isi{syntactic structure} into account can therefore be beneficial for MWE identification. 
-Furthermore, MWEs can have different syntactic variants. For instance, \expl{a \textbf{decision} was \textbf{made} by John} is the passive voice variant of \textit{John made a decision}. The detection of such syntactic variants obviously benefits from the result of \isi{syntactic parsing}. 
+Identifying MWEs after \isi{syntactic parsing} is a natural approach to MWE-aware parsing as an MWE generally constitutes a syntactic constituent. In the dependency framework, there is usually a path continuously linking the MWE components in the syntactic tree. As a consequence, pre-parsing is particularly relevant for detecting discontinuous MWEs, that is, MWEs that include alien elements, by employing adapted lexicon lookup methods. In Figure~\ref{con:fig:combined}, the MWE \textit{made decisions} is discontinuous. As there is an object arc from \textit{made} to \textit{decisions}, the two words are \emph{syntactically} adjacent. A matching procedure taking the \isi{syntactic structure} into account can therefore be beneficial for MWE identification. 
+Furthermore, MWEs can have different syntactic variants. For instance, \textit{a \textbf{decision} was \textbf{made} by John} is the passive voice variant of \textit{John made a decision}. The detection of such syntactic variants obviously benefits from the result of \isi{syntactic parsing}. 
 
 
-\citet{fazly-cook-stevenson:2009:cl} identify verb-noun expressions in a parsed text based on a list of 60 candidate expressions. First, they identify candidate occurrences of the expressions using rules based on syntactic annotations and lexical values. Then, they discriminate  MWEs from literal expressions using different methods. One is based on the assumption that a verbal MWE expression has \emph{fewer syntactic variants} than its literal counterparts, giving rise to the heuristic that canonical forms are idiomatic (e.g., \expl{pull one's weight}) and non-canonical variants are literal (e.g., \textit{pull a weight, pull the weights}). Another method
+\citet{fazly-cook-stevenson:2009:cl} identify verb-noun expressions in a parsed text based on a list of 60 candidate expressions. First, they identify candidate occurrences of the expressions using rules based on syntactic annotations and lexical values. Then, they discriminate  MWEs from literal expressions using different methods. One is based on the assumption that a verbal MWE expression has \emph{fewer syntactic variants} than its literal counterparts, giving rise to the heuristic that canonical forms are idiomatic (e.g., \textit{pull one's weight}) and non-canonical variants are literal (e.g., \textit{pull a weight, pull the weights}). Another method
 compared the distributional contexts of co-occurring verb-object pairs to two sets of gold-standard contexts: one for idiomatic readings and another one for literal readings. 
 
 \citet{nagyt-vincze:2014:mwe} compare the use of parsers and of a syntax-based pipeline approach to identify verb particle constructions in \ili{English}. \ili{English} off-the-shelf parsers usually have a specific syntactic arc label to identify occurrences of \isi{verb-particle constructions}. Nonetheless, such parsers tend to get good precision but low recall, as they do not use dedicated features for this task. The pipeline method developed in this paper  uses a standard parser to identify a first set of candidates. This set is subsequently enlarged using other syntactic relations. A classifier is then applied in order to decide whether they are \isi{verb-particle constructions} or not. They show a significant gain in terms of recall and F-score with respect to standard parsers on the Wiki50 corpus \citep{vincze11}.
 
 \subsubsection{Post-parsing MWE discovery}
 \label{con:ssec:discopost}
-
-
-{This section discusses the discovery of new MWEs after parsing. This is particularly useful for the creation of resources that can be used for MWE-aware parsing (Section~\ref{con:sec:resources}). 
+This section discusses the discovery of new MWEs after parsing. This is particularly useful for the creation of resources that can be used for MWE-aware parsing (Section~\ref{con:sec:resources}). 
 For instance, such lexicon of newly discovered MWEs can be subsequently used for MWE pre-identification at the next cycle of processing.
-\citet{seretan11} has shown that discovery based on parsed corpora provides considerably cleaner {results than those relying on shallow analysis (e.g., POS-tagged corpora)}. Chapter~8 discusses the integration of resources built with the help of MWE discovery into a language-independent symbolic parser.}
+\citet{seretan11} has shown that discovery based on parsed corpora provides considerably cleaner {results than those relying on shallow analysis (e.g., POS-tagged corpora)}. Chapter~8\todo{Cite Foufi et al, this volume?} discusses the integration of resources built with the help of MWE discovery into a language-independent symbolic parser.
 
 {Since the literature in MWE discovery is huge, we focus on two studies that represent a sample of this type of approach.}
 \citet{lehmann-schneider2011:verb-pp} and \citet{ronan_schneider_mwe_15}
 used automatically parsed data for discovering MWEs of different types, including idiomatic verb + prepositional \isi{phrase} (PP) combinations and light-verb constructions {in English}. These cases involved the use of different {\isi{collocation extraction} scores}.
+
+For discovering Verb-PP \isi{idioms} the O/E score was used, combined with filters including T-score and Yule's K (which estimates the degree of non-modifiability of a candidate). 
+{Table}~\ref{con:discover-verb-PP} reproduces the results of discovery, sorting the candidates by descending O/E score. Among the top-ranked candidates, many are genuine \isi{idioms} (e.g., \textit{to kill two birds with one stone}).
 
 \begin{table}
 \begin{tabular}{*{4}{>{\itshape}l}S[table-format=1.5]S[table-format=1.5e+1]}
@@ -627,12 +622,9 @@ used automatically parsed data for discovering MWEs of different types, includin
 \label{con:discover-verb-PP}
 \end{table}
 
-For discovering Verb-PP \isi{idioms} the O/E score was used, combined with filters including T-score and Yule's K (which estimates the degree of non-modifiability of a candidate). 
-{Table}~\ref{con:discover-verb-PP} reproduces the results of discovery, sorting the candidates by descending O/E score. Among the top-ranked candidates, many are genuine \isi{idioms} (e.g., \expl{to kill two birds with one stone}).
-
 
 For discovering light-verb constructions, the t-score was used together with a number of filters including WordNet and NomBank lookup \citep{ronan_schneider_mwe_15}. 
-An example of analysis is shown in Figure~\ref{con:discover-lightverbs}, showing a precision and recall plot by candidate list length. The vertical axis shows precision and recall, respectively, the horizontal axis (which is logarithmic) gives the cutoff in the ranked list of candidates to be included in the evaluation. For the cutoff at 20, the reported candidates for \emph{give}+object, precision is 100\%, while recall is 10\%. At rank 2560, about 88\% of all instances in the gold standard were found.
+An example of analysis is shown in Figure~\ref{con:discover-lightverbs}, showing a precision and recall plot by candidate list length. The vertical axis shows precision and recall, respectively, the horizontal axis (which is logarithmic) gives the cutoff in the ranked list of candidates to be included in the evaluation. For the cutoff at 20, the reported candidates for \textit{give}+object, precision is 100\%, while recall is 10\%. At rank 2560, about 88\% of all instances in the gold standard were found.
 
 \begin{figure}
 % \includegraphics[width=240pt,height=160pt]{figures/ICAME_2013_27_BW1}
@@ -674,7 +666,7 @@ BNCX		R
 \addlegendentry{R}
 \end{axis}
 \end{tikzpicture}
-\caption{Precision vs. recall curve of the light verb \expl{give} in the British National Corpus, using t-score \citep{ronan_schneider_mwe_15}}
+\caption{Precision vs. recall curve of the light verb \textit{give} in the British National Corpus, using t-score \citep{ronan_schneider_mwe_15}}
 \label{con:discover-lightverbs}
 \end{figure}
 
@@ -698,19 +690,19 @@ Indeed, when moving from standard test sets to real texts, gold MWE identificati
 It may be hard to use a pipeline approach (Section~\ref{con:sec:pipeline}) if the target MWEs are ambiguous or discontinuous.
 
 On the downside, parsers that perform both syntactic analysis and MWE identification simultaneously are harder to design.
-First, ambiguity is increased, often by a larger number of labels and/or parsing decisions that are possible at a given moment.
+First, ambiguity is increased, often by a larger number of labels and\slash or parsing decisions that are possible at a given moment.
 It is crucial, for such systems, to have coherent MWE annotations in \isi{treebanks}, datasets that are large enough, and features that generalize well. 
 
 We classify such approaches according to the degree of  ``MWE-awareness'' of the parser.
 In shallow approaches, the parser generates $n$-best solutions without putting any particular emphasis on MWEs, then uses MWE information for reranking (Section~\ref{con:ssec:joint:rerank}).
 The majority of joint approaches add MWE information to training and test \isi{treebanks}, and then use off-the-shelf parsers enriched with dedicated MWE features (Section~ \ref{con:ssec:joint:data}). 
-We also present fully MWE-aware parsers that take them into account in the parsing algorithm itself (Section~ \ref{con:ssec:joint:model}).
+We also present fully MWE-aware parsers that take them into account in the parsing algorithm itself (Section~\ref{con:ssec:joint:model}).
 
 
-\subsection{N-best and reranking approaches }
+\subsection{$n$-best and reranking approaches}
 \label{con:ssec:joint:rerank}
 
-One possible orchestration solution is to consider MWE identification as a retokenization problem, as described in Subsection~\ref{con:ssec:concat}.
+One possible orchestration solution is to consider MWE identification as a retokenization problem, as described in Section~\ref{con:ssec:concat}.
 In $n$-best approaches, however, the text is first segmented into tokens in a non-deterministic way, considering \emph{several possible segmentations}.
 Usually, the output of such non-deterministic tokenizer is a lattice containing all possible segmentation paths for a sentence \citep{sagot:2005}.
 This representation is particularly suited for ambiguous irregular constructions, that could be considered as MWEs or as accidental co-occurrence, depending on the context.
@@ -722,15 +714,8 @@ Thus, different segmentation possibilities in the lattice are represented by pat
 Conversely, the parser can use the same kind of approach and also generate $n$-best parsing trees.
 A reranker can then use MWE-aware features, among others, to choose the highest scoring tree. \citet{constant12acl}, for instance, use a deterministic tokenizer but output $n$-best MWE-aware syntactic trees using the Berkeley constituency parser. Then, they use a discriminative reranker to choose the correct parse tree that includes MWE features.  
 
-
-
-
-These are considered joint approaches because, even though MWE segmentation and parsing are independent processes, one needs to be aware of the format of the input/output of the other.
+These are considered joint approaches because, even though MWE segmentation and parsing are independent processes, one needs to be aware of the format of the input\slash output of the other.
 For example, the parser has to be able to process lattices as input, provided by the non-deterministic MWE identifier.
-
-
-
-
 
 \subsection{Treebank modification approaches}
 \label{con:ssec:joint:data}
@@ -741,23 +726,23 @@ For example, if MWEs are represented as subtrees (Figure~\ref{con:fig:extended-l
 This subsection covers MWE-aware parsing studies   in which the learning and parsing algorithms \emph{remain unchanged} with respect to their standard version.
 
 Approaches discussed in this section face several challenges.
-First, most of the time MWEs are either \main{absent} from \isi{treebanks}, or the available representation requires \main{adaptations} in order to be usable by the parser.
-Second, parsers learned from MWE-annotated \isi{treebanks} often require \main{extra features} to take MWEs into account properly. Third, these features may suffer from data \main{sparseness}, as individual MWEs may not occur often enough in limited-size \isi{treebanks}.\footnote{
+First, most of the time MWEs are either \textit{absent} from \isi{treebanks}, or the available representation requires \textit{adaptations} in order to be usable by the parser.
+Second, parsers learned from MWE-annotated \isi{treebanks} often require \textit{extra features} to take MWEs into account properly. Third, these features may suffer from data \textit{sparseness}, as individual MWEs may not occur often enough in limited-size \isi{treebanks}.\footnote{
 Some MWE categories may never occur (e.g., colloquial \isi{idioms}) because many existing \isi{treebanks} cover a single register (e.g., newspapers).}
 
 In this subsection, we present approaches that tackle the challenges posed by MWEs by:
 \begin{itemize}
- \item adding or modifying the \isi{MWE representation} in the \isi{treebanks}, and/or
+ \item adding or modifying the \isi{MWE representation} in the \isi{treebanks}, and\slash or
  \item adding MWE-dedicated features to the parsing model.
 \end{itemize}
 The last challenge, related to data sparseness and domain adaptation, is tackled by integrating external resources in the parser, as discussed in Section~\ref{con:sec:resources}.
 
 
-In \isi{constituency parsing}, several parsers, MWE representations and feature sets have been tested, especially on continuous MWEs in the \ili{French} Treebank. 
+In \isi{constituency parsing}, several parsers, MWE representations and feature sets have been tested, especially on continuous MWEs in the \ili{French} treebank. 
 \citet{constant13combining} experiment with two implementations of a PCFG-LA parser, using a representation similar to the one of \citet{green11} and a variant similar to IOB encoding.
 
 When MWE annotation is absent, a reasonably straightforward solution is to automatically project an MWE lexicon on the treebank before training the parser.
-For instance, \citet{kato16} project a lexicon of compound function words (e.g., \expl{a number of}) onto the \ili{English} Ontonotes constituency treebank. 
+For instance, \citet{kato16} project a lexicon of compound function words (e.g., \textit{a number of}) onto the \ili{English} Ontonotes constituency treebank. 
 Syntactic trees are modified to take MWEs into account.
 Constituents are then automatically transformed into dependencies and a standard first-order graph-based parser is learned.
 While the training data is modified, no MWE features are added to the model.
@@ -768,10 +753,10 @@ However, these results were obtained assuming gold MWE segmentation. %, which is
 
 \citet{vincze13} were among the first to use a dependency parser to perform realistic MWE identification.
 They focus on light-verb constructions (LVCs) in \ili{Hungarian}.
-They first perform an automatic matching of two annotation layers in the Szeged Treebank: syntactic dependencies and LVCs.
-As a result, the  dependency link between a light verb and a predicative noun (e.g., {\scshape obj}) is suffixed with a {\scshape lvc} tag, whereas regular verb-argument links remain unchanged, like in Figure~\ref{con:fig:extended-labels}. An off-the-shelf parser is used to predict the \isi{syntactic structure} of sentences, including LVC links.
+They first perform an automatic matching of two annotation layers in the Szeged treebank: syntactic dependencies and LVCs.
+As a result, the  dependency link between a light verb and a predicative noun (e.g., OBJ) is suffixed with a LVC tag, whereas regular verb-argument links remain unchanged, like in Figure~\ref{con:fig:extended-labels}. An off-the-shelf parser is used to predict the \isi{syntactic structure} of sentences, including LVC links.
 Given that \ili{Hungarian} is a relatively free word-order language, LVCs often involve \isi{long-distance dependencies}.
-When compared with a classifier baseline, the parser performs slightly worse on continuous LVC instances (F1=81\% vs. 82.8\%) but considerably better on discontinuous LVCs (F1=64\% vs. 60\%).
+When compared with a classifier baseline, the parser performs slightly worse on continuous LVC instances ($\text{F1}=81\%$ vs.\ $82.8\%$) but considerably better on discontinuous LVCs ($\text{F1}=64\%$ vs.\ $60\%$).
 
 
 Treebanks containing MWEs as words with spaces pose problems when converted into subtrees. 
@@ -785,7 +770,7 @@ Contrary to previous conclusions \citep{nivre04b}, results indicate that subtree
 \citet{candito2014strategies} explore several orchestrations for combining \isi{syntactic parsing} and continuous MWE identification in \ili{French}, distinguishing syntactically regular from irregular multiword constructions. In particular, they experimented with an off-the-shelf graph-based parser that was learned from an MWE-aware treebank where the subtrees representing regular and irregular expressions have their usual labels suffixed by the POS of the MWE, as shown in Figure~\ref{con:fig:extended-labels}. They showed on-par results with different pipeline variants.
 
 
-\citet{nasretal15} focus on ambiguous compound grammatical words in \ili{French} of the form ADV+\expl{que} and \expl{de}+DET.
+\citet{nasretal15} focus on ambiguous compound grammatical words in \ili{French} of the form ADV+\textit{que} and \textit{de}+DET.
 While these represent a limited scope, such constructions are pervasive and hard to identify without access to syntactic information, because its component words can co-occur by chance. %, making it hard to disambiguate them.
 For instance, the two sentences below have the same sequences of POS and similar lexical units, but the first one contains an MWE whereas the second one does not:
 
@@ -802,7 +787,7 @@ For instance, the two sentences below have the same sequences of POS and similar
 \z
 
 In order to deal with these constructions, the training treebank is modified similarly to \citet{candito2014strategies}, splitting MWEs originally represented as words with spaces into two tokens linked by a special dependency. 
-For example, since \expl{bien que} functions as a conjunction, the conjunction \expl{que} becomes the head, modified by the adverb \expl{bien}. % using a {\scshape Morph} link.
+For example, since \textit{bien que} functions as a conjunction, the conjunction \textit{que} becomes the head, modified by the adverb \textit{bien}. % using a {\scshape Morph} link.
 Using a standard graph-based dependency parser, the authors evaluate the identification of the target MWEs on a dedicated dataset. As described in Section~\ref{con:ssec:lex-help-mwe}, the use of \isi{subcategorization} frame information for verbs, coming from an external lexicon, improves the results.
 
 
@@ -859,7 +844,7 @@ The provision of information about such lexical affinities to the parser has bee
 Lexical affinities might be integrated using either soft constraints \citep{bansal:11,mirroshandel:12} or hard ones \citep{mirroshandel:2016}. 
 The deep learning revolution has opened new perspectives to help handle lexical sparsity, as words are represented as continuous space vectors (i.e., word embeddings) learned from large corpora. Words having similar syntactic behaviors have vectors that are geometrically close to each other \citep{durrett:15,dyer:15}.
 
-The use of external lexicons has also turned out to be of great interest, notably for \isi{dependency parsing}. For instance, \citet{candito:2010} successfully use the MELt tagger \citep{denis:2012}, thereby incorporating features based on a large-scale morphological lexicon. The integration of hard constraints based on syntactic lexicons was also shown to have a positive impact \citep{mirroshandel:2013}. 
+The use of external lexicons has also turned out to be of great interest, notably for \isi{dependency parsing}. For instance, \citet{candito:2010} successfully use the MElt tagger \citep{denis:2012}, thereby incorporating features based on a large-scale morphological lexicon. The integration of hard constraints based on syntactic lexicons was also shown to have a positive impact \citep{mirroshandel:2013}. 
 
 
 \subsection{MWE resources help parsing}
@@ -869,18 +854,18 @@ We now give examples of MWE lexical resource integration using a pipeline approa
 
 
 On the chunking level, replacing chunks with their head words reduces parsing complexity considerably. 
-According to experiments carried out by \citet{prins05}, parsing performance also increases slightly. 
+According to experiments carried out by \citeauthor{prins05}\linebreak(\citeyear{prins05}), parsing performance also increases slightly. 
 However, experiments on technical terms have not confirmed this hypothesis.
 In other words, replacing chunks with their heads does not necessarily lead to improved results in other settings. 
 
 
-\citet{weeds-ea07} used a substitution approach (Section~\ref{con:ssec:subst}) for term identification in the domain of biomedical research, where gene and protein names in particular are often MWEs. Because taggers, unless they are trained on the domain, perform very poorly, they report better results when replacing technical terms with their head, using a large lexicon of domain terms.\footnote{Such a lexicon is often referred to as \emph{gazetteer}.}
+\citet{weeds-ea07} used a substitution approach (Section~\ref{con:ssec:subst}) for term identification in the domain of biomedical research, where gene and protein names in particular are often MWEs. Because taggers, unless they are trained on the domain, perform very poorly, they report better results when replacing technical terms with their head, using a large lexicon of domain terms.\footnote{Such a lexicon is often referred to as ``gazetteer''.}
 
 A comparable example is the situation in which a sentence such as 
 %
-\expl{... he did not see the traffic\_N light\_V} 
+\textit{... he did not see the traffic\_N light\_V} 
 %
-is POS-tagged incorrectly (\expl{light\_V} instead of \expl{light\_N}). Here, a pipeline substitution approach relying on an MWE lexicon can clearly improve results. This improvement is passed on to the subsequent parsing step. 
+is POS-tagged incorrectly (\textit{light\_V} instead of \textit{light\_N}). Here, a pipeline substitution approach relying on an MWE lexicon can clearly improve results. This improvement is passed on to the subsequent parsing step. 
 When domain-adapted taggers are available, though, the advantages of the substitution approach tend to disappear. 
 The performance of adapted taggers is often comparable or slightly higher than that of the substitution approach, as tagging accuracy of technical terms increases. 
 In short, sometimes it is better to adapt statistical models (in this case, a domain-adapted tagger) rather than using lexical resources (in this case, an MWE gazetteer of the domain).% 
@@ -889,7 +874,7 @@ In short, sometimes it is better to adapt statistical models (in this case, a do
 Also this experiment did confirm that statistically motivated resources are usually better than purely lexical resources.
 
 
-\subsection{Lexical resources help MWE-aware parsing}
+\subsection{Lexical resources help MWE-aware parsing}\largerpage
 \label{con:ssec:lex-help-mwe}
 
 Having discussed the effect of lexical resources on parsing accuracy, we now turn to two different ways to use them as a source of features for dependency parsers, to help MWE identification as well as parsing accuracy. 
@@ -897,31 +882,28 @@ Having discussed the effect of lexical resources on parsing accuracy, we now tur
 The first is to use MWE lexicons to alleviate the low coverage of MWEs in the training dataset. The idea is to perform an MWE pre-segmentation of the input text by lexicon lookup. The pre-segmentation, encoded in an IOB-like format, is then used as source of features during MWE-aware parsing, either in the parser itself for joint approaches \citep{candito2014strategies}, or in the MWE tagger applied before parsing in pipeline approaches \citep{constant12acl,constant13mwe}.  
 
 One advantage of using soft constraints like features is their ability to handle ambiguous MWEs.
-Let us take the sequence \expl{up to}, which can be either a complex preposition (\expl{no more than}) or an accidental co-occurrence (\expl{look up to the sky}). A naive segmentation will systematically consider it to be an MWE, independently of the context. However, a better decision can be made taking the context (i.e., the set of other features) into account. Using a joint approach on the \ili{French} treebank, \citet{candito2014strategies} managed to gain around 4 points in terms of tagged MWE identification F-score using such lexicon-based features: $\text{F}1=74.5$ (with) vs.\ $\text{F}1=70.7$ (without). We should recall, however, that their approach is limited to continuous MWEs.
+Let us take the sequence \textit{up to}, which can be either a complex preposition (\textit{no more than}) or an accidental co-occurrence (\textit{look up to the sky}). A naive segmentation will systematically consider it to be an MWE, independently of the context. However, a better decision can be made taking the context (i.e., the set of other features) into account. Using a joint approach on the \ili{French} treebank, \citet{candito2014strategies} managed to gain around 4 points in terms of tagged MWE identification F-score using such lexicon-based features: $\text{F}1=74.5$ (with) vs.\ $\text{F}1=70.7$ (without). We should recall, however, that their approach is limited to continuous MWEs.
 
 
 A second method proposed by \citet{nasretal15} is to incorporate \isi{subcategorization} frame information, derived from a syntactic lexicon, as features in a joint parser. This was used to improve the resolution of ambiguities between grammatical compound MWEs and accidental co-occurrences.
-An example is the \ili{French} sequence \expl{bien que} which is either a multiword conjunction (\expl{although}) or  an adverb (\expl{well}) followed by a relative conjunction (\expl{that}), as exemplified in Subsection~\ref{con:ssec:joint:data}. This ambiguity may be resolved using information about the verb in the syntactic neighborhood. The authors included specific features indicating whether a given verb accepts a given complement: \expl{manger (to eat)} \textminus QUE \textminus DE, \expl{penser (to think)} +QUE \textminus DE, \expl{boire (to drink)} \textminus QUE \textminus DE, \expl{parler (to speak)} \textminus QUE +DE. 
-In particular, they show for \ili{French} that there is a 1-point gain in F-score, 85.24 (without) vs. 86.41 (with), for MWEs of the form ADV+\expl{que} (ADV+\expl{that}). The effect is spectacular for compounds of the form \expl{de}+DET, that display a 15-point gain : 75.00 (without) vs. 84.67 (with).
+An example is the \ili{French} sequence \textit{bien que} which is either a multiword conjunction (`although') or  an adverb (`well') followed by a relative conjunction (`that'), as exemplified in Section~\ref{con:ssec:joint:data}. This ambiguity may be resolved using information about the verb in the syntactic neighborhood. The authors included specific features indicating whether a given verb accepts a given complement: \textit{manger} (`to eat') \textminus QUE \textminus DE, \textit{penser} (`to think') +QUE \textminus DE, \textit{boire} (`to drink') \textminus QUE \textminus DE, \textit{parler} (`to speak') \textminus QUE +DE. 
+In particular, they show for \ili{French} that there is a 1-point gain in F-score, 85.24 (without) vs. 86.41 (with), for MWEs of the form ADV+\textit{que} (ADV+\textit{that}). The effect is spectacular for compounds of the form \textit{de}+DET, that display a 15-point gain: 75.00 (without) vs. 84.67 (with).
 
   
 
 %\input{constantetal/07-evaluation}
 \section{Evaluation}
 \label{con:sec:evaluation}
-
-
-
 Evaluating a syntactic parser generally consists in comparing the output to reference  (gold-standard) parses from  a manually labeled treebank.
 In the case of \isi{constituency parsing}, a constituent is treated as correct if there exists a constituent in the gold standard parse with the same labels, starting and ending points. These parsers are traditionally evaluated through precision, recall and F-score \citep{abney1991procedure,sekine1997evalb}. 
 
-In standard \isi{dependency parsing} with single-head \isi{constraint}\footnote{Each dependent node has at most one head in the produced dependency tree.}, the number of dependencies produced by a parser is equal to the number of total dependencies in the gold-standard parse tree. Common metrics to evaluate these parsers include the percentage of tokens with correct head, called \emph{unlabelled attachment score} (\asu), and the percentage of tokens with correct head \emph{and} dependency label, called \emph{labeled attachment score} (\asl) \citep{conllx,nilsson2007conll}. 
+In standard \isi{dependency parsing} with single-head \isi{constraint}\footnote{Each dependent node has at most one head in the produced dependency tree.}, the number of dependencies produced by a parser is equal to the number of total dependencies in the gold-standard parse tree. Common metrics to evaluate these parsers include the percentage of tokens with correct head, called \textsc{unlabelled attachment score} (\asu), and the percentage of tokens with correct head \emph{and} dependency label, called \textsc{labeled attachment score} (\asl) \citep{conllx,nilsson2007conll}. 
 
 The evaluation of MWE-aware parsers and the evaluation of  whether or not MWE pre-identification helps  improving the parsing quality should be carefully carried out.
 As stated in previous sections, in most works where MWE identification is realized before parsing, the MWEs are merged into  single tokens.  
 As a result, the common metrics for parsing evaluation given above become problematic for measuring the impact of MWE identification on parsing performance \citep{eryigit:2011:multiword}.
 For example, in \isi{dependency parsing},
-the concatenation of MWEs into single units  decrements the total number of evaluated dependencies. It is thus possible to obtain different scores without actually changing the quality of the parser, but simply the representation of the results. Instead of \asu~ and \asl~ metrics, the attachment scores on the surrounding structures, namely \asus~ and \asls~ (i.e., the accuracy on the dependency relations excluding the ones between MWE elements) are more appropriate for extrinsic evaluation of the impact of MWE identification on parsing. Similar considerations apply to \isi{constituency parsing}.
+the concatenation of MWEs into single units  decrements the total number of evaluated dependencies. It is thus possible to obtain different scores without actually changing the quality of the parser, but simply the representation of the results. Instead of \asu{} and \asl{} metrics, the attachment scores on the surrounding structures, namely \asus{} and \asls{} (i.e., the accuracy on the dependency relations excluding the ones between MWE elements) are more appropriate for extrinsic evaluation of the impact of MWE identification on parsing. Similar considerations apply to \isi{constituency parsing}.
 
 \begin{figure*}[htbp]
   \centering
@@ -939,22 +921,22 @@ Correctly predicted dependencies %by the used setting
 are presented with check marks (\ding{51}) over the relations, whereas the wrongly predicted dependencies are presented with a cross mark (\ding{55}). 
 The continuous MWE of the left side sequence consists of three tokens (w$_4$, w$_5$ and w$_6$). In other words, the two dependency relations of the overall sequence belong to the relations between MWE elements. The non-continuous MWE of the right side sequence consists of two tokens (w$_3$ and w$_6$).
 
-The first examples of each column (``(A)'' and ``(E)'') show the success of a dependency parser without any prior MWE identification process. 
+The first examples of each column (A and E) show the success of a dependency parser without any prior MWE identification process. 
 In the remaining settings, an MWE identifier is run over the given sequence before parsing.
-Both the overall unlabeled accuracy \asuo{} and the accuracy of the surrounding structures \asus{} are provided next to the trees. Examples ``(B)'', ``(C)'' and ``(D)'' show the correctly detected relations by applying an MWE identifier prior to the \isi{syntactic parsing}. In ``(C)'' and ``(D)'', the detected MWE is combined into a single unit (w$_4$w$_5$w$_6$) whereas in ``(B)'', the detected MWE is represented as a subtree. % \isi{constraint} to the \isi{syntactic parsing}.
+Both the overall unlabeled accuracy \asuo{} and the accuracy of the surrounding structures \asus{} are provided next to the trees. Examples (B), (C) and (D) show the correctly detected relations by applying an MWE identifier prior to the \isi{syntactic parsing}. In (C) and (D), the detected MWE is combined into a single unit (w$_4$w$_5$w$_6$) whereas in (B), the detected MWE is represented as a subtree. % \isi{constraint} to the \isi{syntactic parsing}.
 
 %One may notice from this example that i
-In ``(A)'', ``(B)'' and ``(C)'', although the parser success does not change on detecting the syntactic dependencies, \asuo{} is affected by the total number of evaluated dependencies, whereas \asus~ remains stable, as expected.
-In ``(D)'', MWE identification helps the parser to detect one more dependency relation, which is reflected in \asus{}.
-Similarly, in ``(F)'', the pre-identification of  ``w$_3$ - w$_6$'' MWE has no impact on the parser's performance.
+In (A), (B) and (C), although the parser success does not change on detecting the syntactic dependencies, \asuo{} is affected by the total number of evaluated dependencies, whereas \asus{} remains stable, as expected.
+In (D), MWE identification helps the parser to detect one more dependency relation, which is reflected in \asus{}.
+Similarly, in (F), the pre-identification of  ``w$_3$ - w$_6$'' MWE has no impact on the parser's performance.
 %\mycyan{
-Although this can be directly observed by \asus~(60\%), \asuo{} mistakenly gives the impression of an improvement in parsing performance ($50\%\Rightarrow66.6\%$). This is because  in this setting (second column of Figure~\ref{con:fig:example})
+Although this can be directly observed by \asus{} (60\%), \asuo{} mistakenly gives the impression of an improvement in parsing performance ($50\%\Rightarrow66.6\%$). This is because  in this setting (second column of Figure~\ref{con:fig:example})
 %2nd column non-continuous MWE elements), 
 \asuo{} evaluates the performance of MWE pre-identification and \isi{dependency parsing} as a whole.
 %}
-In ``(G)'', the parser performs better after MWE identification, which is again reflected in the surrounding structure evaluation.
+In (G), the parser performs better after MWE identification, which is again reflected in the surrounding structure evaluation.
 
-Although \asus~ and \asls~ are valuable scores for measuring the impact of identifying different MWE types on parsing performance, they are troublesome with automatic MWE identification, when gold-standard MWE segmentation is not available. Then, erroneous MWE identification would degrade parsing scores on the surrounding dependencies.
+Although \asus{} and \asls{} are valuable scores for measuring the impact of identifying different MWE types on parsing performance, they are troublesome with automatic MWE identification, when gold-standard MWE segmentation is not available. Then, erroneous MWE identification would degrade parsing scores on the surrounding dependencies.
 An alternative solution is to detach the concatenated MWE components (if any) into a dependency or constituency subtree \citep{candito2014strategies,eryigit:2011:multiword}. This way, the standard evaluation scores \asu{} and \asl{} are still applicable in all different orchestration scenarios, for both continuous and non-continuous MWEs, successfully assessing the performance of joint \isi{syntactic parsing} and MWE identification as a whole.
 
 %\input{constantetal/08-conclusions}
@@ -981,7 +963,6 @@ Such solutions could then be further integrated into downstream applications, ta
 
 
 \section*{Acknowledgements}
-
 This work was supported by the PARSEME action (COST IC1207).  It was also partially funded by the \ili{French} National Research Agency (ANR) through the PARSEME-FR project (ANR-14-CERA-0001) and by a TUBITAK 1001 grant (no: 112E276).
 %We are thankful to XXX
 
