@@ -1,8 +1,7 @@
 \documentclass[output=paper]{langsci/langscibook} 
 \ChapterDOI{10.5281/zenodo.2579041}
 \author{Krasimir Angelov \affiliation{University of Gothenburg}}
-\title{Multiword expressions in multilingual applications within
-the Grammatical Framework} 
+\title{Multiword expressions in multilingual applications within the Grammatical Framework} 
 
 
 %\lehead{}
@@ -24,8 +23,7 @@ Here, I adopt the broader definition where everything that translates
 non-compositionally accross languages is considered 
 an expression. In this chapter I present multiword expressions
 from a cross-lingual perspective in relation to an interlingual
-grammar.
-}
+grammar.}
 
 \maketitle
 
@@ -161,8 +159,8 @@ with two possible values -- singular (\verb=Sg=) and plural (\verb=Pl=):
 
 The linearization of \verb=horse_N=, on the other hand, gives 
 the actual values in the table. In \ili{English} these would be 
-the word forms ``horse'' and ``horses'', and in 
-\ili{French} ``cheval'', ``chevaux''. In \ili{French}, however, we also need to 
+the word forms \textit{horse} and \textit{horses}, and in 
+\ili{French} \textit{cheval}, \textit{chevaux}. In \ili{French}, however, we also need to 
 know the gender of the noun in order to take care of 
 the word agreement in the syntax. Because of that 
 the corresponding definition in the concrete syntax for \ili{French} is slightly
@@ -198,7 +196,7 @@ Those verbs are modelled as records:
 \end{verbatim}
 The field \verb=part= keeps the particle while the \verb=s= field is the inflection table of the main verb. There is also a third field, \verb=prep=, which stores the potential preposition for transitive verbs. Since there is no preposition in this case, an empty string is added. In \isi{prepositional verbs}, however, this field will be non-empty. It is even possible to have verbs with both a particle and a preposition.
 
-It is possible to have multiple string fields in nouns as well. This happens for instance in Chinese where a noun is characterised by its lemma and its classifier. Both are string fields and they could be arbitrarily far apart in the final sentence. For that reason they are stored as two different fields in the record:
+It is possible to have multiple string fields in nouns as well. This happens for instance in Chinese where a noun is characterized by its lemma and its classifier. Both are string fields and they could be arbitrarily far apart in the final sentence. For that reason they are stored as two different fields in the record:
 \begin{verbatim}
   lincat N = {s : Str; c : Str}
   lin horse_N = {s = "ma"; c = "pi"}
@@ -436,19 +434,22 @@ all fragments from the individual trees that stay invariable.
 In each of the concrete syntaxes we define that the function produces 
 the corresponding language specific trees where the invariable subtrees 
 are just plugged in the right places. In the particular case we would get:
+
+\begin{description}[labelindent=0cm,leftmargin=0mm]
+\item[Abstract:]~
 \begin{verbatim}
-Abstract:
   fun have_name_Cl  : NP -> PN -> Cl
 \end{verbatim}
-\ili{English}:
+\item[\ili{English}:]~
 \begin{verbatim}
   lin have_name_Cl p n = PredVP (DetCN (PossNP p) (UseN name_N))
                                 (UseComp (CompNP (UsePN n)))
 \end{verbatim}
-\ili{German}:
+\item[\ili{German}:]~
 \begin{verbatim}
   lin have_name_Cl p n = PredVP p (CompV2 (mkV "heissen") (UsePN n))
 \end{verbatim}
+\end{description}
 
 \begin{figure*}
     \centering
@@ -527,7 +528,7 @@ cases we have to move from lexical categories such as noun and verb
 to a higher-level syntactic categories. For example instead of assuming
 the existence of a specific verb we just assume that there is a specific
 verb \isi{phrase} or a sentence that conveys the same meaning. Similarly
-instead of nouns we use noun phrases and instead of adjectives - adjective phrases.
+instead of nouns we use noun phrases and instead of adjectives -- adjective phrases.
 Basically we move upwards in the hierarchy of syntactic categories until
 we reach a level where the differences across languages are entirely
 contained within the selected category. 
@@ -562,7 +563,7 @@ It is not difficult to model the verb \isi{phrase} \verb=copula+back=:
 What is not visible here, however, is that the computed verb \isi{phrase}
 is discontinuous. The two important parts are an inflection table with
 all forms of the copula and a second field which contains the argument
-of the copula, i.e. the adverb \textit{back}. 
+of the copula, i.e.\ the adverb \textit{back}. 
 Now if we modify the new lexical verb \isi{phrase}:
 \begin{verbatim}
   AdVVP already_AdV am_back_VP
@@ -644,7 +645,7 @@ a simple lexicon. For example out of 171 candidates 142 expressions
 were syntactic. They can be roughly classified as: greetings, weather
 reports, time expressions, money, units of measurement and spatial deixis.
 The remaining 29 expressions are lexical. For example \textit{locker}
-in \ili{English} translates as \textit{l{\aa}sbart sk{\aa}p} (lockable closet)
+in \ili{English} translates as \textit{l{\aa}sbart sk{\aa}p} (`lockable closet')
 in \ili{Swedish}.
 
 Another experiment in \cite{enache2014handling} is to learn
@@ -716,7 +717,7 @@ fail completely if there is even a minor violation. For that reason
 they are mostly used for controlled languages 
 \citep{angelov:2009:icl} where the users must use 
 authoring tools that help them to stay within the scope of the \isi{grammar}.
-A screen-shot of one of those tools \citep{ranta2010tools}
+A screenshot of one of those tools \citep{ranta2010tools}
 is shown on Figure \ref{ang:fig:fridge}. With this interface the users
 are not allowed to enter free text but instead they compose a sentence
 by choosing words from a list of options. The sentence is built
@@ -747,11 +748,11 @@ When a particular construction is chosen then he/she is guided to
 a customization interface
 like the one on Figure \ref{ang:fig:parlira}. There the user sees an example
 of the construction rendered in two languages. Below the example,
-there is a list of options that can be used to customise the construction.
+there is a list of options that can be used to customize the construction.
 On the figure, the example is the construction is \verb=have_name_Cl= from
 Section \ref{ang:mwe} rendered in \ili{Swedish} and \ili{Bulgarian}. The possible
 customizations are to turn the construction from a statement to a question
-or to change the subject, i.e. \textit{Who are we talking about?}.
+or to change the subject, i.e.\ \textit{Who are we talking about?}.
 
 \begin{figure}
 \center
