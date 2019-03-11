@@ -84,7 +84,7 @@ Therefore, in this chapter, we focus mainly on different orchestration scenarios
 The two commonly used approaches for statistical \isi{dependency parsing} in the literature are transition-based \citep{yamada2003statistical,nivre2007maltparser} and graph-based \citep{eisner1996three,mcdonald-lerman-pereira:2006:conll-x,nakagawa:2007:emnlp-conll2007}. 
 \textsc{Transition-based} approaches treat the \isi{dependency parsing} task as the determination of parsing actions (such as push\slash pop operations in a shift-reduce parser) by the use of a machine learning classifier. \textsc{Graph-based} approaches treat parsing as finding the most likely path within a graph, such as the highest-scoring directed spanning tree in a complete graph. Most MWE-aware parsing strategies are adaptations of standard parsers experimenting with various models of orchestration concerning the scheduling of MWE identification with respect to syntactic analysis.
 
-\todo[inline]{Italics or small caps for terms in this par?}MWEs pose \textit{challenges} for all areas of NLP, and \isi{statistical parsing} is not an exception.
+MWEs pose \textit{challenges} for all areas of NLP, and \isi{statistical parsing} is not an exception.
 An MWE may be \textit{ambiguous} among accidental co-occurrence, literal, and idiomatic uses. The possible surface forms of an MWE \textit{vary}, especially due to morphological \isi{variations} which may become radical in morphologically rich languages. MWE components do not have to appear in consecutive locations within a sentence and it is hard to correctly identify a \textit{discontinuous} MWE by ignoring the intervening words. 
 The syntactic \textit{non-compositionality} of MWEs may result in irregular parse trees.
 The ambiguous, discontinuous, non-compositional and variable nature of MWEs needs to be carefully handled during parsing in order to produce a valid \isi{syntactic structure}. 
@@ -131,7 +131,7 @@ so performance on verb complements for example is much higher than on verb adjun
 \subsection{Words-with-spaces representation}
 \label{con:ssec:wws}
 
-A simple representation consists in considering MWEs as single nodes of the syntactic tree \citep{sag02}, such as in the strategy adopted in the \isi{LFG}/XLE parser described in Chapter~4.\todo{Do you want to cite Angelov, this volume, here?} This \textit{words-with-spaces} representation implies that MWEs have an atomic interpretation. In the constituency framework, the MWE forms are leafs. Their parent nodes correspond to their parts-of-speech (POS) category, as shown in Figure~\ref{con:fig:wws}. For instance, \textit{prime minister} has a noun parent node and \textit{a few} has a determiner parent node. 
+A simple representation consists in considering MWEs as single nodes of the syntactic tree \citep{sag02}, such as in the strategy adopted in the \isi{LFG}/XLE parser described in Chapter~4.\todo{Do you want to cite Angelov, this volume, here?} This ``words-with-spaces'' representation implies that MWEs have an atomic interpretation. In the constituency framework, the MWE forms are leafs. Their parent nodes correspond to their parts-of-speech (POS) category, as shown in Figure~\ref{con:fig:wws}. For instance, \textit{prime minister} has a noun parent node and \textit{a few} has a determiner parent node. 
 A concrete example where MWEs are represented this way is the first version of the \ili{French} treebank distributed for parsing \citep{candito:2009}. 
 In the dependency framework, the MWE node has the same linguistic attributes as a single word token: POS tag, lemma and morphological features. For instance, \textit{hot dogs} would be a noun in plural, whose lemma is \textit{hot dog}. Such representations imply that MWEs have been pre-identified and represented as word-with-space tokens before parsing. Moreover, they have several drawbacks in terms of linguistic expressiveness. First, discontinuous MWEs like the light-verb construction \textit{make decisions} in Figure~\ref{con:fig:wws} cannot be represented this way. Then, the semantic processing of semi-compositional MWEs might be problematic as the internal \isi{syntactic structure} is impossible to retrieve.%\todo{link to chapter 4 - wws representations in \isi{LFG}/XLE}
 
@@ -223,7 +223,7 @@ the \& \color{red}{prime} \& \color{red}{minister} \& \color{blue}{made} \& \col
 \subsection{Subtree representations}
 \label{con:ssec:subtrees}
 
-Another way of representing MWEs is to annotate them as \textit{subtrees} made of several nodes of the syntactic tree. Many \isi{treebanks} using such representations can be found in \citet{rosen:2015}. Several types of subtree MWE representations were proposed in \isi{treebanks}, according to the language, MWE type and syntactic formalism.
+Another way of representing MWEs is to annotate them as \textsc{subtrees} made of several nodes of the syntactic tree. Many \isi{treebanks} using such representations can be found in \citet{rosen:2015}. Several types of subtree MWE representations were proposed in \isi{treebanks}, according to the language, MWE type and syntactic formalism.
 
 For processing purposes, words-with-spaces representations have often been automatically converted into flat subtrees. In the constituency framework, an MWE is considered as a special constituent with a given POS tag. MWE components are leaves of the MWE subtree, as shown in Figure~\ref{con:fig:green}.\footnote{MWE-related symbols MWN and MWD respectively stand for \textit{multiword noun} and \textit{determiner}.} There exist different variants for constituency \isi{treebanks} \citep{gowiska:2010}. This representation has been used by \citet{arun05} and \citet{green11}, especially for compounds. 
 In the dependency framework, flat subtrees can be either head-initial, that is, the root of the subtree is the first token \citep{nivre04,seddah13}, or head-final, with the root being the last token of the MWE \citep{eryigit:2011:multiword}. All other MWE component tokens depend on this arbitrarily defined head, as shown in Figure~\ref{con:fig:flat}. This representation is used, for example, in the Universal Dependencies \isi{treebanks} \citep{nivre16}.
@@ -530,11 +530,11 @@ Ambiguous strings are illustrated below: while the first sentence of each exampl
 %% \end{itemize}
 
 \begin{exe} 
-  \ex
+\noindent\parbox{\textwidth}{\ex
   \begin{xlist}
     \ex I saw her, and \textit{by the way} she went there on foot
     \ex I recognized her \textit{by the way} she walks
-  \end{xlist}
+  \end{xlist}}%
   \ex
   \begin{xlist}
     \ex In \textit{natural language processing}, humans are also challenged
