@@ -257,8 +257,8 @@ no lon\-ger represented by vectors of expansions, but by a vector of all
 individual tokens appearing in the expansions.
 
 $C$ is the resulting $(|\mathbb{C}| \times |\mathbb{T}|)$
-Cluster-Token matrix where $c_i : i = 1,...,|\mathbb{C}|$ is a
-monolingual cluster, and $t_j : j = 1,...,|\mathbb{T}|$ is a
+Cluster-Token matrix where $c_i : i = 1,\ldots{},|\mathbb{C}|$ is a
+monolingual cluster, and $t_j : j = 1,\ldots{},|\mathbb{T}|$ is a
 token. $\mathbb{T}$ contains all the tokens across languages which
 appear at least once in an expansion.  If a token is present in
 different languages, such as \textit{place} in \ili{English} and
@@ -321,8 +321,8 @@ cluster 2  &  Partito Social-Democratico   &  PSD  & it \\
 
 We compute the matrix $(|\mathbb{T}| \times |\mathbb{T}|)$, hereafter
 $\InvEdit$, which corresponds to the inverse of the normalized
-Levenshtein edit distance where $t_i : i = 1,...,|\mathbb{T}|$ and
-$t_j : j = 1,...,|\mathbb{T}|$ are tokens from all the addressed
+Levenshtein edit distance where $t_i : i = 1,\ldots{},|\mathbb{T}|$ and
+$t_j : j = 1,\ldots{},|\mathbb{T}|$ are tokens from all the addressed
 languages:
 \begin{equation}\label{jac:eq:edit}
 \InvEdit(t_i,t_j) = 1 - \frac{\Lev(t_i,t_j)}{\max(|t_i|,|t_j|)} 
@@ -432,8 +432,8 @@ or 0.4 million acronyms is removed from the \isi{parallel corpora} (see
 Section~\ref{jac:evaluation}).
 
 Let $\TransMod$ be the resulting $(|\mathbb{T}| \times |\mathbb{T}|)$
-\isi{translation model} matrix where $t_i : i = 1,...,|\mathbb{T}|$ and $t_j
-: j = 1,...,|\mathbb{T}|$ are tokens.  As for $\InvEdit$ matrix, we
+\isi{translation model} matrix where $t_i : i = 1,\ldots{},|\mathbb{T}|$ and $t_j
+: j = 1,\ldots{},|\mathbb{T}|$ are tokens.  As for $\InvEdit$ matrix, we
 filter $\TransMod$ using a threshold $\beta$:
 
 \begin{equation}
@@ -875,7 +875,7 @@ respect to their reliability scores.
 \begin{figure}
 \centering
 \includegraphics[width=.95\textwidth]{figures/patterns-distr.png}
-\caption{\label{jac:pattern-distr}Distribution of patterns with respect to their reliability score for English and Spanish. Each of the bars represents the fraction of patterns, whose reliability score is within the range $(x,x+0.5>$, where $x \in \{0,0.5,...,0.95\}$.\todo[inline]{Please check the expression $(x,x+0.5>$, esp. the closing angle bracket}}
+\caption{\label{jac:pattern-distr}Distribution of patterns with respect to their reliability score for English and Spanish. Each of the bars represents the fraction of patterns, whose reliability score is within the range $(x,x+0.5>$, where $x \in \{0,0.5,\ldots{},0.95\}$.\todo[inline]{Please check the expression $(x,x+0.5>$, esp. the closing angle bracket}}
 \end{figure}
 
 \subsection{Evaluation}
@@ -884,7 +884,7 @@ In our experiments, we used an in-house rule based \textsc{ner} system \citep{st
 
 Figures~\ref{jac:fig:eval_patterns_english_precision},~\ref{jac:fig:eval_patterns_english_recall},~\ref{jac:fig:eval_patterns_spanish_precision}
 and~\ref{jac:fig:eval_patterns_spanish_recall} depict the performance of applying the BabelNet-derived patterns for \ili{English} and \ili{Spanish} 
-in terms of precision and recall. The precision and recall values were computed for the varying minimum pattern reliability threshold in the range of $\{0.10,0.15,...,0.95\}$, i.e., patterns below the minimum reliability threshold were discarded.
+in terms of precision and recall. The precision and recall values were computed for the varying minimum pattern reliability threshold in the range of $\{0.10,0.15,\ldots{},0.95\}$, i.e., patterns below the minimum reliability threshold were discarded.
 The figures are showing the results obtained for exact matching (denoted with \textsc{exact}-\textsc{patterns} or \textsc{exact}-\textsc{rules+patterns}) and for fuzzy matching, e.g., when there is a matching but with a left or right boundary mismatch (denoted with \textsc{fuzzy}-\textsc{patterns} or \textsc{fuzzy}-\textsc{rules+patterns}).
 We did not visualise the results corresponding to the \textsc{rule} setting in the figures because they do not depend on the reliability threshold. However, the obtained scores for this setting are embraced in Table~\ref{jac:tab:EvalPatterns}.
 
