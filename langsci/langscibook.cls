@@ -585,7 +585,7 @@
 \fi
 
 \ifx\lsSeries\pmwe
- \renewcommand{\eachwordone}{\itshape}
+ \renewcommand{\eachwordone}{\normalfont}
 \fi
 
 \ifx\lsSeries\nc
