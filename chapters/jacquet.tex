@@ -11,7 +11,9 @@
 
 % \epigram{Change epigram in chapters/01.tex or remove it there }
 
-\abstract{The contribution of our work is to address multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this chapter describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities, using distributional patterns. This rule-learning approach, which has currently been tested only for English and Spanish, does not require linguistic tools such as part-of-speech taggers so that it is perfectly suitable for our highly multilingual environment. When adding these learnt patterns to an existing rule-based Named Entity Recognition (\textsc{ner}) system, F1 performance for Spanish increases from 42.4\% to 50\% (18\% increase) and for English from 43.4\% to 44.5\% (2.5\% increase). The purpose of our effort is to improve on current methods for Named Entity Recognition (\textsc{ner}) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.}
+\abstract{We address large-scale multilingual multi-word entity (MWEntity) recognition and variant matching. Firstly, we recognise MWEntities in 22 different languages, identify monolingual variant spellings and link equivalent groups of variants across all languages. We then use the previously recognised MWEntities to learn new recognition rules based on distributional patterns. Not requiring any linguistic tools, the method is suitable for our highly multilingual environment. When adding the new rules to the original rule-based NER system, F1 performance for Spanish increases from 42.4\% to 50\% (18\% increase) and for English from 43.4\% to 44.5\% (2.5\% increase). Besides aiming at turning free text into semi-structured data for search and for machine-processing purposes, we use the system to link related news over time and across languages, as well as to detect trends.}
+
+% % % \Oldabstract{The contribution of our work is to address multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this chapter describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities, using distributional patterns. This rule-learning approach, which has currently been tested only for English and Spanish, does not require linguistic tools such as part-of-speech taggers so that it is perfectly suitable for our highly multilingual environment. When adding these learnt patterns to an existing rule-based Named Entity Recognition (\textsc{ner}) system, F1 performance for Spanish increases from 42.4\% to 50\% (18\% increase) and for English from 43.4\% to 44.5\% (2.5\% increase). The purpose of our effort is to improve on current methods for Named Entity Recognition (\textsc{ner}) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.}
 
 \maketitle
 \begin{document}
@@ -147,7 +149,6 @@ In this section, we describe completed work \citep{jacquet-16} on recognising MW
 The result of this work is a collection of currently 64,000 MWEntities plus their 600,000 multilingual lexical variants.
 
 \begin{figure}
-\centering
 \includegraphics[scale=0.32]{figures/multiLingAcroLinking.png}
 \caption{Example of multilingual MWEntity linking}
 \label{jac:acronym linking}
@@ -162,7 +163,7 @@ and their corresponding acronyms in 22 Roman-script languages
 \citep{ehrmann-13}. These acronym/expansion pairs were extracted from
 the news stream analysed by the EMM processing chain by applying
 patterns similar to those proposed by \citet{schwartz-03}. In a
-nutshell, the algorithm collects acronym/expansion pairs (such as
+nutshell, the algorithm collects acronym\slash expansion pairs (such as
 \textit{expansion (acronym)} and \textit{acronym (expansion)}) by
 identifying short strings within parenthesis, along with candidate
 expansions in a side-window of a limited length. A filtering step is
@@ -223,8 +224,6 @@ their acronyms (both pairs \textit{IMF-International Monetary Fund}
 and \textit{FMI-Fondo Monetario Internazionale} occur in \ili{Italian}
 texts).
 
-
-
 \subsection{Approach}
 \label{jac:approach}
 
@@ -257,7 +256,7 @@ no lon\-ger represented by vectors of expansions, but by a vector of all
 individual tokens appearing in the expansions.
 
 $C$ is the resulting $(|\mathbb{C}| \times |\mathbb{T}|)$
-Cluster-Token matrix where $c_i : i = 1,\ldots{},|\mathbb{C}|$ is a
+cluster-token matrix where $c_i : i = 1,\ldots{},|\mathbb{C}|$ is a
 monolingual cluster, and $t_j : j = 1,\ldots{},|\mathbb{T}|$ is a
 token. $\mathbb{T}$ contains all the tokens across languages which
 appear at least once in an expansion.  If a token is present in
@@ -300,27 +299,23 @@ have a significant amount of highly similar tokens.
 
 
 \begin{table}[h]
-\centering
-%\ra{1.1}
-%\resizebox{8.5cm}{!}{
 \begin{tabular}{clcc}\lsptoprule
 Clusters    &  Expansion  & Acronym  &  Language \\
 \midrule
-cluster 1  &  Social-Democratic Party      &  SDP  & en  \\
-                   &  Social Democratic Party      &      &     \\ \midrule
-cluster 2  &  Partito Social-Democratico   &  PSD  & it \\
-                   &  Partito di socialdemocratico &      &    \\
-                   &  Partito socialdemocratico   &       &    \\ 
+cluster 1  & \itshape  Social-Democratic Party      &  SDP  & en  \\
+           & \itshape  Social Democratic Party      &      &     \\ \midrule
+cluster 2  & \itshape  Partito Social-Democratico   &  PSD  & it \\
+           & \itshape  Partito di socialdemocratico &      &    \\
+           & \itshape  Partito socialdemocratico   &       &    \\ 
 \lspbottomrule
 \end{tabular}
-%}
 \caption{Example of clusters aggregated on the basis of similar tokens}
 \label{jac:tab:common token aggregation}
 \end{table}
 
 
 We compute the matrix $(|\mathbb{T}| \times |\mathbb{T}|)$, hereafter
-$\InvEdit$, which corresponds to the inverse of the normalized
+\textit{InvEdit}, which corresponds to the inverse of the normalized
 Levenshtein edit distance where $t_i : i = 1,\ldots{},|\mathbb{T}|$ and
 $t_j : j = 1,\ldots{},|\mathbb{T}|$ are tokens from all the addressed
 languages:
@@ -396,8 +391,6 @@ language (especially with names of international organisations such as
 %\end{table}
 
 \begin{table}[h]
-\centering
-%\ra{1.1}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{clcc}\lsptoprule
 Clusters    &  Expansion  & Acronym  &  Language \\
@@ -652,7 +645,6 @@ standard\footnote{We tried two other metrics: macro-average and
 
 
 \begin{table}[h]
-\centering
 % \ra{1.1}
 % \resizebox{7cm}{!}{
 \begin{tabular}{lccc}\lsptoprule
@@ -689,9 +681,6 @@ aggregation similarity threshold $\alpha$ set to 0.9.
 
 
 \begin{table}[h]
-\centering
-% \ra{1.1}
-% \resizebox{7cm}{!}{
 \begin{tabular}{lccc}\lsptoprule
 &  \textnormal{MAV-P}  & \textnormal{MAV-R}  &  \textnormal{F1} \\ 
 \midrule
@@ -712,7 +701,6 @@ All aggregations &     \textbf{95.8\%}   &  \textbf{65.5\%}  &
 \textbf{77.8\%}  \\
 \lspbottomrule
 \end{tabular}
-% }
 \caption{Cluster aggregation strategies on 22 languages}
 \label{jac:tab:Eval22l}
 \end{table}
@@ -901,13 +889,12 @@ Figure~\ref{jac:pattern-distr} depicts the distribution of patterns with
 respect to their reliability scores.
 
 \begin{figure}
-\centering
 \includegraphics[width=.95\textwidth]{figures/patterns-distr.png}
 \caption{\label{jac:pattern-distr}Distribution of patterns with respect to their reliability score for English and Spanish. Each of the bars represents the fraction of patterns, whose reliability score is within the range $(x,x+0.5>$, where $x \in \{0,0.5,\ldots{},0.95\}$.\todo[inline]{Please check the expression $(x,x+0.5>$, esp. the closing angle bracket}}
 \end{figure}
 
 \subsection{Evaluation}
-In order to evaluate the quality of the learned patterns we used two NE annotated corpora from the CoNLL shared task for \ili{English} and \ili{Spanish}\footnote{\url{http://www.cnts.ua.ac.be/conll2002/ner/} and \url{http://www.cnts.ua.ac.be/conll2003/ner/}}, which contains respectively 6,300 and 7,389 organisation occurrences, and tested the performance using different settings. In particular, we compared three settings: (a) using only BabelNet-derived patterns (denoted in the figures with \textsc{patterns}),  (b) using only an existing rule-based \textsc{ner} system as a baseline (denoted \textsc{rules}), (c) combining rule-based \textsc{ner} system and BabelNet-derived patterns (denoted in the figures with \textsc{rules+patterns}).
+In order to evaluate the quality of the learned patterns we used two NE annotated corpora from the CoNLL shared task for \ili{English} and \ili{Spanish}\footnote{\url{http://www.cnts.ua.ac.be/conll2002/ner/} and \url{http://www.cnts.ua.ac.be/conll2003/ner/}\todo[inline]{Dead links}}, which contains respectively 6,300 and 7,389 organisation occurrences, and tested the performance using different settings. In particular, we compared three settings: (a) using only BabelNet-derived patterns (denoted in the figures with \textsc{patterns}),  (b) using only an existing rule-based \textsc{ner} system as a baseline (denoted \textsc{rules}), (c) combining rule-based \textsc{ner} system and BabelNet-derived patterns (denoted in the figures with \textsc{rules+patterns}).
 In our experiments, we used an in-house rule based \textsc{ner} system \citep{steinberger-11, ehrmann-15} that is geared towards high precision. The choice of a specific \textsc{ner} system is not decisive for these experiments, but by combining an existing \textsc{ner} system with our BabelNet-derived patterns, we aim at testing how our automatically created patterns could be useful to improve the quality of the \textsc{ner} recognition.
 
 Figures~\ref{jac:fig:eval_patterns_english_precision},~\ref{jac:fig:eval_patterns_english_recall},~\ref{jac:fig:eval_patterns_spanish_precision}
@@ -951,7 +938,6 @@ We did not visualise the results corresponding to the \textsc{rule} setting in t
 \end{figure}
 
 \begin{figure}
-\centering
 % % \includegraphics[width=.95\textwidth]{figures/eval_patterns_English_recall.jpg}
 \begin{tikzpicture}[trim axis right,trim axis left]
     \pgfplotstableread[col sep=tab]{data/jacquet5.csv}{\table}
@@ -986,7 +972,6 @@ We did not visualise the results corresponding to the \textsc{rule} setting in t
 \end{figure}
 
 \begin{figure}
-\centering
 % % \includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_precision.jpg}
 \begin{tikzpicture}[trim axis right,trim axis left]
     \pgfplotstableread[col sep=tab]{data/jacquet6.csv}{\table}
@@ -1021,7 +1006,6 @@ We did not visualise the results corresponding to the \textsc{rule} setting in t
 \end{figure}
 
 \begin{figure}
-\centering
 % % \includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_recall.jpg}
 \begin{tikzpicture}[trim axis right,trim axis left]
     \pgfplotstableread[col sep=tab]{data/jacquet7.csv}{\table}
@@ -1082,7 +1066,7 @@ Table~\ref{jac:tab:EvalPatterns} provides the results obtained with a pattern-re
 \subsubsection{Mistakes and fuzzy matchings}
 \todo[inline]{This subsubsection is the only subsection to ``Evaluation''}
 Using existing NE annotated corpora for our preliminary experiments was the most obvious choice to measure the quality of our patterns. Nevertheless, it appears that some MWEntities recognised by the BabelNet-derived patterns considered as incorrectly extracted according to the annotated corpora, could still be considered as correct extractions.
-Figure~\ref{jac:fig:error_analysis} provides the complete list of 'wrong' MWEntities (first column) recognised by our patterns when pattern reliability threshold equals 0.90. Even if some cases are clear mistakes, like \textit{Results of European Super} or \textit{Bank on Thursday}, large fraction of the extractions could be considered as valid organisation names. The two other columns show the partial matches with the same reliability threshold, which are considered as incorrect in the \emph{Exact matching} evaluation, and correct in the \emph{Fuzzy matching} evaluation. Again, if some of them are clear mismatches, like \textit{European Commission on Wednesday} or \textit{NATO and the European Union}, most of the extractions appear to be consistent entities.
+Figure~\ref{jac:fig:error_analysis} provides the complete list of ``wrong'' MWEntities (first column) recognised by our patterns when pattern reliability threshold equals 0.90. Even if some cases are clear mistakes, like \textit{Results of European Super} or \textit{Bank on Thursday}, large fraction of the extractions could be considered as valid organisation names. The two other columns show the partial matches with the same reliability threshold, which are considered as incorrect in the \emph{Exact matching} evaluation, and correct in the \emph{Fuzzy matching} evaluation. Again, if some of them are clear mismatches, like \textit{European Commission on Wednesday} or \textit{NATO and the European Union}, most of the extractions appear to be consistent entities.
 
 We expect to achieve higher precision of the learned patterns through
 embracing in the computation of the reliability score additional
@@ -1090,10 +1074,8 @@ external evidence, i.e., exploiting contextual information obtained
 from pattern matchings in a web-scale corpus to judge the correctness.
 
 \begin{figure}
-\centering
 \includegraphics[scale=0.54]{figures/error_analysis.png}
-
-\caption{Complete list of 'wrong' MWEntities and left or right boundary mismatching with pattern reliability threshold = 0.90}
+\caption{Complete list of ``wrong'' MWEntities and left or right boundary mismatching with pattern reliability threshold = 0.90}
 \label{jac:fig:error_analysis}
 \end{figure}
 
