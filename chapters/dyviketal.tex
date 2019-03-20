@@ -1696,15 +1696,143 @@ As a result, NorGramBank is now an important resource for studying \ili{Norwegia
 %\cite{Losnegaard:2015} have examined how 859 \ili{Norwegian} \isi{verbal MWEs}, idiomatic expressions, and support verb constructions distribute over syntactic subtypes.
 %Systematic corpus studies of this type can also lead to additions that can improve the MWE coverage of NorGram.
 
+
 \section*{Acknowledgments}
 We thank Koenraad De Smedt and two anonymous reviewers for valuable comments and suggestions for improvements.
 This work was partially financed by the \ili{Norwegian} Research Council and the University of Bergen through the INESS project.
 
-%\section*{Abbreviations}
-%SUBJ	subject
-%OBJ	object
-%OBL-TH	oblique argument which expresses a theta role
- 
+\section*{Abbreviations}
+\begin{tabbing}
+PRESENTATIVE-TYPE \= Lorem Ipsum Dolor \kill
+=c \> symbol in a constraint equation: constrained to be equal to\\
+\relax[P + O] \> selected prepositional complement\\
+$\langle\ldots\rangle$ \> brackets enclosing the list of semantic arguments of a predicate\\
+* \> element in the name of the predicate of a lexeme with a selected semantically light element (e.g., a preposition)\\
+\# \> element in the name of the predicate of a lexeme with a selected semantically heavy element (e.g., a noun, forming an idiom)\\
+\%FN \> variable over predicate names in a lexical template\\
+→ \> phrase structure rule expansion\\
+↑ \> metavariable in an equation, referring to the f-structure of the node immediately dominating the node to which the equation is annotated\\
+↓ \> metavariable in an equation, referring to the f-structure of the node to which the equation is annotated\\
+\char`~ \> negation in an equation defining f-structure\\
+A \> adjective\\
+ADJUNCT \> f-structure attribute: adjunct or modifier\\
+ADV-TYPE \> f-structure-attribute: type of an adverb\\
+ADVcmt \> commitment adverb\\
+ADVdeg \> degree adverb\\
+ADVloc \> locative or temporal adverb\\
+ADVneg \> negative adverb\\
+ADVPdeg \> degree adverb phrase\\
+ADVPloc \> locative or temporal adverb phrase\\
+ADVPs \> sentential adverb phrase\\
+ADVs \> sentential adverb\\
+AP \> adjective phrase\\
+AP’ \> top bar level of adjective phrase\\
+APsmpl \> simple adjective phrase\\
+APsmplcoord \> coordination of simple adjective phrases\\
+ART \> article\\
+C \> complementizer (subjunction)\\
+c-structure \> LFG constituent structure\\
+CASE \> f-structure attribute: case\\
+CHECK \> f-structure attribute: features to be checked during parsing\\
+Cinf \> complementizer of infinitival clause\\
+COMMON \> f-structure attribute: common noun\\
+COMP \> f-structure attribute: closed clausal complement\\
+CONCAT \> lexical template name: concatenates atoms to form a predicate name\\
+CONJ \> conjunction for nominals\\
+CONJev \> conjunction for non-nominals (e.g., verbs and adjectives)\\
+COUNTNOUN \> lexical template name: classifies countable nouns\\
+CP \> complementizer phrase (subordinate clause with subjunction)\\
+CPinf \> infinitival complementizer phrase (infinitival clause with subjunction)\\
+D \> determiner\\
+DEF \> f-structure attribute: definite\\
+DEF-MORPH \> f-structure attribute: definite form\\
+DEIXIS \> f-structure attribute: deixis type with value distal or proximal\\
+DET-TYPE \> f-structure attribute: determiner type\\
+DP \> determiner phrase\\
+f-structure \> LFG functional structure\\
+FEM \> f-structure attribute: feminine gender\\
+FOCUS-INT \> f-structure attribute: the focused wh-element in wh-interrogatiives\\
+GEND \> f-structure attribute: grammatical gender\\
+GEND-SEM \> f-structure attribute: biological gender with value male or female\\
+I'aux \> phrase dominating finite auxiliary verb\\
+I'cop \> phrase dominating finite copula verb\\
+I’ \> phrase dominating finite main verb\\
+INESS \> Infrastructure for the exploration of syntax and semantics\\
+INT-MARK \> interrogative mark\\
+IP \> finite main clause\\
+LFG \> Lexical-Functional Grammar\\
+MASC \> f-structure attribute: masculine gender\\
+MASSNOUN \> lexical template name: classifies uncountable nouns\\
+MOOD \> f-structure attribute: verbal mood\\
+N-PCOMP \> lexical template name: classifies nouns with a selected prepositional finite clause\\
+N-PINFCOMP \> lexical template name: classifies nouns with a selected prepositional infinitival clause\\
+N-POBJ \> lexical template name: classifies nouns with a selected prepositional object\\
+NEUT \> f-structure attribute: neuter gender\\
+NP \> noun phrase\\
+NSEM \> f-structure attribute: semantic properties of a nominal\\
+NSYN \> f-structure attribute: syntactic properties of a nominal\\
+NTYPE \> f-structure attribute: type of a nominal\\
+NUM \> f-structure attribute: number\\
+O \> selected nominal complement\\
+OBJ \> f-structure attribute: direct object\\
+OBJ-BEN \> f-structure attribute: indirect object\\
+OBL-TH \> f-structure attribute: selected prepositional object (oblique-theta)\\
+OP \> variable in lexical template: predicate expressed by a selected nominal object\\
+P \> preposition\\
+P-SELFORM \> f-structure attribute: form of a selected preposition\\
+PASS-OBL-TH \> lexical template name: passive of verbs with selected prepositional objects\\
+PASSIVE \> f-structure attribute: passive\\
+PC \> selected predicative complement\\
+PERIOD \> period (punctuation)\\
+PERS \> f-structure attribute: person\\
+PFORM \> f-structure attribute: preposition form\\
+POSS \> f-structure attribute: possessive specifier\\
+POSS-TYPE \> f-structure attribute: type of possessive specifier\\
+PP \> prepositional phrase\\
+PPsel-n \> selected prepositional phrase with a nominal object\\
+PPsel-v \> selected prepositional phrase with a verbal object\\
+PRED \> f-structure attribute: the predicate of the f-structure\\
+PREDLINK \> f-structure attribute: predicative complement\\
+PRESENTATIVE \> f-structure attribute: presentative sentence\\
+PRESENTATIVE-TYPE \> f-structure attribute: type of presentative sentence\\
+PRON \> pronoun\\
+PRON-FORM \> f-structure attribute: form of a pronoun\\
+PRON-TYPE \> f-structure attribute: type of a pronoun\\
+PRONP \> pronoun phrase\\
+PRONrfl \> reflexive pronoun\\
+PROP \> proper noun\\
+PRT \> verb particle\\
+PRT-FORM \> f-structure attribute: form of a particle\\
+PRT-VERB \> f-structure attribute: particle-selecting verb\\
+PRTP \> particle phrase\\
+Psel-v \> selected preposition capable of taking verbal as well as nominal objects\\
+PTYPE \> f-structure attribute: type of a preposition\\
+QuantP \> quantifier phrase\\
+REF \> f-structure attribute: referential\\
+REFLEXIVE \> f-structure attribute: reflexive verb\\
+ROOT \> top node of c-structure\\
+S \> central phrase in a sentence with finite main verb, complement of IP\\
+Saux \> central phrase in a sentence with finite auxiliary verb, complement of IP\\
+Scop \> central phrase in a sentence with finite copula verb, complement of IP\\
+SPEC \> f-structure attribute: specifiers of a nominal phrase\\
+STMT-TYPE \> f-structure attribute: statement type\\
+SUBJ \> f-structure attribute: subject\\
+SUFF \> lexical category: morphological analysis attached to a word\\
+TENSE \> f-structure attribute: tense\\
+TNS-ASP \> f-structure attribute: tense and aspect categories\\
+TOPIC \> f-structure attribute: topic, the function of the leftmost daughter of IP\\
+Vauxfin \> finite auxiliary verb\\
+Vcopfin \> finite copula verb\\
+Vfin \> finite main verb\\
+VFORM \> f-structure attribute: form of a verb\\
+Vinf \> infinitival main verb\\
+VPauxmain \> verb phrase of a main clause with an auxiliary finite verb (located in V2 position under I’aux, outside VPauxmain)\\
+VPmain \> verb phrase of a main clause with a main finite verb (located in V2 position under I’, outside VPmain)\\
+VTYPE \> f-structure attribute: type of a verb (main or aux)\\
+XCOMP \> f-structure attribute: open clausal complement\\
+XLE \> the development platform Xerox Linguistic Environment\\
+XP \> variable over phrase types
+\end{tabbing} 
 
 {\sloppy\printbibliography[heading=subbibliography,notkeyword=this]}
 
