@@ -764,7 +764,35 @@ cross-lingual connected clusters across languages instead of 81,000
 monolingual ones for the 22 languages.
 
 \begin{figure}
-\includegraphics[scale=0.6]{figures/cosine_average_all_ln_improvment1}
+% % \includegraphics[scale=0.6]{figures/cosine_average_all_ln_improvment1}
+\begin{tikzpicture}[trim axis right,trim axis left]
+    \pgfplotstableread[col sep=tab]{data/jacquet2.csv}{\table}
+    \pgfplotstablegetcolsof{\table}
+    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
+        \begin{axis}[
+                    ybar,
+                    xtick=data,
+                    axis lines*=left,
+                    ylabel=\%,
+                    xticklabels from table={\table}{NAME},
+                    width=\textwidth,
+                    xticklabel style={text width=2cm,align=center},
+                    ticklabel style={font=\footnotesize},
+                    cycle list name=langsciblues,
+                    legend pos=south west,
+                    reverse legend,
+                    legend style={font=\footnotesize},
+                    legend cell align=left,
+                    ]
+            \foreach \i in {1,...,\numberofcols} {
+                \addplot+[
+                    /pgf/number format/read comma as period, fill
+                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
+                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
+                \addlegendentryexpanded{\colname}
+            }   
+            \end{axis}    
+\end{tikzpicture}
 \caption{F1 improvement per aggregation type on 22 languages given $\alpha$, using cosine similarity}
 \label{jac:fig:Eval22l}
 \end{figure}
@@ -889,29 +917,140 @@ The figures are showing the results obtained for exact matching (denoted with \t
 We did not visualise the results corresponding to the \textsc{rule} setting in the figures because they do not depend on the reliability threshold. However, the obtained scores for this setting are embraced in Table~\ref{jac:tab:EvalPatterns}.
 
 \begin{figure}
-\centering
-\includegraphics[width=.95\textwidth]{figures/eval_patterns_English_precision.jpg}
+% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_English_precision.jpg}
+\begin{tikzpicture}[trim axis right,trim axis left]
+    \pgfplotstableread[col sep=tab]{data/jacquet4.csv}{\table}
+    \pgfplotstablegetcolsof{\table}
+    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
+        \begin{axis}[
+                    sharp plot,
+                    xtick=data,
+                    axis lines*=left,
+%                     ylabel=\%,
+                    xticklabels from table={\table}{NAME},
+                    width=\textwidth,
+                    height=.4\textheight,
+                    ticklabel style={font=\footnotesize},
+                    cycle list name=langscicolorcycle,
+                    legend pos=north west,
+                    reverse legend,
+                    legend style={at={(0.5,-0.1)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
+                    legend cell align=left,
+                    ]
+            \foreach \i in {1,...,\numberofcols} {
+                \addplot+[
+                    /pgf/number format/read comma as period, thick
+                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
+                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
+                \addlegendentryexpanded{\colname}
+            }   
+            \end{axis}    
+\end{tikzpicture}
 \caption{Experiments on English: Precision curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
 \label{jac:fig:eval_patterns_english_precision}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=.95\textwidth]{figures/eval_patterns_English_recall.jpg}
+% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_English_recall.jpg}
+\begin{tikzpicture}[trim axis right,trim axis left]
+    \pgfplotstableread[col sep=tab]{data/jacquet5.csv}{\table}
+    \pgfplotstablegetcolsof{\table}
+    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
+        \begin{axis}[
+                    sharp plot,
+                    xtick=data,
+                    axis lines*=left,
+%                     ylabel=\%,
+                    xticklabels from table={\table}{NAME},
+                    width=\textwidth,
+                    height=.4\textheight,                    
+                    ticklabel style={font=\footnotesize},
+                    cycle list name=langscicolorcycle,
+                    legend pos=north west,
+                    reverse legend,
+                    legend style={at={(0.5,-0.1)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
+                    legend cell align=left,
+                    ]
+            \foreach \i in {1,...,\numberofcols} {
+                \addplot+[
+                    /pgf/number format/read comma as period, thick
+                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
+                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
+                \addlegendentryexpanded{\colname}
+            }   
+            \end{axis}    
+\end{tikzpicture}
 \caption{Experiments on English: Recall curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
 \label{jac:fig:eval_patterns_english_recall}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_precision.jpg}
+% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_precision.jpg}
+\begin{tikzpicture}[trim axis right,trim axis left]
+    \pgfplotstableread[col sep=tab]{data/jacquet6.csv}{\table}
+    \pgfplotstablegetcolsof{\table}
+    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
+        \begin{axis}[
+                    sharp plot,
+                    xtick=data,
+                    axis lines*=left,
+%                     ylabel=\%,
+                    xticklabels from table={\table}{NAME},
+                    width=\textwidth,
+                    height=.4\textheight,                    
+                    ticklabel style={font=\footnotesize},
+                    cycle list name=langscicolorcycle,
+                    legend pos=north west,
+                    reverse legend,
+                    legend style={at={(0.5,-0.1)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
+                    legend cell align=left,
+                    ]
+            \foreach \i in {1,...,\numberofcols} {
+                \addplot+[
+                    /pgf/number format/read comma as period, thick
+                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
+                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
+                \addlegendentryexpanded{\colname}
+            }   
+            \end{axis}    
+\end{tikzpicture}
 \caption{Experiments on Spanish: Precision curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
 \label{jac:fig:eval_patterns_spanish_precision}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_recall.jpg}
+% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_recall.jpg}
+\begin{tikzpicture}[trim axis right,trim axis left]
+    \pgfplotstableread[col sep=tab]{data/jacquet7.csv}{\table}
+    \pgfplotstablegetcolsof{\table}
+    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
+        \begin{axis}[
+                    sharp plot,
+                    xtick=data,
+                    axis lines*=left,
+%                     ylabel=\%,
+                    xticklabels from table={\table}{NAME},
+                    width=\textwidth,
+                    height=.4\textheight,
+                    ticklabel style={font=\footnotesize},
+                    cycle list name=langscicolorcycle,
+                    legend pos=north west,
+                    reverse legend,
+                    legend style={at={(0.5,-0.1)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
+                    legend cell align=left,
+                    ]
+            \foreach \i in {1,...,\numberofcols} {
+                \addplot+[
+                    /pgf/number format/read comma as period, thick
+                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
+                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
+                \addlegendentryexpanded{\colname}
+            }   
+            \end{axis}    
+\end{tikzpicture}
 \caption{Experiments on Spanish: Recall curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
 \label{jac:fig:eval_patterns_spanish_recall}
 \end{figure}
