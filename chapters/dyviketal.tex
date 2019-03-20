@@ -163,14 +163,14 @@ NP	$\rightarrow$	N: $\uparrow=\downarrow$ \\
 The annotations on the rule daughters describe the associated f-structures.
 In the equations, $\uparrow$ refers to the f-structure of the mother node (the category on the left-hand side of the rule), while $\downarrow$ refers to the f-structure of the daughter node (the category carrying the annotation on the right-hand side of the rule).
 Thus the equation $\uparrow=\downarrow$ annotated to a rule daughter means that the daughter node and its mother node will project the same f-structure.
-The equation ($\uparrow$~OBJ)=$\downarrow$ on the NP node in (\ref{dyv:ex:mweiness:PP-rule}) specifies that the f-structure of the mother node (PP) has an object (OBJ) which is the f-structure of the daughter node (NP).
-In this way the highlighted f-structure with the index ``2'' at its lower left corner in Figure~\ref{dyv:fig:mweiness:thinking-while-on-bus} is projected from the PP node.
-Both the PP node and the P node are highlighted in the c-structure since they both project this same f-structure.
+The equation \textsf{($\uparrow$~OBJ)=$\downarrow$} on the \textsf{NP} node in (\ref{dyv:ex:mweiness:PP-rule}) specifies that the f-structure of the mother node (\textsf{PP}) has an object (\textsf{OBJ}) which is the f-structure of the daughter node (\textsf{NP}).
+In this way the highlighted f-structure with the index ``\textsf{2}'' at its lower left corner in Figure~\ref{dyv:fig:mweiness:thinking-while-on-bus} is projected from the \textsf{PP} node.
+Both the \textsf{PP} node and the \textsf{P} node are highlighted in the c-structure since they both project this same f-structure.
 
 The annotations on the \isi{phrase} structure rules account for only part of the information in the f-structure.
 Other information comes from the word forms in the terminal nodes of the tree.
 For instance, the lexical and morphological information for the word \textit{bussen} contributes all the equations in (\ref{dyv:ex:mweiness:f-descr-bussen}).
-These equations are part of the f-description for the f-structure that is the value of the OBJ attribute (with the index ``5'') in Figure~\ref{dyv:fig:mweiness:thinking-while-on-bus}.
+These equations are part of the f-description for the f-structure that is the value of the \textsf{OBJ} attribute (with the index ``\textsf{5}'') in Figure~\ref{dyv:fig:mweiness:thinking-while-on-bus}.
 
 %The annotations on the \isi{phrase} structure rules account for only part of the information in the f-structure.
 %Other information comes from the word forms in the terminal nodes of the tree.
@@ -186,7 +186,7 @@ These equations are part of the f-description for the f-structure that is the va
 %\z
 
 \ea\label{dyv:ex:mweiness:f-descr-bussen}
-{\small 
+{\sffamily 
 ($\uparrow$~PRED)=`buss' \\
 ($\uparrow$~NTYPE NSEM COMMON)=count \\
 ($\uparrow$~NTYPE NSYN)=common \\
@@ -202,27 +202,27 @@ These equations are part of the f-description for the f-structure that is the va
 \z
 
 %All except for the first one are common to many other nouns.
-The first equation, which assigns the PRED(icate) value `buss', is specific to this noun, but the others are common to many other words.
-Some of the equations come from features assigned to the word form \textit{bussen} by the morphological analyzer run prior to parsing; these features are +Noun, +Sg, +Def and +Masc, and they will appear in the string presented to the syntactic parser.
+The first equation, which assigns the \textsf{PRED}(icate) value \textsf{`buss'}, is specific to this noun, but the others are common to many other words.
+Some of the equations come from features assigned to the word form \textit{bussen} by the morphological analyzer run prior to parsing; these features are \textsf{+Noun}, \textsf{+Sg}, \textsf{+Def} and \textsf{+Masc}, and they will appear in the string presented to the syntactic parser.
 Other equations come from the \isi{lexical entry} for the noun  \textit{buss}.
 Both the features and the noun must have entries in the lexicon;  these are shown in (\ref{dyv:ex:mweiness:entry-noun}--\ref{dyv:ex:mweiness:entry-buss}).
-Each \isi{lexical entry} specifies a lexical category; SUFF (for suffix) is the category for morphological features.
+Each \isi{lexical entry} specifies a lexical category; \textsf{SUFF} (for suffix) is the category for morphological features.
 %Both the features and the noun must have entries in the NorGram lexicon;  (\ref{dyv:ex:mweiness:entry-noun})--(\ref{dyv:ex:mweiness:entry-masc}) shows possible lexical entries for the features, while (\ref{dyv:ex:mweiness:entry-buss}) provides an entry for the noun.
 
 \ea\label{dyv:ex:mweiness:entry-noun}
-{\small 
+{\sffamily 
 $+$Noun \hspace{0.4em} SUFF \hspace{0.4em} ($\uparrow$~PERS)=3
 }
 \z
 
 \ea\label{dyv:ex:mweiness:entry-sg}
-{\small 
+{\sffamily 
 $+$Sg \hspace{1.7em} SUFF \hspace{0.4em} ($\uparrow$~NUM)=sg
 }
 \z
 
 \ea\label{dyv:ex:mweiness:entry-def}
-{\small 
+{\sffamily 
 $+$Def  \hspace{1.2em} SUFF \hspace{0.4em} @DEF
 }
 \z
@@ -232,7 +232,7 @@ $+$Def  \hspace{1.2em} SUFF \hspace{0.4em} @DEF
 %\z
 
 \ea\label{dyv:ex:mweiness:entry-masc}
-{\small 
+{\sffamily 
 $+$Masc  \hspace{0.6em} SUFF \hspace{0.4em} @MASC
 }
 \z
@@ -244,7 +244,7 @@ $+$Masc  \hspace{0.6em} SUFF \hspace{0.4em} @MASC
 %\z
 
 \ea\label{dyv:ex:mweiness:entry-buss}
-{\small 
+{\sffamily 
 buss  \hspace{1.5em} N \hspace{1.8em} @(COUNTNOUN buss)
 }
 \z
@@ -257,16 +257,16 @@ buss  \hspace{1.5em} N \hspace{1.8em} @(COUNTNOUN buss)
 
 The equations in the first two entries each contribute one attribute-value pair to the f-structure.
 Entries (\ref{dyv:ex:mweiness:entry-def}--\ref{dyv:ex:mweiness:entry-buss}) contain \isi{template} invocations rather than equations.
-The @-sign indicates a call to a \isi{template}, while DEF, MASC and COUNTNOUN are names of templates.
+The \textsf{@}-sign indicates a call to a \isi{template}, while \textsf{DEF}, \textsf{MASC} and \textsf{COUNTNOUN} are names of templates.
 A \isi{template} is an f-description, a collection of equations which it is convenient to refer to by a name rather than listing all the equations.
 Templates can be used in different places in the \isi{grammar} and lexicon, and \isi{template} definitions may refer to other templates.
 
-The definition of the \isi{template} named DEF is shown in (\ref{dyv:ex:mweiness:def-template}).
+The definition of the \isi{template} named \textsf{DEF} is shown in (\ref{dyv:ex:mweiness:def-template}).
 All nouns inflected in the definite form will carry these two equations, so it can be convenient to refer to them together.
 %They can be factored out into a \isi{template}, a named f-description, as in (\ref{dyv:ex:mweiness:def-template}).
 
 \ea\label{dyv:ex:mweiness:def-template}
-{\small 
+{\sffamily 
 DEF = \\
 \hspace{2em}  ($\uparrow$~DEF-MORPH)=$+$ \\
 \hspace{2em}  ($\uparrow$~DEF)=$+$ \\
@@ -283,10 +283,10 @@ DEF = \\
 To account for this, each noun must receive a plus or minus value for each of the three genders.
 The equations needed for specifying masculine gender are included in the \isi{template} in (\ref{dyv:ex:mweiness:masc-template}).
 These equations do not simply describe attribute-value pairs; they describe paths through the f-structure.
-The equation ($\uparrow$ GEND MASC)=$+$ states that the f-structure has an attribute GEND which has as its value a subsidiary f-structure which in its turn has an attribute MASC with the value $+$.
+The equation \textsf{($\uparrow$ GEND MASC)=$+$} states that the f-structure has an attribute \textsf{GEND} which has as its value a subsidiary f-structure which in its turn has an attribute \textsf{MASC} with the value \textsf{$+$}.
 
 \ea\label{dyv:ex:mweiness:masc-template}
-{\small 
+{\sffamily 
 MASC = \\
 \hspace{2em}  ($\uparrow$ GEND MASC)=$+$ \\
 \hspace{2em}  ($\uparrow$ GEND FEM)=$-$ \\
@@ -347,10 +347,10 @@ MASC = \\
 %
 
 
-Like the \isi{template} MASC, the \isi{template} COUNTNOUN also describes paths through the f-structure.
-The NTYPE NSYN features distinguish between common nouns, proper nouns, pronouns, etc. while the NTYPE NSEM COMMON features distinguish between count nouns, mass nouns, etc.
-All nouns must contribute a PRED feature to the f-structure, but the PRED feature itself will differ from noun to noun.
-The \isi{template} in (\ref{dyv:ex:mweiness:countnoun-template}) is parameterized; the parameter P will be substituted by the argument supplied in the invocation of the \isi{template}, for example the word \textit{buss} in (\ref{dyv:ex:mweiness:entry-buss}).
+Like the \isi{template} \textsf{MASC}, the \isi{template} \textsf{COUNTNOUN} also describes paths through the f-structure.
+The \textsf{NTYPE NSYN} features distinguish between common nouns, proper nouns, pronouns, etc. while the \textsf{NTYPE NSEM COMMON} features distinguish between count nouns, mass nouns, etc.
+All nouns must contribute a \textsf{PRED} feature to the f-structure, but the \textsf{PRED} feature itself will differ from noun to noun.
+The \isi{template} in (\ref{dyv:ex:mweiness:countnoun-template}) is parameterized; the parameter \textsf{P} will be substituted by the argument supplied in the invocation of the \isi{template}, for example the word \textit{buss} in (\ref{dyv:ex:mweiness:entry-buss}).
 %All count nouns have in common certain NTYPE features.
 %All count nouns must also contribute a PRED feature to the f-structure, but the PRED feature itself will differ from noun to noun.
 %The \isi{template} in (\ref{dyv:ex:mweiness:countnoun-template}) is parameterized; the parameter P will be substituted by the argument supplied in the invocation of the \isi{template}.
@@ -358,7 +358,7 @@ The \isi{template} in (\ref{dyv:ex:mweiness:countnoun-template}) is parameterize
 
 
 \ea\label{dyv:ex:mweiness:countnoun-template}
-{\small 
+{\sffamily 
 COUNTNOUN (P) = \\
 \hspace{2em}  ($\uparrow$ PRED)=P \\
 \hspace{2em}  ($\uparrow$ NTYPE NSEM COMMON)=count \\
@@ -366,22 +366,22 @@ COUNTNOUN (P) = \\
 }
 \z
 
-The value of a PRED attribute is a semantic form.
+The value of a \textsf{PRED} attribute is a semantic form.
 A semantic form is always enclosed in single quotation marks, indicating that the value is unique, which means that it cannot be unified even with an identical-looking value of some other attribute.
 For some words the semantic form includes not only the word itself, but also a syntactic argument list.
 This is the case for two of the words in \textit{hun tenker på bussen} (in the interpretation being considered in this section).
-The verb has the semantic form `tenke$\langle$[SUBJ]$\rangle$', meaning that the verb is intransitive and subcategorizes only for a subject, and the preposition has the semantic form `på$\langle$[OBJ]$\rangle$', indicating that it requires an object.
+The verb has the semantic form \textsf{`tenke$\langle$[SUBJ]$\rangle$'}, meaning that the verb is intransitive and subcategorizes only for a subject, and the preposition has the semantic form `på$\langle$[OBJ]$\rangle$', indicating that it requires an object.
 %This is the case for two of the words in (\ref{dyv:ex:mweiness:thinking-while-on-bus}); the verb has the semantic form `tenke<[SUBJ]>', meaning that the verb subcategorizes for a subject, and the preposition has the semantic form `på<[OBJ]>', indicating that it requires an object.
 
 Verbs can of course subcategorize for several arguments.
-For example, the verb \textit{slå} `hit' has the semantic form `slå$\langle$[SUBJ,OBJ]$\rangle$' since it requires a subject and an object.
-The completeness requirement for f-structures stipulates that each of the syntactic functions mentioned in the semantic form of a PRED feature must occur on the same level of f-structure as that PRED.
-There is also a coherence requirement to the effect that subcategorizable syntactic functions may only occur on the same level of f-structure as a PRED feature if they are mentioned in its semantic form.
+For example, the verb \textit{slå} `hit' has the semantic form \textsf{`slå$\langle$[SUBJ,OBJ]$\rangle$'} since it requires a subject and an object.
+The completeness requirement for f-structures stipulates that each of the syntactic functions mentioned in the semantic form of a \textsf{PRED} feature must occur on the same level of f-structure as that \textsf{PRED}.
+There is also a coherence requirement to the effect that subcategorizable syntactic functions may only occur on the same level of f-structure as a \textsf{PRED} feature if they are mentioned in its semantic form.
 The argument lists in semantic forms are thus crucial for determining grammaticality.
 The semantic forms ``govern the process of semantic interpretation” \citep[177]{kaplanbresnan82}.
 
 The crucial challenge of representing MWEs is that they defy normal compositional analysis.
-The \isi{LFG} solution that is implemented in NorGram is to assign to each MWE a special \isi{lexical entry} that has its own PRED value and thus its own argument structure.
+The \isi{LFG} solution that is implemented in NorGram is to assign to each MWE a special \isi{lexical entry} that has its own \textsf{PRED} value and thus its own argument structure.
 Each MWE has a semantic form with a special predicate name and a list of any syntactic arguments that this predicate requires.
 %This approach makes it possible to have a clear separation between the 
 This will be shown in detail for the various types of MWEs in the following sections.
@@ -449,7 +449,7 @@ Fixed expressions are the simplest MWEs to implement; they are entered into the 
 
 The sentence in (\ref{dyv:ex:mweiness:wws}) contains three such expressions: \textit{i bunn og grunn}, \textit{New York}, and \textit{i det hele tatt}.\footnote{In this and subsequent examples the lexically fixed words making up the MWE are highlighted with boldface.}
 The c-structure of (\ref{dyv:ex:mweiness:wws}) is shown in Figure~\ref{dyv:fig:mweiness:wws-cstr}.
-The simplified f-structure is shown in Figure~\ref{dyv:fig:mweiness:wws-fstr}; this is the ``PREDs only'' view of f-structure where feature paths that do not end in PRED values are suppressed. 
+The simplified f-structure is shown in Figure~\ref{dyv:fig:mweiness:wws-fstr}; this is the ``\textsf{PRED}s only'' view of f-structure where feature paths that do not end in PRED values are suppressed. 
 The three expressions belong to different parts of speech: ADVcmt (commitment adverb), PROP (proper noun), and ADVs (sentence adverb).
 The adverbs have the function ADJUNCT in the f-structure while the proper noun functions as the OBJ.
 There are numerous \isi{fixed expressions} in most parts of speech in \ili{Norwegian}.
@@ -539,7 +539,7 @@ For instance, the intransitive verb \emph{klage} `complain' is assigned a frame 
 Part of this \isi{template} is shown in (\ref{dyv:ex:mweiness:verb-template}).
 
 \ea\label{dyv:ex:mweiness:verb-template}
-{\small 
+{\sffamily 
  V-SUBJ (P) = \\
 \hspace{2em} ($\uparrow$ PRED)=`P$\langle$($\uparrow$ SUBJ)$\rangle$' \\
 }
@@ -572,13 +572,13 @@ The word that subcategorizes for the other parts of the MWE lists the predicate 
 The \isi{template} call in (\ref{dyv:ex:mweiness:lexicalselection}) shows that the verb \emph{klage} selects the noun \emph{nød}. 
 
 \ea\label{dyv:ex:mweiness:lexicalselection}
-{\small 
+{\sffamily 
 @(VPIDIOM-DEFOBJ klage nød)
 }
 \z
 
 \ea\label{dyv:ex:mweiness:subcatframe}
-{\small
+{\sffamily
 %VPIDIOM-DEFOBJ (P S OP) =  \\
 %	  @(CONCAT P `# OP \%FN) \\
 	  ($\uparrow$ PRED)=`\%FN$\langle$($\uparrow$ SUBJ)$\rangle$($\uparrow$ OBJ)'  \\
@@ -615,13 +615,13 @@ The \isi{constraint} in (\ref{dyv:ex:mweiness:possrestriction}) is an existentia
 The interpretation is that this path of attributes must have some value in the f-structure, thus ensuring that there is a possessive.
 
 \ea\label{dyv:ex:mweiness:defrestriction}
-{\small 
+{\sffamily 
 ($\uparrow$ OBJ DEF)=c +.
 }
 \z
 
 \ea\label{dyv:ex:mweiness:possrestriction}
-{\small 
+{\sffamily 
 ($\uparrow$ OBJ SPEC POSS POSS-TYPE) \\
 }
 \z
@@ -633,7 +633,7 @@ The interpretation is that this path of attributes must have some value in the f
 %\z
 
 \ea\label{dyv:ex:mweiness:nospec}
-{\small 
+{\sffamily 
 {\textasciitilde}($\uparrow$ OBJ SPEC) \\
 }
 \z
@@ -663,7 +663,7 @@ In the entry for \emph{ha et godt øye til}, the equation in (\ref{dyv:ex:mweine
 %($\uparrow$ OBJ ADJUNCT \$ PRED FN)=c god \\
 %		  (^ OBJ SPEC DET DET-TYPE)=c article \\
 %		  (^ VTYPE)=c main \\
-{\small 
+{\sffamily 
 ($\uparrow$ OBJ ADJUNCT PRED)=c god \\
 }
 \z
@@ -729,7 +729,7 @@ The \isi{lexical entry} for \textit{tenke} is associated with the relevant frame
 The relevant part of the \isi{lexical entry} for \textit{tenke} is shown in  (\ref{dyv:ex:mweiness:tenke-lex}).
 
 \eabox{\label{dyv:ex:mweiness:tenke-lex}
-{\small 
+{\sffamily 
 \begin{tabular}{ll}
 tenke V & \{ \enspace [ ... ]\\
 & | \enspace @(V-SUBJ-POBJ tenke på)\\
@@ -740,7 +740,7 @@ The invocation of the \isi{template} V-SUBJ-POBJ has two parameters, the predica
 In (\ref{dyv:ex:mweiness:tenke-template}) part of the \isi{template} is shown (other parts of this \isi{template} for handling passive and other modifications are discussed in Section~\ref{dyv:sec:mweiness:variation}).
 
 \ea\label{dyv:ex:mweiness:tenke-template}
-{\small 
+{\sffamily 
 V-SUBJ-POBJ (P prp) =\\
 \hspace{2em} @(CONCAT P `* prp \%FN)\\
 \hspace{2em}  ($\uparrow$ PRED)=`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBL-TH)$\rangle$'\\
@@ -811,7 +811,7 @@ As in the case of selected prepositions, the \isi{lexical entry} for \textit{skr
 Part of the \isi{lexical entry} for \textit{skrive} is shown in  (\ref{dyv:ex:mweiness:skrive-lex}).
 
 \eabox{\label{dyv:ex:mweiness:skrive-lex}
-{\small 
+{\sffamily 
 \begin{tabular}{ll}
 skrive V & \{ \enspace [ ... ]\\
 & | \enspace @(V-SUBJ-PRT-OBJ skrive opp)\\
@@ -821,7 +821,7 @@ skrive V & \{ \enspace [ ... ]\\
 Part of the invoked \isi{template} V-SUBJ-PRT-OBJ is shown in  (\ref{dyv:ex:mweiness:skrive-template}).
 
 \ea\label{dyv:ex:mweiness:skrive-template}
-{\small 
+{\sffamily 
 V-SUBJ-PRT-OBJ (P prt) =\\
 \hspace{2em} @(CONCAT P `* prt \%FN)\\
 \hspace{2em}  ($\uparrow$ PRED)=`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBJ)$\rangle$'\\
@@ -906,7 +906,7 @@ The \isi{template} invocation has three parameters, the predicate name for the v
 Part of the \isi{template} is shown in  (\ref{dyv:ex:mweiness:holde-template}); the full \isi{template} is discussed in Section~\ref{dyv:sec:mweiness:vpidiomsyntax}.
 
 \eabox{\label{dyv:ex:mweiness:holde-lex}
-{\small 
+{\sffamily 
 \begin{tabular}{ll}
 holde V & \{ \enspace [ ... ]\\
 & | \enspace @(VPIDIOM-INDEFOBJ-POBJ holde øye med)\\
@@ -915,7 +915,7 @@ holde V & \{ \enspace [ ... ]\\
 \end{tabular}}}
 
 \ea\label{dyv:ex:mweiness:holde-template}
-{\small 
+{\sffamily 
  VPIDIOM-INDEFOBJ-POBJ (P OP prp) =\\
 \hspace{1.5em} @(CONCAT P `\# OP `* prp \%FN)\\
 \hspace{1.5em}  ($\uparrow$  PRED)=`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBL-TH)$\rangle$($\uparrow$ OBJ)\\
@@ -981,7 +981,7 @@ With an infinitival or a clausal complement the syntactic function is COMP.
 The \isi{lexical entry} for \textit{ansvar} in (\ref{dyv:ex:mweiness:ansvar-lex}) invokes three alternative templates for the three possible kinds of complements, in addition to its basic \isi{template} as a mass noun.
 
 \eabox{\label{dyv:ex:mweiness:ansvar-lex}
-{\small 
+{\sffamily 
 \begin{tabular}{ll}
 ansvar N & \{ \enspace@(MASSNOUN ansvar)\\
 & | \enspace @(N-POBJ ansvar for)\\
@@ -1066,14 +1066,14 @@ The mechanism for achieving this lies in the projection architecture of \isi{LFG
 To illustrate we may consider the relevant fragments of the c-structure rules for I′, S and VPmain in (\ref{dyv:ex:mweiness:rule1}--\ref{dyv:ex:mweiness:rule3}).
 
 \eabox{\label{dyv:ex:mweiness:rule1}
-{\small 
+{\sffamily 
 \begin{tabular}{lll}
 I′ $\rightarrow$ &  Vfin: & $\uparrow$=$\downarrow$\\
  & (S: & $\uparrow$=$\downarrow$)\\\\
 \end{tabular}}}
 
 \eabox{\label{dyv:ex:mweiness:rule2}
-{\small 
+{\sffamily 
 \begin{tabular}{lll}
 S $\rightarrow$ &  (PRONP: & ($\uparrow$ SUBJ)=$\downarrow$\\
 & &@SUBJCASE)\\
@@ -1090,7 +1090,7 @@ S $\rightarrow$ &  (PRONP: & ($\uparrow$ SUBJ)=$\downarrow$\\
 \end{tabular}}}
 
 \eabox{\label{dyv:ex:mweiness:rule3}
-{\small 
+{\sffamily 
 \begin{tabular}{lll}
 VPmain $\rightarrow$ & [...]\\
 & (PRTP: & $\uparrow$=$\downarrow$\\
@@ -1140,7 +1140,7 @@ Part of the \isi{lexical entry} for \textit{trekke} is shown in  (\ref{dyv:ex:mw
 The \isi{template} has the form shown in  (\ref{dyv:ex:mweiness:trekke-template}).
 
 \eabox{\label{dyv:ex:mweiness:trekke-lex}
-{\small 
+{\sffamily 
 \begin{tabular}{ll}
 trekke V & \{ \enspace [ ... ]\\
 & | \enspace @(V-SUBJ-OBJrefl-PRT trekke tilbake)\\
@@ -1148,7 +1148,7 @@ trekke V & \{ \enspace [ ... ]\\
 \end{tabular}}}
 
 \ea\label{dyv:ex:mweiness:trekke-template}
-{\small 
+{\sffamily 
 V-SUBJ-OBJrefl-PRT (P prt) =\\%[.5em]
 \hspace{1.5em} @(CONCAT P `* seg `* prt  \%FN)\\%[.5em]
 \hspace{1.5em}  \{ \enspace ($\uparrow$  PRED)=`\%FN$\langle$($\uparrow$ SUBJ)$\rangle$($\uparrow$ OBJ-BEN)'\\%[.5em]
@@ -1178,7 +1178,7 @@ The term for this mechanism is \textsc{functional uncertainty}.
 The rule in (\ref{dyv:ex:mweiness:furule}) shows a simplified version of the functional uncertainty equation handling the dependency between the topic and some embedded gap further down in the structure.
 
 \eabox{\label{dyv:ex:mweiness:furule}
-  {\small
+  {\sffamily
 \begin{tabular}{lll}
 IP $\rightarrow$ &  XP: & ($\uparrow$ TOPIC)=$\downarrow$\\
 & & ($\uparrow$ \{COMP | XCOMP\}* \{SUBJ | OBJ | OBL-TH\})=$\downarrow$\\
@@ -1231,7 +1231,7 @@ The full version of the VP idiom \isi{template} in (\ref{dyv:ex:mweiness:holde-t
 %%\clearpage
 
 \ea\label{dyv:ex:mweiness:holde-template-full}
-{\small 
+{\sffamily 
  VPIDIOM-INDEFOBJ-POBJ (P OP prp) =\\%[.5em]
 \hspace{1.5em} @(CONCAT P `\# OP `* prp \%FN)\\%[.5em]
 \hspace{1.5em}  \{ \enspace @(PASS-OBL-TH [($\uparrow$  PRED)=`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBL-TH)$\rangle$($\uparrow$ OBJ) ])\\%[.5em]
