@@ -99,11 +99,11 @@ MWEs are analyzed by NorGram in such a way that the different types may be searc
 The original lexical resource used for the NorGram lexicon, NorKompLeks, contained a small number of \isi{fixed expressions} \citep{nordgard00}.
 The main design of the treatment of MWEs in NorGram was developed during ParGram \citep{pargram02} and especially during the LOGON machine translation project \citep{lonning04}.
 A large number of MWEs have been added to NorGram’s lexicon during the construction of NorGramBank.
-When annotators discovered MWEs that did not receive an analysis or that received an incorrect analysis, they constructed new lexical entries or edited existing lexical entries as needed in order to cover the MWEs \citep{losnegaard12,rosen16lre}.
+When disambiguators discovered MWEs that did not receive an analysis or that received an incorrect analysis, they constructed new lexical entries or edited existing lexical entries as needed in order to cover the MWEs \citep{losnegaard12,rosen16lre}.
 
 This chapter is organized as follows.
 In Section~\ref{dyv:sec:mweiness:LFG} an overview of the basics of \isi{LFG} is given, showing how constructions without MWEs are analyzed in NorGram as a background for the treatment of MWEs in the following sections.
-Section~\ref{dyv:sec:mweiness:fixed} illustrates the analysis of \isi{fixed expressions}, while Section~\ref{dyv:sec:mweiness:flexexp} is about the analysis of flexible expressions, including \isi{phrasal verbs}, verbal \isi{idioms}, and nonverbal flexible expressions.
+Section~\ref{dyv:sec:mweiness:implementing} illustrates the NorGram analysis of MWEs, both \isi{fixed expressions} and flexible expressions such as \isi{phrasal verbs}, verbal \isi{idioms}, and nonverbal flexible expressions.
 Section~\ref{dyv:sec:mweiness:variation} shows how various syntactic modifications are handled, including intervening words, \isi{long-distance dependencies} and passive alternations.
 Section~\ref{dyv:sec:mweiness:complementation} discusses numerous complex complementation patterns that are covered by NorGram for \ili{Norwegian} MWEs.
 Section~\ref{dyv:sec:mweiness:conc} presents our conclusions.
@@ -139,7 +139,7 @@ The analysis in Figure~\ref{dyv:fig:mweiness:thinking-while-on-bus} concerns the
 The second reading, where \textit{tenke på} `think about’ is a phrasal verb, will be treated in Section~\ref{dyv:sec:mweiness:flexexp}.
 
 The \isi{phrase} structure rules and lexicon of an \isi{LFG} \isi{grammar} assign the c-struc\-ture.
-NorGram uses a version of X’-syntax that is inspired by \citet{bresnanlfs}, with some adjustments which depart from strictly binary branching structures.
+NorGram uses a version of X′-syntax that is inspired by \citet{bresnanlfs}, with some adjustments which depart from strictly binary branching structures.
 
 The f-structure is projected from the c-structure by the functional description (f-description), which describes correspondences between the two levels.
 %Functional annotations in the \isi{phrase} structure rules and the lexical entries describe parts of the f-structure.
@@ -161,8 +161,8 @@ NP	$\rightarrow$	N: $\uparrow=\downarrow$ \\
 \z
 
 The annotations on the rule daughters describe the associated f-structures.
-In the equations, $\uparrow$ refers to the f-structure of the mother node (the category on the left-hand side of the rule), while $\downarrow$ refers to the f-structure of the daughter node (the category carrying the annotation on the right-hand side of the rule).
-Thus the equation $\uparrow=\downarrow$ annotated to a rule daughter means that the daughter node and its mother node will project the same f-structure.
+In the equations, \textsf{$\uparrow$} refers to the f-structure of the mother node (the category on the left-hand side of the rule), while \textsf{$\downarrow$} refers to the f-structure of the daughter node (the category carrying the annotation on the right-hand side of the rule).
+Thus the equation \textsf{$\uparrow=\downarrow$} annotated to a rule daughter means that the daughter node and its mother node will project the same f-structure.
 The equation \textsf{($\uparrow$~OBJ)=$\downarrow$} on the \textsf{NP} node in (\ref{dyv:ex:mweiness:PP-rule}) specifies that the f-structure of the mother node (\textsf{PP}) has an object (\textsf{OBJ}) which is the f-structure of the daughter node (\textsf{NP}).
 In this way the highlighted f-structure with the index ``\textsf{2}'' at its lower left corner in Figure~\ref{dyv:fig:mweiness:thinking-while-on-bus} is projected from the \textsf{PP} node.
 Both the \textsf{PP} node and the \textsf{P} node are highlighted in the c-structure since they both project this same f-structure.
@@ -370,7 +370,7 @@ The value of a \textsf{PRED} attribute is a semantic form.
 A semantic form is always enclosed in single quotation marks, indicating that the value is unique, which means that it cannot be unified even with an identical-looking value of some other attribute.
 For some words the semantic form includes not only the word itself, but also a syntactic argument list.
 This is the case for two of the words in \textit{hun tenker på bussen} (in the interpretation being considered in this section).
-The verb has the semantic form \textsf{`tenke$\langle$[SUBJ]$\rangle$'}, meaning that the verb is intransitive and subcategorizes only for a subject, and the preposition has the semantic form `på$\langle$[OBJ]$\rangle$', indicating that it requires an object.
+The verb has the semantic form \textsf{`tenke$\langle$[SUBJ]$\rangle$'}, meaning that the verb is intransitive and subcategorizes only for a subject, and the preposition has the semantic form \textsf{`på$\langle$[OBJ]$\rangle$'}, indicating that it requires an object.
 %This is the case for two of the words in (\ref{dyv:ex:mweiness:thinking-while-on-bus}); the verb has the semantic form `tenke<[SUBJ]>', meaning that the verb subcategorizes for a subject, and the preposition has the semantic form `på<[OBJ]>', indicating that it requires an object.
 
 Verbs can of course subcategorize for several arguments.
@@ -435,7 +435,15 @@ This will be shown in detail for the various types of MWEs in the following sect
 %
 %The entries for \textit{+Noun} and \textit{+Sg} each contribute one equation.
  
- \section{Fixed expressions}\label{dyv:sec:mweiness:fixed}
+ \section{Implementing MWEs}\label{dyv:sec:mweiness:implementing}
+ 
+ The crucial challenge of representing MWEs is that they defy normal compositional analysis.
+The \isi{LFG} solution that is implemented in NorGram is to assign to each MWE a special \isi{lexical entry} that has its own \textsf{PRED} value and thus its own argument structure.
+Each MWE has a semantic form with a special predicate name and a list of any syntactic arguments that this predicate requires.
+%This approach makes it possible to have a clear separation between the 
+This will be shown in detail for the various types of MWEs in the following.
+
+ \subsection{Fixed expressions}\label{dyv:sec:mweiness:fixed}
 
 Fixed expressions, such as \textit{ad hoc}, \textit{déjà vu}, and \textit{vice versa}, are those that do not vary with respect to inflection and that do not admit any internal modification.
 They are also called inflexible expressions or ``words with spaces''.
@@ -496,8 +504,7 @@ There are numerous \isi{fixed expressions} in most parts of speech in \ili{Norwe
 %Other types?
 
 
-\section{Flexible expressions}\label{dyv:sec:mweiness:flexexp}
-\todo[inline]{Please insert a subsection here}
+\subsection{Basic properties of flexible MWEs and method of analysis}\label{dyv:sec:mweiness:flexexp}
 Flexible expressions may exhibit a great deal of syntactic variation, but in some respects they are inherently fixed or restricted.
 One of the characterizing features of MWEs is that they are lexically fixed, meaning that they consist of at least two words that cannot be substituted with near-synonyms or semantically related words without the expression losing its idiomatic meaning.
 The verbal idiom \emph{komme på kant med} in (\ref{dyv:ex:mweiness:kommepåkantmed}) has four such fixed lexical words.
@@ -600,9 +607,9 @@ The \isi{template} call in (\ref{dyv:ex:mweiness:lexicalselection}) shows that t
 %\z
 
 The predicate values of the fixed MWE components, i.e. the verb and its selected complements, are merged to form one single idiom predicate which is substituted for the relevant parameter in the \isi{predicate-argument structure}.
-In one of the equations in the \isi{template}, the predicate assignment in (\ref{dyv:ex:mweiness:subcatframe}),  the parameter \%FN is replaced by the predicate name \emph\textsf{{klage\#nød}}, where we use the symbol ``\textsf{\#}'' to signal idiomatic combinations of this kind.
+In one of the equations in the \isi{template}, the predicate assignment in (\ref{dyv:ex:mweiness:subcatframe}),  the parameter \%FN is replaced by the predicate name textsf{klage\#nød}, where we use the symbol ``\textsf{\#}'' to signal idiomatic combinations of this kind.
 Only the free arguments of \isi{verbal MWEs} are specified as semantic arguments to the verb.
-The \isi{subcategorization} frame \textsf{`klage\#nød$\langle$($\uparrow$~SUBJ)$\rangle$($\uparrow$~OBJ)'} lists the semantic argument, in this case \textsf{SUBJ}, inside the angled brackets, while the selected argument OBJ is placed outside the brackets.
+The \isi{subcategorization} frame \textsf{`klage\#nød$\langle$($\uparrow$~SUBJ)$\rangle$($\uparrow$~OBJ)'} lists the semantic argument, in this case \textsf{SUBJ}, inside the angled brackets, while the selected argument \textsf{OBJ} is placed outside the brackets.
 The parameter \textsf{\%FN} and the construction of predicate names such as \textsf{klage\#nød} are accounted for in Section~\ref{dyv:sec:mweiness:prepverbs}.  
 
 %Fixed or lexically selected arguments are non-thematic and thus listed outside the angled brackets, like the OBJ in (\ref{dyv:ex:mweiness:subcatframe}) which in this case refers to the selected object \emph{nød}.
@@ -1133,7 +1140,7 @@ Thus it can be seen that the \textsf{Vfin} daughter of \textsf{I′} (the verb) 
 A particle verb presupposes the presence of the required particle in the sentence, and a particle presupposes the presence of a particle verb.
 This mutual dependency is captured through two features, one feature \textsf{PRT-VERB=+}, carried by the verb and required by the rule introducing the particle, and, conversely, one feature \textsf{PRT-FORM}, carried by the particle and required by the verb to have the appropriate value.
 Thus, the \isi{constraint} equation annotated to \textsf{PRTP}, \textsf{($\uparrow$ CHECK PRT-VERB)=c +}, demanding that its f-structure should have a feature \textsf{PRT-VERB=+} (i.e., that the verb should be a particle verb), will be satisfied if the finite verb has contributed such a feature to this common f-structure.
-A similar \isi{constraint} equation associated with the verb, \textsf{(($\uparrow$ PRT-FORM)=c prt} in (\ref{dyv:ex:mweiness:trekke-template}) below), ensures that the particle has the form required by the verb.
+A similar \isi{constraint} equation associated with the verb, (\textsf{($\uparrow$ PRT-FORM)=c prt} in (\ref{dyv:ex:mweiness:trekke-template}) below), ensures that the particle has the form required by the verb.
 
 The \isi{lexical entry} for \textit{trekke} is associated with the relevant frame through an invocation of the \isi{template} for reflexive \isi{verb-particle constructions}.
 Part of the \isi{lexical entry} for \textit{trekke} is shown in  (\ref{dyv:ex:mweiness:trekke-lex}).
@@ -1155,19 +1162,19 @@ V-SUBJ-OBJrefl-PRT (P prt) =\\%[.5em]
 \hspace{1.5em} | \enspace ($\uparrow$  PRED)=`\%FN$\langle\uparrow$ OBJ)$\rangle$($\uparrow$  OBJ-BEN)($\uparrow$ SUBJ)'\\%[.5em]
 \hspace{1.5em} \quad ($\uparrow$ PRESENTATIVE)=+\\%[.5em]
 \hspace{1.5em} \quad ($\uparrow$ SUBJ PRON-TYPE)=c expl\\%[.5em]
-\hspace{1.5em} \quad ¬ ($\uparrow$ OBJ DEF)=+ \enspace \}\\%[.5em]
+\hspace{1.5em} \quad \char`~($\uparrow$ OBJ DEF)=+ \enspace \}\\%[.5em]
 \hspace{1.5em} @(REFLEXIVE OBJ-BEN)\\%[.5em]
 \hspace{1.5em} ($\uparrow$ CHECK PRT-VRB)=+\\%[.5em]
 \hspace{1.5em} ($\uparrow$ PRT-FORM)=c prt\\%[.5em]
-\hspace{1.5em} ¬ ($\uparrow$ PASSIVE)=+
+\hspace{1.5em} \char`~($\uparrow$ PASSIVE)=+
 }
 \z
 
 The \isi{template} \textsf{CONCAT} constructs the predicate name \textsf{trekke*seg*tilbake} as the value of \textsf{PRED}.
 The reflexive occurring with reflexive verbs is analyzed as \textsf{OBJ-BEN} (indirect object).
 The reason for this is that there will be a direct object in the alternative presentative construction with an expletive \textit{det} subject, such as \textit{Det trekker seg tilbake store styrker} `There are big forces withdrawing', in which \textit{store styrker} occurs as a syntactic object (OBJ); there can only be one \textsf{OBJ}.
-The presentative construction is described as the second alternative in the disjunction \{...|...\} in the \isi{template}.
-The reflexive, like the expletive subject, is analyzed as a non-argument, which appears from the fact that it is placed outside the argument list enclosed by $\langle$...$\rangle$ in the value of \textsf{PRED}.
+The presentative construction is described as the second alternative in the disjunction \textsf{\{...|...\}} in the \isi{template}.
+The reflexive, like the expletive subject, is analyzed as a non-argument, which appears from the fact that it is placed outside the argument list enclosed by \textsf{$\langle$...$\rangle$} in the value of \textsf{PRED}.
 The features \textsf{PRT-VRB} and \textsf{PRT-FORM} are explained in the discussion of the \isi{template} in (\ref{dyv:ex:mweiness:skrive-template}).
 
 \subsection{Long-distance dependencies}\label{dyv:sec:mweiness:longdist}
@@ -1726,7 +1733,7 @@ ADVPloc \> locative or temporal adverb phrase\\
 ADVPs \> sentential adverb phrase\\
 ADVs \> sentential adverb\\
 AP \> adjective phrase\\
-AP’ \> top bar level of adjective phrase\\
+AP′ \> top bar level of adjective phrase\\
 APsmpl \> simple adjective phrase\\
 APsmplcoord \> coordination of simple adjective phrases\\
 ART \> article\\
@@ -1754,9 +1761,9 @@ FEM \> f-structure attribute: feminine gender\\
 FOCUS-INT \> f-structure attribute: the focused wh-element in wh-interrogatiives\\
 GEND \> f-structure attribute: grammatical gender\\
 GEND-SEM \> f-structure attribute: biological gender with value male or female\\
-I'aux \> phrase dominating finite auxiliary verb\\
-I'cop \> phrase dominating finite copula verb\\
-I’ \> phrase dominating finite main verb\\
+I′aux \> phrase dominating finite auxiliary verb\\
+I′cop \> phrase dominating finite copula verb\\
+I′ \> phrase dominating finite main verb\\
 INESS \> Infrastructure for the exploration of syntax and semantics\\
 INT-MARK \> interrogative mark\\
 IP \> finite main clause\\
