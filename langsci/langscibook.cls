@@ -214,11 +214,11 @@
 \DeclareVoidOption{arseneau}{\lsArseneautrue}
 \DeclareVoidOption{oldstylenumbers}{\lsOldStyleNumberstrue}
 \DeclareVoidOption{chinesefont}{
-	\newfontfamily\cn[Mapping=tex-text,Ligatures=Common,Scale=MatchUppercase]{AR PL UMing CN}
+	\AtEndPreamble{\newfontfamily\cn[Mapping=tex-text,Ligatures=Common,Scale=MatchUppercase]{AR PL UMing CN}
 % 	\newcommand{\zh}[1]{{\cn #1}}
 	\XeTeXlinebreaklocale 'zh'  
 	\XeTeXlinebreakskip = 0pt plus 1pt
-	\AdditionalFontImprint{UMing}
+	\AdditionalFontImprint{UMing}}
 }
 \DeclareVoidOption{japanesefont}{
 	  \newfontfamily\jpn[Mapping=tex-text,Ligatures=Common,Scale=MatchUppercase]{TakaoPGothic} %Japanese
@@ -231,9 +231,9 @@
 % 	\newcommand{\kr}[1]{{\sffamily #1}}
 % 	\AdditionalFontImprint{Korean}}
 \DeclareVoidOption{arabicfont}{
-	\newfontfamily\arabicfont[Script=Arabic,ItalicFont=*,Scale=1.4]{arabtype.ttf}
+	\AtEndPreamble{\newfontfamily\arabicfont[Script=Arabic,ItalicFont=*,Scale=MatchLowercase]{DejaVu Sans}
 % 	\newcommand{\textarabic}[1]{{\arabicfont #1}}
-	\AdditionalFontImprint{Arabtype}
+	\AdditionalFontImprint{Arabtype}}
 }
 \DeclareVoidOption{hebrewfont}{
 	\newfontfamily\hebrewfont[Script=Hebrew,ItalicFont=*, Scale=0.9]{SBLHebrew.ttf}
