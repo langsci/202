@@ -13,7 +13,7 @@
 
 \abstract{We address large-scale multilingual multi-word entity (MWEntity) recognition and variant matching. Firstly, we recognise MWEntities in 22 different languages, identify monolingual variant spellings and link equivalent groups of variants across all languages. We then use the previously recognised MWEntities to learn new recognition rules based on distributional patterns. Not requiring any linguistic tools, the method is suitable for our highly multilingual environment. When adding the new rules to the original rule-based NER system, F1 performance for Spanish increases from 42.4\% to 50\% (18\% increase) and for English from 43.4\% to 44.5\% (2.5\% increase). Besides aiming at turning free text into semi-structured data for search and for machine-processing purposes, we use the system to link related news over time and across languages, as well as to detect trends.}
 
-% % % \Oldabstract{The contribution of our work is to address multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this chapter describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities, using distributional patterns. This rule-learning approach, which has currently been tested only for English and Spanish, does not require linguistic tools such as part-of-speech taggers so that it is perfectly suitable for our highly multilingual environment. When adding these learnt patterns to an existing rule-based Named Entity Recognition (\textsc{ner}) system, F1 performance for Spanish increases from 42.4\% to 50\% (18\% increase) and for English from 43.4\% to 44.5\% (2.5\% increase). The purpose of our effort is to improve on current methods for Named Entity Recognition (\textsc{ner}) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.}
+% % % \Oldabstract{The contribution of our work is to address multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this chapter describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities, using distributional patterns. This rule-learning approach, which has currently been tested only for English and Spanish, does not require linguistic tools such as part-of-speech taggers so that it is perfectly suitable for our highly multilingual environment. When adding these learnt patterns to an existing rule-based Named Entity Recognition (NER) system, F1 performance for Spanish increases from 42.4\% to 50\% (18\% increase) and for English from 43.4\% to 44.5\% (2.5\% increase). The purpose of our effort is to improve on current methods for Named Entity Recognition (NER) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.}
 
 \maketitle
 \begin{document}
@@ -21,11 +21,11 @@
 \section{Introduction} 
 %\remMaud{as discussed on skype, I liked the initial generic frame formulated by Ralf on going from unstructured to structured data/information to answer the needs of applications xyz.}
 
-%In this chapter, we present our contribution in addressing multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this contribution describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes our ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities. We then show how such rules can improve the recognition of new or unknown MWEntities. The purpose of our effort is to improve on current methods for Named Entity Recognition (\textsc{ner}) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.
+%In this chapter, we present our contribution in addressing multi-word entity (MWEntity) recognition in a highly multilingual environment. The first part of this contribution describes completed work on recognising MWEntities in large volumes of text in 22 different languages, on identifying monolingual variants for the same entity and on linking the equivalent groups of variants across all languages. The second part describes our ongoing work on learning MWEntity recognition rules based on the already recognised MWEntities. We then show how such rules can improve the recognition of new or unknown MWEntities. The purpose of our effort is to improve on current methods for Named Entity Recognition (NER) in order to turn free text into semi-structured data that can be used for improved search, for linking related news over time and across languages, for trend detection and – more generally – for a more advanced intelligent analysis of large volumes of multilingual text collections.
 
 %by addressing the specific case of multi-word entities.
 
-Named Entities (NEs) such as persons, organisations, locations and events are major bearers of information in text as they provide answers to the text representation questions \textit{Who did What to Whom, Where and When}. For this reason, work on \textsc{ner} and Classification is abundant \citep{nadeau-05} and NEs have been linked to knowledge bases \citep{rao-13,mcnamee-09}. Major challenges are homographic entity names belonging to different classes or within the same class and the existence of variant spellings within the same or across different languages, as well as morphological inflection \citep{steinberger-13}. An additional challenge for names of organisations and events is that they may be referred to as multi-word expressions or acronyms, e.g., \textit{Economic Community of West African States} (abbreviated as ECOWAS), and that name parts are likely to be translated, e.g., the equivalent Portuguese \textit{Comunidade Económica dos Estados da África Ocidental} (abbreviated as CEDEAO). Users searching for such an entity will want to retrieve all mentions, independently of their spelling or abbreviation or language.
+Named Entities (NEs) such as persons, organisations, locations and events are major bearers of information in text as they provide answers to the text representation questions \textit{Who did What to Whom, Where and When}. For this reason, work on NER and Classification is abundant \citep{nadeau-05} and NEs have been linked to knowledge bases \citep{rao-13,mcnamee-09}. Major challenges are homographic entity names belonging to different classes or within the same class and the existence of variant spellings within the same or across different languages, as well as morphological inflection \citep{steinberger-13}. An additional challenge for names of organisations and events is that they may be referred to as multi-word expressions or acronyms, e.g., \textit{Economic Community of West African States} (abbreviated as ECOWAS), and that name parts are likely to be translated, e.g., the equivalent Portuguese \textit{Comunidade Económica dos Estados da África Ocidental} (abbreviated as CEDEAO). Users searching for such an entity will want to retrieve all mentions, independently of their spelling or abbreviation or language.
 
 Our interest in entity variants originally stems from our multiannual work on the \textit{Europe Media Monitor} (EMM), which is a freely accessible meta-news web platform\footnote{See \url{http://emm.newsbrief.eu/overview.html} and \url{http://emm.newsexplorer.eu/}} that has been online since 2002 \citep{steinberger-09,steinberger-15}. EMM currently gathers an average of 300,000 news articles per day in about 70 languages from about 8,000 news websites (HTML pages and RSS feeds). News items are classified into thousands of categories 
 %(more than half are customer-specific so that they are not available on the public website)
@@ -34,7 +34,7 @@ and many others are all identified as referring to the 12th President of the Eur
 
  
 %TODO : maybe remove the two next paragraphs
-%In recent years, EMM’s text mining capacity has also been applied to social media posts (e.g., \citealt{Zavarella-14}) and to documents resulting from generic web searches \citep{Crawley-10}, thus widening the range of analysed text types. \textsc{ner} software does not perform equally well on all text types. We try to overcome this limitation by building up a large historical collection of names previously seen in hundreds of millions of news articles (known names) that can then be recognised through a simple lookup rather than re-recognising the names anew in every text. This should allow a decent performance even for poorly written texts such as Twitter messages. Accumulated lists of variants within the same and across different languages and scripts additionally have the benefit of grounding name mentions with real-world entities by abstracting away from the spelling. It is our intention to release large volumes of names and their multilingual spelling variants by adding them to the freely accessible JRC-Names name variant resource \citep{ehrmann-15,steinberger-11}.
+%In recent years, EMM’s text mining capacity has also been applied to social media posts (e.g., \citealt{Zavarella-14}) and to documents resulting from generic web searches \citep{Crawley-10}, thus widening the range of analysed text types. NER software does not perform equally well on all text types. We try to overcome this limitation by building up a large historical collection of names previously seen in hundreds of millions of news articles (known names) that can then be recognised through a simple lookup rather than re-recognising the names anew in every text. This should allow a decent performance even for poorly written texts such as Twitter messages. Accumulated lists of variants within the same and across different languages and scripts additionally have the benefit of grounding name mentions with real-world entities by abstracting away from the spelling. It is our intention to release large volumes of names and their multilingual spelling variants by adding them to the freely accessible JRC-Names name variant resource \citep{ehrmann-15,steinberger-11}.
 %
 % 
 %
@@ -78,8 +78,8 @@ on an interlingua for the latter.
 As mentioned previously, the variety and the number of acronyms is
 very large so that it is useful to organise the acronym dataset on a
 semantic basis by grouping related variants under the same acronym
-identifier. The aim is thus - for each set of expansions having the
-same acronym - to identify those which are conceptually
+identifier. The aim is thus -- for each set of expansions having the
+same acronym -- to identify those which are conceptually
 related. Previous related work focused mainly, anew, on biomedical
 literature in \ili{English}. \citet{adar-04} experimented with k-means
 clustering based on an n-gram similarity measure and on a MeSH term
@@ -128,7 +128,7 @@ With the emergence of large-scale knowledge bases and the availability
 of web-scale corpora, numerous efforts on exploiting such resources
 for developping named entity recognition and classification tools have
 been reported. For instance, \citet{nothman:2013:lmn} reports on a
-multilingual \textsc{ner} approach based on using Wikipedia links for
+multilingual NER approach based on using Wikipedia links for
 automatically annotating a huge corpus for training purposes, whereas
 \citet{downey:2007:lcn} presents a novel method for detecting
 complex (multi-word) named entities using solely capitalisation
@@ -163,7 +163,7 @@ and their corresponding acronyms in 22 Roman-script languages
 \citep{ehrmann-13}. These acronym/expansion pairs were extracted from
 the news stream analysed by the EMM processing chain by applying
 patterns similar to those proposed by \citet{schwartz-03}. In a
-nutshell, the algorithm collects acronym\slash expansion pairs (such as
+nutshell, the algorithm collects acronym/expansion pairs (such as
 \textit{expansion (acronym)} and \textit{acronym (expansion)}) by
 identifying short strings within parenthesis, along with candidate
 expansions in a side-window of a limited length. A filtering step is
@@ -214,14 +214,14 @@ this end, we leverage the previously computed monolingual clusters and
 attempt to link them across languages. Considering the previous
 example with the entity \textit{International Space Station}
 (cf. Figure~\ref{jac:acronym linking}), this results in aggregating the
-monolingual clusters \textit{SSI-Station spatiale internationale}
-(\ili{French}), \textit{ISS-International Space Station} (\ili{English}) and
-\textit{EEI-Estaci\'{o}n Espacial} (\ili{Spanish}).  Additionally to linking
+monolingual clusters \textit{SSI -- Station spatiale internationale}
+(\ili{French}), \textit{ISS -- International Space Station} (\ili{English}) and
+\textit{EEI -- Estaci\'{o}n Espacial} (\ili{Spanish}).  Additionally to linking
 expansions across languages and independently from their acronym,
 cross-lingual cluster aggregation can also revise monolingual clusters
 by aggregating those conceptually related but isolated because of
-their acronyms (both pairs \textit{IMF-International Monetary Fund}
-and \textit{FMI-Fondo Monetario Internazionale} occur in \ili{Italian}
+their acronyms (both pairs \textit{IMF -- International Monetary Fund}
+and \textit{FMI~-- Fondo Monetario Internazionale} occur in \ili{Italian}
 texts).
 
 \subsection{Approach}
@@ -302,9 +302,9 @@ have a significant amount of highly similar tokens.
 \begin{tabular}{clcc}\lsptoprule
 Clusters    &  Expansion  & Acronym  &  Language \\
 \midrule
-cluster 1  & \itshape  Social-Democratic Party      &  SDP  & en  \\
+cluster 1  & \itshape  Social-Democratic Party      &  \itshape SDP  & en  \\
            & \itshape  Social Democratic Party      &      &     \\ \midrule
-cluster 2  & \itshape  Partito Social-Democratico   &  PSD  & it \\
+cluster 2  & \itshape  Partito Social-Democratico   &  \itshape PSD  & it \\
            & \itshape  Partito di socialdemocratico &      &    \\
            & \itshape  Partito socialdemocratico   &       &    \\ 
 \lspbottomrule
@@ -315,7 +315,7 @@ cluster 2  & \itshape  Partito Social-Democratico   &  PSD  & it \\
 
 
 We compute the matrix $(|\mathbb{T}| \times |\mathbb{T}|)$, hereafter
-\textit{InvEdit}, which corresponds to the inverse of the normalized
+\textit{InvEdit}, which corresponds to the inverse of the normalised
 Levenshtein edit distance where $t_i : i = 1,\ldots{},|\mathbb{T}|$ and
 $t_j : j = 1,\ldots{},|\mathbb{T}|$ are tokens from all the addressed
 languages:
@@ -363,7 +363,7 @@ C\_\CTok_{l_{1}}(c_i,t_j) =
 This aggregation is particularly useful when comparing clusters from
 similar languages. Table~\ref{jac:tab:common token aggregation}
 illustrates such cases, with the \ili{English}-\ili{Italian} tokens
-\textit{Party / Partito} and \textit{Democratic / Democratico}. This
+\textit{Party\slash Partito} and \textit{Democratic\slash Democratico}. This
 representation can also benefit from the fact that it is possible to
 find multi-word entities of a given language in texts in another
 language (especially with names of international organisations such as
@@ -395,12 +395,12 @@ language (especially with names of international organisations such as
 \begin{tabular}{clcc}\lsptoprule
 Clusters    &  Expansion  & Acronym  &  Language \\
 \midrule
-cluster 1   &  Russian Academy of Sciences     &  RAS  & en  \\
-                    &  Russian of Academy of Sciences   &         &     \\
-\midrule
-cluster 2   &  russischen Akademie der Wissenschaften   &  RAW  & de \\
-                    &  Russischen Akademie für Wissenschaften  &          &    \\
-                    &  Russische Akademie der Wissenschaften    &         &    \\
+cluster 1   &  \itshape Russian Academy of Sciences     &  \itshape RAS  & en  \\
+            &  \itshape Russian of Academy of Sciences   &         &     \\
+\midrule       
+cluster 2   &  \itshape russischen Akademie der Wissenschaften   &  \itshape RAW  & de \\
+            &  \itshape Russischen Akademie für Wissenschaften  &          &    \\
+            &  \itshape Russische Akademie der Wissenschaften    &         &    \\
 \lspbottomrule
 \end{tabular}
 }
@@ -412,7 +412,7 @@ cluster 2   &  russischen Akademie der Wissenschaften   &  RAW  & de \\
 However, many entities have different written forms across languages
 so that a string-based comparison of tokens is not successful. We
 therefore complement the cluster aggregation by using token
-translation probabilities (hereafter \textit{TransTokAgg}).
+translation probabilities (hereafter \linebreak\mbox{\textit{TransTokAgg}}).
 
 They are produced using statistical translation models trained on
 \isi{parallel corpora} built from Wikipedia, by making use of redirection
@@ -583,7 +583,7 @@ There were about 300,000 training examples for \ili{German}--\ili{English} and
 \ili{French}--\ili{English}, and about 170,000 for \ili{Italian}--\ili{English}.  Word
 alignments with many-to-one links were generated using the
 unsupervised \texttt{fast\_align} tool \citep{dyer-13} in both directions
-and combined with the \texttt{grow-diag-final-and} symmetrization
+and combined with the \texttt{grow-diag-final-and} symmetrisation
 heuristic \citep{koehn-03}. Lexical translation tables for the three
 language pairs in both directions where extracted with a tool from the
 Moses translation toolkit \citep{koehn2007moses}. Tables contain maximum
@@ -597,7 +597,7 @@ tables.
 \subsubsection{Evaluation measures}
 
 Clusters are evaluated against the gold standard using micro-average
-Precision and Recall, adopting the mapping between identified clusters
+precision and recall, adopting the mapping between identified clusters
 and gold standard clusters which maximised the $F_1$
 measure. Micro-average precision (MAV-P) and recall (MAV-R) are
 defined as follows:
@@ -612,9 +612,9 @@ where $C$ is the set of produced clusters, $\EXP(c)_{\text{true}}$ is the set
 of expansions in a cluster $c$ which also appear in the corresponding
 class of the gold standard, and $\EXP(c)_{\text{false}}$ is the set of
 expansions in a cluster $c$ which do not appear in the gold
-standard\footnote{We tried two other metrics: macro-average and
+standard.\footnote{We tried two other metrics: macro-average and
   B-cubed measure \citep{bagga-98} but since results are comparable we
-  do not report them.}.
+  do not report them.}
 
 \subsubsection{Results and discussion}
 \label{jac:results}
@@ -764,11 +764,11 @@ monolingual ones for the 22 languages.
                     ylabel=\%,
                     xticklabels from table={\table}{NAME},
                     width=\textwidth,
+                    height=8cm,
                     xticklabel style={text width=2cm,align=center},
                     ticklabel style={font=\footnotesize},
                     cycle list name=langsciblues,
                     legend pos=south west,
-                    reverse legend,
                     legend style={font=\footnotesize},
                     legend cell align=left,
                     ]
@@ -793,7 +793,7 @@ The previous section describes an approach which is useful to recognise frequent
 \label{jac:sec:babelnet}
 
 For the sake of learning multi-word entity extraction patterns we have exploited BabelNet~\citep{navigli-12},
-a large multilingual encyclopedic dictionary and semantic network, created by merging various publicly available linguistic resources, e.g., WordNet and Wikipedia. In particular, BabelNet contains circa 7,7 millions of named entity-related (NE-related) synsets. We used the BabelNet API\footnote{\url{http://babelnet.org/guide}} to extract organisation names for \ili{English} and \ili{Spanish}, which were then used in the process of learning patterns in various ways. Since the NE-related BabelNet synsets are not tagged with a specific NE tag, the NE type was inferred through utilisation of the hypernym information provided in BabelNet (i.e., using WordNet hypernyms and Wikipedia categories). To be more precise, based on hypernym frequency information for the entire set of named entities a list of \textit{positive} (circa 200) and \textit{negative} (circa 20) hypernyms was manually created. These lists were subsequently used to extract organisation names, i.e., a given synset was extracted if: (a) there was at least one hypernym for the main sense of the synset in the list of positive hypernyms, and (b) no hypernym for the main sense of the synset was on the list of negative hypernyms. For instance, the list of positive hypernyms for extracting organisations includes terms like: \textit{airline}, \textit{enterprise}, \textit{corporation}, \textit{bank}, \textit{local\_government}, \textit{political\_organisation}, \textit{law\_enforcement\_agency}, whereas the list of negative hypernyms includes terms like \textit{person} and \textit{human}. The main drive behind the usage of negative hypernym list was to filter out potentially ambiguous named entity candidates. In total, we have extracted 647 898 and 127 264 organisation names for \ili{English} and \ili{Spanish} respectively. We exploited only names that consisted of at least two tokens for the multi-word organisation name pattern learning, which resulted in maintaining only 87.0\% (557 841) of the \ili{English} and 86.1\% (127 264) of the \ili{Spanish} organisation names extracted. Noteworthy, the resource for \ili{English} obtained in this manner includes a portion of organisation names in foreign languages, which is most likely due to the fact that some non-\ili{English} name variants have been tagged in BabelNet as variants in \ili{English}. Since the entire procedure for pulling out organisation names from BabelNet is automated such language-specific name variants have not been manually removed.
+a large multilingual encyclopedic dictionary and semantic network, created by merging various publicly available linguistic resources, e.g., WordNet and Wikipedia. In particular, BabelNet contains circa 7.7 millions of named entity-related (NE-related) synsets. We used the BabelNet API\footnote{\url{http://babelnet.org/guide}} to extract organisation names for \ili{English} and \ili{Spanish}, which were then used in the process of learning patterns in various ways. Since the NE-related BabelNet synsets are not tagged with a specific NE tag, the NE type was inferred through utilisation of the hypernym information provided in BabelNet (i.e., using WordNet hypernyms and Wikipedia categories). To be more precise, based on hypernym frequency information for the entire set of named entities a list of \textit{positive} (circa 200) and \textit{negative} (circa 20) hypernyms was manually created. These lists were subsequently used to extract organisation names, i.e., a given synset was extracted if: (a) there was at least one hypernym for the main sense of the synset in the list of positive hypernyms, and (b) no hypernym for the main sense of the synset was on the list of negative hypernyms. For instance, the list of positive hypernyms for extracting organisations includes terms like: \textit{airline}, \textit{enterprise}, \textit{corporation}, \textit{bank}, \textit{local\_government}, \textit{political\_organisation}, \textit{law\_enforcement\_agency}, whereas the list of negative hypernyms includes terms like \textit{person} and \textit{human}. The main drive behind the usage of negative hypernym list was to filter out potentially ambiguous named entity candidates. In total, we have extracted 647,898 and 127,264 organisation names for \ili{English} and \ili{Spanish} respectively. We exploited only names that consisted of at least two tokens for the multi-word organisation name pattern learning, which resulted in maintaining only 87.0\% (557,841) of the \ili{English} and 86.1\% (127,264) of the \ili{Spanish} organisation names extracted. Noteworthy, the resource for \ili{English} obtained in this manner includes a portion of organisation names in foreign languages, which is most likely due to the fact that some non-\ili{English} name variants have been tagged in BabelNet as variants in \ili{English}. Since the entire procedure for pulling out organisation names from BabelNet is automated such language-specific name variants have not been manually removed.
 
 \subsection{Learning multi-word entity patterns based solely on BabelNet resources}
 \label{jac:sec:babelnet-only-derived-patterns}
@@ -809,7 +809,7 @@ The first approach to learning multi-word organisation name extraction patterns 
 \z
 %\end{verbatim}
 
-\noindent \verb+[]+ denotes a whitespace (not necessarily required to be included in the pattern as illustrated by the last pattern), whereas other token classes are delimited using square brackets. There are 28 generic token classes, out of which 8 cover natural language words (e.g., \verb+[UPP_W]+ - uppercase word, \verb+[LOW_W]+ - lowercase word, \verb+[ALLCAP]+ - all capital words), letters (e.g., \verb+[SINGCAP]+ - single capital letter), numbers (e.g., \verb+[NUM]+) and combinations thereof (e.g., \verb+[NUM_LET]+ - sequence of digits followed by a sequence of letters, etc.), whereas the remaining 20 classes are used to denote specific symbols (e.g., brackets, commas, dots, colons, etc.). 
+\noindent \verb+[]+ denotes a whitespace (not necessarily required to be included in the pattern as illustrated by the last pattern), whereas other token classes are delimited using square brackets. There are 28 generic token classes, out of which 8 cover natural language words (e.g., \verb+[UPP_W]+ -- uppercase word, \verb+[LOW_W]+ -- lowercase word, \verb+[ALLCAP]+ -- all capital words), letters (e.g., \verb+[SINGCAP]+ -- single capital letter), numbers (e.g., \verb+[NUM]+) and combinations thereof (e.g., \verb+[NUM_LET]+ -- sequence of digits followed by a sequence of letters, etc.), whereas the remaining 20 classes are used to denote specific symbols (e.g., brackets, commas, dots, colons, etc.). 
 
 The pattern learning process consists of three main steps: (a) acquisition of candidate patterns, (b) filtering unreliable and ambiguous candidate patterns, and (c) ranking patterns. These are described in more detail below.
 
@@ -818,7 +818,7 @@ The pattern learning process consists of three main steps: (a) acquisition of ca
 \subsubsection{Acquisition of candidate patterns} First, each organisation name is transformed into a candidate pattern, i.e., each token which can be found in a set of predefined surface forms (consisting of keywords that trigger organisation names, e.g.,  \textit{University}, and frequently occurring word forms, e.g., prepositions) remains unchanged, whereas all other tokens are mapped into a corresponding generic token class. Each candidate pattern must contain at least one surface form and at least one token-class element,
 otherwise it is discarded.
 
-The set of predefined surface forms has been computed automatically and consists of word uni-grams that fulfill the following criteria: (a) it appears more than $\phi=20$ times as part of an organisation name, (b) it does not appear on a list of known toponyms\footnote{We used GeoNames resource at: \url{http://www.geonames.org} for this purpose.}, (c) it does not appear on the list of known first names and surnames\footnote{We used for this purpose {\sc JRC Name Variant Database} and huge list of first names extracted from~\cite{piskorski-11}}, and (d) it is not an adjective (unless it appears very frequently). For instance, for the subset of \ili{English} organisation names consisting solely of company names, the 10 top-most frequent word uni-grams that fulfill the aforementioned criteria are: \textit{Company}, \textit{and}, \textit{of}, \textit{The}, \textit{Group}, \textit{Corporation}, \textit{Bank}, \textit{de}, \textit{Limited} and \textit{Air}.  
+The set of predefined surface forms has been computed automatically and consists of word uni-grams that fulfill the following criteria: (a) it appears more than $\phi=20$ times as part of an organisation name, (b) it does not appear on a list of known toponyms,\footnote{We used GeoNames resource at: \url{http://www.geonames.org} for this purpose.} (c) it does not appear on the list of known first names and surnames,\footnote{We used for this purpose the {\itshape JRC Name Variant Database} and a huge list of first names extracted from \citet{piskorski-11}.} and (d) it is not an adjective (unless it appears very frequently). For instance, for the subset of \ili{English} organisation names consisting solely of company names, the 10 top-most frequent word uni-grams that fulfill the aforementioned criteria are: \textit{Company}, \textit{and}, \textit{of}, \textit{The}, \textit{Group}, \textit{Corporation}, \textit{Bank}, \textit{de}, \textit{Limited} and \textit{Air}.  
 
 %\vspace{0.3cm}
 %\noindent
@@ -873,17 +873,17 @@ The formal definition of the reliability score ($\Rel(p)$) for a pattern $p$ is 
 \end{eqnarray*}
 %\noindent
 A few examples of patterns with various reliability scores
-(provided in brackets) are given below.
+(provided in brackets) are given in \REF{ex:jacexamplesrelscores}.
 
-{\small
+\ea\label{ex:jacexamplesrelscores}\small
 \begin{verbatim}
-    Ministry [] of [] Foreign [] Affairs [] of [] [UPP_W]          (0.97)
-    Institute [] of [] [UPP_W] [] Studies                          (0.95)
-    [UPP_W] [] [UPP_W] [] [ALLCAP] [] at [] [UPP_W] [] University  (0.67)
-    St [DOT] [] [LOW_W] [] [LOW_W] [] [LOW_W] [] [LOW_W] [] school (0.24)
-    [UPP_W] [] [LOW_W] [] [LOW_W] [] [LOW_W] [] committee          (0.22)
+Ministry [] of [] Foreign [] Affairs [] of [] [UPP_W]          (0.97)
+Institute [] of [] [UPP_W] [] Studies                          (0.95)
+[UPP_W] [] [UPP_W] [] [ALLCAP] [] at [] [UPP_W] [] University  (0.67)
+St [DOT] [] [LOW_W] [] [LOW_W] [] [LOW_W] [] [LOW_W] [] school (0.24)
+[UPP_W] [] [LOW_W] [] [LOW_W] [] [LOW_W] [] committee          (0.22)
 \end{verbatim}
-}
+\z
 
 Figure~\ref{jac:pattern-distr} depicts the distribution of patterns with
 respect to their reliability scores.
@@ -894,153 +894,14 @@ respect to their reliability scores.
 \end{figure}
 
 \subsection{Evaluation}
-In order to evaluate the quality of the learned patterns we used two NE annotated corpora from the CoNLL shared task for \ili{English} and \ili{Spanish}\footnote{\url{http://www.cnts.ua.ac.be/conll2002/ner/} and \url{http://www.cnts.ua.ac.be/conll2003/ner/}\todo[inline]{Dead links}}, which contains respectively 6,300 and 7,389 organisation occurrences, and tested the performance using different settings. In particular, we compared three settings: (a) using only BabelNet-derived patterns (denoted in the figures with \textsc{patterns}),  (b) using only an existing rule-based \textsc{ner} system as a baseline (denoted \textsc{rules}), (c) combining rule-based \textsc{ner} system and BabelNet-derived patterns (denoted in the figures with \textsc{rules+patterns}).
-In our experiments, we used an in-house rule based \textsc{ner} system \citep{steinberger-11, ehrmann-15} that is geared towards high precision. The choice of a specific \textsc{ner} system is not decisive for these experiments, but by combining an existing \textsc{ner} system with our BabelNet-derived patterns, we aim at testing how our automatically created patterns could be useful to improve the quality of the \textsc{ner} recognition.
+In order to evaluate the quality of the learned patterns we used two NE annotated corpora from the CoNLL shared task for \ili{English} and \ili{Spanish}\footnote{\url{http://www.cnts.ua.ac.be/conll2002/ner/} and \url{http://www.cnts.ua.ac.be/conll2003/ner/}}\todo{Dead links in Fn 7}, which contains respectively 6,300 and 7,389 organisation occurrences, and tested the performance using different settings. In particular, we compared three settings: (a) using only BabelNet-derived patterns (denoted in the figures with \textsc{patterns}),  (b) using only an existing rule-based NER system as a baseline (denoted \textsc{rules}), (c) combining rule-based NER system and BabelNet-derived patterns (denoted in the figures with \textsc{rules+patterns}).
+In our experiments, we used an in-house rule based NER system \citep{steinberger-11, ehrmann-15} that is geared towards high precision. The choice of a specific NER system is not decisive for these experiments, but by combining an existing NER system with our BabelNet-derived patterns, we aim at testing how our automatically created patterns could be useful to improve the quality of the NER recognition.
 
 Figures~\ref{jac:fig:eval_patterns_english_precision},~\ref{jac:fig:eval_patterns_english_recall},~\ref{jac:fig:eval_patterns_spanish_precision}
 and~\ref{jac:fig:eval_patterns_spanish_recall} depict the performance of applying the BabelNet-derived patterns for \ili{English} and \ili{Spanish} 
 in terms of precision and recall. The precision and recall values were computed for the varying minimum pattern reliability threshold in the range of $\{0.10,0.15,\ldots{},0.95\}$, i.e., patterns below the minimum reliability threshold were discarded.
 The figures are showing the results obtained for exact matching (denoted with \textsc{exact}-\textsc{patterns} or \textsc{exact}-\textsc{rules+patterns}) and for fuzzy matching, e.g., when there is a matching but with a left or right boundary mismatch (denoted with \textsc{fuzzy}-\textsc{patterns} or \textsc{fuzzy}-\textsc{rules+patterns}).
 We did not visualise the results corresponding to the \textsc{rule} setting in the figures because they do not depend on the reliability threshold. However, the obtained scores for this setting are embraced in Table~\ref{jac:tab:EvalPatterns}.
-
-\begin{figure}
-% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_English_precision.jpg}
-\begin{tikzpicture}[trim axis right,trim axis left]
-    \pgfplotstableread[col sep=tab]{data/jacquet4.csv}{\table}
-    \pgfplotstablegetcolsof{\table}
-    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
-        \begin{axis}[
-                    sharp plot,
-                    xtick=data,
-                    axis lines*=left,
-%                     ylabel=\%,
-                    xticklabels from table={\table}{NAME},
-                    width=\textwidth,
-                    height=.4\textheight,
-                    ticklabel style={font=\footnotesize},
-                    cycle list name=langscicolorcycle,
-                    legend pos=north west,
-                    reverse legend,
-                    legend style={at={(0.5,-0.1)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
-                    legend cell align=left,
-                    ]
-            \foreach \i in {1,...,\numberofcols} {
-                \addplot+[
-                    /pgf/number format/read comma as period, thick
-                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
-                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
-                \addlegendentryexpanded{\colname}
-            }   
-            \end{axis}    
-\end{tikzpicture}
-\caption{Experiments on English: Precision curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
-\label{jac:fig:eval_patterns_english_precision}
-\end{figure}
-
-\begin{figure}
-% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_English_recall.jpg}
-\begin{tikzpicture}[trim axis right,trim axis left]
-    \pgfplotstableread[col sep=tab]{data/jacquet5.csv}{\table}
-    \pgfplotstablegetcolsof{\table}
-    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
-        \begin{axis}[
-                    sharp plot,
-                    xtick=data,
-                    axis lines*=left,
-%                     ylabel=\%,
-                    xticklabels from table={\table}{NAME},
-                    width=\textwidth,
-                    height=.4\textheight,                    
-                    ticklabel style={font=\footnotesize},
-                    cycle list name=langscicolorcycle,
-                    legend pos=north west,
-                    reverse legend,
-                    legend style={at={(0.5,-0.1)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
-                    legend cell align=left,
-                    ]
-            \foreach \i in {1,...,\numberofcols} {
-                \addplot+[
-                    /pgf/number format/read comma as period, thick
-                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
-                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
-                \addlegendentryexpanded{\colname}
-            }   
-            \end{axis}    
-\end{tikzpicture}
-\caption{Experiments on English: Recall curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
-\label{jac:fig:eval_patterns_english_recall}
-\end{figure}
-
-\begin{figure}
-% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_precision.jpg}
-\begin{tikzpicture}[trim axis right,trim axis left]
-    \pgfplotstableread[col sep=tab]{data/jacquet6.csv}{\table}
-    \pgfplotstablegetcolsof{\table}
-    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
-        \begin{axis}[
-                    sharp plot,
-                    xtick=data,
-                    axis lines*=left,
-%                     ylabel=\%,
-                    xticklabels from table={\table}{NAME},
-                    width=\textwidth,
-                    height=.4\textheight,                    
-                    ticklabel style={font=\footnotesize},
-                    cycle list name=langscicolorcycle,
-                    legend pos=north west,
-                    reverse legend,
-                    legend style={at={(0.5,-0.1)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
-                    legend cell align=left,
-                    ]
-            \foreach \i in {1,...,\numberofcols} {
-                \addplot+[
-                    /pgf/number format/read comma as period, thick
-                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
-                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
-                \addlegendentryexpanded{\colname}
-            }   
-            \end{axis}    
-\end{tikzpicture}
-\caption{Experiments on Spanish: Precision curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
-\label{jac:fig:eval_patterns_spanish_precision}
-\end{figure}
-
-\begin{figure}
-% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_recall.jpg}
-\begin{tikzpicture}[trim axis right,trim axis left]
-    \pgfplotstableread[col sep=tab]{data/jacquet7.csv}{\table}
-    \pgfplotstablegetcolsof{\table}
-    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
-        \begin{axis}[
-                    sharp plot,
-                    xtick=data,
-                    axis lines*=left,
-%                     ylabel=\%,
-                    xticklabels from table={\table}{NAME},
-                    width=\textwidth,
-                    height=.4\textheight,
-                    ticklabel style={font=\footnotesize},
-                    cycle list name=langscicolorcycle,
-                    legend pos=north west,
-                    reverse legend,
-                    legend style={at={(0.5,-0.1)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
-                    legend cell align=left,
-                    ]
-            \foreach \i in {1,...,\numberofcols} {
-                \addplot+[
-                    /pgf/number format/read comma as period, thick
-                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
-                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
-                \addlegendentryexpanded{\colname}
-            }   
-            \end{axis}    
-\end{tikzpicture}
-\caption{Experiments on Spanish: Recall curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based \textsc{ner} system}
-\label{jac:fig:eval_patterns_spanish_recall}
-\end{figure}
-        
-Table~\ref{jac:tab:EvalPatterns} provides the results obtained with a pattern-reliability threshold equal to 0.60, which corresponds to the best results obtained in both languages. For the \textsc{exact} evaluation, an improvement in terms of F1 of 6.5 points for \ili{Spanish} could be observed with the setting \textsc{rules+patterns} versus the baseline \textsc{rules}. As regards \textsc{fuzzy} evaluation, one could observe an improvement of F1 of 7.6 and 1.1 points for \ili{Spanish} and \ili{English} respectively when comparing \textsc{rules+patterns} versus the baseline \textsc{rules} setting.
-
 
 \begin{table}[h]
 \begin{tabular}{l ccc ccc}\lsptoprule
@@ -1062,11 +923,154 @@ Table~\ref{jac:tab:EvalPatterns} provides the results obtained with a pattern-re
 \label{jac:tab:EvalPatterns}
 \end{table}
 
+Table~\ref{jac:tab:EvalPatterns} provides the results obtained with a pattern-reliability threshold equal to 0.60, which corresponds to the best results obtained in both languages. For the \textsc{exact} evaluation, an improvement in terms of F1 of 6.5 points for \ili{Spanish} could be observed with the setting \textsc{rules+patterns} versus the baseline \textsc{rules}. As regards \textsc{fuzzy} evaluation, one could observe an improvement of F1 of 7.6 and 1.1 points for \ili{Spanish} and \ili{English} respectively when comparing \textsc{rules+patterns} versus the baseline \textsc{rules} setting.
+
+\begin{figure}[p]
+% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_English_precision.jpg}
+\begin{tikzpicture}[trim axis right,trim axis left]
+    \pgfplotstableread[col sep=tab]{data/jacquet4.csv}{\table}
+    \pgfplotstablegetcolsof{\table}
+    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
+        \begin{axis}[
+                    sharp plot,
+                    xtick=data,
+                    axis lines*=left,
+                    ylabel=Precision,
+                    xlabel={Reliability score},
+                    xticklabels from table={\table}{NAME},
+                    width=\textwidth,
+                    height=.4\textheight,
+                    ticklabel style={font=\footnotesize},
+                    cycle list name=langscicolorcycle,
+                    legend pos=north west,
+                    reverse legend,
+                    legend style={at={(0.5,-0.2)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
+                    legend cell align=left,
+                    ]
+            \foreach \i in {1,...,\numberofcols} {
+                \addplot+[
+                    /pgf/number format/read comma as period, thick
+                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
+                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
+                \addlegendentryexpanded{\colname}
+            }   
+            \end{axis}    
+\end{tikzpicture}
+\caption{Experiments on English: Precision curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based NER system}
+\label{jac:fig:eval_patterns_english_precision}
+\end{figure}
+
+\begin{figure}[p]
+% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_English_recall.jpg}
+\begin{tikzpicture}[trim axis right,trim axis left]
+    \pgfplotstableread[col sep=tab]{data/jacquet5.csv}{\table}
+    \pgfplotstablegetcolsof{\table}
+    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
+        \begin{axis}[
+                    sharp plot,
+                    xtick=data,
+                    axis lines*=left,
+                    ylabel=Recall,
+                    xlabel={Reliability score},
+                    xticklabels from table={\table}{NAME},
+                    width=\textwidth,
+                    height=.4\textheight,                    
+                    ticklabel style={font=\footnotesize},
+                    cycle list name=langscicolorcycle,
+                    legend pos=north west,
+                    reverse legend,
+                    legend style={at={(0.5,-0.2)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
+                    legend cell align=left,
+                    ]
+            \foreach \i in {1,...,\numberofcols} {
+                \addplot+[
+                    /pgf/number format/read comma as period, thick
+                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
+                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
+                \addlegendentryexpanded{\colname}
+            }   
+            \end{axis}    
+\end{tikzpicture}
+\caption{Experiments on English: Recall curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based NER system}
+\label{jac:fig:eval_patterns_english_recall}
+\end{figure}
+
+\begin{figure}[p]
+% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_precision.jpg}
+\begin{tikzpicture}[trim axis right,trim axis left]
+    \pgfplotstableread[col sep=tab]{data/jacquet6.csv}{\table}
+    \pgfplotstablegetcolsof{\table}
+    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
+        \begin{axis}[
+                    sharp plot,
+                    xtick=data,
+                    axis lines*=left,
+                    ylabel=Precision,
+                    xlabel={Reliability score},
+                    xticklabels from table={\table}{NAME},
+                    width=\textwidth,
+                    height=.4\textheight,                    
+                    ticklabel style={font=\footnotesize},
+                    cycle list name=langscicolorcycle,
+                    legend pos=north west,
+                    reverse legend,
+                    legend style={at={(0.5,-0.2)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
+                    legend cell align=left,
+                    ]
+            \foreach \i in {1,...,\numberofcols} {
+                \addplot+[
+                    /pgf/number format/read comma as period, thick
+                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
+                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
+                \addlegendentryexpanded{\colname}
+            }   
+            \end{axis}    
+\end{tikzpicture}
+\caption{Experiments on Spanish: Precision curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based NER system}
+\label{jac:fig:eval_patterns_spanish_precision}
+\end{figure}
+
+\begin{figure}[p]
+% % \includegraphics[width=.95\textwidth]{figures/eval_patterns_Spanish_recall.jpg}
+\begin{tikzpicture}[trim axis right,trim axis left]
+    \pgfplotstableread[col sep=tab]{data/jacquet7.csv}{\table}
+    \pgfplotstablegetcolsof{\table}
+    \pgfmathtruncatemacro\numberofcols{\pgfplotsretval-1}
+        \begin{axis}[
+                    sharp plot,
+                    xtick=data,
+                    axis lines*=left,
+                    ylabel=Recall,
+                    xlabel={Reliability score},
+                    xticklabels from table={\table}{NAME},
+                    width=\textwidth,
+                    height=.4\textheight,
+                    ticklabel style={font=\footnotesize},
+                    cycle list name=langscicolorcycle,
+                    legend pos=north west,
+                    reverse legend,
+                    legend style={at={(0.5,-0.2)},anchor=north,font=\scriptsize\scshape,legend columns=-1},
+                    legend cell align=left,
+                    ]
+            \foreach \i in {1,...,\numberofcols} {
+                \addplot+[
+                    /pgf/number format/read comma as period, thick
+                    ] table [x index={1},y index={\i},x expr=\coordindex] {\table};
+                \pgfplotstablegetcolumnnamebyindex{\i}\of{\table}\to{\colname} % Adding column headers to legend
+                \addlegendentryexpanded{\colname}
+            }   
+            \end{axis}    
+\end{tikzpicture}
+\caption{Experiments on Spanish: Recall curves reflecting the performance of applying BabelNet-derived patterns and combining them with a rule-based NER system}
+\label{jac:fig:eval_patterns_spanish_recall}
+\end{figure}
+\clearpage
+
 
 \subsubsection{Mistakes and fuzzy matchings}
 \todo[inline]{This subsubsection is the only subsection to ``Evaluation''}
 Using existing NE annotated corpora for our preliminary experiments was the most obvious choice to measure the quality of our patterns. Nevertheless, it appears that some MWEntities recognised by the BabelNet-derived patterns considered as incorrectly extracted according to the annotated corpora, could still be considered as correct extractions.
-Figure~\ref{jac:fig:error_analysis} provides the complete list of ``wrong'' MWEntities (first column) recognised by our patterns when pattern reliability threshold equals 0.90. Even if some cases are clear mistakes, like \textit{Results of European Super} or \textit{Bank on Thursday}, large fraction of the extractions could be considered as valid organisation names. The two other columns show the partial matches with the same reliability threshold, which are considered as incorrect in the \emph{Exact matching} evaluation, and correct in the \emph{Fuzzy matching} evaluation. Again, if some of them are clear mismatches, like \textit{European Commission on Wednesday} or \textit{NATO and the European Union}, most of the extractions appear to be consistent entities.
+Figure~\ref{jac:fig:error_analysis} provides the complete list of ``wrong'' MWEntities (first column) recognised by our patterns when pattern reliability threshold equals 0.90. Even if some cases are clear mistakes, like \textit{Results of European Super} or \textit{Bank on Thursday}, a large fraction of the extractions could be considered as valid organisation names. The two other columns show the partial matches with the same reliability threshold, which are considered as incorrect in the \emph{Exact matching} evaluation, and correct in the \emph{Fuzzy matching} evaluation. Again, if some of them are clear mismatches, like \textit{European Commission on Wednesday} or \textit{NATO and the European Union}, most of the extractions appear to be consistent entities.
 
 We expect to achieve higher precision of the learned patterns through
 embracing in the computation of the reliability score additional
@@ -1081,7 +1085,7 @@ from pattern matchings in a web-scale corpus to judge the correctness.
 
 
 \section{Conclusion and future work}
-The methods described in this chapter have produced a large 22-language resource containing Multi-word entities of different types and a number of automatically learned patterns to recognise newly occurring MWEntities. We intend to integrate these recognition patterns, together with the variant matching techniques, into the workflow of the \textit{Europe Media Monitor}. An interesting feature of this collection and the patterns is that all MWEntity forms were found in real-world text and that large numbers of variants were identified, including typos, simplifications of longer names, syntactic and morphological variants and translational equivalences.
+The methods described in this chapter have produced a large 22-language resource containing multi-word entities of different types and a number of automatically learned patterns to recognise newly occurring MWEntities. We intend to integrate these recognition patterns, together with the variant matching techniques, into the workflow of the \textit{Europe Media Monitor}. An interesting feature of this collection and the patterns is that all MWEntity forms were found in real-world text and that large numbers of variants were identified, including typos, simplifications of longer names, syntactic and morphological variants and translational equivalences.
 
 The results obtained in MWEntity recognition with the patterns automatically derived from BabelNet are promising when applied to \ili{English} and \ili{Spanish}, although the reported approach and evaluation figures reflect only our preliminary research in this area. Expanding the pattern learning to other languages is part of our future work. We also envisage applying the same pattern learning approach from the automatically created MWEntity resource. This would require to categorise the MWEntity sets into some broad semantic classes (e.g., organisations, events, measurements, and others) which is a task we are currently working on.
 
