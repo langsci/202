@@ -27,6 +27,20 @@
 \makeatother
 \usepgfplotslibrary{colorbrewer,groupplots}
 
+\pgfplotscreateplotcyclelist{langsciblues}{%
+{color=lsLightBlue},
+{color=lsMidBlue},
+{color=lsMidDarkBlue},
+{color=lsDarkBlue},
+{color=lsNightBlue}}
+
+
+\pgfplotscreateplotcyclelist{langscicolorcycle}{% from ./langsci/seriesinfo/langsci-colors.def
+{color=langscicol1},
+{color=langscicol7},
+{color=langscicol11},
+{color=langscicol19}}
+
 \usepackage{siunitx}
 \sisetup{output-decimal-marker={.},detect-weight=true, detect-family=true, detect-all, input-symbols={\%}, uncertainty-separator={\,},group-digits=false,detect-inline-weight=math}
 \DeclareSIUnit[number-unit-product={}]{\percent}{\%}
