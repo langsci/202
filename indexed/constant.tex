@@ -1,0 +1,933 @@
+\documentclass[output=paper]{LSP/langsci} 
+
+\title{Statistical MWE-aware parsing} 
+
+\author{\texorpdfstring{
+Mathieu Constant\affiliation{ATILF UMR 7118, Universit\'e de Lorraine/CNRS}\and 
+Gülşen Eryiğit\affiliation{Istanbul Technical University}\and 
+Carlos Ramisch\affiliation{Aix-Marseille Universit\'e}\and
+Mike Rosner\affiliation{University of Malta}\lastand
+Gerold Schneider\affiliation{University of Konstanz and University of Zurich}}{Mathieu Constant, Gülşen Eryiğit, Carlos Ramisch, Mike Rosner, Gerold Schneider}
+}
+
+\lehead{M. Constant, G. Eryi{\v{g}}it, C. Ramisch, M. Rosner \& G. Schneider}
+%\shorttitlerunninghead{}
+
+% \chapterDOI{} %will be filled in at production
+% \epigram{}
+
+
+\abstract{
+This chapter aims at presenting different strategies that have been designed to incorporate multiword expression (MWE) identification in the process of syntactic parsing using statistical approaches. We discuss MWE representation in treebanks, pipeline and joint orchestrations, the integration of external lexicons and the evaluation of MWE-aware parsers, concluding with our suggestions for future research.% Volume: 10-15 pages
+}
+
+\begin{document}\ili{}
+\ili{}\maketitle\ili{}
+\ili{}
+\ili{}%\ili{}\input\ili{}{constantetal\ili{}/01\ili{}-intro}\ili{}
+\ili{}\section\ili{}{Introduction}\ili{}
+\ili{}
+Supervised\ili{} \ili{}\main\ili{}{statistical\ili{} parsing}\ili{} is\ili{} nowadays\ili{} an\ili{} important\ili{} and\ili{} challenging\ili{} field\ili{} of\ili{} \ili{}\main\ili{}{natural\ili{} language\ili{} processing\ili{} \ili{}(NLP\ili{})}\ili{}.\ili{} \ili{}
+It\ili{} consists\ili{} in\ili{} predicting\ili{} the\ili{} most\ili{} probable\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} of\ili{} a\ili{} new\ili{} sentence\ili{},\ili{} given\ili{} a\ili{} statistical\ili{} model\ili{} that\ili{} has\ili{} been\ili{} trained\ili{} on\ili{} a\ili{} \ili{}\main\ili{}{treebank}\ili{},\ili{} that\ili{} is\ili{},\ili{} a\ili{} syntactically\ili{} annotated\ili{} corpus\ili{}.\ili{}
+Since\ili{} the\ili{} seminal\ili{} works\ili{} of\ili{} \ili{}\citet\ili{}{Nivre04b}\ili{} for\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} and\ili{} \ili{}\citet\ili{}{arun05}\ili{} for\ili{} constituency\ili{} parsing\ili{},\ili{} a\ili{} new\ili{} research\ili{} line\ili{} has\ili{} emerged\ili{}:\ili{} incorporating\ili{} the\ili{} analysis\ili{} of\ili{} \ili{}\main\ili{}{multiword\ili{} expressions\ili{} \ili{}(MWEs\ili{})}\ili{} in\ili{} such\ili{} parsers\ili{}.\ili{}
+The\ili{} main\ili{} objective\ili{} of\ili{} this\ili{} chapter\ili{} is\ili{} to\ili{} present\ili{} different\ili{} approaches\ili{} that\ili{} have\ili{} been\ili{} developed\ili{} and\ili{} evaluated\ili{} for\ili{} statistical\ili{} MWE\ili{}-aware\ili{} parsing\ili{} systems\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+The\ili{} design\ili{} of\ili{} MWE\ili{}-aware\ili{} parsers\ili{} must\ili{} address\ili{} the\ili{} following\ili{} questions\ili{}:\ili{}
+How\ili{} are\ili{} MWEs\ili{} represented\ili{} in\ili{} combination\ili{} with\ili{} syntactic\ili{} trees\ili{}?\ili{} \ili{}
+When\ili{} is\ili{} MWE\ili{} identification\ili{} performed\ili{} with\ili{} respect\ili{} to\ili{} parsing\ili{}?\ili{} \ili{}
+What\ili{} algorithms\ili{} and\ili{} machine\ili{} learning\ili{} techniques\ili{} are\ili{} to\ili{} be\ili{} used\ili{} for\ili{} the\ili{} two\ili{} tasks\ili{}?\ili{} \ili{}
+How\ili{} can\ili{} external\ili{} lexical\ili{} resources\ili{} be\ili{} integrated\ili{} to\ili{} improve\ili{} MWE\ili{} coverage\ili{}?\ili{} \ili{}
+How\ili{} are\ili{} systems\ili{} evaluated\ili{}?\ili{}
+\ili{}
+\ili{}
+Answering\ili{} the\ili{} question\ili{} about\ili{} MWE\ili{} \ili{}\main\ili{}{representation}\ili{} is\ili{} fundamental\ili{} as\ili{} it\ili{} enables\ili{} the\ili{} definition\ili{} of\ili{} a\ili{} system\ili{}'s\ili{} output\ili{}.\ili{} Hence\ili{},\ili{} it\ili{} influences\ili{} the\ili{} design\ili{} of\ili{} datasets\ili{} used\ili{} for\ili{} training\ili{} and\ili{} test\ili{},\ili{} including\ili{} \ili{}\isi\ili{}{treebanks}\ili{},\ili{} as\ili{} shown\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:representation}\ili{}.\ili{}
+\ili{}
+\ili{}%\ili{} \ili{}\item\ili{} \ili{}
+The\ili{} \ili{}\main\ili{}{orchestration}\ili{} issue\ili{} is\ili{} also\ili{} crucial\ili{} in\ili{} order\ili{} to\ili{} position\ili{} MWE\ili{} identification\ili{} with\ili{} respect\ili{} to\ili{} parsing\ili{}:\ili{} should\ili{} it\ili{} be\ili{} performed\ili{} before\ili{},\ili{} during\ili{} or\ili{} after\ili{} it\ili{}?\ili{} The\ili{} answer\ili{} is\ili{} not\ili{} straightforward\ili{} as\ili{} it\ili{} might\ili{} depend\ili{} on\ili{} the\ili{} type\ili{} of\ili{} MWE\ili{} \ili{}\citep\ili{}{Eryigit\ili{}:2011\ili{}:MES\ili{}:2206359\ili{}.2206365}\ili{}.\ili{} Orchestration\ili{} also\ili{} implies\ili{} determining\ili{} how\ili{} the\ili{} two\ili{} components\ili{} interact\ili{}.\ili{} \ili{}
+For\ili{} instance\ili{},\ili{} in\ili{} pipeline\ili{} strategies\ili{} \ili{}(before\ili{} or\ili{} after\ili{})\ili{} discussed\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:pipeline}\ili{},\ili{} should\ili{} the\ili{} intermediate\ili{} input\ili{}/output\ili{} be\ili{} computed\ili{} using\ili{} MWE\ili{} concatenation\ili{} strategies\ili{} or\ili{} MWE\ili{} substitution\ili{} ones\ili{}?\ili{} \ili{}
+Joint\ili{} strategies\ili{} \ili{}(during\ili{})\ili{} \ili{} discussed\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:joint}\ili{} alongside\ili{} n\ili{}-best\ili{} strategies\ili{},\ili{} might\ili{} involve\ili{} different\ili{} methods\ili{} like\ili{} adapting\ili{} a\ili{} grammatical\ili{} formalism\ili{} for\ili{} constituent\ili{} parsing\ili{} \ili{}\citep\ili{}{Green13}\ili{} or\ili{} concatenating\ili{} arc\ili{} labels\ili{} in\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} \ili{}\citep\ili{}{Vincze13}\ili{}.\ili{}
+\ili{}%\ili{} \ili{}\item\ili{} \ili{}
+\ili{}
+Concerning\ili{} \ili{}\main\ili{}{algorithms}\ili{} and\ili{} machine\ili{} learning\ili{},\ili{} most\ili{} techniques\ili{} use\ili{} worka\ili{}\\ili{}-round\ili{} approaches\ili{} by\ili{} adapting\ili{} the\ili{} MWE\ili{}-aware\ili{} representation\ili{} to\ili{} existing\ili{} representations\ili{} directly\ili{} exploitable\ili{} by\ili{} off\ili{}-the\ili{}-shelf\ili{} tools\ili{} \ili{}\citep\ili{}{nasrEtAl15}\ili{}.\ili{} Nonetheless\ili{},\ili{} new\ili{} parsing\ili{} algorithms\ili{} have\ili{} been\ili{} recently\ili{} proposed\ili{} that\ili{} include\ili{} specific\ili{} handling\ili{} of\ili{} MWEs\ili{},\ili{} notably\ili{} when\ili{} using\ili{} joint\ili{} strategies\ili{} \ili{}\citep\ili{}{Nivre\ili{}:2014}\ili{}.\ili{} \ili{}
+\ili{}%\ili{} \ili{}\item\ili{} \ili{}
+\ili{}
+The\ili{} integration\ili{} of\ili{} \ili{}\main\ili{}{exogenous\ili{} lexical\ili{} knowledge}\ili{} in\ili{} the\ili{} system\ili{},\ili{} discussed\ili{} in\ili{} \ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:resources}\ili{},\ili{} is\ili{} non\ili{}-trivial\ili{} but\ili{} potentially\ili{} helpful\ili{}.\ili{} Indeed\ili{},\ili{} supervised\ili{} systems\ili{} are\ili{} trained\ili{} on\ili{} datasets\ili{} of\ili{} limited\ili{} size\ili{}.\ili{} Therefore\ili{},\ili{} one\ili{} drawback\ili{} of\ili{} such\ili{} systems\ili{} is\ili{} the\ili{} limited\ili{} coverage\ili{} in\ili{} terms\ili{} of\ili{} MWEs\ili{}.\ili{} One\ili{} possible\ili{} solution\ili{} consists\ili{} in\ili{} integrating\ili{} knowledge\ili{} coming\ili{} from\ili{} large\ili{}-scale\ili{} MWE\ili{} lexicons\ili{},\ili{} either\ili{} manually\ili{} built\ili{} and\ili{}/or\ili{} validated\ili{} \ili{}\citep\ili{}{candito2014strategies}\ili{} or\ili{} automatically\ili{} acquired\ili{} \ili{}\citep\ili{}{schneider\ili{}:2012}\ili{}.\ili{}
+\ili{}
+\ili{}%\ili{} \ili{}\item\ili{} \ili{}
+The\ili{} last\ili{} issue\ili{} concerns\ili{} \ili{}\main\ili{}{evaluation}\ili{}:\ili{} what\ili{} is\ili{} the\ili{} impact\ili{} of\ili{} MWE\ili{} identification\ili{} on\ili{} \ili{}\isi\ili{}{syntactic\ili{} parsing}\ili{} and\ili{} vice\ili{}-versa\ili{}?\ili{} What\ili{} types\ili{} of\ili{} measure\ili{} are\ili{} adequate\ili{} to\ili{} quantify\ili{} this\ili{} impact\ili{}?\ili{} We\ili{} try\ili{} to\ili{} answer\ili{} these\ili{} questions\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:evaluation}\ili{}.\ili{}
+\ili{}%\ili{} \ili{}\end\ili{}{enumerate}\ili{}
+\ili{}
+\ili{}
+The\ili{} outline\ili{} of\ili{} this\ili{} chapter\ili{} is\ili{} as\ili{} follows\ili{}.\ili{} First\ili{},\ili{} we\ili{} briefly\ili{} explain\ili{} some\ili{} basic\ili{} concepts\ili{} and\ili{} terms\ili{} in\ili{} \ili{}\isi\ili{}{statistical\ili{} parsing}\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:parsing}\ili{}.\ili{} Then\ili{},\ili{} each\ili{} section\ili{} addresses\ili{} the\ili{} questions\ili{} above\ili{}.\ili{} We\ili{} conclude\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:conclusions}\ili{} by\ili{} providing\ili{} a\ili{} summary\ili{} of\ili{} the\ili{} current\ili{} research\ili{} in\ili{} statistical\ili{} MWE\ili{}-aware\ili{} parsing\ili{} and\ili{} presenting\ili{} pointers\ili{} that\ili{},\ili{} in\ili{} our\ili{} opinion\ili{},\ili{} may\ili{} lead\ili{} to\ili{} significant\ili{} advances\ili{} in\ili{} the\ili{} field\ili{} in\ili{} the\ili{} future\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{}\input\ili{}{constantetal\ili{}/02\ili{}-statisticalparsing}\ili{}
+\ili{}\section\ili{}{Statistical\ili{} parsing}\ili{}
+\ili{}\label\ili{}{sec\ili{}:parsing}\ili{}
+\ili{}
+Parsing\ili{},\ili{} also\ili{} referred\ili{} as\ili{} syntactic\ili{} analysis\ili{},\ili{} is\ili{} the\ili{} process\ili{} of\ili{} assigning\ili{} a\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} to\ili{} a\ili{} given\ili{} input\ili{} sentence\ili{}.\ili{}
+The\ili{} analysis\ili{} is\ili{} aimed\ili{} at\ili{} producing\ili{} a\ili{} valid\ili{} syntactic\ili{} tree\ili{} conforming\ili{} to\ili{} a\ili{} hand\ili{}-written\ili{} or\ili{} automatically\ili{} induced\ili{} language\ili{} grammar\ili{}.\ili{}
+With\ili{} the\ili{} emergence\ili{} of\ili{} manually\ili{} annotated\ili{} datasets\ili{} \ili{}(i\ili{}.e\ili{}.\ili{} \ili{}\isi\ili{}{treebanks}\ili{})\ili{} and\ili{} machine\ili{} learning\ili{} techniques\ili{},\ili{}
+\ili{}\isi\ili{}{statistical\ili{} parsing}\ili{} \ili{}\citep\ili{}{collins1996new\ili{},charniak2000maximum}\ili{} has\ili{} become\ili{} the\ili{} dominant\ili{} approach\ili{} in\ili{} the\ili{} parsing\ili{} literature\ili{}.\ili{} \ili{}
+\ili{}
+Statistical\ili{} parsing\ili{} aims\ili{} at\ili{} selecting\ili{} the\ili{} most\ili{} probable\ili{} parse\ili{} tree\ili{} from\ili{} the\ili{} set\ili{} of\ili{} all\ili{} possible\ili{} parse\ili{} trees\ili{} for\ili{} a\ili{} given\ili{} sentence\ili{}.\ili{} \ili{}
+These\ili{} data\ili{}-driven\ili{} parsing\ili{} models\ili{} may\ili{} be\ili{} basically\ili{} grouped\ili{} under\ili{} generative\ili{} or\ili{} discriminative\ili{} approaches\ili{}.\ili{}
+\ili{}\main\ili{}{Generative}\ili{} parsing\ili{} models\ili{} generally\ili{} rely\ili{} on\ili{} a\ili{} grammatical\ili{} formalism\ili{} whereas\ili{} \ili{}\main\ili{}{discriminative}\ili{} ones\ili{} are\ili{} usually\ili{} performed\ili{} without\ili{} any\ili{} underlying\ili{} grammar\ili{}.\ili{}
+There\ili{} exist\ili{} also\ili{} joint\ili{} approaches\ili{} where\ili{} a\ili{} discriminative\ili{} model\ili{} is\ili{} used\ili{} to\ili{} rerank\ili{} the\ili{} top\ili{} n\ili{} candidates\ili{} of\ili{} a\ili{} generative\ili{} parser\ili{}.\ili{}
+\ili{}
+Constituency\ili{} and\ili{} dependency\ili{} formalisms\ili{} are\ili{} the\ili{} most\ili{} two\ili{} common\ili{} parsing\ili{} formalisms\ili{} used\ili{} in\ili{} \ili{}\isi\ili{}{statistical\ili{} parsing}\ili{}.\ili{}
+Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:wws}\ili{} and\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:flat}\ili{} each\ili{} provide\ili{} constituency\ili{} and\ili{} dependency\ili{} parse\ili{} tree\ili{} samples\ili{}
+for\ili{} the\ili{} sentence\ili{} \ili{}\expl\ili{}{The\ili{} prime\ili{} minister\ili{} made\ili{} a\ili{} few\ili{} good\ili{} decisions\ili{}.}\ili{} \ili{}
+\ili{}
+In\ili{} the\ili{} \ili{}\main\ili{}{constituency\ili{} formalism}\ili{},\ili{} a\ili{} sentence\ili{} is\ili{} regarded\ili{} as\ili{} being\ili{} composed\ili{} of\ili{} phrases\ili{} and\ili{} parsing\ili{} is\ili{} the\ili{} task\ili{} of\ili{} determining\ili{} the\ili{} underlying\ili{} \ili{}\emph\ili{}{\ili{}\isi\ili{}{phrase}\ili{} structure}\ili{}.\ili{}
+For\ili{} example\ili{},\ili{} a\ili{} statistical\ili{} generative\ili{} constituency\ili{} parser\ili{} aims\ili{} to\ili{} assign\ili{} probabilities\ili{} to\ili{} a\ili{} parse\ili{} tree\ili{} by\ili{} combining\ili{} the\ili{} probabilities\ili{} of\ili{} each\ili{} of\ili{} its\ili{} sub\ili{}-phrases\ili{}.\ili{}
+In\ili{} the\ili{} \ili{}\main\ili{}{dependency\ili{} formalism}\ili{},\ili{} parsing\ili{} is\ili{} defined\ili{} as\ili{} correctly\ili{} determining\ili{} the\ili{} dependency\ili{} relations\ili{} between\ili{} words\ili{} of\ili{} an\ili{} input\ili{} sentence\ili{}.\ili{} More\ili{} precisely\ili{},\ili{}
+the\ili{} aim\ili{} of\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} is\ili{} to\ili{} correctly\ili{} determine\ili{} the\ili{} dependent\ili{}-head\ili{} relationships\ili{} between\ili{} words\ili{} and\ili{} also\ili{} the\ili{} type\ili{} of\ili{} these\ili{} relationships\ili{} such\ili{} as\ili{} subject\ili{},\ili{} object\ili{},\ili{} predicate\ili{}.\ili{}
+Dependency\ili{} parsing\ili{} is\ili{} nowadays\ili{} strikingly\ili{} more\ili{} popular\ili{} than\ili{} constituency\ili{} parsing\ili{} and\ili{} attracts\ili{} the\ili{} attention\ili{} of\ili{} an\ili{} ever\ili{}-growing\ili{} community\ili{} in\ili{} NLP\ili{}.\ili{}
+Furthermore\ili{},\ili{} most\ili{} existing\ili{} MWE\ili{}-aware\ili{} parsers\ili{} are\ili{} developed\ili{} in\ili{} the\ili{} dependency\ili{} framework\ili{}.\ili{}
+Therefore\ili{},\ili{} in\ili{} this\ili{} chapter\ili{},\ili{} we\ili{} focus\ili{} mainly\ili{} on\ili{} different\ili{} orchestration\ili{} scenarios\ili{} applied\ili{} for\ili{} different\ili{} \ili{}\emph\ili{}{statistical\ili{} dependency\ili{} \ili{}\isi\ili{}{parsing}}\ili{} approaches\ili{}.\ili{}
+\ili{}
+\ili{}
+The\ili{} two\ili{} commonly\ili{} used\ili{} approaches\ili{} for\ili{} statistical\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} in\ili{} the\ili{} literature\ili{} are\ili{} transition\ili{} based\ili{} \ili{}\citep\ili{}{yamada2003statistical\ili{},nivre2007maltparser}\ili{} and\ili{} graph\ili{}-based\ili{} \ili{}\citep\ili{}{eisner1996three\ili{},mcdonald\ili{}-lerman\ili{}-pereira\ili{}:2006\ili{}:CoNLL\ili{}-X\ili{},nakagawa\ili{}:2007\ili{}:EMNLP\ili{}-CoNLL2007}\ili{}.\ili{} \ili{}
+\ili{}\main\ili{}{Transition\ili{}-based}\ili{} approaches\ili{} treat\ili{} the\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} task\ili{} as\ili{} the\ili{} determination\ili{} of\ili{} parsing\ili{} actions\ili{} \ili{}(such\ili{} as\ili{} push\ili{}/pop\ili{} operations\ili{} in\ili{} a\ili{} shift\ili{}-reduce\ili{} parser\ili{})\ili{} by\ili{} the\ili{} use\ili{} of\ili{} a\ili{} machine\ili{} learning\ili{} classifier\ili{}.\ili{} \ili{}\main\ili{}{Graph\ili{}-based}\ili{} approaches\ili{} treat\ili{} parsing\ili{} as\ili{} finding\ili{} the\ili{} most\ili{} likely\ili{} path\ili{} within\ili{} a\ili{} graph\ili{},\ili{} such\ili{} as\ili{} the\ili{} highest\ili{}-scoring\ili{} directed\ili{} spanning\ili{} tree\ili{} in\ili{} a\ili{} complete\ili{} graph\ili{}.\ili{} Most\ili{} MWE\ili{}-aware\ili{} parsing\ili{} strategies\ili{} are\ili{} adaptations\ili{} of\ili{} standard\ili{} parsers\ili{} experimenting\ili{} with\ili{} various\ili{} models\ili{} of\ili{} orchestration\ili{} concerning\ili{} the\ili{} scheduling\ili{} of\ili{} MWE\ili{} identification\ili{} with\ili{} respect\ili{} to\ili{} syntactic\ili{} analysis\ili{}.\ili{}
+\ili{}
+MWEs\ili{} pose\ili{} \ili{}\main\ili{}{challenges}\ili{} for\ili{} all\ili{} areas\ili{} of\ili{} NLP\ili{},\ili{} and\ili{} \ili{}\isi\ili{}{statistical\ili{} parsing}\ili{} is\ili{} not\ili{} an\ili{} exception\ili{}.\ili{}
+An\ili{} MWE\ili{} may\ili{} be\ili{} \ili{}\main\ili{}{ambiguous}\ili{} among\ili{} accidental\ili{} co\ili{}-occurrence\ili{},\ili{} literal\ili{},\ili{} and\ili{} idiomatic\ili{} uses\ili{}.\ili{} The\ili{} possible\ili{} surface\ili{} forms\ili{} of\ili{} an\ili{} MWE\ili{} \ili{}\main\ili{}{vary}\ili{},\ili{} especially\ili{} due\ili{} to\ili{} morphological\ili{} \ili{}\isi\ili{}{variations}\ili{} which\ili{} may\ili{} become\ili{} radical\ili{} in\ili{} morphologically\ili{} rich\ili{} languages\ili{}.\ili{} MWE\ili{} components\ili{} do\ili{} not\ili{} have\ili{} to\ili{} appear\ili{} in\ili{} consecutive\ili{} locations\ili{} within\ili{} a\ili{} sentence\ili{} and\ili{} it\ili{} is\ili{} hard\ili{} to\ili{} correctly\ili{} identify\ili{} a\ili{} \ili{}\main\ili{}{discontinuous}\ili{} MWE\ili{} by\ili{} ignoring\ili{} the\ili{} intervening\ili{} words\ili{}.\ili{} \ili{}
+The\ili{} syntactic\ili{} \ili{}\main\ili{}{non\ili{}-compositionality}\ili{} of\ili{} MWEs\ili{} may\ili{} result\ili{} in\ili{} irregular\ili{} parse\ili{} trees\ili{}.\ili{}
+The\ili{} ambiguous\ili{},\ili{} discontinuous\ili{},\ili{} non\ili{}-compositional\ili{} and\ili{} variable\ili{} nature\ili{} of\ili{} MWEs\ili{} needs\ili{} to\ili{} be\ili{} carefully\ili{} handled\ili{} during\ili{} parsing\ili{} in\ili{} order\ili{} to\ili{} produce\ili{} a\ili{} valid\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{}.\ili{} \ili{}
+Additionally\ili{},\ili{} annotated\ili{} datasets\ili{} \ili{}(\ili{}\isi\ili{}{treebanks}\ili{})\ili{} are\ili{} crucial\ili{} resources\ili{} for\ili{} the\ili{} training\ili{} of\ili{} data\ili{}-driven\ili{} statistical\ili{} parsers\ili{}.\ili{} \ili{}
+The\ili{} \ili{}\main\ili{}{scarcity\ili{} and\ili{} limited\ili{} size}\ili{} of\ili{} MWE\ili{}-annotated\ili{} \ili{}\isi\ili{}{treebanks}\ili{} is\ili{} a\ili{} great\ili{} challenge\ili{} faced\ili{} by\ili{} MWE\ili{}-aware\ili{} parsing\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{}\input\ili{}{constantetal\ili{}/03\ili{}-representation}\ili{}
+\ili{}\section\ili{}{MWE\ili{} representations\ili{} in\ili{} treebanks}\ili{} \ili{}
+\ili{}\label\ili{}{sec\ili{}:representation}\ili{}
+\ili{}
+\ili{}
+The\ili{} choice\ili{} of\ili{} an\ili{} appropriate\ili{} \ili{}\isi\ili{}{MWE\ili{} representation}\ili{} is\ili{} crucial\ili{},\ili{} with\ili{} strong\ili{} consequences\ili{} on\ili{} the\ili{} format\ili{} of\ili{} \ili{}\isi\ili{}{treebanks}\ili{}.\ili{} Representational\ili{} choices\ili{} that\ili{} have\ili{} affected\ili{} existing\ili{} \ili{}\isi\ili{}{treebanks}\ili{} in\ili{} this\ili{} way\ili{} range\ili{}
+from\ili{} words\ili{}-with\ili{}-spaces\ili{} \ili{}-\ili{}-\ili{} \ili{}\eg\ili{}{}\ili{} the\ili{} \ili{}\ili\ili{}{French}\ili{} Treebank\ili{} \ili{}\citep\ili{}{candito\ili{}:2009}\ili{} \ili{}-\ili{}-\ili{} to\ili{} the\ili{} use\ili{} of\ili{} special\ili{} MWE\ili{} syntactic\ili{} relations\ili{} \ili{}-\ili{}-\ili{} \ili{}\eg\ili{}{}\ili{} the\ili{} Universal\ili{} Dependencies\ili{} project\ili{} \ili{}\citep\ili{}{nivre16}\ili{}.\ili{} Some\ili{} \ili{}\isi\ili{}{treebanks}\ili{} may\ili{} not\ili{} even\ili{} contain\ili{} MWE\ili{} representations\ili{} at\ili{} all\ili{},\ili{} \ili{}
+while\ili{} others\ili{} may\ili{} have\ili{} sophisticated\ili{} multi\ili{}-layer\ili{} representations\ili{} \ili{}
+\ili{}\citep\ili{}{prague}\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+The\ili{} number\ili{} and\ili{} variety\ili{} of\ili{} available\ili{} MWE\ili{}-aware\ili{} \ili{}\isi\ili{}{treebanks}\ili{} is\ili{} growing\ili{} \ili{}\citep\ili{}{rosen\ili{}:2015}\ili{}.\ili{} \ili{}
+They\ili{} do\ili{} not\ili{} necessarily\ili{} cover\ili{} the\ili{} same\ili{} kinds\ili{} of\ili{} MWE\ili{}.\ili{} \ili{}
+They\ili{} often\ili{} belong\ili{} to\ili{} the\ili{} constituency\ili{} or\ili{} the\ili{} dependency\ili{} frameworks\ili{},\ili{} but\ili{}
+some\ili{} can\ili{} also\ili{} be\ili{} compatible\ili{} with\ili{} different\ili{} types\ili{} of\ili{} grammatical\ili{} formalisms\ili{},\ili{} like\ili{} lexical\ili{} functional\ili{} grammar\ili{} \ili{}\citep\ili{}{Dyvik\ili{}:2016}\ili{}.\ili{} \ili{}
+To\ili{} narrow\ili{} down\ili{} the\ili{} scope\ili{} of\ili{} this\ili{} section\ili{},\ili{} we\ili{} focus\ili{} on\ili{} MWE\ili{} representations\ili{} in\ili{} relation\ili{} to\ili{} \ili{}\isi\ili{}{treebanks}\ili{} \ili{}\emph\ili{}{that\ili{} are\ili{} useful\ili{} to\ili{} or\ili{} that\ili{} have\ili{} been\ili{} used\ili{} in\ili{} statistical\ili{} MWE\ili{}-aware\ili{} \ili{}\isi\ili{}{parsing}}\ili{}.\ili{}
+\ili{}
+\ili{}\subsection\ili{}{No\ili{} representation\ili{} at\ili{} all}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:norep}\ili{}
+\ili{}
+The\ili{} simplest\ili{} and\ili{} most\ili{} obvious\ili{} \ili{}\isi\ili{}{MWE\ili{} representation}\ili{} is\ili{} not\ili{} to\ili{} consider\ili{} MWEs\ili{} at\ili{} all\ili{},\ili{} only\ili{} considering\ili{} separate\ili{} word\ili{} tokens\ili{}.\ili{} While\ili{} such\ili{} a\ili{} treatment\ili{} is\ili{} simplistic\ili{},\ili{} it\ili{} also\ili{} has\ili{} a\ili{} number\ili{} of\ili{} advantages\ili{}.\ili{} First\ili{} and\ili{} foremost\ili{},\ili{} it\ili{} is\ili{} easy\ili{} to\ili{} operationalize\ili{}:\ili{} no\ili{} distinction\ili{} is\ili{} necessary\ili{} \ili{} between\ili{} single\ili{} words\ili{} in\ili{} combination\ili{} and\ili{} MWEs\ili{}.\ili{} MWEs\ili{} include\ili{} a\ili{} variety\ili{} of\ili{} phenomena\ili{}:\ili{} compound\ili{} nouns\ili{},\ili{} technical\ili{} terms\ili{},\ili{} multi\ili{}-word\ili{} entities\ili{},\ili{} light\ili{} verb\ili{} constructions\ili{},\ili{} \ili{}\isi\ili{}{phrasal\ili{} verbs}\ili{},\ili{} idioms\ili{},\ili{} and\ili{} proverbs\ili{}.\ili{} In\ili{} general\ili{} they\ili{} are\ili{} partly\ili{} non\ili{}-compositional\ili{},\ili{} but\ili{} due\ili{} to\ili{} this\ili{} characteristic\ili{} they\ili{} also\ili{} border\ili{} on\ili{} or\ili{} overlap\ili{} with\ili{} collocations\ili{},\ili{} which\ili{} are\ili{} an\ili{} inherently\ili{} gradient\ili{} phenomenon\ili{}.\ili{} Not\ili{} representing\ili{} MWEs\ili{} can\ili{} thus\ili{} be\ili{} seen\ili{} as\ili{} a\ili{} tacit\ili{} assumption\ili{} that\ili{} all\ili{} forms\ili{} of\ili{} MWE\ili{} are\ili{} gradient\ili{}.\ili{} \ili{}
+\ili{}
+Statistical\ili{} parsers\ili{} were\ili{} conceived\ili{} to\ili{} improve\ili{} parsing\ili{} performance\ili{} by\ili{} modeling\ili{} lexical\ili{} interactions\ili{} \ili{}\citep\ili{}{gross84\ili{},sinclair91\ili{},\ili{} collins99}\ili{}.\ili{} As\ili{} MWEs\ili{} are\ili{} a\ili{} subclass\ili{} of\ili{} collocations\ili{},\ili{} the\ili{} statistical\ili{} attraction\ili{} between\ili{} the\ili{} participating\ili{} words\ili{} is\ili{} typically\ili{} very\ili{} strong\ili{} and\ili{} errors\ili{} are\ili{} therefore\ili{} much\ili{} rarer\ili{}.\ili{} Statistical\ili{} parsers\ili{} generally\ili{} perform\ili{} better\ili{} on\ili{} relations\ili{} that\ili{} are\ili{} semantically\ili{} expected\ili{} \ili{}(as\ili{} \ili{}\eg\ili{}{}\ili{} in\ili{} selectional\ili{} preferences\ili{})\ili{},\ili{}
+so\ili{} performance\ili{} on\ili{} verb\ili{} complements\ili{} for\ili{} example\ili{} is\ili{} much\ili{} higher\ili{} than\ili{} on\ili{} verb\ili{} adjuncts\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[t\ili{}]\ili{}
+\ili{}{\ili{}
+\ili{}\small\ili{}
+\ili{}\Tree\ili{} \ili{}[\ili{}.S\ili{} \ili{}[\ili{}.NP\ili{} \ili{}[\ili{}.D\ili{} the\ili{} \ili{}]\ili{} \ili{} \ili{}[\ili{}.N\ili{} \ili{}\color\ili{}{red}\ili{}{prime\ili{}\_minister}\ili{} \ili{}]\ili{} \ili{} \ili{}]\ili{} \ili{} \ili{}[\ili{}.VP\ili{} \ili{}[\ili{}.V\ili{} \ili{}\color\ili{}{blue}\ili{}{made}\ili{} \ili{}]\ili{} \ili{} \ili{}[\ili{}.NP\ili{} \ili{}[\ili{}.D\ili{} \ili{}\color\ili{}{orange}\ili{}{a\ili{}\_few}\ili{} \ili{}]\ili{} \ili{}[\ili{}.A\ili{} good\ili{} \ili{}]\ili{} \ili{}[\ili{}.N\ili{} \ili{}\color\ili{}{blue}\ili{}{decisions}\ili{} \ili{}]\ili{} \ili{} \ili{}]\ili{} \ili{} \ili{}]\ili{} \ili{} \ili{}]\ili{}
+}\ili{}
+\ili{}\caption\ili{}{Constituency\ili{} MWE\ili{}-aware\ili{} tree\ili{} with\ili{} words\ili{}-with\ili{}-spaces\ili{} representation\ili{}.}\ili{}
+\ili{}\label\ili{}{fig\ili{}:wws}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Words\ili{}-with\ili{}-spaces\ili{} representation}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:wws}\ili{}
+\ili{}
+A\ili{} simple\ili{} representation\ili{} consists\ili{} in\ili{} considering\ili{} MWEs\ili{} as\ili{} single\ili{} nodes\ili{} of\ili{} the\ili{} syntactic\ili{} tree\ili{} \ili{}\citep\ili{}{Sag02}\ili{},\ili{} such\ili{} as\ili{} in\ili{} the\ili{} strategy\ili{} adopted\ili{} in\ili{} the\ili{} LFG\ili{}/XLE\ili{} parser\ili{} described\ili{} in\ili{} Chapter\ili{}~5\ili{}.\ili{} This\ili{} \ili{}\main\ili{}{words\ili{}-with\ili{}-spaces}\ili{} representation\ili{} implies\ili{} that\ili{} MWEs\ili{} have\ili{} an\ili{} atomic\ili{} interpretation\ili{}.\ili{} In\ili{} the\ili{} constituency\ili{} framework\ili{},\ili{} the\ili{} MWE\ili{} forms\ili{} are\ili{} leafs\ili{}.\ili{} Their\ili{} parent\ili{} nodes\ili{} correspond\ili{} to\ili{} their\ili{} parts\ili{}-of\ili{}-speech\ili{} \ili{}(POS\ili{})\ili{} category\ili{},\ili{} as\ili{} shown\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:wws}\ili{}.\ili{} For\ili{} instance\ili{},\ili{} \ili{}\expl\ili{}{prime\ili{} minister}\ili{} has\ili{} a\ili{} noun\ili{} parent\ili{} node\ili{} and\ili{} \ili{}\expl\ili{}{a\ili{} few}\ili{} has\ili{} a\ili{} determiner\ili{} parent\ili{} node\ili{}.\ili{} \ili{}
+A\ili{} concrete\ili{} example\ili{} where\ili{} MWEs\ili{} are\ili{} represented\ili{} this\ili{} way\ili{} is\ili{} the\ili{} first\ili{} version\ili{} of\ili{} the\ili{} \ili{}\ili\ili{}{French}\ili{} treebank\ili{} distributed\ili{} for\ili{} parsing\ili{} \ili{}\citep\ili{}{candito\ili{}:2009}\ili{}.\ili{} \ili{}
+In\ili{} the\ili{} dependency\ili{} framework\ili{},\ili{} the\ili{} MWE\ili{} node\ili{} has\ili{} the\ili{} same\ili{} linguistic\ili{} attributes\ili{} as\ili{} a\ili{} single\ili{} word\ili{} token\ili{}:\ili{} POS\ili{} tag\ili{},\ili{} lemma\ili{} and\ili{} morphological\ili{} features\ili{}.\ili{} For\ili{} instance\ili{},\ili{} \ili{}\expl\ili{}{hot\ili{} dogs}\ili{} would\ili{} be\ili{} a\ili{} noun\ili{} in\ili{} plural\ili{},\ili{} whose\ili{} lemma\ili{} is\ili{} \ili{}\expl\ili{}{hot\ili{} dog}\ili{}.\ili{} Such\ili{} representations\ili{} imply\ili{} that\ili{} MWEs\ili{} have\ili{} been\ili{} pre\ili{}-identified\ili{} and\ili{} represented\ili{} as\ili{} word\ili{}-with\ili{}-space\ili{} tokens\ili{} before\ili{} parsing\ili{}.\ili{} Moreover\ili{},\ili{} they\ili{} have\ili{} several\ili{} drawbacks\ili{} in\ili{} terms\ili{} of\ili{} linguistic\ili{} expressiveness\ili{}.\ili{} First\ili{},\ili{} discontinuous\ili{} MWEs\ili{} like\ili{} the\ili{} light\ili{} verb\ili{} construction\ili{} \ili{}\expl\ili{}{make\ili{} decisions}\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:wws}\ili{} cannot\ili{} be\ili{} represented\ili{} this\ili{} way\ili{}.\ili{} Then\ili{},\ili{} the\ili{} semantic\ili{} processing\ili{} of\ili{} semi\ili{}-compositional\ili{} MWEs\ili{} might\ili{} be\ili{} problematic\ili{} as\ili{} the\ili{} internal\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} is\ili{} impossible\ili{} to\ili{} retrieve\ili{}.\ili{}%\ili{}\todo\ili{}{link\ili{} to\ili{} chapter\ili{} 5\ili{} \ili{}-\ili{} wws\ili{} representations\ili{} in\ili{} LFG\ili{}/XLE}\ili{}
+\ili{}
+\ili{}\subsection\ili{} \ili{}{Chunking\ili{} representations}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:chunking}\ili{}
+\ili{}
+Another\ili{} way\ili{} of\ili{} representing\ili{} MWEs\ili{} uses\ili{} \ili{}\main\ili{}{chunking}\ili{}.\ili{} \ili{}
+Chunks\ili{} are\ili{} a\ili{} polysemous\ili{} concept\ili{},\ili{} but\ili{} its\ili{} two\ili{} meanings\ili{} are\ili{} related\ili{}.\ili{} \ili{}
+On\ili{} the\ili{} one\ili{} hand\ili{},\ili{} chunks\ili{} are\ili{} seen\ili{} as\ili{} psycholinguistic\ili{} units\ili{} that\ili{} are\ili{} partly\ili{} or\ili{} fully\ili{} lexicalized\ili{},\ili{} that\ili{} is\ili{},\ili{} stored\ili{} as\ili{} one\ili{} entity\ili{} in\ili{} the\ili{} mental\ili{} lexicon\ili{} \ili{}\citep\ili{}{miller56\ili{},pawley\ili{}-syder83\ili{},tomasello98\ili{},wray08}\ili{}.\ili{} \ili{}
+On\ili{} the\ili{} other\ili{} hand\ili{} they\ili{} are\ili{} \ili{}
+\ili{}%an\ili{} operationalisation\ili{} \ili{}
+the\ili{} concrete\ili{} output\ili{} of\ili{} applying\ili{} finite\ili{}-state\ili{} technology\ili{} to\ili{} obtain\ili{} base\ili{}-NPs\ili{} and\ili{} verb\ili{} groups\ili{} deterministically\ili{}.\ili{} While\ili{} the\ili{} psycholinguistic\ili{} and\ili{} the\ili{} computational\ili{} concepts\ili{} are\ili{} related\ili{},\ili{} the\ili{} latter\ili{} has\ili{} the\ili{} drawback\ili{} that\ili{} chunks\ili{} need\ili{} to\ili{} be\ili{} continuous\ili{}.\ili{}
+\ili{}
+\ili{}\citet\ili{}{abney1991procedure}\ili{} pointed\ili{} out\ili{} that\ili{} dependency\ili{} grammars\ili{} are\ili{} particularly\ili{} suited\ili{} to\ili{} model\ili{} chunks\ili{} and\ili{} parse\ili{} between\ili{} heads\ili{} of\ili{} chunks\ili{}.\ili{} \ili{}
+In\ili{} fact\ili{},\ili{} chunks\ili{} are\ili{} close\ili{} to\ili{} Tesnière\ili{}'s\ili{} original\ili{} conception\ili{} of\ili{} nucleus\ili{},\ili{} which\ili{} is\ili{} typically\ili{} not\ili{} a\ili{} single\ili{} word\ili{} \ili{}\citep\ili{}{Tesniere\ili{}:1959}\ili{}.\ili{} Some\ili{} dependency\ili{} parsers\ili{} following\ili{} this\ili{} scheme\ili{} exist\ili{},\ili{} for\ili{} example\ili{} \ili{}\citet\ili{}{schneiderPhd}\ili{}.\ili{} \ili{}\citet\ili{}{Nivre\ili{}:2014}\ili{} has\ili{} proposed\ili{} a\ili{} transition\ili{}-based\ili{} parser\ili{} that\ili{} performs\ili{} MWE\ili{} merging\ili{} as\ili{} it\ili{} syntactically\ili{} parses\ili{} a\ili{} sentence\ili{}.\ili{} This\ili{} operation\ili{} can\ili{} be\ili{} seen\ili{} as\ili{} MWE\ili{} chunking\ili{}.\ili{} \ili{}
+\ili{}
+A\ili{} standard\ili{} way\ili{} of\ili{} representing\ili{} chunks\ili{} in\ili{} tagging\ili{} systems\ili{} is\ili{} the\ili{} IOB\ili{} annotation\ili{} scheme\ili{} \ili{}\citep\ili{}{ramshaw1995}\ili{}.\ili{}\footnote\ili{}{Tokens\ili{} are\ili{} tagged\ili{} as\ili{} B\ili{} for\ili{} \ili{}\emph\ili{}{begin}\ili{},\ili{} I\ili{} for\ili{} \ili{}\emph\ili{}{inside}\ili{} and\ili{} O\ili{} for\ili{} \ili{}\emph\ili{}{outside}\ili{} a\ili{} chunk\ili{}.}\ili{} Such\ili{} representations\ili{} have\ili{} been\ili{} successfully\ili{} adapted\ili{} to\ili{} named\ili{} entity\ili{} recognition\ili{} \ili{}\citep\ili{}{tjong2002}\ili{} and\ili{} MWE\ili{} identification\ili{} \ili{}\citep\ili{}{Vincze11\ili{},Constant12}\ili{}.\ili{} For\ili{} MWEs\ili{},\ili{} there\ili{} are\ili{} variants\ili{} covering\ili{} contiguous\ili{} MWEs\ili{} \ili{}\citep\ili{}{blunsom\ili{}-baldwin\ili{}:2006\ili{}:EMNLP}\ili{} and\ili{} gappy\ili{} ones\ili{} \ili{}\citep\ili{}{Schneider14}\ili{}.\ili{}
+For\ili{} instance\ili{},\ili{} \ili{}\citet\ili{}{Schneider14}\ili{} use\ili{} a\ili{} 6\ili{}-tag\ili{} set\ili{} \ili{}(with\ili{} additional\ili{} lowercased\ili{} tags\ili{} in\ili{} order\ili{} to\ili{} emphasize\ili{} nested\ili{} MWE\ili{} structures\ili{})\ili{} to\ili{} represent\ili{} MWEs\ili{} enabling\ili{} 1\ili{}-level\ili{} nesting\ili{},\ili{} as\ili{} shown\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:iob}\ili{}.\ili{} Such\ili{} representations\ili{} can\ili{} be\ili{} used\ili{} in\ili{} \ili{}\isi\ili{}{treebanks}\ili{} for\ili{} training\ili{} pipeline\ili{} MWE\ili{}-aware\ili{} systems\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{sec\ili{}:pipeline}\ili{})\ili{} and\ili{} joint\ili{} MWE\ili{}-aware\ili{} parsers\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{sec\ili{}:joint}\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[t\ili{}]\ili{}
+\ili{}\small\ili{}
+\ili{}\begin\ili{}{center}\ili{}
+\ili{}\begin\ili{}{dependency}\ili{}[edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}
+\ili{}\begin\ili{}{deptext}\ili{}[column\ili{} sep\ili{}=\ili{}.7cm\ili{}]\ili{}
+the\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}\ili{}{prime}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}\ili{}{minister}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}\ili{}{made}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{orange}\ili{}{a}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{orange}\ili{}{few}\ili{} \ili{}\\ili{}&\ili{} good\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}\ili{}{decisions}\ili{} \ili{}\\ili{}\\ili{}
+O\ili{}\\ili{}&\ili{}\color\ili{}{red}B\ili{}\\ili{}&\ili{}\color\ili{}{red}I\ili{}\\ili{}&\ili{}\color\ili{}{blue}B\ili{}\\ili{}&\ili{}\color\ili{}{orange}b\ili{}\\ili{}&\ili{}\color\ili{}{orange}i\ili{}\\ili{}&o\ili{}\\ili{}&\ili{}\color\ili{}{blue}I\ili{}\\ili{}\\ili{}
+\ili{}\end\ili{}{deptext}\ili{}
+\ili{}\depedge\ili{}{3}\ili{}{1}\ili{}{det}\ili{}
+\ili{}\depedge\ili{}{3}\ili{}{2}\ili{}{mod}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=2\ili{}.8ex\ili{}]\ili{}{4}\ili{}{3}\ili{}{subj}\ili{}
+\ili{}\depedge\ili{}{8}\ili{}{7}\ili{}{mod}\ili{}
+\ili{}\depedge\ili{}{8}\ili{}{5}\ili{}{det}\ili{}
+\ili{}\depedge\ili{}{5}\ili{}{6}\ili{}{mwe}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=2\ili{}.4ex\ili{}]\ili{}{4}\ili{}{8}\ili{}{obj}\ili{}
+\ili{}\end\ili{}{dependency}\ili{}
+\ili{}\vspace\ili{}{\ili{}-0\ili{}.3cm}\ili{}
+\ili{}\caption\ili{}{Chunking\ili{}-based\ili{} representation\ili{} with\ili{} IOB\ili{} tags\ili{} \ili{}\citep\ili{}{Schneider14}\ili{}.}\ili{}
+\ili{}\label\ili{}{fig\ili{}:iob}\ili{}
+\ili{}\end\ili{}{center}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{comment}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{figure}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{center}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{tabular}\ili{}{llllllll}\ili{}
+\ili{}%\ili{}%\ili{} The\ili{}&\ili{}\color\ili{}{red}prime\ili{}&\ili{}\color\ili{}{red}minister\ili{}&\ili{}\color\ili{}{blue}made\ili{}&\ili{}\color\ili{}{orange}a\ili{}&\ili{}\color\ili{}{orange}few\ili{}&good\ili{}&\ili{}\color\ili{}{blue}decisions\ili{}\\ili{}\\ili{}
+\ili{}%\ili{}%\ili{} O\ili{}&\ili{}\color\ili{}{red}B\ili{}&\ili{}\color\ili{}{red}I\ili{}&\ili{}\color\ili{}{blue}B\ili{}&\ili{}\color\ili{}{orange}b\ili{}&\ili{}\color\ili{}{orange}i\ili{}&o\ili{}&\ili{}\color\ili{}{blue}I\ili{}\\ili{}\\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{center}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\caption\ili{}{Chunking\ili{}-based\ili{} representation\ili{} with\ili{} IOB\ili{} tags\ili{} \ili{}\citep\ili{}{Schneider14}\ili{}.}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\label\ili{}{fig\ili{}:iob}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{figure}\ili{}\todo\ili{}{CR\ili{}:\ili{} it\ili{} is\ili{} a\ili{} bit\ili{} odd\ili{} that\ili{} we\ili{} omit\ili{} the\ili{} syntactic\ili{} tree\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:iob}\ili{}.\ili{} I\ili{} suggest\ili{} adding\ili{} regular\ili{} dependencies\ili{} to\ili{} represent\ili{} the\ili{} structure\ili{},\ili{} and\ili{} indicate\ili{} the\ili{} tags\ili{} IOB\ili{} below\ili{} to\ili{} show\ili{} that\ili{} MWE\ili{} chunking\ili{} information\ili{} is\ili{} represented\ili{} as\ili{} a\ili{} tag\ili{} in\ili{} tokens\ili{}.\ili{} Alternatively\ili{},\ili{} we\ili{} explain\ili{} that\ili{} the\ili{} syntactic\ili{} tree\ili{} is\ili{} omitted\ili{}.}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{comment}\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[t\ili{}]\ili{}
+\ili{}{\ili{}
+\ili{}\small\ili{}
+\ili{}\Tree\ili{} \ili{}[\ili{}.S\ili{} \ili{}[\ili{}.NP\ili{} \ili{}[\ili{}.D\ili{} the\ili{} \ili{}]\ili{} \ili{} \ili{}[\ili{}.\ili{}\color\ili{}{red}\ili{}{MWN}\ili{} \ili{}[\ili{}.\ili{}\color\ili{}{red}\ili{}{A}\ili{} \ili{}\color\ili{}{red}\ili{}{prime}\ili{} \ili{}]\ili{} \ili{} \ili{}[\ili{}.\ili{}\color\ili{}{red}\ili{}{N}\ili{} \ili{}\color\ili{}{red}\ili{}{minister}\ili{} \ili{}]\ili{} \ili{} \ili{}]\ili{} \ili{} \ili{}]\ili{} \ili{} \ili{}[\ili{}.VP\ili{} \ili{}[\ili{}.V\ili{} \ili{}\color\ili{}{blue}\ili{}{made}\ili{} \ili{}]\ili{} \ili{} \ili{}[\ili{}.NP\ili{} \ili{}[\ili{}.\ili{}\color\ili{}{orange}\ili{}{MWD}\ili{} \ili{}[\ili{}.\ili{}\color\ili{}{orange}\ili{}{D}\ili{} \ili{}\color\ili{}{orange}\ili{}{a}\ili{} \ili{}]\ili{} \ili{} \ili{}[\ili{}.\ili{}\color\ili{}{orange}\ili{}{D}\ili{} \ili{}\color\ili{}{orange}\ili{}{few}\ili{} \ili{}]\ili{} \ili{} \ili{}]\ili{} \ili{}[\ili{}.A\ili{} good\ili{} \ili{}]\ili{} \ili{}[\ili{}.N\ili{} \ili{}\color\ili{}{blue}\ili{}{decisions}\ili{} \ili{}]\ili{} \ili{} \ili{}]\ili{} \ili{} \ili{}]\ili{} \ili{} \ili{}]\ili{}
+}\ili{}
+\ili{}\caption\ili{}{Flat\ili{} constituency\ili{} subtree\ili{} representation\ili{} \ili{}\citep\ili{}{Green11}\ili{}.}\ili{}
+\ili{}\label\ili{}{fig\ili{}:green}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[t\ili{}]\ili{}
+\ili{}\small\ili{}
+\ili{}\begin\ili{}{center}\ili{}
+\ili{}\begin\ili{}{dependency}\ili{}[edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}
+\ili{}\begin\ili{}{deptext}\ili{}[column\ili{} sep\ili{}=\ili{}.7cm\ili{}]\ili{}
+the\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}\ili{}{prime}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}\ili{}{minister}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}\ili{}{made}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{orange}\ili{}{a}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{orange}\ili{}{few}\ili{} \ili{}\\ili{}&\ili{} good\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}\ili{}{decisions}\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%N\ili{} \ili{}\\ili{}&\ili{} V\ili{} \ili{}\\ili{}&\ili{} P\ili{} \ili{}\\ili{}&A\ili{} \ili{}\\ili{}&\ili{} D\ili{} \ili{}\\ili{}&\ili{} N\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\end\ili{}{deptext}\ili{}
+\ili{}\depedge\ili{}{2}\ili{}{1}\ili{}{det}\ili{}
+\ili{}\depedge\ili{}{2}\ili{}{3}\ili{}{\ili{}\color\ili{}{red}\ili{}{mwe\ili{}\_noun}}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=2\ili{}.8ex\ili{}]\ili{}{4}\ili{}{2}\ili{}{subj}\ili{}
+\ili{}\depedge\ili{}{8}\ili{}{7}\ili{}{mod}\ili{}
+\ili{}\depedge\ili{}{8}\ili{}{5}\ili{}{det}\ili{}
+\ili{}\depedge\ili{}{5}\ili{}{6}\ili{}{\ili{}\color\ili{}{orange}\ili{}{mwe\ili{}\_det}}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=2\ili{}.4ex\ili{}]\ili{}{4}\ili{}{8}\ili{}{\ili{}\color\ili{}{blue}\ili{}{mwe\ili{}\_lvc}}\ili{}
+\ili{}
+\ili{}\end\ili{}{dependency}\ili{}
+\ili{}\vspace\ili{}{\ili{}-0\ili{}.3cm}\ili{}
+\ili{}\caption\ili{}{Flat\ili{} head\ili{}-initial\ili{} dependency\ili{} subtree\ili{} representation\ili{}.}\ili{}
+\ili{}\label\ili{}{fig\ili{}:flat}\ili{}
+\ili{}\end\ili{}{center}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Subtree\ili{} representations}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:subtrees}\ili{}
+\ili{}
+Another\ili{} way\ili{} of\ili{} representing\ili{} MWEs\ili{} is\ili{} to\ili{} annotate\ili{} them\ili{} as\ili{} \ili{}\main\ili{}{subtrees}\ili{} made\ili{} of\ili{} several\ili{} nodes\ili{} of\ili{} the\ili{} syntactic\ili{} tree\ili{}.\ili{} Many\ili{} \ili{}\isi\ili{}{treebanks}\ili{} using\ili{} such\ili{} representations\ili{} can\ili{} be\ili{} found\ili{} in\ili{} \ili{}\citet\ili{}{rosen\ili{}:2015}\ili{}.\ili{} Several\ili{} types\ili{} of\ili{} subtree\ili{} MWE\ili{} representations\ili{} were\ili{} proposed\ili{} in\ili{} \ili{}\isi\ili{}{treebanks}\ili{},\ili{} according\ili{} to\ili{} the\ili{} language\ili{},\ili{} MWE\ili{} type\ili{} and\ili{} syntactic\ili{} formalism\ili{}.\ili{}
+\ili{}
+For\ili{} processing\ili{} purposes\ili{},\ili{} words\ili{}-with\ili{}-spaces\ili{} representations\ili{} have\ili{} often\ili{} been\ili{} automatically\ili{} converted\ili{} into\ili{} flat\ili{} subtrees\ili{}.\ili{} In\ili{} the\ili{} constituency\ili{} framework\ili{},\ili{} an\ili{} MWE\ili{} is\ili{} considered\ili{} as\ili{} a\ili{} special\ili{} constituent\ili{} with\ili{} a\ili{} given\ili{} POS\ili{} tag\ili{}.\ili{} MWE\ili{} components\ili{} are\ili{} leaves\ili{} of\ili{} the\ili{} MWE\ili{} subtree\ili{},\ili{} as\ili{} shown\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:green}\ili{}.\ili{}\footnote\ili{}{MWE\ili{}-related\ili{} symbols\ili{} \ili{}\texttt\ili{}{MWN}\ili{} and\ili{} \ili{}\texttt\ili{}{MWD}\ili{} respectively\ili{} stand\ili{} for\ili{} multiword\ili{} noun\ili{} and\ili{} determiner\ili{}.}\ili{} There\ili{} exist\ili{} different\ili{} variants\ili{} for\ili{} constituency\ili{} \ili{}\isi\ili{}{treebanks}\ili{} \ili{}\citep\ili{}{Gowiska\ili{}:2010}\ili{}.\ili{} This\ili{} representation\ili{} has\ili{} been\ili{} used\ili{} by\ili{} \ili{}\citet\ili{}{arun05}\ili{} and\ili{} \ili{}\citet\ili{}{Green11}\ili{},\ili{} especially\ili{} for\ili{} compounds\ili{}.\ili{} \ili{}
+In\ili{} the\ili{} dependency\ili{} framework\ili{},\ili{} flat\ili{} subtrees\ili{} can\ili{} be\ili{} either\ili{} head\ili{}-initial\ili{},\ili{} that\ili{} is\ili{},\ili{} the\ili{} root\ili{} of\ili{} the\ili{} subtree\ili{} is\ili{} the\ili{} first\ili{} token\ili{} \ili{}\citep\ili{}{nivre04\ili{},seddah13}\ili{},\ili{} or\ili{} head\ili{}-final\ili{},\ili{} with\ili{} the\ili{} root\ili{} being\ili{} the\ili{} last\ili{} token\ili{} of\ili{} the\ili{} MWE\ili{} \ili{}\citep\ili{}{Eryigit\ili{}:2011\ili{}:MES\ili{}:2206359\ili{}.2206365}\ili{}.\ili{} All\ili{} other\ili{} MWE\ili{} component\ili{} tokens\ili{} depend\ili{} on\ili{} this\ili{} arbitrarily\ili{} defined\ili{} head\ili{},\ili{} as\ili{} shown\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:flat}\ili{}.\ili{} This\ili{} representation\ili{} is\ili{} used\ili{},\ili{} for\ili{} example\ili{},\ili{} in\ili{} the\ili{} Universal\ili{} Dependencies\ili{} \ili{}\isi\ili{}{treebanks}\ili{} \ili{}\citep\ili{}{nivre16}\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[t\ili{}]\ili{}
+\ili{}\small\ili{}
+\ili{}\begin\ili{}{center}\ili{}
+\ili{}\begin\ili{}{dependency}\ili{}[edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}
+\ili{}\begin\ili{}{deptext}\ili{}[column\ili{} sep\ili{}=\ili{}.7cm\ili{}]\ili{}
+the\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}\ili{}{prime}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}\ili{}{minister}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}\ili{}{made}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{orange}\ili{}{a}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{orange}\ili{}{few}\ili{} \ili{}\\ili{}&\ili{} good\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}\ili{}{decisions}\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%N\ili{} \ili{}\\ili{}&\ili{} V\ili{} \ili{}\\ili{}&\ili{} P\ili{} \ili{}\\ili{}&A\ili{} \ili{}\\ili{}&\ili{} D\ili{} \ili{}\\ili{}&\ili{} N\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\end\ili{}{deptext}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=3\ili{}.5ex\ili{}]\ili{}{3}\ili{}{1}\ili{}{det}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=2\ili{}.4ex\ili{}]\ili{}{3}\ili{}{2}\ili{}{mod\ili{}:\ili{}\color\ili{}{red}\ili{}{mwe\ili{}\_noun}}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=2\ili{}.8ex\ili{}]\ili{}{4}\ili{}{3}\ili{}{subj}\ili{}
+\ili{}\depedge\ili{}{8}\ili{}{7}\ili{}{mod}\ili{}
+\ili{}\depedge\ili{}{8}\ili{}{5}\ili{}{det}\ili{}
+\ili{}\depedge\ili{}{5}\ili{}{6}\ili{}{\ili{}\color\ili{}{orange}\ili{}{mwe\ili{}\_det}}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=2\ili{}.4ex\ili{}]\ili{}{4}\ili{}{8}\ili{}{obj\ili{}:\ili{}\color\ili{}{blue}\ili{}{mwe\ili{}\_lvc}}\ili{}
+\ili{}\end\ili{}{dependency}\ili{}
+\ili{}\vspace\ili{}{\ili{}-0\ili{}.3cm}\ili{}
+\ili{}\caption\ili{}{Structured\ili{} dependency\ili{} subtree\ili{} representation\ili{} with\ili{} extended\ili{} labels\ili{}.}\ili{}
+\ili{}\label\ili{}{fig\ili{}:extended\ili{}-labels}\ili{}
+\ili{}\end\ili{}{center}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}
+\ili{}
+Flat\ili{} subtree\ili{} representations\ili{} have\ili{} a\ili{} disadvantage\ili{}:\ili{} the\ili{} internal\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} of\ili{} MWEs\ili{},\ili{} required\ili{} for\ili{} semi\ili{}-fixed\ili{} MWEs\ili{} in\ili{} particular\ili{},\ili{} is\ili{} lost\ili{},\ili{} like\ili{} for\ili{} words\ili{}-with\ili{}-spaces\ili{} representation\ili{}.\ili{} To\ili{} retain\ili{} the\ili{} internal\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} as\ili{} well\ili{} as\ili{} the\ili{} MWE\ili{} status\ili{},\ili{} some\ili{} authors\ili{} propose\ili{} representing\ili{} an\ili{} MWE\ili{} with\ili{} its\ili{} syntactic\ili{} subtree\ili{},\ili{} where\ili{} arc\ili{} labels\ili{} are\ili{} extended\ili{} with\ili{} MWE\ili{} tags\ili{},\ili{} as\ili{} shown\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:extended\ili{}-labels}\ili{}.\ili{} This\ili{} kind\ili{} of\ili{} representation\ili{} has\ili{} been\ili{} used\ili{},\ili{} for\ili{} instance\ili{},\ili{} for\ili{} annotating\ili{} light\ili{} verb\ili{} constructions\ili{} \ili{}\citep\ili{}{Vincze13}\ili{} and\ili{} contiguous\ili{} MWEs\ili{} \ili{}\citep\ili{}{candito2014strategies}\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}%In\ili{} fact\ili{},\ili{} \ili{}
+\ili{}\citet\ili{}{candito2014strategies}\ili{} adopt\ili{} a\ili{} hybrid\ili{} representation\ili{} scheme\ili{} to\ili{} distinguish\ili{} regular\ili{} from\ili{} irregular\ili{} MWEs\ili{}.\ili{} Regular\ili{} MWEs\ili{} have\ili{} a\ili{} regular\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{}\footnote\ili{}{The\ili{} distinction\ili{} between\ili{} irregular\ili{} and\ili{} regular\ili{} MWEs\ili{} is\ili{} arbitrary\ili{},\ili{} being\ili{} defined\ili{} by\ili{} a\ili{} manually\ili{}-built\ili{} set\ili{} of\ili{} POS\ili{} patterns\ili{}.}\ili{} whereas\ili{} they\ili{} display\ili{} semantic\ili{} irregularity\ili{}.\ili{} They\ili{} are\ili{} represented\ili{} with\ili{} structured\ili{} MWE\ili{} subtrees\ili{},\ili{} as\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:extended\ili{}-labels}\ili{}.\ili{} Irregular\ili{} MWEs\ili{} display\ili{} an\ili{} irregular\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} \ili{}\expl\ili{}{by\ili{} and\ili{} large}\ili{} is\ili{} the\ili{} coordination\ili{} of\ili{} a\ili{} preposition\ili{} and\ili{} an\ili{} adjective\ili{})\ili{} and\ili{} therefore\ili{} cannot\ili{} be\ili{} analyzed\ili{} syntactically\ili{} in\ili{} a\ili{} compositional\ili{} way\ili{}.\ili{} They\ili{} are\ili{} represented\ili{} with\ili{} flat\ili{} subtrees\ili{},\ili{} as\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:flat}\ili{}.\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{comment}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{figure}\ili{}[t\ili{}]\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{center}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}{\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\scriptsize\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\begin\ili{}{dependency}\ili{}[theme\ili{} \ili{}=\ili{} simple\ili{}]\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\begin\ili{}{deptext}\ili{}[column\ili{} sep\ili{}=1em\ili{}]\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} He\ili{} \ili{}\\ili{}&\ili{} was\ili{} \ili{}\\ili{}&\ili{} willing\ili{} \ili{}\\ili{}&\ili{} to\ili{} \ili{}\\ili{}&\ili{} budge\ili{} \ili{}\\ili{}&\ili{} a\ili{} \ili{}\\ili{}&\ili{} little\ili{} \ili{}\\ili{}&\ili{} on\ili{} \ili{}\\ili{}&\ili{} the\ili{} \ili{}\\ili{}&\ili{} price\ili{} \ili{}\\ili{}&\ili{} which\ili{} \ili{}\\ili{}&\ili{} means\ili{} \ili{}\\ili{}&\ili{} a\ili{} \ili{}\\ili{}&\ili{} lot\ili{} \ili{}\\ili{}&\ili{} to\ili{} \ili{}\\ili{}&\ili{} me\ili{}\\ili{}\\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\end\ili{}{deptext}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\deproot\ili{}{2}\ili{}{ROOT}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{2}\ili{}{1}\ili{}{SBJ}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{2}\ili{}{3}\ili{}{PRD}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{3}\ili{}{4}\ili{}{AMOD}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{4}\ili{}{5}\ili{}{IM}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{7}\ili{}{6}\ili{}{NMOD}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{5}\ili{}{7}\ili{}{ADV}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{5}\ili{}{8}\ili{}{ADV}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{10}\ili{}{9}\ili{}{NMOD}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{8}\ili{}{10}\ili{}{PMOD}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{12}\ili{}{11}\ili{}{DEP}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{5}\ili{}{12}\ili{}{ADV}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{14}\ili{}{13}\ili{}{NMOD}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{12}\ili{}{14}\ili{}{OBJ}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{12}\ili{}{15}\ili{}{ADV}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{15}\ili{}{16}\ili{}{PMOD}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\end\ili{}{dependency}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} }\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{}\end\ili{}{center}\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{center}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}{\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\scriptsize\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\begin\ili{}{dependency}\ili{}[theme\ili{} \ili{}=\ili{} simple\ili{}]\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\begin\ili{}{deptext}\ili{}[column\ili{} sep\ili{}=1em\ili{}]\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} He\ili{} \ili{}\\ili{}&\ili{} was\ili{} \ili{}\\ili{}&\ili{} willing\ili{} \ili{}\\ili{}&\ili{} to\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}budge\ili{} \ili{}\\ili{}&\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\color\ili{}{blue}a\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}little\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}on\ili{} \ili{}\\ili{}&\ili{} the\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}&\ili{} price\ili{} \ili{}\\ili{}&\ili{} which\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{brown}means\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{violet}a\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{violet}lot\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{brown}to\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{brown}me\ili{}\\ili{}\\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\end\ili{}{deptext}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\deproot\ili{}{1}\ili{}{ROOT}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{1}\ili{}{2}\ili{}{lex}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{2}\ili{}{3}\ili{}{lex}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{3}\ili{}{4}\ili{}{lex}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{4}\ili{}{5}\ili{}{lex}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}[edge\ili{} style\ili{}=\ili{}{red}\ili{}]\ili{}{5}\ili{}{8}\ili{}{\ili{}\color\ili{}{red}mwe}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{5}\ili{}{6}\ili{}{lex}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}[edge\ili{} style\ili{}=\ili{}{blue}\ili{}]\ili{}{6}\ili{}{7}\ili{}{\ili{}\color\ili{}{blue}mwe}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{5}\ili{}{9}\ili{}{lex}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{9}\ili{}{10}\ili{}{lex}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{10}\ili{}{11}\ili{}{lex}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}{11}\ili{}{12}\ili{}{lex}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}[edge\ili{} style\ili{}=\ili{}{brown}\ili{}]\ili{}{12}\ili{}{13}\ili{}{\ili{}\color\ili{}{brown}mwe}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}[edge\ili{} style\ili{}=\ili{}{violet}\ili{}]\ili{}{13}\ili{}{14}\ili{}{\ili{}\color\ili{}{violet}mwe}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}[edge\ili{} style\ili{}=\ili{}{brown}\ili{}]\ili{}{12}\ili{}{15}\ili{}{\ili{}\color\ili{}{brown}mwe}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\depedge\ili{}[edge\ili{} style\ili{}=\ili{}{brown}\ili{}]\ili{}{12}\ili{}{16}\ili{}{\ili{}\color\ili{}{brown}mwe}\ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\end\ili{}{dependency}\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} }\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{} \ili{}\end\ili{}{center}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\caption\ili{}{Representation\ili{} on\ili{} two\ili{} distinct\ili{} layers\ili{} \ili{}\citep\ili{}{Constant16}\ili{}.}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\label\ili{}{fig\ili{}:2\ili{}-dim}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{comment}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[t\ili{}]\ili{}
+\ili{}\small\ili{}
+\ili{}\begin\ili{}{center}\ili{}
+\ili{}\begin\ili{}{dependency}\ili{}[edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}
+\ili{}\begin\ili{}{deptext}\ili{}[column\ili{} sep\ili{}=\ili{}.7cm\ili{}]\ili{}
+the\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}\ili{}{prime}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}\ili{}{minister}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}\ili{}{made}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{orange}\ili{}{a}\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{orange}\ili{}{few}\ili{} \ili{}\\ili{}&\ili{} good\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}\ili{}{decisions}\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%N\ili{} \ili{}\\ili{}&\ili{} V\ili{} \ili{}\\ili{}&\ili{} P\ili{} \ili{}\\ili{}&A\ili{} \ili{}\\ili{}&\ili{} D\ili{} \ili{}\\ili{}&\ili{} N\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\end\ili{}{deptext}\ili{}
+\ili{}%\ili{}\wordgroup\ili{}{1}\ili{}{2}\ili{}{2}\ili{}{envain}\ili{}
+\ili{}%\ili{}\deproot\ili{}[edge\ili{} below\ili{}]\ili{}
+\ili{}%\ili{}{4}\ili{}{root}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{},\ili{} edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}{3}\ili{}{1}\ili{}{det}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{},\ili{} edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}{3}\ili{}{2}\ili{}{mod}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{}]\ili{}{4}\ili{}{3}\ili{}{subj}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{}]\ili{}{8}\ili{}{7}\ili{}{mod}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{},\ili{} edge\ili{} unit\ili{} distance\ili{}=1\ili{}.5ex\ili{}]\ili{}{8}\ili{}{5}\ili{}{det}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{}]\ili{}{5}\ili{}{6}\ili{}{\ili{}\color\ili{}{orange}\ili{}{mwe}}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{},\ili{} edge\ili{} unit\ili{} distance\ili{}=1\ili{}.5ex\ili{}]\ili{}{4}\ili{}{8}\ili{}{obj}\ili{}
+\ili{}
+\ili{}\depedge\ili{}{1}\ili{}{2}\ili{}{lex}\ili{}
+\ili{}\depedge\ili{}{2}\ili{}{3}\ili{}{\ili{}\color\ili{}{red}\ili{}{mwe}}\ili{}
+\ili{}\depedge\ili{}[\ili{}]\ili{}{2}\ili{}{4}\ili{}{lex}\ili{}
+\ili{}\depedge\ili{}[\ili{}]\ili{}{4}\ili{}{5}\ili{}{lex}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=1\ili{}.5ex\ili{}]\ili{}{4}\ili{}{8}\ili{}{\ili{}\color\ili{}{blue}\ili{}{mwe}}\ili{}
+\ili{}\depedge\ili{}[\ili{}]\ili{}{5}\ili{}{6}\ili{}{\ili{}\color\ili{}{orange}\ili{}{mwe}}\ili{}
+\ili{}\depedge\ili{}{5}\ili{}{7}\ili{}{lex}\ili{}
+\ili{}\end\ili{}{dependency}\ili{}
+\ili{}\vspace\ili{}{\ili{}-0\ili{}.3cm}\ili{}
+\ili{}\caption\ili{}{Representation\ili{} on\ili{} two\ili{} distinct\ili{} layers\ili{} \ili{}\citep\ili{}{Constant16}\ili{}.}\ili{}
+\ili{}\label\ili{}{fig\ili{}:2\ili{}-dim}\ili{}
+\ili{}\end\ili{}{center}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{comment}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{figure}\ili{}[t\ili{}]\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\small\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{center}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{dependency}\ili{}[edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\begin\ili{}{deptext}\ili{}[column\ili{} sep\ili{}=\ili{}.7cm\ili{}]\ili{}
+\ili{}%\ili{}%\ili{} the\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}prime\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}minister\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}made\ili{} \ili{}\\ili{}&\ili{} a\ili{} \ili{}\\ili{}&\ili{} few\ili{} \ili{}\\ili{}&\ili{} good\ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{blue}decisions\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{}%\ili{} \ili{} \ili{}\\ili{}&\ili{} \ili{} \ili{}\\ili{}&\ili{} \ili{}\color\ili{}{red}\ili{}\textit\ili{}{noun}\ili{} \ili{}\\ili{}&\ili{}\color\ili{}{blue}\ili{}\textit\ili{}{lvc}\ili{} \ili{}\\ili{}&\ili{} \ili{}\\ili{}&\ili{} \ili{}\\ili{}&\ili{} \ili{} \ili{}\\ili{}&\ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{deptext}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}{3}\ili{}{1}\ili{}{det}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}{3}\ili{}{2}\ili{}{mod}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\depedge\ili{}{4}\ili{}{3}\ili{}{subj}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\depedge\ili{}{8}\ili{}{7}\ili{}{mod}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\depedge\ili{}{8}\ili{}{5}\ili{}{det}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\depedge\ili{}{5}\ili{}{6}\ili{}{mwe\ili{}\_det}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\depedge\ili{}[edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}{4}\ili{}{8}\ili{}{obj}\ili{}
+\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{dependency}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\vspace\ili{}{\ili{}-0\ili{}.3cm}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\caption\ili{}{Structured\ili{} representation\ili{} of\ili{} MWEs\ili{} \ili{}(with\ili{} MWE\ili{} status\ili{} in\ili{} token\ili{} attributes\ili{})}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\label\ili{}{fig\ili{}:combined}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{center}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{figure}\ili{}
+\ili{}%\ili{}%\ili{} \ili{}\end\ili{}{comment}\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}[t\ili{}]\ili{}
+\ili{}\small\ili{}
+\ili{}\begin\ili{}{center}\ili{}
+\ili{}\begin\ili{}{dependency}\ili{}[edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}
+\ili{}\begin\ili{}{deptext}\ili{}[column\ili{} sep\ili{}=\ili{}.7cm\ili{}]\ili{}
+the\ili{} \ili{}\\ili{}&\ili{} prime\ili{} \ili{}\\ili{}&\ili{} minister\ili{} \ili{}\\ili{}&\ili{} made\ili{} \ili{}\\ili{}&\ili{} a\ili{} \ili{}\\ili{}&\ili{} few\ili{} \ili{}\\ili{}&\ili{} good\ili{} \ili{}\\ili{}&\ili{} decisions\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%N\ili{} \ili{}\\ili{}&\ili{} V\ili{} \ili{}\\ili{}&\ili{} P\ili{} \ili{}\\ili{}&A\ili{} \ili{}\\ili{}&\ili{} D\ili{} \ili{}\\ili{}&\ili{} N\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\end\ili{}{deptext}\ili{}
+\ili{}\wordgroup\ili{}[draw\ili{}=black\ili{},\ili{} fill\ili{}=orange\ili{}!50\ili{}]\ili{}{1}\ili{}{5}\ili{}{6}\ili{}{afew}\ili{}
+\ili{}\wordgroup\ili{}[draw\ili{}=white\ili{}]\ili{}{1}\ili{}{8}\ili{}{8}\ili{}{decisions}\ili{}
+\ili{}%\ili{}\wordgroup\ili{}{1}\ili{}{2}\ili{}{2}\ili{}{envain}\ili{}
+\ili{}%\ili{}\deproot\ili{}[edge\ili{} below\ili{}]\ili{}
+\ili{}%\ili{}{4}\ili{}{root}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{},\ili{} edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}
+\ili{}{3}\ili{}{1}\ili{}{det}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{},\ili{} edge\ili{} unit\ili{} distance\ili{}=2ex\ili{}]\ili{}
+\ili{}{3}\ili{}{2}\ili{}{mod}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{}]\ili{}
+\ili{}{4}\ili{}{3}\ili{}{subj}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{}]\ili{}
+\ili{}{8}\ili{}{7}\ili{}{mod}\ili{}
+\ili{}\depedge\ili{}[edge\ili{} below\ili{},\ili{} edge\ili{} unit\ili{} distance\ili{}=1\ili{}.5ex\ili{}]\ili{}
+\ili{}{4}\ili{}{8}\ili{}{obj}\ili{}
+\ili{}
+\ili{}\groupedge\ili{}[edge\ili{} below\ili{}]\ili{}
+\ili{}{decisions}\ili{}{afew}\ili{}{det}\ili{}{3\ili{}.5ex}\ili{}
+\ili{}%\ili{}\depedge\ili{}[edge\ili{} below\ili{}]\ili{}{5}\ili{}{6}\ili{}{dobj}\ili{}
+\ili{}%\ili{}\wordgroup\ili{}{2}\ili{}{1}\ili{}{2}\ili{}{a0}\ili{}
+\ili{}%\ili{}\wordgroup\ili{}{2}\ili{}{5}\ili{}{6}\ili{}{a1}\ili{}
+\ili{}%\ili{}\groupedge\ili{}[edge\ili{} below\ili{}]\ili{}{pred}\ili{}{a0}\ili{}{ARG0}\ili{}{4ex}\ili{} \ili{}%\ili{} pred\ili{} \ili{}-\ili{}>\ili{} a0\ili{} \ili{}(ARG0\ili{},\ili{} 4ex\ili{})\ili{}
+\ili{}%\ili{}\groupedge\ili{}[edge\ili{} below\ili{}]\ili{}{a0}\ili{}{pred}\ili{}{ARG0}\ili{}{4ex}\ili{}
+\ili{}%\ili{}\groupedge\ili{}[edge\ili{} below\ili{}]\ili{}{pred}\ili{}{a1}\ili{}{ARG1}\ili{}{6ex}\ili{} \ili{}%\ili{} pred\ili{} \ili{}-\ili{}>\ili{} a1\ili{} \ili{}(ARG1\ili{},\ili{} 6ex\ili{})\ili{}
+\ili{}
+\ili{}\node\ili{}[yshift\ili{}=0\ili{}.75cm\ili{},xshift\ili{}=2cm\ili{},draw\ili{}=black\ili{},\ili{} fill\ili{}=blue\ili{}!50\ili{}]\ili{} \ili{}{made\ili{}-decisions}\ili{}
+child\ili{}{\ili{}
+\ili{} node\ili{} at\ili{} \ili{}(\ili{}$\ili{}(\ili{}\wordref\ili{}{1}\ili{}{4}\ili{})\ili{}$\ili{})\ili{} \ili{}{}\ili{}
+}\ili{}
+child\ili{}{\ili{}
+\ili{} node\ili{} at\ili{} \ili{}(\ili{}$\ili{}(\ili{}\wordref\ili{}{1}\ili{}{8}\ili{})\ili{}$\ili{})\ili{} \ili{}{}\ili{}
+}\ili{};\ili{}
+\ili{}
+\ili{}
+\ili{}\node\ili{}[yshift\ili{}=0\ili{}.75cm\ili{},xshift\ili{}=\ili{}-3cm\ili{},draw\ili{}=black\ili{},\ili{} fill\ili{}=red\ili{}!50\ili{}]\ili{} \ili{}{prime\ili{}-minister}\ili{}
+child\ili{}{\ili{}
+\ili{} node\ili{} at\ili{} \ili{}(\ili{}$\ili{}(\ili{}\wordref\ili{}{1}\ili{}{2}\ili{})\ili{}$\ili{})\ili{} \ili{}{}\ili{}
+}\ili{}
+child\ili{}{\ili{}
+\ili{} node\ili{} at\ili{} \ili{}(\ili{}$\ili{}(\ili{}\wordref\ili{}{1}\ili{}{3}\ili{})\ili{}$\ili{})\ili{} \ili{}{}\ili{}
+}\ili{};\ili{}
+\ili{}
+\ili{}
+\ili{}\end\ili{}{dependency}\ili{}
+\ili{}\vspace\ili{}{\ili{}-0\ili{}.3cm}\ili{}
+\ili{}\caption\ili{}{Representation\ili{} on\ili{} factorized\ili{} lexical\ili{} and\ili{} syntactic\ili{} layers\ili{} \ili{}\citep\ili{}{constantNivre16}\ili{}.}\ili{}
+\ili{}\label\ili{}{fig\ili{}:combined}\ili{}
+\ili{}\end\ili{}{center}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Multilayer\ili{} representations}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:multilayer}\ili{}
+\ili{}
+One\ili{} of\ili{} the\ili{} most\ili{} interesting\ili{} \ili{}\isi\ili{}{MWE\ili{} representation}\ili{} combined\ili{} with\ili{} \ili{}(deep\ili{})\ili{} syntactic\ili{} analysis\ili{} is\ili{} the\ili{} one\ili{} used\ili{} in\ili{} the\ili{} Prague\ili{} Dependency\ili{} Treebank\ili{} \ili{}\citep\ili{}{prague}\ili{}.\ili{} It\ili{} combines\ili{} three\ili{} different\ili{} analysis\ili{} layers\ili{} in\ili{} the\ili{} form\ili{} of\ili{} trees\ili{}:\ili{} morphological\ili{} \ili{}(\ili{}$m\ili{}$\ili{}-layer\ili{})\ili{},\ili{} syntactic\ili{} \ili{}(\ili{}$a\ili{}$\ili{}-layer\ili{})\ili{} and\ili{} \ili{}`\ili{}`semantic\ili{}"\ili{} ones\ili{} \ili{}(\ili{}$t\ili{}$\ili{}-layer\ili{})\ili{}.\ili{} Nodes\ili{} of\ili{} one\ili{} layer\ili{} can\ili{} be\ili{} linked\ili{} to\ili{} nodes\ili{} of\ili{} another\ili{} layer\ili{} to\ili{} model\ili{} the\ili{} interleaving\ili{} of\ili{} the\ili{} different\ili{} types\ili{} of\ili{} analysis\ili{}.\ili{} MWEs\ili{} are\ili{} represented\ili{} on\ili{} the\ili{} t\ili{}-layer\ili{} and\ili{} are\ili{} associated\ili{} with\ili{} MWE\ili{} entries\ili{} of\ili{} a\ili{} lexicon\ili{}.\ili{} To\ili{} our\ili{} knowledge\ili{},\ili{} there\ili{} is\ili{} unfortunately\ili{} no\ili{} statistical\ili{} parser\ili{} outputting\ili{} such\ili{} combined\ili{} structures\ili{}.\ili{} \ili{}
+\ili{}
+Though\ili{} less\ili{} linguistically\ili{} expressive\ili{},\ili{} other\ili{} multilayer\ili{} representations\ili{} have\ili{} been\ili{} proposed\ili{} on\ili{} top\ili{} of\ili{} a\ili{} combined\ili{} lexical\ili{} and\ili{} syntactic\ili{} parser\ili{}.\ili{} The\ili{} proposal\ili{} of\ili{} \ili{}\citet\ili{}{Constant16}\ili{} is\ili{} to\ili{} have\ili{} two\ili{} distinct\ili{} layers\ili{} for\ili{} representing\ili{} lexical\ili{} and\ili{} syntactic\ili{} analysis\ili{} in\ili{} the\ili{} form\ili{} of\ili{} dependency\ili{} trees\ili{}.\ili{} The\ili{} two\ili{} layers\ili{} share\ili{} the\ili{} same\ili{} nodes\ili{},\ili{} that\ili{} correspond\ili{} to\ili{} the\ili{} tokens\ili{},\ili{} as\ili{} shown\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:2\ili{}-dim}\ili{}.\ili{} \ili{}
+The\ili{} syntactic\ili{} layer\ili{} represents\ili{} the\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} in\ili{} the\ili{} dependency\ili{} framework\ili{}.\ili{} The\ili{} lexical\ili{} layer\ili{} represents\ili{} the\ili{} lexical\ili{} segmentation\ili{} in\ili{} the\ili{} form\ili{} of\ili{} a\ili{} tree\ili{}.\ili{} \ili{}
+Arcs\ili{} in\ili{} MWE\ili{} subtrees\ili{} have\ili{} a\ili{} special\ili{} label\ili{} \ili{}\expl\ili{}{mwe}\ili{}.\ili{} For\ili{} instance\ili{},\ili{} the\ili{} MWE\ili{} \ili{}\expl\ili{}{prime\ili{} minister}\ili{} corresponds\ili{} to\ili{} a\ili{} subtree\ili{} whose\ili{} root\ili{} is\ili{} \ili{}\expl\ili{}{prime}\ili{} and\ili{} which\ili{} is\ili{} composed\ili{} of\ili{} an\ili{} \ili{}\expl\ili{}{mwe}\ili{} arc\ili{} from\ili{} \ili{}\expl\ili{}{prime}\ili{} to\ili{} \ili{}\expl\ili{}{minister}\ili{}.\ili{} \ili{} In\ili{} order\ili{} to\ili{} form\ili{} a\ili{} unique\ili{} tree\ili{} for\ili{} the\ili{} lexical\ili{} layer\ili{},\ili{} lexical\ili{} units\ili{} are\ili{} sequentially\ili{} related\ili{} via\ili{} arcs\ili{} labeled\ili{} \ili{}\expl\ili{}{lex}\ili{}.\ili{} For\ili{} instance\ili{},\ili{} the\ili{} MWE\ili{} \ili{}\expl\ili{}{prime\ili{} minister}\ili{} is\ili{} linked\ili{} to\ili{} the\ili{} following\ili{} lexical\ili{} unit\ili{} \ili{}\expl\ili{}{made\ili{} decisions}\ili{}.\ili{} \ili{}
+This\ili{} dual\ili{} representation\ili{} has\ili{} several\ili{} advantages\ili{}.\ili{} First\ili{},\ili{} syntactic\ili{} and\ili{} lexical\ili{} analyzes\ili{} are\ili{} explicitly\ili{} separated\ili{}.\ili{} In\ili{} the\ili{} case\ili{} of\ili{} regular\ili{} MWEs\ili{},\ili{} there\ili{} is\ili{} a\ili{} clear\ili{} distinction\ili{} between\ili{} the\ili{} syntactic\ili{} and\ili{} the\ili{} semantic\ili{} status\ili{} \ili{}(regular\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} vs\ili{}.\ili{} irregular\ili{} semantics\ili{})\ili{}.\ili{} In\ili{} addition\ili{},\ili{} the\ili{} representation\ili{} enables\ili{} not\ili{} only\ili{} nested\ili{} MWEs\ili{} to\ili{} be\ili{} annotated\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} \ili{} \ili{}\expl\ili{}{a\ili{} few}\ili{} in\ili{} \ili{}\expl\ili{}{made\ili{} a\ili{} few\ili{} good\ili{} decisions}\ili{})\ili{} but\ili{} also\ili{} fully\ili{} overlapping\ili{} expressions\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} the\ili{} noun\ili{} compound\ili{} \ili{}\expl\ili{}{rain\ili{} check}\ili{} inside\ili{} the\ili{} light\ili{} verb\ili{} construction\ili{} \ili{}\expl\ili{}{to\ili{} take\ili{} a\ili{} rain\ili{} check}\ili{})\ili{}.\ili{} \ili{}
+On\ili{} the\ili{} down\ili{} side\ili{},\ili{} irregular\ili{} MWEs\ili{} are\ili{} duplicated\ili{} on\ili{} the\ili{} two\ili{} layers\ili{} because\ili{} there\ili{} is\ili{} no\ili{} possible\ili{} compositional\ili{} syntactic\ili{} analysis\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} \ili{}\expl\ili{}{a\ili{} few}\ili{})\ili{}.\ili{} Additionally\ili{},\ili{} arcs\ili{} linking\ili{} lexical\ili{} units\ili{} could\ili{} be\ili{} made\ili{} implicit\ili{},\ili{} as\ili{} they\ili{} can\ili{} straightforwardly\ili{} be\ili{} computed\ili{} from\ili{} their\ili{} positions\ili{} in\ili{} the\ili{} sequence\ili{}.\ili{}
+\ili{}
+\ili{}\citet\ili{}{constantNivre16}\ili{} correct\ili{} the\ili{} main\ili{} drawbacks\ili{} of\ili{} the\ili{} previous\ili{} two\ili{}-layer\ili{} representation\ili{} by\ili{} making\ili{} it\ili{} more\ili{} compact\ili{} and\ili{} more\ili{} factorized\ili{}.\ili{} The\ili{} representation\ili{} is\ili{} still\ili{} composed\ili{} of\ili{} two\ili{} layers\ili{},\ili{} but\ili{} the\ili{} lexical\ili{} layer\ili{} is\ili{} a\ili{} forest\ili{} of\ili{} constituent\ili{}-like\ili{} trees\ili{} representing\ili{} complex\ili{} lexical\ili{} units\ili{} like\ili{} MWEs\ili{},\ili{} as\ili{} shown\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:combined}\ili{}.\ili{}
+Here\ili{},\ili{} the\ili{} discontiguous\ili{} MWE\ili{} \ili{}\expl\ili{}{made\ili{} decisions}\ili{} is\ili{} represented\ili{} by\ili{} a\ili{} tree\ili{} whose\ili{} root\ili{} corresponds\ili{} to\ili{} a\ili{} new\ili{} lexical\ili{} node\ili{} having\ili{} linguistic\ili{} attributes\ili{} like\ili{} any\ili{} token\ili{}:\ili{} a\ili{} form\ili{} \ili{}(\ili{}\expl\ili{}{made\ili{} decisions}\ili{})\ili{},\ili{} a\ili{} lemma\ili{} \ili{}(\ili{}\expl\ili{}{make\ili{} decision}\ili{})\ili{},\ili{} a\ili{} POS\ili{} tag\ili{} \ili{}(verb\ili{})\ili{} and\ili{} morphological\ili{} features\ili{} \ili{}(past\ili{} tense\ili{})\ili{}.\ili{}
+It\ili{} is\ili{} straightforward\ili{} to\ili{} elegantly\ili{} represent\ili{} embedded\ili{} and\ili{} fully\ili{} overlapping\ili{} MWEs\ili{},\ili{} as\ili{} lexical\ili{} units\ili{} are\ili{} trees\ili{}.\ili{}
+Irregular\ili{} MWEs\ili{} like\ili{} \ili{}\expl\ili{}{a\ili{} few}\ili{} and\ili{} simple\ili{} words\ili{} are\ili{} called\ili{} syntactic\ili{} nodes\ili{}.\ili{} The\ili{} syntactic\ili{} layer\ili{} is\ili{} a\ili{} dependency\ili{} tree\ili{} over\ili{} such\ili{} nodes\ili{}.\ili{} Therefore\ili{},\ili{} irregular\ili{} MWE\ili{} nodes\ili{} and\ili{} simple\ili{} word\ili{} nodes\ili{} are\ili{} shared\ili{} by\ili{} the\ili{} two\ili{} layers\ili{}.\ili{} For\ili{} example\ili{},\ili{} there\ili{} is\ili{} a\ili{} \ili{}\expl\ili{}{det}\ili{} arc\ili{} from\ili{} \ili{}\expl\ili{}{decisions}\ili{} to\ili{} \ili{}\expl\ili{}{a\ili{} few}\ili{},\ili{} as\ili{} it\ili{} is\ili{} compositionally\ili{} modified\ili{} by\ili{} the\ili{} complex\ili{} determiner\ili{}.\ili{} \ili{} This\ili{} representation\ili{} is\ili{} not\ili{} without\ili{} some\ili{} limitations\ili{}:\ili{} the\ili{} lexical\ili{} layer\ili{} cannot\ili{} represent\ili{} an\ili{} MWE\ili{} that\ili{} strictly\ili{} requires\ili{} a\ili{} graph\ili{} \ili{}(and\ili{} not\ili{} a\ili{} tree\ili{})\ili{}.\ili{} For\ili{} instance\ili{},\ili{} it\ili{} is\ili{} impossible\ili{} to\ili{} represent\ili{} the\ili{} coordinated\ili{} MWEs\ili{} \ili{}\expl\ili{}{had\ili{} shower}\ili{} and\ili{} \ili{}\expl\ili{}{had\ili{} bath}\ili{} in\ili{} the\ili{} sentence\ili{} \ili{}\expl\ili{}{John\ili{} had\ili{}$_\ili{}{1\ili{},2}\ili{}$\ili{} a\ili{} shower\ili{}$_1\ili{}$\ili{} then\ili{} a\ili{} bath\ili{}$_2\ili{}$}\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{}\input\ili{}{constantetal\ili{}/04\ili{}-pipeline}\ili{}
+\ili{}\section\ili{}{Pipeline\ili{} approaches}\ili{}
+\ili{}\label\ili{}{sec\ili{}:pipeline}\ili{}
+\ili{}
+A\ili{} minimal\ili{} processing\ili{} pipeline\ili{} consists\ili{} of\ili{} a\ili{} collection\ili{} of\ili{} two\ili{} processes\ili{} arranged\ili{} in\ili{} a\ili{} chain\ili{} so\ili{} that\ili{} the\ili{} output\ili{} of\ili{} the\ili{} first\ili{} process\ili{} is\ili{} the\ili{} input\ili{} of\ili{} the\ili{} other\ili{}.\ili{} Thus\ili{},\ili{} a\ili{} processing\ili{} pipeline\ili{} for\ili{} statistical\ili{} \ili{}\isi\ili{}{MWE\ili{} parsing}\ili{} involves\ili{} two\ili{} processes\ili{},\ili{} one\ili{} to\ili{} identify\ili{} the\ili{} MWEs\ili{} in\ili{} the\ili{} input\ili{} sentence\ili{},\ili{} and\ili{} another\ili{} for\ili{} parsing\ili{} the\ili{} sentence\ili{} into\ili{} one\ili{} or\ili{} more\ili{} structures\ili{} that\ili{} include\ili{} the\ili{} MWEs\ili{}.\ili{} The\ili{} question\ili{} that\ili{} we\ili{} address\ili{} in\ili{} this\ili{} section\ili{} concerns\ili{} the\ili{} order\ili{} in\ili{} which\ili{} these\ili{} two\ili{} processes\ili{} are\ili{} arranged\ili{},\ili{} and\ili{} there\ili{} are\ili{} clearly\ili{} two\ili{} possibilities\ili{} referred\ili{} to\ili{} as\ili{} preprocessing\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:preproc}\ili{})\ili{},\ili{} and\ili{} postprocessing\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:postproc}\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Preprocessing\ili{} approaches}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:preproc}\ili{}
+\ili{}
+Preprocessing\ili{} means\ili{} that\ili{} the\ili{} MWE\ili{} identification\ili{} task\ili{} takes\ili{} place\ili{} before\ili{} parsing\ili{}.\ili{} For\ili{} the\ili{} parser\ili{} to\ili{} benefit\ili{} from\ili{} this\ili{},\ili{} a\ili{} decision\ili{} must\ili{} be\ili{} made\ili{} about\ili{} how\ili{} to\ili{} represent\ili{} MWEs\ili{} in\ili{} the\ili{} input\ili{}.\ili{} As\ili{} discussed\ili{} earlier\ili{},\ili{} there\ili{} are\ili{} different\ili{} approaches\ili{},\ili{} the\ili{} most\ili{} important\ili{} of\ili{} which\ili{} \ili{} employ\ili{} concatenation\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:concat}\ili{})\ili{},\ili{} or\ili{} substitution\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:subst}\ili{})\ili{} operations\ili{},\ili{} as\ili{} discussed\ili{} in\ili{} the\ili{} following\ili{} sections\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Concatenation\ili{} approach}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:concat}\ili{}
+\ili{}
+A\ili{} widely\ili{} used\ili{} pipeline\ili{} approach\ili{} to\ili{} statistical\ili{} MWE\ili{}-aware\ili{} parsing\ili{} is\ili{} to\ili{} have\ili{} a\ili{} \ili{}\emph\ili{}{retokenization}\ili{} phase\ili{} before\ili{} parsing\ili{}.\ili{} It\ili{} consists\ili{} in\ili{} first\ili{} pre\ili{}-identifying\ili{} MWEs\ili{},\ili{} then\ili{} concatenating\ili{} their\ili{} components\ili{} in\ili{} one\ili{} single\ili{} token\ili{},\ili{} and\ili{} finally\ili{} applying\ili{} \ili{} a\ili{} syntactic\ili{} parser\ili{} trained\ili{} on\ili{} a\ili{} treebank\ili{} where\ili{} MWEs\ili{} have\ili{} a\ili{} words\ili{}-with\ili{}-spaces\ili{} representation\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:wws}\ili{})\ili{}.\ili{} Note\ili{} that\ili{} this\ili{} approach\ili{} is\ili{} limited\ili{} to\ili{} contiguous\ili{} MWEs\ili{}.\ili{} \ili{}
+\ili{}
+For\ili{} example\ili{},\ili{} given\ili{} the\ili{} input\ili{} token\ili{} sequence\ili{} \ili{}\expl\ili{}{The\ili{} prime\ili{} minister\ili{} made\ili{} a\ili{} few\ili{} good\ili{} decisions}\ili{},\ili{} MWEs\ili{} \ili{}\expl\ili{}{prime\ili{} minister}\ili{} and\ili{} \ili{}\expl\ili{}{a\ili{} few}\ili{} are\ili{} first\ili{} pre\ili{}-identified\ili{}.\ili{} Each\ili{} of\ili{} them\ili{} is\ili{} then\ili{} merged\ili{} by\ili{} concatenating\ili{} its\ili{} components\ili{} into\ili{} a\ili{} single\ili{} token\ili{}.\ili{} The\ili{} sequence\ili{} is\ili{} retokenized\ili{} as\ili{} \ili{}\expl\ili{}{The\ili{} prime\ili{}\_minister\ili{} made\ili{} a\ili{}\_few\ili{} good\ili{} decisions}\ili{} and\ili{} is\ili{} then\ili{} parsed\ili{}.\ili{}
+This\ili{} approach\ili{} has\ili{} the\ili{} advantage\ili{} of\ili{} reducing\ili{} the\ili{} token\ili{}-count\ili{} of\ili{} the\ili{} sentence\ili{} and\ili{} hence\ili{} reducing\ili{} the\ili{} search\ili{} space\ili{} of\ili{} the\ili{} parser\ili{}.\ili{} However\ili{},\ili{} it\ili{} may\ili{} not\ili{} be\ili{} realistic\ili{} to\ili{} recognize\ili{} some\ili{} types\ili{} of\ili{} MWEs\ili{} without\ili{} access\ili{} to\ili{} morpho\ili{}-syntactic\ili{} information\ili{}.\ili{}
+\ili{}
+Seminal\ili{} studies\ili{} \ili{}
+on\ili{} gold\ili{} MWE\ili{} identification\ili{} performed\ili{} before\ili{} either\ili{} consti\ili{}\\ili{}-tuency\ili{} parsing\ili{} \ili{}\citep\ili{}{arun05}\ili{} or\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} \ili{}\citep\ili{}{nivre04\ili{},Eryigit\ili{}:2011\ili{}:MES\ili{}:2206359\ili{}.2206365}\ili{} showed\ili{} that\ili{} it\ili{} may\ili{} have\ili{} a\ili{} great\ili{} impact\ili{} on\ili{} parsing\ili{} accuracy\ili{}.\ili{}
+Other\ili{} studies\ili{} confirmed\ili{} that\ili{} more\ili{} realistic\ili{} MWE\ili{} pre\ili{}-identification\ili{} actually\ili{} helps\ili{} parsing\ili{}.\ili{} \ili{}
+\ili{}\citet\ili{}{korkontzelosEtAl2010}\ili{} evaluated\ili{} MWE\ili{} pre\ili{}-identification\ili{} using\ili{} Wordnet\ili{} 3\ili{}.0\ili{} for\ili{} lexicon\ili{} lookup\ili{} before\ili{} shallow\ili{} parsing\ili{}.\ili{} The\ili{} set\ili{} of\ili{} MWEs\ili{} was\ili{} limited\ili{} to\ili{} two\ili{}-word\ili{} contiguous\ili{} compound\ili{} nominals\ili{},\ili{} proper\ili{} names\ili{},\ili{} and\ili{} adjective\ili{}-noun\ili{} constructions\ili{}.\ili{} The\ili{} authors\ili{} showed\ili{} that\ili{} the\ili{} approach\ili{} improves\ili{} shallow\ili{} parsing\ili{} accuracy\ili{}.\ili{} For\ili{} instance\ili{},\ili{} \ili{}
+without\ili{} \ili{} MWE\ili{} pre\ili{}-identification\ili{},\ili{}
+\ili{}%the\ili{} sentence\ili{} \ili{}
+\ili{}\expl\ili{}{he\ili{} threw\ili{} the\ili{} fire\ili{} wheel\ili{} up\ili{} into\ili{} the\ili{} air}\ili{} is\ili{} erroneously\ili{} parsed\ili{} as\ili{}:\ili{} \ili{}\expl\ili{}{\ili{}(he\ili{})\ili{} \ili{}(threw\ili{})\ili{} \ili{}(the\ili{} fire\ili{})\ili{} \ili{}(wheel\ili{} up\ili{})\ili{} \ili{}(into\ili{})\ili{} \ili{}(the\ili{} air\ili{})}\ili{},\ili{} whereas\ili{} with\ili{} MWE\ili{} pre\ili{}-identification\ili{} the\ili{} result\ili{} is\ili{}:\ili{} \ili{}\expl\ili{}{\ili{}(he\ili{})\ili{} \ili{}(threw\ili{})\ili{} \ili{}(the\ili{} fire\ili{}\_wheel\ili{})\ili{} \ili{}(up\ili{})\ili{} \ili{}(into\ili{})\ili{} \ili{}(the\ili{} air\ili{})}\ili{}.\ili{} \ili{}\citet\ili{}{Cafferkey07}\ili{} carried\ili{} out\ili{} similar\ili{} experiments\ili{} with\ili{} a\ili{} probabilistic\ili{} constituency\ili{} parser\ili{}.\ili{} MWEs\ili{} were\ili{} automatically\ili{} identified\ili{} by\ili{} applying\ili{} a\ili{} named\ili{} entity\ili{} recognizer\ili{} and\ili{} list\ili{} of\ili{} prepositional\ili{} MWEs\ili{}.\ili{} A\ili{} slight\ili{} but\ili{} statistically\ili{} significant\ili{} improvement\ili{} was\ili{} observed\ili{}.\ili{} We\ili{} should\ili{} note\ili{} that\ili{} in\ili{} the\ili{} above\ili{} studies\ili{},\ili{} MWE\ili{} identification\ili{} itself\ili{} was\ili{} not\ili{} evaluated\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+The\ili{} SPMRL\ili{} shared\ili{} task\ili{} \ili{}\citep\ili{}{seddah13}\ili{} had\ili{} a\ili{} special\ili{} track\ili{} dedicated\ili{} to\ili{} MWE\ili{}-aware\ili{} parsing\ili{} in\ili{} \ili{}\ili\ili{}{French}\ili{}.\ili{} The\ili{} provided\ili{} treebank\ili{} included\ili{} contiguous\ili{} MWE\ili{} annotations\ili{} represented\ili{} as\ili{} flat\ili{} subtrees\ili{} \ili{}(Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:flat}\ili{})\ili{}.\ili{} All\ili{} but\ili{} one\ili{} competing\ili{} team\ili{} did\ili{} not\ili{} develop\ili{} special\ili{} treatments\ili{} for\ili{} MWEs\ili{}.\ili{} The\ili{} winning\ili{} team\ili{} was\ili{} the\ili{} only\ili{} one\ili{} to\ili{} have\ili{} a\ili{} preprocessing\ili{} stage\ili{} to\ili{} identify\ili{} MWEs\ili{} using\ili{} a\ili{} tagger\ili{} based\ili{} on\ili{} linear\ili{} conditional\ili{} random\ili{} fields\ili{} \ili{}\citep\ili{}{constant\ili{}:13\ili{}:MWE}\ili{}.\ili{} The\ili{} tagger\ili{} model\ili{} also\ili{} incorporated\ili{} features\ili{} based\ili{} on\ili{} an\ili{} MWE\ili{} lexicon\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:lex\ili{}-help\ili{}-mwe}\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Substitution\ili{} approach}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:subst}\ili{}
+\ili{}
+\ili{}
+Another\ili{} approach\ili{} is\ili{} to\ili{} use\ili{} substitution\ili{}:\ili{} whenever\ili{} an\ili{} MWE\ili{} from\ili{} the\ili{} lexicon\ili{} \ili{}
+matches\ili{},\ili{} it\ili{} is\ili{} replaced\ili{} by\ili{} its\ili{} head\ili{} word\ili{}.\ili{} Such\ili{} approach\ili{} is\ili{} employed\ili{} by\ili{} \ili{}\citep\ili{}{weeds\ili{}-ea07}\ili{} for\ili{} technical\ili{} terms\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:mwe\ili{}-help\ili{}-parse}\ili{})\ili{},\ili{} and\ili{} by\ili{} \ili{}\citet\ili{}{schneiderPhd}\ili{} on\ili{} all\ili{} chunks\ili{}.\ili{}
+In\ili{} a\ili{} typical\ili{} substitution\ili{} approach\ili{},\ili{} for\ili{} example\ili{},\ili{} the\ili{} term\ili{} \ili{}\expl\ili{}{natural\ili{} language\ili{} processing}\ili{} would\ili{} be\ili{} replaced\ili{} by\ili{} \ili{}\expl\ili{}{processing}\ili{} before\ili{} parsing\ili{}.\ili{} \ili{}
+\ili{}
+The\ili{} advantage\ili{} of\ili{} keeping\ili{} the\ili{} lexical\ili{} head\ili{} is\ili{} that\ili{} resources\ili{} taking\ili{} lexical\ili{} relations\ili{} into\ili{} account\ili{},\ili{} such\ili{} as\ili{} bi\ili{}-lexical\ili{} disambiguation\ili{} \ili{}\citep\ili{}{collins99}\ili{},\ili{} can\ili{} use\ili{} the\ili{} lexical\ili{} information\ili{}.\ili{} Thus\ili{},\ili{} potential\ili{} sparsity\ili{} problems\ili{} are\ili{} reduced\ili{} in\ili{} comparison\ili{} to\ili{} the\ili{} concatenation\ili{} approach\ili{}.\ili{} For\ili{} example\ili{},\ili{} the\ili{} prepositional\ili{} \ili{}\isi\ili{}{phrase}\ili{} attachment\ili{} ambiguity\ili{} in\ili{} \ili{}
+\ili{}\expl\ili{}{We\ili{} help\ili{} users\ili{} with\ili{} natural\ili{} language\ili{} processing}\ili{} \ili{}
+can\ili{} be\ili{} resolved\ili{} properly\ili{},\ili{} even\ili{} if\ili{} \ili{}\expl\ili{}{natural\ili{} language\ili{} processing}\ili{} is\ili{} unseen\ili{} in\ili{} the\ili{} training\ili{} data\ili{}.\ili{} As\ili{} long\ili{} as\ili{} \ili{}\expl\ili{}{processing}\ili{} exists\ili{} in\ili{} the\ili{} training\ili{} corpus\ili{},\ili{} the\ili{} ambiguity\ili{} can\ili{} be\ili{} solved\ili{} because\ili{} the\ili{} combination\ili{} \ili{}\expl\ili{}{help\ili{}-with\ili{}-processing}\ili{} is\ili{} more\ili{} likely\ili{} than\ili{} \ili{}\expl\ili{}{user\ili{}-with\ili{}-processing}\ili{}.\ili{} \ili{}
+\ili{}
+The\ili{} potential\ili{} drawbacks\ili{} of\ili{} this\ili{} approach\ili{} are\ili{} that\ili{},\ili{} on\ili{} the\ili{} one\ili{} hand\ili{},\ili{} strings\ili{} may\ili{} be\ili{} ambiguous\ili{},\ili{} and\ili{} on\ili{} the\ili{} other\ili{} hand\ili{} non\ili{}-compositionality\ili{} may\ili{} affect\ili{} the\ili{} results\ili{}.\ili{} \ili{}
+Ambiguous\ili{} strings\ili{} are\ili{} illustrated\ili{} below\ili{}:\ili{} while\ili{} the\ili{} first\ili{} sentence\ili{} of\ili{} each\ili{} example\ili{} is\ili{} an\ili{} MWE\ili{},\ili{} the\ili{} second\ili{} is\ili{} accidental\ili{} cooccurrence\ili{}.\ili{} The\ili{} last\ili{} example\ili{} involves\ili{} light\ili{} verbs\ili{},\ili{} for\ili{} which\ili{} \ili{}\citet\ili{}{tu\ili{}-roth\ili{}:2011\ili{}:MWE}\ili{} use\ili{} token\ili{}-wise\ili{} disambiguation\ili{},\ili{} as\ili{} ambiguity\ili{} is\ili{} relatively\ili{} frequent\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{}\item\ili{} \ili{}\expl\ili{}{I\ili{} saw\ili{} her\ili{},\ili{} and\ili{} \ili{}\textbf\ili{}{by\ili{} the\ili{} way}\ili{} she\ili{} went\ili{} there\ili{} on\ili{} foot}\ili{}
+\ili{}%\ili{}
+vs\ili{}.\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\expl\ili{}{I\ili{} recognized\ili{} her\ili{} \ili{}\textbf\ili{}{by\ili{} the\ili{} way}\ili{} she\ili{} walks}\ili{} \ili{}
+\ili{}\item\ili{} \ili{}\expl\ili{}{In\ili{} \ili{}\textbf\ili{}{natural\ili{} language\ili{} processing}\ili{},\ili{} humans\ili{} are\ili{} also\ili{} challenged}\ili{}
+\ili{}%\ili{}
+vs\ili{}.\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\expl\ili{}{In\ili{} \ili{}\textbf\ili{}{natural\ili{} language\ili{} processing}\ili{} can\ili{} be\ili{} difficult}\ili{}
+\ili{}\item\ili{} \ili{}\expl\ili{}{The\ili{} politician\ili{} \ili{}\textbf\ili{}{took}\ili{} a\ili{} strong\ili{} \ili{}\textbf\ili{}{position}\ili{} on\ili{} the\ili{} issue}\ili{}
+\ili{}%\ili{}
+vs\ili{}.\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\expl\ili{}{The\ili{} soldier\ili{} \ili{}\textbf\ili{}{took}\ili{} a\ili{} vanguard\ili{} \ili{}\textbf\ili{}{position}\ili{} on\ili{} the\ili{} mountain\ili{} top}\ili{}
+\ili{}\end\ili{}{itemize}\ili{}
+\ili{}
+Non\ili{}-compositionality\ili{} may\ili{} lead\ili{} to\ili{} situations\ili{} in\ili{} which\ili{} the\ili{} head\ili{} is\ili{} semantically\ili{} so\ili{} different\ili{} that\ili{} attachment\ili{} preferences\ili{} are\ili{} also\ili{} affected\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{}\item\ili{} \ili{}\expl\ili{}{I\ili{} saw\ili{} the\ili{} road\ili{} with\ili{} the\ili{} \ili{}\textbf\ili{}{torch\ili{} light}}\ili{} vs\ili{}.\ili{} \ili{}\\ili{}\\ili{}
+\ili{}\expl\ili{}{I\ili{} saw\ili{} the\ili{} road\ili{} with\ili{} the\ili{} \ili{}\textbf\ili{}{traffic\ili{} light}}\ili{}
+\ili{}\end\ili{}{itemize}\ili{}
+If\ili{} the\ili{} MWE\ili{} \ili{}\expl\ili{}{traffic\ili{} light}\ili{} is\ili{} reduced\ili{} to\ili{} \ili{}\expl\ili{}{light}\ili{},\ili{} the\ili{} chances\ili{} are\ili{} that\ili{} the\ili{} prepositional\ili{} \ili{}\isi\ili{}{phrase}\ili{} is\ili{} erroneously\ili{} attached\ili{} to\ili{} the\ili{} verb\ili{},\ili{} as\ili{} \ili{}\expl\ili{}{see\ili{}-with\ili{}-light}\ili{} is\ili{} likely\ili{}.\ili{} If\ili{} \ili{}\expl\ili{}{traffic\ili{} light}\ili{} is\ili{} treated\ili{} as\ili{} an\ili{} MWE\ili{},\ili{} bi\ili{}-lexical\ili{} disambiguation\ili{} can\ili{} only\ili{} profit\ili{} if\ili{} very\ili{} large\ili{} annotated\ili{} resources\ili{} exist\ili{}.\ili{} Unless\ili{} a\ili{} backoff\ili{} method\ili{} to\ili{} treat\ili{} MWE\ili{} components\ili{} is\ili{} included\ili{},\ili{} the\ili{} increased\ili{} data\ili{} sparseness\ili{} may\ili{} easily\ili{} lead\ili{} to\ili{} worse\ili{} results\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Postprocessing\ili{} approach}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:postproc}\ili{}
+\ili{}
+In\ili{} this\ili{} section\ili{},\ili{} we\ili{} present\ili{} approaches\ili{} where\ili{} parsing\ili{} precedes\ili{} MWE\ili{} processing\ili{}.\ili{} We\ili{} make\ili{} a\ili{} distinction\ili{} between\ili{} MWE\ili{} identification\ili{} and\ili{} discovery\ili{}.\ili{} We\ili{} define\ili{} \ili{}\emph\ili{}{identification}\ili{} as\ili{} the\ili{} process\ili{} recognizing\ili{} MWEs\ili{} in\ili{} context\ili{},\ili{} that\ili{} is\ili{},\ili{} as\ili{} tokens\ili{} inside\ili{} running\ili{} text\ili{}.\ili{} On\ili{} the\ili{} other\ili{} hand\ili{},\ili{} \ili{}\emph\ili{}{discovery}\ili{} aims\ili{} at\ili{} creating\ili{} a\ili{} lexicon\ili{} of\ili{} MWE\ili{} types\ili{} from\ili{} the\ili{} corpus\ili{}.\ili{} This\ili{} lexicon\ili{} can\ili{} later\ili{} be\ili{} used\ili{} to\ili{} guide\ili{} MWE\ili{} identification\ili{} and\ili{} parsing\ili{}.\ili{} In\ili{} this\ili{} section\ili{},\ili{} we\ili{} describe\ili{} approaches\ili{} for\ili{} identification\ili{} after\ili{} parsing\ili{} \ili{}(Sec\ili{}.\ili{}\ref\ili{}{ssec\ili{}:idpost}\ili{})\ili{} and\ili{} for\ili{} discovery\ili{} after\ili{} parsing\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:discopost}\ili{})\ili{},\ili{} focusing\ili{} on\ili{} works\ili{} in\ili{} which\ili{} the\ili{} result\ili{} of\ili{} discovery\ili{} was\ili{} later\ili{} employed\ili{} for\ili{} identification\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Post\ili{}-parsing\ili{} MWE\ili{} identification}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:idpost}\ili{}
+\ili{}
+Identifying\ili{} MWEs\ili{} after\ili{} \ili{}\isi\ili{}{syntactic\ili{} parsing}\ili{} is\ili{} a\ili{} natural\ili{} approach\ili{} to\ili{} MWE\ili{}-aware\ili{} parsing\ili{} as\ili{} an\ili{} MWE\ili{} generally\ili{} constitutes\ili{} a\ili{} syntactic\ili{} constituent\ili{}.\ili{} In\ili{} the\ili{} dependency\ili{} framework\ili{},\ili{} there\ili{} is\ili{} usually\ili{} a\ili{} path\ili{} contiguously\ili{} linking\ili{} the\ili{} MWE\ili{} components\ili{} in\ili{} the\ili{} syntactic\ili{} tree\ili{}.\ili{} As\ili{} a\ili{} consequence\ili{},\ili{} pre\ili{}-parsing\ili{} is\ili{} particularly\ili{} relevant\ili{} for\ili{} detecting\ili{} discontiguous\ili{} MWEs\ili{},\ili{} that\ili{} is\ili{},\ili{} MWEs\ili{} that\ili{} include\ili{} alien\ili{} elements\ili{},\ili{} by\ili{} employing\ili{} adapted\ili{} lexicon\ili{} lookup\ili{} methods\ili{}.\ili{} In\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:combined}\ili{},\ili{} the\ili{} MWE\ili{} \ili{}\expl\ili{}{made\ili{} decisions}\ili{} is\ili{} discontiguous\ili{}.\ili{} As\ili{} there\ili{} is\ili{} an\ili{} object\ili{} arc\ili{} from\ili{} \ili{}\expl\ili{}{made}\ili{} to\ili{} \ili{}\expl\ili{}{decisions}\ili{},\ili{} the\ili{} two\ili{} words\ili{} are\ili{} \ili{}\emph\ili{}{syntactically}\ili{} adjacent\ili{}.\ili{} A\ili{} matching\ili{} procedure\ili{} taking\ili{} the\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} into\ili{} account\ili{} can\ili{} therefore\ili{} be\ili{} beneficial\ili{} for\ili{} MWE\ili{} identification\ili{}.\ili{} \ili{}
+Furthermore\ili{},\ili{} MWEs\ili{} can\ili{} have\ili{} different\ili{} syntactic\ili{} variants\ili{}.\ili{} For\ili{} instance\ili{},\ili{} \ili{}\expl\ili{}{a\ili{} \ili{}\textbf\ili{}{decision}\ili{} was\ili{} \ili{}\textbf\ili{}{made}\ili{} by\ili{} John}\ili{} is\ili{} the\ili{} passive\ili{} voice\ili{} variant\ili{} of\ili{} \ili{}\textit\ili{}{John\ili{} made\ili{} a\ili{} decision}\ili{}.\ili{} The\ili{} detection\ili{} of\ili{} such\ili{} syntactic\ili{} variants\ili{} obviously\ili{} benefits\ili{} from\ili{} the\ili{} result\ili{} of\ili{} \ili{}\isi\ili{}{syntactic\ili{} parsing}\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}\citet\ili{}{fazly\ili{}-cook\ili{}-stevenson\ili{}:2009\ili{}:CL}\ili{} identify\ili{} verb\ili{}-noun\ili{} expressions\ili{} in\ili{} a\ili{} parsed\ili{} text\ili{} based\ili{} on\ili{} a\ili{} list\ili{} of\ili{} 60\ili{} candidate\ili{} expressions\ili{}.\ili{} First\ili{},\ili{} they\ili{} identify\ili{} candidate\ili{} occurrences\ili{} of\ili{} the\ili{} expressions\ili{} using\ili{} rules\ili{} based\ili{} on\ili{} syntactic\ili{} annotations\ili{} and\ili{} lexical\ili{} values\ili{}.\ili{} Then\ili{},\ili{} they\ili{} discriminate\ili{} \ili{} MWEs\ili{} from\ili{} literal\ili{} expressions\ili{} using\ili{} different\ili{} methods\ili{}.\ili{} One\ili{} is\ili{} based\ili{} on\ili{} the\ili{} assumption\ili{} that\ili{} a\ili{} verbal\ili{} MWE\ili{} expression\ili{} has\ili{} \ili{}\emph\ili{}{fewer\ili{} syntactic\ili{} variants}\ili{} than\ili{} its\ili{} literal\ili{} counterparts\ili{},\ili{} giving\ili{} rise\ili{} to\ili{} the\ili{} heuristic\ili{} that\ili{} canonical\ili{} forms\ili{} are\ili{} idiomatic\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} \ili{}\expl\ili{}{pull\ili{} one\ili{}'s\ili{} weight}\ili{})\ili{} and\ili{} non\ili{}-canonical\ili{} variants\ili{} are\ili{} literal\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} \ili{}\textit\ili{}{pull\ili{} a\ili{} weight\ili{},\ili{} pull\ili{} the\ili{} weights}\ili{})\ili{}.\ili{} Another\ili{} method\ili{}
+compared\ili{} the\ili{} distributional\ili{} contexts\ili{} of\ili{} co\ili{}-occurring\ili{} verb\ili{}-object\ili{} pairs\ili{} to\ili{} two\ili{} sets\ili{} of\ili{} gold\ili{}-standard\ili{} contexts\ili{}:\ili{} one\ili{} for\ili{} idiomatic\ili{} readings\ili{} and\ili{} another\ili{} one\ili{} for\ili{} literal\ili{} readings\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}\citet\ili{}{nagyt\ili{}-vincze\ili{}:2014\ili{}:MWE}\ili{} compare\ili{} the\ili{} use\ili{} of\ili{} parsers\ili{} and\ili{} of\ili{} a\ili{} syntax\ili{}-based\ili{} pipeline\ili{} approach\ili{} to\ili{} identify\ili{} verb\ili{} particle\ili{} constructions\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{}.\ili{} \ili{}\ili\ili{}{English}\ili{} off\ili{}-the\ili{}-shelf\ili{} parsers\ili{} usually\ili{} have\ili{} a\ili{} specific\ili{} syntactic\ili{} arc\ili{} label\ili{} to\ili{} identify\ili{} occurrences\ili{} of\ili{} \ili{}\isi\ili{}{verb\ili{}-particle\ili{} constructions}\ili{}.\ili{} Nonetheless\ili{},\ili{} such\ili{} parsers\ili{} tend\ili{} to\ili{} get\ili{} good\ili{} precision\ili{} but\ili{} low\ili{} recall\ili{},\ili{} as\ili{} they\ili{} do\ili{} not\ili{} use\ili{} dedicated\ili{} features\ili{} for\ili{} this\ili{} task\ili{}.\ili{} The\ili{} pipeline\ili{} method\ili{} developed\ili{} in\ili{} this\ili{} paper\ili{} \ili{} uses\ili{} a\ili{} standard\ili{} parser\ili{} to\ili{} identify\ili{} a\ili{} first\ili{} set\ili{} of\ili{} candidates\ili{}.\ili{} This\ili{} set\ili{} is\ili{} subsequently\ili{} enlarged\ili{} using\ili{} other\ili{} syntactic\ili{} relations\ili{}.\ili{} A\ili{} classifier\ili{} is\ili{} then\ili{} applied\ili{} in\ili{} order\ili{} to\ili{} decide\ili{} whether\ili{} they\ili{} are\ili{} \ili{}\isi\ili{}{verb\ili{}-particle\ili{} constructions}\ili{} or\ili{} not\ili{}.\ili{} They\ili{} show\ili{} a\ili{} significant\ili{} gain\ili{} in\ili{} terms\ili{} of\ili{} recall\ili{} and\ili{} F\ili{}-score\ili{} with\ili{} respect\ili{} to\ili{} standard\ili{} parsers\ili{} on\ili{} the\ili{} Wiki50\ili{} corpus\ili{} \ili{}\citep\ili{}{Vincze11}\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Post\ili{}-parsing\ili{} MWE\ili{} discovery}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:discopost}\ili{}
+\ili{}
+\ili{}
+\ili{}{This\ili{} section\ili{} discusses\ili{} the\ili{} discovery\ili{} of\ili{} new\ili{} MWEs\ili{} after\ili{} parsing\ili{}.\ili{} This\ili{} is\ili{} particularly\ili{} useful\ili{} for\ili{} the\ili{} creation\ili{} of\ili{} resources\ili{} that\ili{} can\ili{} be\ili{} used\ili{} for\ili{} MWE\ili{}-aware\ili{} parsing\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{sec\ili{}:resources}\ili{})\ili{}.\ili{} \ili{}
+For\ili{} instance\ili{},\ili{} such\ili{} lexicon\ili{} of\ili{} newly\ili{} discovered\ili{} MWEs\ili{} can\ili{} be\ili{} subsequently\ili{} used\ili{} for\ili{} MWE\ili{} pre\ili{}-identification\ili{} at\ili{} the\ili{} next\ili{} cycle\ili{} of\ili{} processing\ili{}.\ili{}
+\ili{}\citet\ili{}{seretan11}\ili{} has\ili{} shown\ili{} that\ili{} discovery\ili{} based\ili{} on\ili{} parsed\ili{} corpora\ili{} provides\ili{} considerably\ili{} cleaner\ili{} \ili{}{results\ili{} than\ili{} those\ili{} relying\ili{} on\ili{} shallow\ili{} analysis\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} POS\ili{}-tagged\ili{} corpora\ili{})}\ili{}.\ili{} Chapter\ili{}~9\ili{} discusses\ili{} the\ili{} integration\ili{} of\ili{} resources\ili{} built\ili{} with\ili{} the\ili{} help\ili{} of\ili{} MWE\ili{} discovery\ili{} into\ili{} a\ili{} language\ili{}-independent\ili{} symbolic\ili{} parser\ili{}.}\ili{}
+\ili{}
+\ili{}{Since\ili{} the\ili{} literature\ili{} in\ili{} MWE\ili{} discovery\ili{} is\ili{} huge\ili{},\ili{} we\ili{} focus\ili{} on\ili{} two\ili{} studies\ili{} that\ili{} represent\ili{} a\ili{} sample\ili{} of\ili{} this\ili{} type\ili{} of\ili{} approach\ili{}.}\ili{}
+\ili{}\citet\ili{}{lehmann\ili{}-schneider2011\ili{}:verb\ili{}-PP}\ili{} and\ili{} \ili{}\citet\ili{}{Ronan_Schneider_MWE_15}\ili{}
+used\ili{} automatically\ili{} parsed\ili{} data\ili{} for\ili{} discovering\ili{} MWEs\ili{} of\ili{} different\ili{} types\ili{},\ili{} including\ili{} idiomatic\ili{} verb\ili{} \ili{}+\ili{} prepositional\ili{} \ili{}\isi\ili{}{phrase}\ili{} \ili{}(PP\ili{})\ili{} combinations\ili{} and\ili{} light\ili{}-verb\ili{} constructions\ili{} \ili{}{in\ili{} English}\ili{}.\ili{} These\ili{} cases\ili{} involved\ili{} the\ili{} use\ili{} of\ili{} different\ili{} \ili{}{collocation\ili{} extraction\ili{} scores}\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{\ili{}|\ili{}|llll\ili{}|r\ili{}|r\ili{}|\ili{}|}\ili{}
+\ili{}%\ili{}\includegraphics\ili{}[width\ili{}=180pt\ili{},height\ili{}=160pt\ili{}]\ili{}{VOPN_OE\ili{}.png}\ili{}
+\ili{}\hline\ili{} \ili{}\hline\ili{}
+Verb\ili{} \ili{}&\ili{} Object\ili{} \ili{}&\ili{} Prep\ili{} \ili{}&\ili{} Desc\ili{}.\ili{} noun\ili{} \ili{}&\ili{} T\ili{}-score\ili{} \ili{}&\ili{} O\ili{}/E\ili{} \ili{}\\ili{}\\ili{} \ili{}\hline\ili{}
+send\ili{} \ili{}&\ili{} shiver\ili{} \ili{}&\ili{} down\ili{} \ili{}&\ili{} spine\ili{} \ili{}&\ili{} 5\ili{}.74456\ili{} \ili{}&\ili{} 2\ili{}.21477\ili{}×10\ili{}$\ili{}^8\ili{}$\ili{}\\ili{}\\ili{}
+tap\ili{} \ili{}&\ili{} esc\ili{} \ili{}&\ili{} for\ili{} \ili{}&\ili{} escape\ili{} \ili{}&\ili{} 6\ili{}.40312\ili{} \ili{}&\ili{} 2\ili{}.1134\ili{}×10\ili{}$\ili{}^8\ili{}$\ili{}\\ili{}\\ili{}
+separate\ili{} \ili{}&\ili{} shield\ili{} \ili{}&\ili{} from\ili{} \ili{}&\ili{} plate\ili{} \ili{}&\ili{} 6\ili{}.78233\ili{} \ili{}&\ili{} 2\ili{}.33384\ili{}×10\ili{}$\ili{}^7\ili{}$\ili{}\\ili{}\\ili{}
+refer\ili{} \ili{}&\ili{} gentleman\ili{} \ili{}&\ili{} to\ili{} \ili{}&\ili{} reply\ili{} \ili{}&\ili{} 8\ili{}.24621\ili{} \ili{}&\ili{} 7\ili{}.8143\ili{}×10\ili{}$\ili{}^6\ili{}$\ili{}\\ili{}\\ili{}
+obtain\ili{} \ili{}&\ili{} property\ili{} \ili{}&\ili{} by\ili{} \ili{}&\ili{} deception\ili{} \ili{}&\ili{} 5\ili{}.2915\ili{} \ili{}&\ili{} 7\ili{}.60043\ili{}×10\ili{}$\ili{}^6\ili{}$\ili{}\\ili{}\\ili{}
+ask\ili{} \ili{}&\ili{} secretary\ili{} \ili{}&\ili{} for\ili{} \ili{}&\ili{} affairs\ili{} \ili{}&\ili{} 6\ili{}.40312\ili{} \ili{}&\ili{} 5\ili{}.01529\ili{}×10\ili{}$\ili{}^6\ili{}$\ili{}\\ili{}\\ili{}
+kill\ili{} \ili{}&\ili{} bird\ili{} \ili{}&\ili{} with\ili{} \ili{}&\ili{} stone\ili{} \ili{}&\ili{} 5\ili{}.38516\ili{} \ili{}&\ili{} 3\ili{}.37917\ili{}×10\ili{}$\ili{}^6\ili{}$\ili{}\\ili{}\\ili{}
+add\ili{} \ili{}&\ili{} insult\ili{} \ili{}&\ili{} to\ili{} \ili{}&\ili{} injury\ili{} \ili{}&\ili{} 6\ili{}.08276\ili{} \ili{}&\ili{} 2\ili{}.21769\ili{}×10\ili{}$\ili{}^6\ili{}$\ili{}\\ili{}\\ili{}
+throw\ili{} \ili{}&\ili{} caution\ili{} \ili{}&\ili{} to\ili{} \ili{}&\ili{} wind\ili{} \ili{}&\ili{} 5\ili{}.09902\ili{} \ili{}&\ili{} 2\ili{}.03157\ili{}×10\ili{}$\ili{}^6\ili{}$\ili{}\\ili{}\\ili{}
+refer\ili{} \ili{}&\ili{} friend\ili{} \ili{}&\ili{} to\ili{} \ili{}&\ili{} reply\ili{} \ili{}&\ili{} 7\ili{}.54983\ili{} \ili{}&\ili{} 1\ili{}.36298\ili{}×10\ili{}$\ili{}^6\ili{}$\ili{}\\ili{}\\ili{}
+report\ili{} \ili{}&\ili{} loss\ili{} \ili{}&\ili{} on\ili{} \ili{}&\ili{} turnover\ili{} \ili{}&\ili{} 7\ili{}.14142\ili{} \ili{}&\ili{} 1\ili{}.34742\ili{}×10\ili{}$\ili{}^6\ili{}$\ili{}\\ili{}\\ili{} \ili{}
+\ili{}\hline\ili{} \ili{}\hline\ili{}
+\ili{}\end\ili{}{tabular}\ili{}
+\ili{}\caption\ili{}{Top\ili{}-ranked\ili{} verb\ili{}-object\ili{} \ili{}+\ili{} preposition\ili{}-noun\ili{} tuples\ili{},\ili{} using\ili{} the\ili{} the\ili{} O\ili{}/E\ili{} score\ili{} \ili{}\citep\ili{}{lehmann\ili{}-schneider2011\ili{}:verb\ili{}-PP}\ili{}.}\ili{}
+\ili{}\label\ili{}{discover\ili{}-verb\ili{}-PP}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+For\ili{} discovering\ili{} Verb\ili{}-PP\ili{} idioms\ili{} the\ili{} O\ili{}/E\ili{} score\ili{} was\ili{} used\ili{},\ili{} combined\ili{} with\ili{} filters\ili{} including\ili{} T\ili{}-score\ili{} and\ili{} Yule\ili{}'s\ili{} K\ili{} \ili{}(which\ili{} estimates\ili{} the\ili{} degree\ili{} of\ili{} non\ili{}-modifiability\ili{} of\ili{} a\ili{} candidate\ili{})\ili{}.\ili{} \ili{}
+\ili{}{Table}\ili{}~\ili{}\ref\ili{}{discover\ili{}-verb\ili{}-PP}\ili{},\ili{} reproduces\ili{} the\ili{} results\ili{} of\ili{} discovery\ili{},\ili{} sorting\ili{} the\ili{} candidates\ili{} by\ili{} descending\ili{} O\ili{}/E\ili{} score\ili{}.\ili{} Among\ili{} the\ili{} top\ili{}-ranked\ili{} candidates\ili{},\ili{} many\ili{} are\ili{} genuine\ili{} idioms\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} \ili{}\expl\ili{}{to\ili{} kill\ili{} two\ili{} birds\ili{} with\ili{} one\ili{} stone}\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}
+For\ili{} discovering\ili{} light\ili{}-verb\ili{} constructions\ili{},\ili{} the\ili{} t\ili{}-score\ili{} was\ili{} used\ili{} together\ili{} with\ili{} a\ili{} number\ili{} of\ili{} filters\ili{} including\ili{} WordNet\ili{} and\ili{} NomBank\ili{} lookup\ili{} \ili{}\citep\ili{}{Ronan_Schneider_MWE_15}\ili{}.\ili{} \ili{}
+An\ili{} example\ili{} of\ili{} analysis\ili{} is\ili{} shown\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{discover\ili{}-lightverbs}\ili{},\ili{} showing\ili{} a\ili{} precision\ili{} and\ili{} recall\ili{} plot\ili{} by\ili{} candidate\ili{} list\ili{} length\ili{}.\ili{} The\ili{} vertical\ili{} axis\ili{} shows\ili{} precision\ili{} and\ili{} recall\ili{},\ili{} respectively\ili{},\ili{} the\ili{} horizontal\ili{} axis\ili{} \ili{}(which\ili{} is\ili{} logarithmic\ili{})\ili{} gives\ili{} the\ili{} cutoff\ili{} in\ili{} the\ili{} ranked\ili{} list\ili{} of\ili{} candidates\ili{} to\ili{} be\ili{} included\ili{} in\ili{} the\ili{} evaluation\ili{}.\ili{} For\ili{} the\ili{} cutoff\ili{} at\ili{} 20\ili{},\ili{} the\ili{} reported\ili{} candidates\ili{} for\ili{} \ili{}\emph\ili{}{give}\ili{}+object\ili{},\ili{} precision\ili{} is\ili{} 100\ili{}\\ili{}%\ili{},\ili{} while\ili{} recall\ili{} is\ili{} 10\ili{}\\ili{}%\ili{}.\ili{} At\ili{} rank\ili{} 2560\ili{},\ili{} about\ili{} 88\ili{}\\ili{}%\ili{} of\ili{} all\ili{} instances\ili{} in\ili{} the\ili{} gold\ili{} standard\ili{} were\ili{} found\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=240pt\ili{},height\ili{}=160pt\ili{}]\ili{}{figures\ili{}/ICAME_2013_27_BW\ili{}.pdf}\ili{}
+\ili{}\caption\ili{}{Precision\ili{} vs\ili{}.\ili{} recall\ili{} curve\ili{} of\ili{} the\ili{} light\ili{} verb\ili{} \ili{}\expl\ili{}{give}\ili{} in\ili{} the\ili{} British\ili{} National\ili{} Corpus\ili{},\ili{} using\ili{} t\ili{}-score\ili{} \ili{}\citep\ili{}{Ronan_Schneider_MWE_15}\ili{}.}\ili{}
+\ili{}\label\ili{}{discover\ili{}-lightverbs}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{}\input\ili{}{constantetal\ili{}/05\ili{}-joint}\ili{}
+\ili{}\section\ili{}{Joint\ili{} approaches}\ili{}
+\ili{}\label\ili{}{sec\ili{}:joint}\ili{}
+\ili{}
+Joint\ili{} approaches\ili{} perform\ili{} parsing\ili{} and\ili{} MWE\ili{} identification\ili{} simultaneously\ili{}.\ili{}
+Since\ili{} syntactic\ili{} and\ili{} lexical\ili{}-semantic\ili{} information\ili{} are\ili{} complementary\ili{},\ili{} both\ili{} processes\ili{} can\ili{} help\ili{} each\ili{} other\ili{} if\ili{} performed\ili{} together\ili{}.\ili{}
+In\ili{} such\ili{} systems\ili{},\ili{} MWE\ili{} lexical\ili{}-seman\ili{}\\ili{}-tic\ili{} segmentation\ili{} is\ili{} often\ili{} seen\ili{} as\ili{} a\ili{} by\ili{}-product\ili{} of\ili{} syntactic\ili{} analysis\ili{},\ili{} or\ili{} vice\ili{}-versa\ili{}.\ili{}
+\ili{}
+Some\ili{} MWEs\ili{} require\ili{} quite\ili{} sophisticated\ili{} syntactic\ili{} information\ili{} to\ili{} be\ili{} recognized\ili{},\ili{} such\ili{} as\ili{} \ili{}\isi\ili{}{subcategorization}\ili{} frames\ili{} and\ili{} \ili{}\isi\ili{}{phrase}\ili{} structure\ili{}.\ili{}
+Joint\ili{} approaches\ili{} favor\ili{} delaying\ili{} the\ili{} decision\ili{} as\ili{} to\ili{} whether\ili{} a\ili{} given\ili{} combination\ili{} is\ili{} an\ili{} MWE\ili{} to\ili{} the\ili{} parser\ili{},\ili{} where\ili{} this\ili{} information\ili{} is\ili{} available\ili{}.\ili{}
+In\ili{} other\ili{} words\ili{},\ili{} the\ili{} system\ili{} has\ili{} access\ili{} to\ili{} the\ili{} right\ili{} information\ili{} at\ili{} the\ili{} right\ili{} moment\ili{}.\ili{} \ili{}%\ili{} in\ili{} the\ili{} pipeline\ili{}.\ili{}
+\ili{}
+\ili{}
+Parser\ili{} evaluation\ili{} scores\ili{} are\ili{} often\ili{} reported\ili{} on\ili{} standard\ili{} test\ili{} sets\ili{},\ili{} where\ili{} MWEs\ili{} have\ili{} been\ili{} manually\ili{} pre\ili{}-identified\ili{} \ili{}(gold\ili{})\ili{}.\ili{}
+Jointly\ili{} performing\ili{} MWE\ili{} identification\ili{} and\ili{} parsing\ili{} is\ili{} more\ili{} realistic\ili{} than\ili{} parsing\ili{} pre\ili{}-annotated\ili{} test\ili{} sets\ili{},\ili{} where\ili{} MWEs\ili{} are\ili{} often\ili{} represented\ili{} as\ili{} words\ili{} with\ili{} spaces\ili{} \ili{}(Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:wws}\ili{})\ili{}.\ili{}
+Indeed\ili{},\ili{} when\ili{} moving\ili{} from\ili{} standard\ili{} test\ili{} sets\ili{} to\ili{} real\ili{} texts\ili{},\ili{} gold\ili{} MWE\ili{} identification\ili{} is\ili{} not\ili{} necessarily\ili{} available\ili{}.\ili{}
+It\ili{} may\ili{} be\ili{} hard\ili{} to\ili{} use\ili{} a\ili{} pipeline\ili{} approach\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{sec\ili{}:pipeline}\ili{})\ili{} if\ili{} the\ili{} target\ili{} MWEs\ili{} are\ili{} ambiguous\ili{} or\ili{} discontiguous\ili{}.\ili{}
+\ili{}
+On\ili{} the\ili{} downside\ili{},\ili{} parsers\ili{} that\ili{} perform\ili{} both\ili{} syntactic\ili{} analysis\ili{} and\ili{} MWE\ili{} identification\ili{} simultaneously\ili{} are\ili{} harder\ili{} to\ili{} design\ili{}.\ili{}
+First\ili{},\ili{} ambiguity\ili{} is\ili{} increased\ili{},\ili{} often\ili{} by\ili{} a\ili{} larger\ili{} number\ili{} of\ili{} labels\ili{} and\ili{}/or\ili{} parsing\ili{} decisions\ili{} that\ili{} are\ili{} possible\ili{} at\ili{} a\ili{} given\ili{} moment\ili{}.\ili{}
+It\ili{} is\ili{} crucial\ili{},\ili{} for\ili{} such\ili{} systems\ili{},\ili{} to\ili{} have\ili{} coherent\ili{} MWE\ili{} annotations\ili{} in\ili{} \ili{}\isi\ili{}{treebanks}\ili{},\ili{} datasets\ili{} that\ili{} are\ili{} large\ili{} enough\ili{},\ili{} and\ili{} features\ili{} that\ili{} generalize\ili{} well\ili{}.\ili{} \ili{}
+\ili{}
+We\ili{} classify\ili{} such\ili{} approaches\ili{} according\ili{} to\ili{} the\ili{} degree\ili{} of\ili{} \ili{} \ili{}`\ili{}`MWE\ili{}-awareness\ili{}'\ili{}'\ili{} of\ili{} the\ili{} parser\ili{}.\ili{}
+In\ili{} shallow\ili{} approaches\ili{},\ili{} the\ili{} parser\ili{} generates\ili{} \ili{}$n\ili{}$\ili{}-best\ili{} solutions\ili{} without\ili{} putting\ili{} any\ili{} particular\ili{} emphasis\ili{} on\ili{} MWEs\ili{},\ili{} then\ili{} uses\ili{} MWE\ili{} information\ili{} for\ili{} reranking\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:joint\ili{}:rerank}\ili{})\ili{}.\ili{}
+The\ili{} majority\ili{} of\ili{} joint\ili{} approaches\ili{} add\ili{} MWE\ili{} information\ili{} to\ili{} training\ili{} and\ili{} test\ili{} \ili{}\isi\ili{}{treebanks}\ili{},\ili{} and\ili{} then\ili{} use\ili{} off\ili{}-the\ili{}-shelf\ili{} parsers\ili{} enriched\ili{} with\ili{} dedicated\ili{} MWE\ili{} features\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{} \ili{}\ref\ili{}{ssec\ili{}:joint\ili{}:data}\ili{})\ili{}.\ili{} \ili{}
+We\ili{} also\ili{} present\ili{} fully\ili{} MWE\ili{}-aware\ili{} parsers\ili{} that\ili{} take\ili{} them\ili{} into\ili{} account\ili{} in\ili{} the\ili{} parsing\ili{} algorithm\ili{} itself\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{} \ili{}\ref\ili{}{ssec\ili{}:joint\ili{}:model}\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{N\ili{}-best\ili{} and\ili{} reranking\ili{} approaches\ili{} }\ili{}
+\ili{}\label\ili{}{ssec\ili{}:joint\ili{}:rerank}\ili{}
+\ili{}
+One\ili{} possible\ili{} orchestration\ili{} solution\ili{} is\ili{} to\ili{} consider\ili{} MWE\ili{} identification\ili{} as\ili{} a\ili{} retokenization\ili{} problem\ili{},\ili{} as\ili{} described\ili{} in\ili{} Subsection\ili{}~\ili{}\ref\ili{}{ssec\ili{}:concat}\ili{}.\ili{}
+In\ili{} \ili{}$n\ili{}$\ili{}-best\ili{} approaches\ili{},\ili{} however\ili{},\ili{} the\ili{} text\ili{} is\ili{} first\ili{} segmented\ili{} into\ili{} tokens\ili{} in\ili{} a\ili{} non\ili{}-deterministic\ili{} way\ili{},\ili{} considering\ili{} \ili{}\emph\ili{}{several\ili{} possible\ili{} segmentations}\ili{}.\ili{}
+Usually\ili{},\ili{} the\ili{} output\ili{} of\ili{} such\ili{} non\ili{}-deterministic\ili{} tokenizer\ili{} is\ili{} a\ili{} lattice\ili{} containing\ili{} all\ili{} possible\ili{} segmentation\ili{} paths\ili{} for\ili{} a\ili{} sentence\ili{} \ili{}\citep\ili{}{sagot\ili{}:2005}\ili{}.\ili{}
+This\ili{} representation\ili{} is\ili{} particularly\ili{} suited\ili{} for\ili{} ambiguous\ili{} irregular\ili{} constructions\ili{},\ili{} that\ili{} could\ili{} be\ili{} considered\ili{} as\ili{} MWEs\ili{} or\ili{} as\ili{} accidental\ili{} co\ili{}-occurrence\ili{},\ili{} depending\ili{} on\ili{} the\ili{} context\ili{}.\ili{}
+The\ili{} parser\ili{} then\ili{} must\ili{} take\ili{} this\ili{} ambiguous\ili{} segmentation\ili{} and\ili{} uses\ili{} simple\ili{} parsing\ili{} models\ili{} to\ili{} disambiguate\ili{} the\ili{} input\ili{} and\ili{} generate\ili{} a\ili{} parse\ili{} tree\ili{} \ili{}\citep\ili{}{nasr\ili{}:11}\ili{}.\ili{}
+\ili{}
+An\ili{} \ili{}$n\ili{}$\ili{}-best\ili{} MWE\ili{} identifier\ili{} is\ili{} used\ili{} by\ili{} \ili{}\citet\ili{}{Constant13}\ili{},\ili{} producing\ili{} a\ili{} lattice\ili{} of\ili{} possible\ili{} segmentations\ili{}.\ili{} Then\ili{},\ili{} a\ili{} PCFG\ili{}-LA\ili{} parser\ili{} is\ili{} used\ili{} to\ili{} disambiguate\ili{} the\ili{} possible\ili{} readings\ili{}.\ili{} The\ili{} authors\ili{} test\ili{} two\ili{} variants\ili{}.\ili{} First\ili{},\ili{} they\ili{} consider\ili{} that\ili{} MWEs\ili{} in\ili{} the\ili{} lattice\ili{} are\ili{} single\ili{} nodes\ili{} \ili{}(words\ili{} with\ili{} spaces\ili{})\ili{}.\ili{} \ili{}
+Thus\ili{},\ili{} different\ili{} segmentation\ili{} possibilities\ili{} in\ili{} the\ili{} lattice\ili{} are\ili{} represented\ili{} by\ili{} paths\ili{} with\ili{} different\ili{} lengths\ili{}.\ili{} Second\ili{},\ili{} they\ili{} considering\ili{} that\ili{} MWE\ili{} components\ili{} are\ili{} individual\ili{} nodes\ili{} tagged\ili{} using\ili{} an\ili{} IOB\ili{} scheme\ili{},\ili{} like\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:iob}\ili{}.\ili{} The\ili{} latter\ili{} obtains\ili{} better\ili{} performance\ili{} because\ili{} all\ili{} possible\ili{} paths\ili{} in\ili{} the\ili{} lattice\ili{} have\ili{} the\ili{} same\ili{} length\ili{},\ili{} resulting\ili{} in\ili{} more\ili{} accurate\ili{} parsing\ili{} scores\ili{}.\ili{}
+\ili{}
+Conversely\ili{},\ili{} the\ili{} parser\ili{} can\ili{} use\ili{} the\ili{} same\ili{} kind\ili{} of\ili{} approach\ili{} and\ili{} also\ili{} generate\ili{} \ili{}$n\ili{}$\ili{}-best\ili{} parsing\ili{} trees\ili{}.\ili{}
+A\ili{} reranker\ili{} can\ili{} then\ili{} use\ili{} MWE\ili{}-aware\ili{} features\ili{},\ili{} among\ili{} others\ili{},\ili{} to\ili{} choose\ili{} the\ili{} highest\ili{} scoring\ili{} tree\ili{}.\ili{} \ili{}\citet\ili{}{Constant12}\ili{},\ili{} for\ili{} instance\ili{},\ili{} use\ili{} a\ili{} deterministic\ili{} tokenizer\ili{} but\ili{} output\ili{} \ili{}$n\ili{}$\ili{}-best\ili{} MWE\ili{}-aware\ili{} syntactic\ili{} trees\ili{} using\ili{} the\ili{} Berkeley\ili{} constituent\ili{} parser\ili{}.\ili{} Then\ili{},\ili{} they\ili{} use\ili{} a\ili{} discriminative\ili{} reranker\ili{} to\ili{} choose\ili{} the\ili{} correct\ili{} parse\ili{} tree\ili{} that\ili{} includes\ili{} MWE\ili{} features\ili{}.\ili{} \ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}
+These\ili{} are\ili{} considered\ili{} joint\ili{} approaches\ili{} because\ili{},\ili{} even\ili{} though\ili{} MWE\ili{} segmentation\ili{} and\ili{} parsing\ili{} are\ili{} independent\ili{} processes\ili{},\ili{} one\ili{} needs\ili{} to\ili{} be\ili{} aware\ili{} of\ili{} the\ili{} format\ili{} of\ili{} the\ili{} input\ili{}/output\ili{} of\ili{} the\ili{} other\ili{}.\ili{}
+For\ili{} example\ili{},\ili{} the\ili{} parser\ili{} has\ili{} to\ili{} be\ili{} able\ili{} to\ili{} process\ili{} lattices\ili{} as\ili{} input\ili{},\ili{} provided\ili{} by\ili{} the\ili{} non\ili{}-deterministic\ili{} MWE\ili{} identifier\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Treebank\ili{} modification\ili{} approaches}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:joint\ili{}:data}\ili{}
+\ili{}
+In\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:representation}\ili{},\ili{} we\ili{} discussed\ili{} several\ili{} ways\ili{} to\ili{} represent\ili{} MWEs\ili{} in\ili{} \ili{}\isi\ili{}{treebanks}\ili{}.\ili{}
+Standard\ili{} statistical\ili{} parsers\ili{} trained\ili{} on\ili{} such\ili{} \ili{}\isi\ili{}{treebanks}\ili{} will\ili{} be\ili{} inherently\ili{} aware\ili{} of\ili{} MWEs\ili{},\ili{} provided\ili{} that\ili{} they\ili{} can\ili{} handle\ili{} the\ili{} particular\ili{} \ili{}\isi\ili{}{MWE\ili{} representation}\ili{} in\ili{} that\ili{} treebank\ili{}.\ili{}
+For\ili{} example\ili{},\ili{} if\ili{} MWEs\ili{} are\ili{} represented\ili{} as\ili{} subtrees\ili{} \ili{}(Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:extended\ili{}-labels}\ili{})\ili{},\ili{} then\ili{} there\ili{} is\ili{} no\ili{} need\ili{} to\ili{} explicitly\ili{} handle\ili{} MWEs\ili{} \ili{}\citep\ili{}{nivre16}\ili{}.\ili{}
+This\ili{} subsection\ili{} covers\ili{} MWE\ili{}-aware\ili{} parsing\ili{} studies\ili{} \ili{} \ili{} in\ili{} which\ili{} the\ili{} learning\ili{} and\ili{} parsing\ili{} algorithms\ili{} \ili{}\emph\ili{}{remain\ili{} unchanged}\ili{} with\ili{} respect\ili{} to\ili{} their\ili{} standard\ili{} version\ili{}.\ili{}
+\ili{}
+Approaches\ili{} discussed\ili{} in\ili{} this\ili{} section\ili{} face\ili{} several\ili{} challenges\ili{}.\ili{}
+First\ili{},\ili{} most\ili{} of\ili{} the\ili{} time\ili{} MWEs\ili{} are\ili{} either\ili{} \ili{}\main\ili{}{absent}\ili{} from\ili{} \ili{}\isi\ili{}{treebanks}\ili{},\ili{} or\ili{} the\ili{} available\ili{} representation\ili{} requires\ili{} \ili{}\main\ili{}{adaptations}\ili{} in\ili{} order\ili{} to\ili{} be\ili{} usable\ili{} by\ili{} the\ili{} parser\ili{}.\ili{}
+Second\ili{},\ili{} parsers\ili{} learned\ili{} from\ili{} MWE\ili{}-annotated\ili{} \ili{}\isi\ili{}{treebanks}\ili{} often\ili{} require\ili{} \ili{}\main\ili{}{extra\ili{} features}\ili{} to\ili{} take\ili{} MWEs\ili{} into\ili{} account\ili{} properly\ili{}.\ili{} Third\ili{},\ili{} these\ili{} features\ili{} may\ili{} suffer\ili{} from\ili{} data\ili{} \ili{}\main\ili{}{sparseness}\ili{},\ili{} as\ili{} individual\ili{} MWEs\ili{} may\ili{} not\ili{} occur\ili{} often\ili{} enough\ili{} in\ili{} limited\ili{}-size\ili{} \ili{}\isi\ili{}{treebanks}\ili{}.\ili{}\footnote\ili{}{\ili{}
+Some\ili{} MWE\ili{} categories\ili{} may\ili{} never\ili{} occur\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} colloquial\ili{} idioms\ili{})\ili{} because\ili{} many\ili{} existing\ili{} \ili{}\isi\ili{}{treebanks}\ili{} cover\ili{} a\ili{} single\ili{} register\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} newspapers\ili{})\ili{}.}\ili{}
+\ili{}
+This\ili{} subsection\ili{} covers\ili{} approaches\ili{} that\ili{} tackle\ili{} the\ili{} challenges\ili{} that\ili{} MWEs\ili{} pose\ili{} by\ili{}:\ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{} \ili{}\item\ili{} adding\ili{} or\ili{} modifying\ili{} the\ili{} \ili{}\isi\ili{}{MWE\ili{} representation}\ili{} in\ili{} the\ili{} \ili{}\isi\ili{}{treebanks}\ili{},\ili{} and\ili{}/or\ili{}
+\ili{} \ili{}\item\ili{} adding\ili{} MWE\ili{}-dedicated\ili{} features\ili{} to\ili{} the\ili{} parsing\ili{} model\ili{}.\ili{}
+\ili{}\end\ili{}{itemize}\ili{}
+The\ili{} last\ili{} challenge\ili{},\ili{} related\ili{} to\ili{} data\ili{} sparseness\ili{} and\ili{} domain\ili{} adaptation\ili{},\ili{} is\ili{} tackled\ili{} by\ili{} integrating\ili{} external\ili{} resources\ili{} in\ili{} the\ili{} parser\ili{},\ili{} as\ili{} discussed\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:resources}\ili{}.\ili{}
+\ili{}
+\ili{}
+In\ili{} constituency\ili{} parsing\ili{},\ili{} several\ili{} parsers\ili{},\ili{} MWE\ili{} representations\ili{} and\ili{} feature\ili{} sets\ili{} have\ili{} been\ili{} tested\ili{},\ili{} especially\ili{} on\ili{} contiguous\ili{} MWEs\ili{} in\ili{} the\ili{} \ili{}\ili\ili{}{French}\ili{} Treebank\ili{}.\ili{} \ili{}
+\ili{}\citet\ili{}{Constant13}\ili{} experiment\ili{} with\ili{} two\ili{} implementations\ili{} of\ili{} a\ili{} PCFG\ili{}-LA\ili{} parser\ili{},\ili{} using\ili{} a\ili{} representation\ili{} similar\ili{} to\ili{} the\ili{} one\ili{} of\ili{} \ili{}\citet\ili{}{Green11}\ili{} and\ili{} a\ili{} variant\ili{} similar\ili{} to\ili{} IOB\ili{} encoding\ili{}.\ili{}
+\ili{}
+When\ili{} MWE\ili{} annotation\ili{} is\ili{} absent\ili{},\ili{} a\ili{} reasonably\ili{} straightforward\ili{} solution\ili{} is\ili{} to\ili{} automatically\ili{} project\ili{} an\ili{} MWE\ili{} lexicon\ili{} on\ili{} the\ili{} treebank\ili{} before\ili{} training\ili{} the\ili{} parser\ili{}.\ili{}
+For\ili{} instance\ili{},\ili{} \ili{}\citet\ili{}{KATO16\ili{}.422}\ili{} project\ili{} a\ili{} lexicon\ili{} of\ili{} compound\ili{} function\ili{} words\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} \ili{}\expl\ili{}{a\ili{} number\ili{} of}\ili{})\ili{} onto\ili{} the\ili{} \ili{}\ili\ili{}{English}\ili{} Ontonotes\ili{} constituency\ili{} treebank\ili{}.\ili{} \ili{}
+Syntactic\ili{} trees\ili{} are\ili{} modified\ili{} to\ili{} take\ili{} MWEs\ili{} into\ili{} account\ili{}.\ili{}
+Constituents\ili{} are\ili{} then\ili{} automatically\ili{} transformed\ili{} into\ili{} dependencies\ili{} and\ili{} a\ili{} standard\ili{} first\ili{}-order\ili{} graph\ili{}-based\ili{} parser\ili{} is\ili{} learned\ili{}.\ili{}
+While\ili{} the\ili{} training\ili{} data\ili{} is\ili{} modified\ili{},\ili{} no\ili{} MWE\ili{} features\ili{} are\ili{} added\ili{} to\ili{} the\ili{} model\ili{}.\ili{}
+\ili{}
+Early\ili{} experiments\ili{} on\ili{} MWE\ili{}-aware\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} compared\ili{} two\ili{} representation\ili{} variants\ili{}:\ili{} MWEs\ili{} as\ili{} subtrees\ili{} or\ili{} as\ili{} words\ili{} with\ili{} spaces\ili{} \ili{}\citep\ili{}{Nivre04b}\ili{}.\ili{}
+The\ili{} results\ili{} indicated\ili{} that\ili{} the\ili{} subtree\ili{} representation\ili{} \ili{}(joint\ili{} approach\ili{})\ili{} is\ili{} worse\ili{} than\ili{} parsing\ili{} MWEs\ili{} as\ili{} words\ili{} with\ili{} spaces\ili{} \ili{}(pipeline\ili{} approach\ili{})\ili{}.\ili{}
+However\ili{},\ili{} these\ili{} results\ili{} were\ili{} obtained\ili{} assuming\ili{} gold\ili{} MWE\ili{} segmentation\ili{}.\ili{} \ili{}%\ili{},\ili{} which\ili{} is\ili{} not\ili{} realistic\ili{}.\ili{}
+\ili{}
+\ili{}\citet\ili{}{Vincze13}\ili{} were\ili{} among\ili{} the\ili{} first\ili{} to\ili{} use\ili{} a\ili{} dependency\ili{} parser\ili{} to\ili{} perform\ili{} realistic\ili{} MWE\ili{} identification\ili{}.\ili{}
+They\ili{} focus\ili{} on\ili{} light\ili{}-verb\ili{} constructions\ili{} \ili{}(LVCs\ili{})\ili{} in\ili{} Hungarian\ili{}.\ili{}
+They\ili{} first\ili{} perform\ili{} an\ili{} automatic\ili{} matching\ili{} of\ili{} two\ili{} annotation\ili{} layers\ili{} in\ili{} the\ili{} Szeged\ili{} Treebank\ili{}:\ili{} syntactic\ili{} dependencies\ili{} and\ili{} LVCs\ili{}.\ili{}
+As\ili{} a\ili{} result\ili{},\ili{} the\ili{} \ili{} dependency\ili{} link\ili{} between\ili{} a\ili{} light\ili{} verb\ili{} and\ili{} a\ili{} predicative\ili{} noun\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} \ili{}{\ili{}\scshape\ili{} obj}\ili{})\ili{} is\ili{} suffixed\ili{} with\ili{} a\ili{} \ili{}{\ili{}\scshape\ili{} lvc}\ili{} tag\ili{},\ili{} whereas\ili{} regular\ili{} verb\ili{}-argument\ili{} links\ili{} remain\ili{} unchanged\ili{},\ili{} like\ili{} in\ili{} Figure\ili{}\ref\ili{}{fig\ili{}:extended\ili{}-labels}\ili{}.\ili{} An\ili{} off\ili{}-the\ili{}-shelf\ili{} parser\ili{} is\ili{} used\ili{} to\ili{} predict\ili{} the\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} of\ili{} sentences\ili{},\ili{} including\ili{} LVC\ili{} links\ili{}.\ili{}
+Given\ili{} that\ili{} Hungarian\ili{} is\ili{} a\ili{} relatively\ili{} free\ili{} word\ili{}-order\ili{} language\ili{},\ili{} LVCs\ili{} often\ili{} involve\ili{} \ili{}\isi\ili{}{long\ili{}-distance\ili{} dependencies}\ili{}.\ili{}
+When\ili{} compared\ili{} with\ili{} a\ili{} classifier\ili{} baseline\ili{},\ili{} the\ili{} parser\ili{} performs\ili{} slightly\ili{} worse\ili{} on\ili{} contiguous\ili{} LVC\ili{} instances\ili{} \ili{}(F1\ili{}=81\ili{}\\ili{}%\ili{} vs\ili{}.\ili{} 82\ili{}.8\ili{}\\ili{}%\ili{})\ili{} but\ili{} considerably\ili{} better\ili{} on\ili{} discontiguous\ili{} LVCs\ili{} \ili{}(F1\ili{}=64\ili{}\\ili{}%\ili{} vs\ili{}.\ili{} 60\ili{}\\ili{}%\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}
+Treebanks\ili{} containing\ili{} MWEs\ili{} as\ili{} words\ili{} with\ili{} spaces\ili{} pose\ili{} problems\ili{} when\ili{} converted\ili{} into\ili{} subtrees\ili{}.\ili{} \ili{}
+When\ili{} splitting\ili{} an\ili{} MWE\ili{},\ili{} one\ili{} needs\ili{} to\ili{} manually\ili{} or\ili{} semi\ili{}-automatically\ili{} assign\ili{} POS\ili{},\ili{} lemmas\ili{} and\ili{} morphological\ili{} features\ili{} to\ili{} the\ili{} individual\ili{} MWE\ili{} components\ili{}.\ili{} \ili{}
+Additionally\ili{},\ili{} the\ili{} internal\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} must\ili{} be\ili{} inferred\ili{}.\ili{}
+Since\ili{} it\ili{} is\ili{} difficult\ili{} to\ili{} automate\ili{} this\ili{} task\ili{},\ili{} the\ili{} internal\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} of\ili{} decomposed\ili{} MWEs\ili{} is\ili{} often\ili{} underspecified\ili{} using\ili{} flat\ili{} head\ili{}-initial\ili{} subtrees\ili{} \ili{}\citep\ili{}{seddah13}\ili{},\ili{} head\ili{}-initial\ili{} \ili{}\citep\ili{}{nivre16}\ili{} or\ili{} head\ili{}-final\ili{} chained\ili{} subtrees\ili{} \ili{}\citep\ili{}{Eryigit\ili{}:2011\ili{}:MES\ili{}:2206359\ili{}.2206365}\ili{},\ili{} as\ili{} detailed\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{ssec\ili{}:subtrees}\ili{}.\ili{}
+\ili{}\citet\ili{}{Eryigit\ili{}:2011\ili{}:MES\ili{}:2206359\ili{}.2206365}\ili{} compare\ili{} parsing\ili{} and\ili{} MWE\ili{} identification\ili{} accuracy\ili{} on\ili{} different\ili{} treebank\ili{} representations\ili{} for\ili{} different\ili{} MWE\ili{} types\ili{}.\ili{}
+Their\ili{} original\ili{} treebank\ili{} includes\ili{} MWEs\ili{} as\ili{} words\ili{} with\ili{} spaces\ili{},\ili{} which\ili{} are\ili{} semi\ili{}-automatically\ili{} transformed\ili{} into\ili{} subtrees\ili{}.\ili{}
+Contrary\ili{} to\ili{} previous\ili{} conclusions\ili{} \ili{}\citep\ili{}{Nivre04b}\ili{},\ili{} results\ili{} indicate\ili{} that\ili{} subtrees\ili{} may\ili{} be\ili{} a\ili{} more\ili{} suitable\ili{} solution\ili{} for\ili{} some\ili{} MWE\ili{} types\ili{},\ili{} specially\ili{} when\ili{} looking\ili{} at\ili{} MWE\ili{}-aware\ili{} parsing\ili{} evaluation\ili{} metrics\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{sec\ili{}:evaluation}\ili{})\ili{}.\ili{} In\ili{} this\ili{} study\ili{},\ili{} the\ili{} words\ili{}-with\ili{}-spaces\ili{} representation\ili{} is\ili{} shown\ili{} to\ili{} have\ili{} a\ili{} harming\ili{} effect\ili{} on\ili{} the\ili{} types\ili{},\ili{} where\ili{} it\ili{} increases\ili{} lexical\ili{} sparsity\ili{},\ili{} such\ili{} as\ili{} in\ili{} Turkish\ili{} light\ili{}-verb\ili{} constructions\ili{}.\ili{}
+\ili{}
+\ili{}\citet\ili{}{candito2014strategies}\ili{} explore\ili{} several\ili{} orchestrations\ili{} for\ili{} combining\ili{} \ili{}\isi\ili{}{syntactic\ili{} parsing}\ili{} and\ili{} contiguous\ili{} MWE\ili{} identification\ili{} in\ili{} \ili{}\ili\ili{}{French}\ili{},\ili{} distinguishing\ili{} syntactically\ili{} regular\ili{} from\ili{} irregular\ili{} multiword\ili{} constructions\ili{}.\ili{} In\ili{} particular\ili{},\ili{} they\ili{} experimented\ili{} with\ili{} an\ili{} off\ili{}-the\ili{}-shelf\ili{} graph\ili{}-based\ili{} parser\ili{} that\ili{} was\ili{} learned\ili{} from\ili{} an\ili{} MWE\ili{}-aware\ili{} treebank\ili{} where\ili{} the\ili{} subtrees\ili{} representing\ili{} regular\ili{} and\ili{} irregular\ili{} expressions\ili{} have\ili{} their\ili{} usual\ili{} labels\ili{} suffixed\ili{} by\ili{} the\ili{} POS\ili{} of\ili{} the\ili{} MWE\ili{},\ili{} as\ili{} shown\ili{} in\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:extended\ili{}-labels}\ili{}.\ili{} They\ili{} showed\ili{} on\ili{}-par\ili{} results\ili{} with\ili{} different\ili{} pipeline\ili{} variants\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\citet\ili{}{nasrEtAl15}\ili{} focus\ili{} on\ili{} ambiguous\ili{} compound\ili{} grammatical\ili{} words\ili{} in\ili{} \ili{}\ili\ili{}{French}\ili{} of\ili{} the\ili{} form\ili{} ADV\ili{}+\ili{}\expl\ili{}{que}\ili{} and\ili{} \ili{}\expl\ili{}{de}\ili{}+DET\ili{}.\ili{}
+While\ili{} these\ili{} represent\ili{} a\ili{} limited\ili{} scope\ili{},\ili{} such\ili{} constructions\ili{} are\ili{} pervasive\ili{} and\ili{} hard\ili{} to\ili{} identify\ili{} without\ili{} access\ili{} to\ili{} syntactic\ili{} information\ili{},\ili{} because\ili{} its\ili{} component\ili{} words\ili{} can\ili{} co\ili{}-occur\ili{} by\ili{} chance\ili{}.\ili{} \ili{}%\ili{},\ili{} making\ili{} it\ili{} hard\ili{} to\ili{} disambiguate\ili{} them\ili{}.\ili{}
+For\ili{} instance\ili{},\ili{} the\ili{} two\ili{} sentences\ili{} below\ili{} have\ili{} the\ili{} same\ili{} sequences\ili{} of\ili{} POS\ili{} and\ili{} similar\ili{} lexical\ili{} units\ili{},\ili{} but\ili{} the\ili{} first\ili{} one\ili{} contains\ili{} an\ili{} MWE\ili{} whereas\ili{} the\ili{} second\ili{} one\ili{} does\ili{} not\ili{}:\ili{}
+\ili{}
+\ili{}\ea\ili{}
+\ili{}\gll\ili{} Je\ili{} chante\ili{} \ili{}{\ili{}\textbf\ili{}{bien}}\ili{} \ili{}{\ili{}\textbf\ili{}{que}}\ili{} \ili{} je\ili{} sois\ili{} triste\ili{}\\ili{}\\ili{} \ili{} \ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} I\ili{} \ili{} sing\ili{} \ili{} \ili{} well\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} that\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} I\ili{} \ili{} am\ili{} \ili{} \ili{} sad\ili{}\\ili{}\\ili{}
+\ili{}\glt\ili{} \ili{}`I\ili{} sing\ili{} even\ili{} though\ili{} I\ili{} am\ili{} sad\ili{}'\ili{}
+\ili{}\z\ili{} \ili{}
+\ili{}
+\ili{}\ea\ili{}
+\ili{}\gll\ili{} Je\ili{} pense\ili{} \ili{}{\ili{}\textbf\ili{}{bien}}\ili{} \ili{}{\ili{}\textbf\ili{}{que}}\ili{} \ili{} je\ili{} suis\ili{} triste\ili{}\\ili{}\\ili{} \ili{} \ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} I\ili{} \ili{} think\ili{} well\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} that\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} I\ili{} \ili{} am\ili{} \ili{} \ili{} sad\ili{}\\ili{}\\ili{}
+\ili{}\glt\ili{} \ili{}`Indeed\ili{},\ili{} I\ili{} think\ili{} that\ili{} I\ili{} am\ili{} sad\ili{}'\ili{}
+\ili{}\z\ili{}
+\ili{}
+In\ili{} order\ili{} to\ili{} deal\ili{} with\ili{} these\ili{} constructions\ili{},\ili{} the\ili{} training\ili{} treebank\ili{} is\ili{} modified\ili{} similarly\ili{} to\ili{} \ili{}\citet\ili{}{candito2014strategies}\ili{},\ili{} splitting\ili{} MWEs\ili{} originally\ili{} represented\ili{} as\ili{} words\ili{} with\ili{} spaces\ili{} into\ili{} two\ili{} tokens\ili{} linked\ili{} by\ili{} a\ili{} special\ili{} dependency\ili{}.\ili{} \ili{}
+For\ili{} example\ili{},\ili{} since\ili{} \ili{}\expl\ili{}{bien\ili{} que}\ili{} functions\ili{} as\ili{} a\ili{} conjunction\ili{},\ili{} the\ili{} conjunction\ili{} \ili{}\expl\ili{}{que}\ili{} becomes\ili{} the\ili{} head\ili{},\ili{} modified\ili{} by\ili{} the\ili{} adverb\ili{} \ili{}\expl\ili{}{bien}\ili{}.\ili{} \ili{}%\ili{} using\ili{} a\ili{} \ili{}{\ili{}\scshape\ili{} Morph}\ili{} link\ili{}.\ili{}
+Using\ili{} a\ili{} standard\ili{} graph\ili{}-based\ili{} dependency\ili{} parser\ili{},\ili{} the\ili{} authors\ili{} evaluate\ili{} the\ili{} identification\ili{} of\ili{} the\ili{} target\ili{} MWEs\ili{} on\ili{} a\ili{} dedicated\ili{} dataset\ili{}.\ili{} As\ili{} described\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{ssec\ili{}:lex\ili{}-help\ili{}-mwe}\ili{},\ili{} the\ili{} use\ili{} of\ili{} \ili{}\isi\ili{}{subcategorization}\ili{} frame\ili{} information\ili{} for\ili{} verbs\ili{},\ili{} coming\ili{} from\ili{} an\ili{} external\ili{} lexicon\ili{},\ili{} improves\ili{} the\ili{} results\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{MWE\ili{}-aware\ili{} parsing\ili{} models}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:joint\ili{}:model}\ili{}
+\ili{}
+The\ili{} models\ili{} discussed\ili{} up\ili{} to\ili{} now\ili{} have\ili{} the\ili{} advantage\ili{} of\ili{} being\ili{} simple\ili{} and\ili{} fast\ili{} to\ili{} deploy\ili{}.\ili{}
+Provided\ili{} that\ili{} the\ili{} training\ili{} treebank\ili{} contains\ili{} MWEs\ili{} in\ili{} a\ili{} suitable\ili{} representation\ili{} \ili{}(which\ili{} can\ili{} be\ili{} manually\ili{} or\ili{} automatically\ili{} converted\ili{})\ili{},\ili{} the\ili{} parsing\ili{} algorithm\ili{} itself\ili{} does\ili{} not\ili{} need\ili{} to\ili{} be\ili{} changed\ili{} to\ili{} accommodate\ili{} MWEs\ili{}.\ili{}
+These\ili{} approaches\ili{} achieve\ili{} reasonably\ili{} good\ili{} results\ili{},\ili{} specially\ili{} if\ili{} compared\ili{} to\ili{} MWE\ili{} systems\ili{} based\ili{} on\ili{} purely\ili{} sequential\ili{} models\ili{}.\ili{}
+However\ili{},\ili{} they\ili{} often\ili{} use\ili{} language\ili{}-specific\ili{} or\ili{} treebank\ili{}-specific\ili{} workarounds\ili{} and\ili{} are\ili{} not\ili{} always\ili{} generalizable\ili{}.\ili{}
+Therefore\ili{},\ili{} some\ili{} recent\ili{} contributions\ili{} focus\ili{} on\ili{} designing\ili{} parsing\ili{} models\ili{} that\ili{} are\ili{} truly\ili{} awa\ili{}\\ili{}-re\ili{} of\ili{} MWEs\ili{} in\ili{} the\ili{} model\ili{},\ili{} with\ili{} promising\ili{} results\ili{}.\ili{}
+\ili{}
+In\ili{} the\ili{} framework\ili{} of\ili{} constituency\ili{} parsing\ili{},\ili{} \ili{}\citet\ili{}{Green11}\ili{} propose\ili{} and\ili{} evaluate\ili{} an\ili{} MWE\ili{}-aware\ili{} parser\ili{} based\ili{} on\ili{} tree\ili{} substitution\ili{} grammars\ili{} \ili{}(TSGs\ili{})\ili{}.\ili{}
+This\ili{} work\ili{} was\ili{} latter\ili{} extended\ili{},\ili{} comparing\ili{} the\ili{} TSG\ili{} with\ili{} a\ili{} PCFG\ili{} model\ili{} enriched\ili{} with\ili{} a\ili{} factorized\ili{} lexicon\ili{} \ili{}\citep\ili{}{Green13}\ili{}.\ili{}
+The\ili{} authors\ili{} apply\ili{} these\ili{} models\ili{} to\ili{} MWE\ili{}-rich\ili{} \ili{}\isi\ili{}{treebanks}\ili{} for\ili{} \ili{}\ili\ili{}{French}\ili{} and\ili{} Arabic\ili{},\ili{} showing\ili{} gains\ili{} for\ili{} both\ili{} parsing\ili{} and\ili{} MWE\ili{} identification\ili{}.\ili{}
+The\ili{} authors\ili{} state\ili{} that\ili{} TSGs\ili{} are\ili{} more\ili{} powerful\ili{} than\ili{} PCFGs\ili{},\ili{} being\ili{} able\ili{} to\ili{} store\ili{} lexicalized\ili{} tree\ili{} fragments\ili{}.\ili{}
+They\ili{} are\ili{} therefore\ili{} more\ili{} suitable\ili{} for\ili{} idiomatic\ili{} MWEs\ili{},\ili{} whose\ili{} particular\ili{} syntactic\ili{} analysis\ili{} requires\ili{} larger\ili{} contexts\ili{} to\ili{} be\ili{} predicted\ili{}.\ili{}
+\ili{}
+Along\ili{} the\ili{} same\ili{} lines\ili{},\ili{} \ili{}\citet\ili{}{Leroux14}\ili{} design\ili{} a\ili{} joint\ili{} parsing\ili{} and\ili{} MWE\ili{} identification\ili{} model\ili{} based\ili{} on\ili{} dual\ili{} decomposition\ili{}.\ili{}
+In\ili{} this\ili{} work\ili{},\ili{} however\ili{},\ili{} a\ili{} specialized\ili{} sequence\ili{} model\ili{} performs\ili{} lexical\ili{} segmentation\ili{} of\ili{} MWEs\ili{}.\ili{}
+The\ili{} MWE\ili{} identification\ili{} module\ili{} uses\ili{} conditional\ili{} random\ili{} fields\ili{},\ili{} while\ili{} the\ili{} parsing\ili{} module\ili{} uses\ili{} a\ili{} PCFG\ili{}-LA\ili{} also\ili{} including\ili{} MWE\ili{} identification\ili{},\ili{} using\ili{} the\ili{} approach\ili{} of\ili{} \ili{}\citet\ili{}{Green13}\ili{}.\ili{} \ili{}
+Both\ili{} models\ili{} are\ili{} combined\ili{} using\ili{} penalty\ili{} vectors\ili{} that\ili{} are\ili{} updated\ili{} in\ili{} an\ili{} iterative\ili{} way\ili{}.\ili{}
+In\ili{} other\ili{} words\ili{},\ili{} until\ili{} reaching\ili{} consensus\ili{} on\ili{} MWE\ili{} identification\ili{},\ili{} the\ili{} MWE\ili{} identifier\ili{} and\ili{} parser\ili{} analyze\ili{} the\ili{} input\ili{} sentence\ili{}.\ili{}
+If\ili{} the\ili{} systems\ili{} do\ili{} not\ili{} agree\ili{},\ili{} they\ili{} are\ili{} penalized\ili{} in\ili{} proportion\ili{} to\ili{} the\ili{} difference\ili{} between\ili{} the\ili{} given\ili{} solution\ili{} and\ili{} the\ili{} average\ili{} solution\ili{}.\ili{}
+This\ili{} model\ili{} reaches\ili{} impressive\ili{} performance\ili{} on\ili{} the\ili{} \ili{}\ili\ili{}{French}\ili{} treebank\ili{},\ili{} reaching\ili{} an\ili{} MWE\ili{} identification\ili{} F\ili{}-score\ili{} of\ili{} up\ili{} to\ili{} 82\ili{}.4\ili{}\\ili{}%\ili{} on\ili{} the\ili{} test\ili{} set\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\citet\ili{}{constantNivre16}\ili{} propose\ili{} a\ili{} new\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} system\ili{} that\ili{} jointly\ili{} performs\ili{} syntactic\ili{} analysis\ili{} and\ili{} lexical\ili{} segmentation\ili{} \ili{}(including\ili{} MWE\ili{} identification\ili{})\ili{}.\ili{}
+The\ili{} authors\ili{} design\ili{} and\ili{} evaluate\ili{} a\ili{} transition\ili{}-based\ili{} parser\ili{} using\ili{} two\ili{} synchronized\ili{} stacks\ili{}:\ili{} one\ili{} for\ili{} \ili{}\isi\ili{}{syntactic\ili{} parsing}\ili{} and\ili{} another\ili{} for\ili{} lexical\ili{} segmentation\ili{}.\ili{}
+The\ili{} synchronization\ili{} of\ili{} both\ili{} stacks\ili{} is\ili{} guaranteed\ili{} by\ili{} a\ili{} unique\ili{} \ili{}{\ili{}\scshape\ili{} Push}\ili{} transition\ili{} which\ili{} pushes\ili{} the\ili{} first\ili{} element\ili{} of\ili{} the\ili{} buffer\ili{} on\ili{} both\ili{} stacks\ili{}.\ili{}
+The\ili{} parser\ili{} models\ili{} MWE\ili{}-dedicated\ili{} transitions\ili{} \ili{}{\ili{}\scshape\ili{} Merge\ili{}$_N\ili{}$}\ili{} and\ili{} \ili{}{\ili{}\scshape\ili{} Merge\ili{}$_F\ili{}$}\ili{},\ili{} which\ili{} respectively\ili{} create\ili{} new\ili{} merged\ili{} lexical\ili{} nodes\ili{} for\ili{} regular\ili{} MWEs\ili{} and\ili{} lexico\ili{}-syntactic\ili{} nodes\ili{} for\ili{} fixed\ili{} MWEs\ili{}.\ili{}
+An\ili{} additional\ili{} \ili{}{\ili{}\scshape\ili{} Complete}\ili{} transition\ili{} marks\ili{} that\ili{} a\ili{} given\ili{} lexical\ili{} node\ili{} has\ili{} been\ili{} fully\ili{} parsed\ili{} \ili{}(but\ili{} can\ili{} be\ili{} implicit\ili{})\ili{}.\ili{} This\ili{} approach\ili{} obtains\ili{} results\ili{} that\ili{} compare\ili{} with\ili{} or\ili{} exceed\ili{} state\ili{}-of\ili{}-the\ili{}-art\ili{} performance\ili{} on\ili{} \ili{}\ili\ili{}{French}\ili{} and\ili{} \ili{}\ili\ili{}{English}\ili{} MWE\ili{}-rich\ili{} \ili{}\isi\ili{}{treebanks}\ili{}.\ili{}
+Finally\ili{},\ili{} the\ili{} authors\ili{} show\ili{} that\ili{} lexical\ili{} information\ili{} can\ili{} guide\ili{} parsing\ili{},\ili{} leading\ili{} to\ili{} slightly\ili{} better\ili{} syntactic\ili{} trees\ili{}.\ili{}
+The\ili{} converse\ili{} assumption\ili{} does\ili{} not\ili{} seem\ili{} to\ili{} hold\ili{},\ili{} though\ili{},\ili{} as\ili{} adding\ili{} syntactic\ili{} information\ili{} to\ili{} a\ili{} purely\ili{} lexical\ili{} parser\ili{} tends\ili{} to\ili{} slightly\ili{} degrade\ili{} its\ili{} performance\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{}\input\ili{}{constantetal\ili{}/06\ili{}-resources}\ili{}
+\ili{}\section\ili{}{Integration\ili{} of\ili{} lexical\ili{} resources}\ili{}
+\ili{}\label\ili{}{sec\ili{}:resources}\ili{}
+\ili{}
+Lexical\ili{} resources\ili{} are\ili{} large\ili{}-scale\ili{} repositories\ili{} of\ili{} information\ili{} typically\ili{} about\ili{} simple\ili{} words\ili{},\ili{} more\ili{} rarely\ili{} about\ili{} MWEs\ili{}.\ili{} \ili{}
+They\ili{} can\ili{} play\ili{} different\ili{} roles\ili{} with\ili{} respect\ili{} to\ili{} statistical\ili{} MWE\ili{}-aware\ili{} parsing\ili{},\ili{} and\ili{} in\ili{} this\ili{} section\ili{} we\ili{} discuss\ili{} three\ili{} of\ili{} them\ili{}.\ili{} We\ili{} show\ili{} how\ili{} lexical\ili{} information\ili{} can\ili{} help\ili{} in\ili{} general\ili{} to\ili{} resolve\ili{} parsing\ili{} ambiguities\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:lexres\ili{}-parse}\ili{})\ili{}.\ili{} Then\ili{},\ili{} we\ili{} focus\ili{} on\ili{} the\ili{} availability\ili{} of\ili{} lexical\ili{} information\ili{} within\ili{} pipeline\ili{} approaches\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:mwe\ili{}-help\ili{}-parse}\ili{})\ili{}.\ili{} Finally\ili{},\ili{} we\ili{} shift\ili{} the\ili{} emphasis\ili{} to\ili{} the\ili{} effect\ili{} of\ili{} lexical\ili{} resources\ili{} on\ili{} MWE\ili{} identification\ili{} rather\ili{} than\ili{} on\ili{} parsing\ili{} itself\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:lex\ili{}-help\ili{}-mwe}\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}\subsection\ili{}{General\ili{} integration\ili{} of\ili{} lexical\ili{} resources\ili{} in\ili{} statistical\ili{} parsers}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:lexres\ili{}-parse}\ili{}
+\ili{}
+Statistical\ili{} parsers\ili{} have\ili{} several\ili{} drawbacks\ili{} due\ili{} to\ili{} the\ili{} limited\ili{} size\ili{} of\ili{} available\ili{} gold\ili{} standard\ili{} \ili{}\isi\ili{}{treebanks}\ili{} used\ili{} for\ili{} training\ili{}.\ili{} Many\ili{} words\ili{} in\ili{} the\ili{} datasets\ili{} are\ili{} \ili{} infrequent\ili{},\ili{} which\ili{} makes\ili{} it\ili{} very\ili{} difficult\ili{} to\ili{} learn\ili{} relevant\ili{} \ili{}(lexical\ili{})\ili{} regularities\ili{}.\ili{} In\ili{} addition\ili{},\ili{} when\ili{} parsing\ili{} an\ili{} unseen\ili{} text\ili{},\ili{} some\ili{} words\ili{} are\ili{} simply\ili{} absent\ili{} from\ili{} \ili{} the\ili{} training\ili{} dataset\ili{},\ili{} which\ili{} negatively\ili{} impacts\ili{} parsing\ili{} accuracy\ili{}.\ili{} Experiments\ili{} with\ili{} \ili{} different\ili{} solutions\ili{} have\ili{} been\ili{} undertaken\ili{} within\ili{} the\ili{} parsing\ili{} community\ili{},\ili{} notably\ili{} by\ili{} incorporating\ili{} external\ili{} resources\ili{} mostly\ili{} \ili{}(but\ili{} not\ili{} only\ili{})\ili{} learned\ili{} automatically\ili{} from\ili{} large\ili{} raw\ili{} corpora\ili{}.\ili{}
+\ili{}
+The\ili{} use\ili{} of\ili{} word\ili{} clusters\ili{} is\ili{} one\ili{} method\ili{} to\ili{} deal\ili{} with\ili{} the\ili{} lexical\ili{} sparsity\ili{} issue\ili{}.\ili{} Clusters\ili{} \ili{}(\ili{}\eg\ili{}{}\ili{} Brown\ili{} clusters\ili{})\ili{},\ili{} consist\ili{} of\ili{} groups\ili{} of\ili{} words\ili{} occurring\ili{} in\ili{} the\ili{} same\ili{} \ili{} context\ili{}.\ili{} \ili{}
+Replacing\ili{} words\ili{} by\ili{} clusters\ili{} or\ili{} using\ili{} clusters\ili{} as\ili{} features\ili{} has\ili{} each\ili{} been\ili{} shown\ili{} to\ili{} improve\ili{} parsing\ili{} accuracy\ili{} \ili{} \ili{}\citep\ili{}{koo\ili{}-carreras\ili{}-collins\ili{}:2008\ili{}:ACLMain\ili{},candito\ili{}-seddah\ili{}:2010\ili{}:SPMRL}\ili{}.\ili{}
+Pairs\ili{} of\ili{} words\ili{} that\ili{} co\ili{}-occur\ili{} frequently\ili{} in\ili{} large\ili{} corpora\ili{} tend\ili{} to\ili{} be\ili{} related\ili{} syntactically\ili{}.\ili{} \ili{}
+The\ili{} provision\ili{} of\ili{} information\ili{} about\ili{} such\ili{} lexical\ili{} affinities\ili{} to\ili{} the\ili{} parser\ili{} has\ili{} been\ili{} shown\ili{} to\ili{} usefully\ili{} support\ili{} \ili{} syntactic\ili{} attachment\ili{} decisions\ili{}.\ili{} \ili{}
+Lexical\ili{} affinities\ili{} might\ili{} be\ili{} integrated\ili{} using\ili{} either\ili{} soft\ili{} constraints\ili{} \ili{}\citep\ili{}{bansal\ili{}:11\ili{},mirroshandel\ili{}:12}\ili{} or\ili{} hard\ili{} ones\ili{} \ili{}\citep\ili{}{Mirroshandel\ili{}:2016}\ili{}.\ili{} \ili{}
+The\ili{} deep\ili{} learning\ili{} revolution\ili{} has\ili{} opened\ili{} new\ili{} perspectives\ili{} to\ili{} help\ili{} handle\ili{} lexical\ili{} sparsity\ili{},\ili{} as\ili{} words\ili{} are\ili{} represented\ili{} as\ili{} continuous\ili{} space\ili{} vectors\ili{} \ili{}(\ili{}\ie\ili{}{}\ili{} word\ili{} embeddings\ili{})\ili{} learned\ili{} from\ili{} large\ili{} corpora\ili{}.\ili{} Words\ili{} having\ili{} similar\ili{} syntactic\ili{} behaviors\ili{} have\ili{} vectors\ili{} that\ili{} are\ili{} geometrically\ili{} close\ili{} to\ili{} each\ili{} other\ili{} \ili{}\citep\ili{}{durrett\ili{}:15\ili{},dyer\ili{}:15}\ili{}.\ili{}
+\ili{}
+The\ili{} use\ili{} of\ili{} external\ili{} lexicons\ili{} has\ili{} also\ili{} turned\ili{} out\ili{} to\ili{} be\ili{} of\ili{} great\ili{} interest\ili{},\ili{} notably\ili{} for\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{}.\ili{} For\ili{} instance\ili{},\ili{} \ili{}\citet\ili{}{candito\ili{}:2010}\ili{} successfully\ili{} use\ili{} the\ili{} MELt\ili{} tagger\ili{} \ili{}\citep\ili{}{Denis\ili{}:2012}\ili{},\ili{} thereby\ili{} incorporating\ili{} features\ili{} based\ili{} on\ili{} a\ili{} large\ili{}-scale\ili{} morphological\ili{} lexicon\ili{}.\ili{} The\ili{} integration\ili{} of\ili{} hard\ili{} constraints\ili{} based\ili{} on\ili{} syntactic\ili{} lexicons\ili{} was\ili{} also\ili{} shown\ili{} to\ili{} have\ili{} a\ili{} positive\ili{} impact\ili{} \ili{}\citep\ili{}{Mirroshandel\ili{}:2013}\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{MWE\ili{} resources\ili{} help\ili{} parsing}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:mwe\ili{}-help\ili{}-parse}\ili{}
+\ili{}
+We\ili{} now\ili{} give\ili{} examples\ili{} of\ili{} MWE\ili{} lexical\ili{} resource\ili{} integration\ili{} using\ili{} a\ili{} pipeline\ili{} approach\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{sec\ili{}:pipeline}\ili{})\ili{} in\ili{} which\ili{} MWEs\ili{} are\ili{} replaced\ili{} by\ili{} their\ili{} syntactic\ili{} heads\ili{}.\ili{} We\ili{} do\ili{} so\ili{} on\ili{} two\ili{} levels\ili{}:\ili{} general\ili{} NP\ili{} chunking\ili{} and\ili{} technical\ili{} terms\ili{}.\ili{}
+\ili{}
+\ili{}
+On\ili{} the\ili{} chunking\ili{} level\ili{},\ili{} replacing\ili{} chunks\ili{} with\ili{} their\ili{} head\ili{} words\ili{} reduces\ili{} parsing\ili{} complexity\ili{} considerably\ili{}.\ili{} \ili{}
+According\ili{} to\ili{} experiments\ili{} carried\ili{} out\ili{} by\ili{} \ili{}\citet\ili{}{prins05}\ili{},\ili{} parsing\ili{} performance\ili{} also\ili{} increases\ili{} slightly\ili{}.\ili{} \ili{}
+However\ili{},\ili{} experiments\ili{} on\ili{} technical\ili{} terms\ili{} have\ili{} not\ili{} confirmed\ili{} this\ili{} hypothesis\ili{}.\ili{}
+In\ili{} other\ili{} words\ili{},\ili{} replacing\ili{} chunks\ili{} with\ili{} their\ili{} heads\ili{} does\ili{} not\ili{} necessarily\ili{} lead\ili{} to\ili{} improved\ili{} results\ili{} in\ili{} other\ili{} settings\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}\citet\ili{}{weeds\ili{}-ea07}\ili{} used\ili{} a\ili{} substitution\ili{} approach\ili{} \ili{}(Sec\ili{}.\ili{}~\ili{}\ref\ili{}{ssec\ili{}:subst}\ili{})\ili{} for\ili{} term\ili{} identification\ili{} in\ili{} the\ili{} domain\ili{} of\ili{} biomedical\ili{} research\ili{},\ili{} where\ili{} gene\ili{} and\ili{} protein\ili{} names\ili{} in\ili{} particular\ili{} are\ili{} often\ili{} MWEs\ili{}.\ili{} Because\ili{} taggers\ili{},\ili{} unless\ili{} they\ili{} are\ili{} trained\ili{} on\ili{} the\ili{} domain\ili{},\ili{} perform\ili{} very\ili{} poorly\ili{},\ili{} they\ili{} report\ili{} better\ili{} results\ili{} when\ili{} replacing\ili{} technical\ili{} terms\ili{} with\ili{} their\ili{} head\ili{},\ili{} using\ili{} a\ili{} large\ili{} lexicon\ili{} of\ili{} domain\ili{} terms\ili{}.\ili{}\footnote\ili{}{Such\ili{} a\ili{} lexicon\ili{} is\ili{} often\ili{} referred\ili{} to\ili{} as\ili{} \ili{}\emph\ili{}{gazetteer}\ili{}.}\ili{}
+\ili{}
+A\ili{} comparable\ili{} example\ili{} is\ili{} the\ili{} situation\ili{} in\ili{} which\ili{} a\ili{} sentence\ili{} such\ili{} as\ili{} \ili{}
+\ili{}%\ili{}
+\ili{}\expl\ili{}{\ili{}.\ili{}.\ili{}.\ili{} he\ili{} did\ili{} not\ili{} see\ili{} the\ili{} traffic\ili{}\_N\ili{} light\ili{}\_V}\ili{} \ili{}
+\ili{}%\ili{}
+is\ili{} POS\ili{}-tagged\ili{} incorrectly\ili{} \ili{}(\ili{}\expl\ili{}{light\ili{}\_V\ili{} instead\ili{} of\ili{} light\ili{}\_N}\ili{})\ili{}.\ili{} Here\ili{},\ili{} a\ili{} pipeline\ili{} substitution\ili{} approach\ili{} relying\ili{} on\ili{} an\ili{} MWE\ili{} lexicon\ili{} can\ili{} clearly\ili{} improve\ili{} results\ili{}.\ili{} This\ili{} improvement\ili{} is\ili{} passed\ili{} on\ili{} to\ili{} the\ili{} subsequent\ili{} parsing\ili{} step\ili{}.\ili{} \ili{}
+When\ili{} domain\ili{}-adapted\ili{} taggers\ili{} are\ili{} available\ili{},\ili{} though\ili{},\ili{} the\ili{} advantages\ili{} of\ili{} the\ili{} substitution\ili{} approach\ili{} tend\ili{} to\ili{} disappear\ili{}.\ili{} \ili{}
+The\ili{} performance\ili{} of\ili{} adapted\ili{} taggers\ili{} is\ili{} often\ili{} comparable\ili{} or\ili{} slightly\ili{} higher\ili{} than\ili{} that\ili{} of\ili{} the\ili{} substitution\ili{} approach\ili{},\ili{} as\ili{} tagging\ili{} accuracy\ili{} of\ili{} technical\ili{} terms\ili{} increases\ili{}.\ili{} \ili{}
+In\ili{} short\ili{},\ili{} sometimes\ili{} it\ili{} is\ili{} better\ili{} to\ili{} adapt\ili{} statistical\ili{} models\ili{} \ili{}(in\ili{} this\ili{} case\ili{},\ili{} a\ili{} domain\ili{}-adapted\ili{} tagger\ili{})\ili{} rather\ili{} than\ili{} using\ili{} lexical\ili{} resources\ili{} \ili{}(in\ili{} this\ili{} case\ili{},\ili{} an\ili{} MWE\ili{} gazetteer\ili{} of\ili{} the\ili{} domain\ili{})\ili{}.\ili{}%\ili{} \ili{}
+\ili{}
+\ili{}\citet\ili{}{schneider\ili{}:2014}\ili{} conducted\ili{} an\ili{} experiment\ili{} using\ili{} LT\ili{}-TTT2\ili{},\ili{} an\ili{} off\ili{}-the\ili{}-shelf\ili{} rule\ili{}-based\ili{} named\ili{} entity\ili{} recognizer\ili{} \ili{}\citep\ili{}{grover08}\ili{} on\ili{} the\ili{} standard\ili{} evaluation\ili{} suite\ili{} GREVAL\ili{} \ili{}\citep\ili{}{carroll\ili{}-ea04}\ili{} with\ili{} the\ili{} same\ili{} approach\ili{} of\ili{} replacing\ili{} multiword\ili{} named\ili{} entities\ili{} by\ili{} the\ili{} head\ili{} of\ili{} the\ili{} MWE\ili{}.\ili{} The\ili{} performance\ili{} of\ili{} the\ili{} substitution\ili{} approach\ili{} was\ili{} slightly\ili{} worse\ili{} than\ili{} when\ili{} leaving\ili{} the\ili{} MWE\ili{} unchanged\ili{}.\ili{} \ili{}%\ili{}\todo\ili{}{CR\ili{}:\ili{} worse\ili{} than\ili{} what\ili{}?\ili{} \ili{}=\ili{}>\ili{} I\ili{} told\ili{} you\ili{} I\ili{}'m\ili{} picky\ili{} \ili{}:\ili{}-P}\ili{} \ili{}
+Also\ili{} this\ili{} experiment\ili{} did\ili{} confirm\ili{} that\ili{} statistically\ili{} motivated\ili{} resources\ili{} are\ili{} usually\ili{} better\ili{} than\ili{} purely\ili{} lexical\ili{} resources\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Lexical\ili{} resources\ili{} help\ili{} MWE\ili{}-aware\ili{} parsing}\ili{}
+\ili{}\label\ili{}{ssec\ili{}:lex\ili{}-help\ili{}-mwe}\ili{}
+\ili{}
+Having\ili{} discussed\ili{} the\ili{} effect\ili{} of\ili{} lexical\ili{} resources\ili{} on\ili{} parsing\ili{} accuracy\ili{},\ili{} we\ili{} now\ili{} turn\ili{} to\ili{} two\ili{} different\ili{} ways\ili{} to\ili{} use\ili{} them\ili{} as\ili{} a\ili{} source\ili{} of\ili{} features\ili{} for\ili{} dependency\ili{} parsers\ili{},\ili{} to\ili{} help\ili{} MWE\ili{} identification\ili{} as\ili{} well\ili{} as\ili{} parsing\ili{} accuracy\ili{}.\ili{} \ili{}
+\ili{}
+The\ili{} first\ili{} is\ili{} to\ili{} use\ili{} MWE\ili{} lexicons\ili{} to\ili{} alleviate\ili{} the\ili{} low\ili{} coverage\ili{} of\ili{} MWEs\ili{} in\ili{} the\ili{} training\ili{} dataset\ili{}.\ili{} The\ili{} idea\ili{} is\ili{} to\ili{} perform\ili{} an\ili{} MWE\ili{} pre\ili{}-segmentation\ili{} of\ili{} the\ili{} input\ili{} text\ili{} by\ili{} lexicon\ili{} lookup\ili{}.\ili{} The\ili{} pre\ili{}-segmentation\ili{},\ili{} encoded\ili{} in\ili{} an\ili{} IOB\ili{}-like\ili{} format\ili{},\ili{} is\ili{} then\ili{} used\ili{} as\ili{} source\ili{} of\ili{} features\ili{} during\ili{} MWE\ili{}-aware\ili{} parsing\ili{},\ili{} either\ili{} in\ili{} the\ili{} parser\ili{} itself\ili{} for\ili{} joint\ili{} approaches\ili{} \ili{}\citep\ili{}{candito2014strategies}\ili{},\ili{} or\ili{} in\ili{} the\ili{} MWE\ili{} tagger\ili{} applied\ili{} before\ili{} parsing\ili{} in\ili{} pipeline\ili{} approaches\ili{} \ili{}\citep\ili{}{Constant12\ili{},constant\ili{}:13\ili{}:MWE}\ili{}.\ili{} \ili{} \ili{}
+\ili{}
+One\ili{} advantage\ili{} of\ili{} using\ili{} soft\ili{} constraints\ili{} like\ili{} features\ili{} is\ili{} their\ili{} ability\ili{} to\ili{} handle\ili{} ambiguous\ili{} MWEs\ili{}.\ili{}
+Let\ili{} us\ili{} take\ili{} the\ili{} sequence\ili{} \ili{}\expl\ili{}{up\ili{} to}\ili{},\ili{} which\ili{} can\ili{} be\ili{} either\ili{} a\ili{} complex\ili{} preposition\ili{} \ili{}(\ili{}\expl\ili{}{no\ili{} more\ili{} than}\ili{})\ili{} or\ili{} an\ili{} accidental\ili{} co\ili{}-occurrence\ili{} \ili{}(\ili{}\expl\ili{}{look\ili{} up\ili{} to\ili{} the\ili{} sky}\ili{})\ili{}.\ili{} A\ili{} naive\ili{} segmentation\ili{} will\ili{} systematically\ili{} consider\ili{} it\ili{} to\ili{} be\ili{} an\ili{} MWE\ili{},\ili{} independently\ili{} of\ili{} the\ili{} context\ili{}.\ili{} However\ili{},\ili{} a\ili{} better\ili{} decision\ili{} can\ili{} be\ili{} made\ili{} taking\ili{} the\ili{} context\ili{} \ili{}(\ili{}\ie\ili{}{}\ili{} the\ili{} set\ili{} of\ili{} other\ili{} features\ili{})\ili{} into\ili{} account\ili{}.\ili{} Using\ili{} a\ili{} joint\ili{} approach\ili{} on\ili{} the\ili{} \ili{}\ili\ili{}{French}\ili{} treebank\ili{},\ili{} \ili{}\citet\ili{}{candito2014strategies}\ili{} managed\ili{} to\ili{} gain\ili{} around\ili{} 4\ili{} points\ili{} in\ili{} terms\ili{} of\ili{} tagged\ili{} MWE\ili{} identification\ili{} F\ili{}-score\ili{} using\ili{} such\ili{} lexicon\ili{}-based\ili{} features\ili{}:\ili{} F1\ili{}=74\ili{}.5\ili{} \ili{}(with\ili{})\ili{} vs\ili{}.\ili{} F1\ili{}=70\ili{}.7\ili{} \ili{}(without\ili{})\ili{}.\ili{} We\ili{} should\ili{} recall\ili{},\ili{} however\ili{},\ili{} that\ili{} their\ili{} approach\ili{} is\ili{} limited\ili{} to\ili{} contiguous\ili{} MWEs\ili{}.\ili{}
+\ili{}
+\ili{}
+A\ili{} second\ili{} method\ili{} proposed\ili{} by\ili{} \ili{}\citet\ili{}{nasrEtAl15}\ili{} is\ili{} to\ili{} incorporate\ili{} \ili{}\isi\ili{}{subcategorization}\ili{} frame\ili{} information\ili{},\ili{} derived\ili{} from\ili{} a\ili{} syntactic\ili{} lexicon\ili{},\ili{} as\ili{} features\ili{} in\ili{} a\ili{} joint\ili{} parser\ili{}.\ili{} This\ili{} was\ili{} used\ili{} to\ili{} improve\ili{} the\ili{} resolution\ili{} of\ili{} ambiguities\ili{} between\ili{} grammatical\ili{} compound\ili{} MWEs\ili{} and\ili{} accidental\ili{} co\ili{}-occurrences\ili{}.\ili{}
+An\ili{} example\ili{} is\ili{} the\ili{} \ili{}\ili\ili{}{French}\ili{} sequence\ili{} \ili{}\expl\ili{}{bien\ili{} que}\ili{} which\ili{} is\ili{} either\ili{} a\ili{} multiword\ili{} conjunction\ili{} \ili{}(\ili{}\expl\ili{}{although}\ili{})\ili{} or\ili{} \ili{} an\ili{} adverb\ili{} \ili{}(\ili{}\expl\ili{}{well}\ili{})\ili{} followed\ili{} by\ili{} a\ili{} relative\ili{} conjunction\ili{} \ili{}(\ili{}\expl\ili{}{that}\ili{})\ili{},\ili{} as\ili{} exemplified\ili{} in\ili{} Subsection\ili{}~\ili{}\ref\ili{}{ssec\ili{}:joint\ili{}:data}\ili{}.\ili{} This\ili{} ambiguity\ili{} may\ili{} be\ili{} resolved\ili{} using\ili{} information\ili{} about\ili{} the\ili{} verb\ili{} in\ili{} the\ili{} syntactic\ili{} neighborhood\ili{}.\ili{} The\ili{} authors\ili{} included\ili{} specific\ili{} features\ili{} indicating\ili{} whether\ili{} a\ili{} given\ili{} verb\ili{} accepts\ili{} a\ili{} given\ili{} complement\ili{}:\ili{} \ili{}\expl\ili{}{manger\ili{} \ili{}(to\ili{} eat\ili{})}\ili{} \ili{}-QUE\ili{} \ili{}-DE\ili{},\ili{} \ili{}\expl\ili{}{penser\ili{} \ili{}(to\ili{} think\ili{})}\ili{} \ili{}+QUE\ili{} \ili{}-DE\ili{},\ili{} \ili{}\expl\ili{}{boire\ili{} \ili{}(to\ili{} drink\ili{})}\ili{} \ili{}-QUE\ili{} \ili{}-DE\ili{},\ili{} \ili{}\expl\ili{}{parler\ili{} \ili{}(to\ili{} speak\ili{})}\ili{} \ili{}-QUE\ili{} \ili{}+DE\ili{}.\ili{} \ili{}
+In\ili{} particular\ili{},\ili{} they\ili{} show\ili{} for\ili{} \ili{}\ili\ili{}{French}\ili{} that\ili{} there\ili{} is\ili{} a\ili{} 1\ili{}-point\ili{} gain\ili{} in\ili{} F\ili{}-score\ili{},\ili{} 85\ili{}.24\ili{} \ili{}(without\ili{})\ili{} vs\ili{}.\ili{} 86\ili{}.41\ili{} \ili{}(with\ili{})\ili{},\ili{} for\ili{} MWEs\ili{} of\ili{} the\ili{} form\ili{} ADV\ili{}+\ili{}\expl\ili{}{que}\ili{} \ili{}(ADV\ili{}+\ili{}\expl\ili{}{that}\ili{})\ili{}.\ili{} The\ili{} effect\ili{} is\ili{} spectacular\ili{} for\ili{} compounds\ili{} of\ili{} the\ili{} form\ili{} \ili{}\expl\ili{}{de}\ili{}+DET\ili{},\ili{} that\ili{} display\ili{} a\ili{} 15\ili{}-point\ili{} gain\ili{} \ili{}:\ili{} 75\ili{}.00\ili{} \ili{}(with\ili{})\ili{} vs\ili{}.\ili{} 84\ili{}.67\ili{} \ili{}(without\ili{})\ili{}.\ili{}
+\ili{}
+\ili{} \ili{} \ili{}
+\ili{}
+\ili{}%\ili{}\input\ili{}{constantetal\ili{}/07\ili{}-evaluation}\ili{}
+\ili{}\section\ili{}{Evaluation}\ili{}
+\ili{}\label\ili{}{sec\ili{}:evaluation}\ili{}
+\ili{}
+\ili{}
+\ili{}
+Evaluating\ili{} a\ili{} syntactic\ili{} parser\ili{} generally\ili{} consists\ili{} in\ili{} comparing\ili{} the\ili{} output\ili{} to\ili{} reference\ili{} \ili{} \ili{}(gold\ili{}-standard\ili{})\ili{} parses\ili{} from\ili{} \ili{} a\ili{} manually\ili{} labeled\ili{} treebank\ili{}.\ili{}
+In\ili{} the\ili{} case\ili{} of\ili{} constituency\ili{} parsing\ili{},\ili{} a\ili{} constituent\ili{} is\ili{} treated\ili{} as\ili{} correct\ili{} if\ili{} there\ili{} exists\ili{} a\ili{} constituent\ili{} in\ili{} the\ili{} gold\ili{} standard\ili{} parse\ili{} with\ili{} the\ili{} same\ili{} labels\ili{},\ili{} starting\ili{} and\ili{} ending\ili{} points\ili{}.\ili{} These\ili{} parsers\ili{} are\ili{} traditionally\ili{} evaluated\ili{} through\ili{} precision\ili{},\ili{} recall\ili{} and\ili{} F\ili{}-score\ili{} \ili{}\citep\ili{}{abney1991procedure\ili{},sekine1997evalb}\ili{}.\ili{} \ili{}
+\ili{}
+In\ili{} standard\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} with\ili{} single\ili{}-head\ili{} constraint\ili{}\footnote\ili{}{Each\ili{} dependent\ili{} node\ili{} has\ili{} at\ili{} most\ili{} one\ili{} head\ili{} in\ili{} the\ili{} produced\ili{} dependency\ili{} tree\ili{}.}\ili{},\ili{} the\ili{} number\ili{} of\ili{} dependencies\ili{} produced\ili{} by\ili{} a\ili{} parser\ili{} is\ili{} equal\ili{} to\ili{} the\ili{} number\ili{} of\ili{} total\ili{} dependencies\ili{} in\ili{} the\ili{} gold\ili{}-standard\ili{} parse\ili{} tree\ili{}.\ili{} Common\ili{} metrics\ili{} to\ili{} evaluate\ili{} these\ili{} parsers\ili{} include\ili{} the\ili{} percentage\ili{} of\ili{} tokens\ili{} with\ili{} correct\ili{} head\ili{},\ili{} called\ili{} \ili{}\emph\ili{}{unlabelled\ili{} attachment\ili{} score}\ili{} \ili{}(\ili{}\asu\ili{})\ili{},\ili{} and\ili{} the\ili{} percentage\ili{} of\ili{} tokens\ili{} with\ili{} correct\ili{} head\ili{} \ili{}\emph\ili{}{and}\ili{} dependency\ili{} label\ili{},\ili{} called\ili{} labeled\ili{} attachment\ili{} score\ili{} \ili{}(\ili{}\asl\ili{})\ili{} \ili{}\citep\ili{}{conllx\ili{},nilsson2007conll}\ili{}.\ili{} \ili{}
+\ili{}
+The\ili{} evaluation\ili{} of\ili{} MWE\ili{}-aware\ili{} parsers\ili{} and\ili{} the\ili{} evaluation\ili{} of\ili{} \ili{} whether\ili{} or\ili{} not\ili{} MWE\ili{} pre\ili{}-identification\ili{} helps\ili{} \ili{} improving\ili{} the\ili{} parsing\ili{} quality\ili{} should\ili{} be\ili{} carefully\ili{} carried\ili{} out\ili{}.\ili{}
+As\ili{} stated\ili{} in\ili{} previous\ili{} sections\ili{},\ili{} in\ili{} most\ili{} works\ili{} where\ili{} MWE\ili{} identification\ili{} is\ili{} realized\ili{} before\ili{} parsing\ili{},\ili{} the\ili{} MWEs\ili{} are\ili{} merged\ili{} into\ili{} \ili{} single\ili{} tokens\ili{}.\ili{} \ili{} \ili{}
+As\ili{} a\ili{} result\ili{},\ili{} the\ili{} common\ili{} metrics\ili{} for\ili{} parsing\ili{} evaluation\ili{} given\ili{} above\ili{} become\ili{} problematic\ili{} for\ili{} measuring\ili{} the\ili{} impact\ili{} of\ili{} MWE\ili{} identification\ili{} on\ili{} parsing\ili{} performance\ili{} \ili{}\citep\ili{}{Eryigit\ili{}:2011\ili{}:MES\ili{}:2206359\ili{}.2206365}\ili{}.\ili{}
+For\ili{} example\ili{},\ili{} in\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{},\ili{}
+the\ili{} concatenation\ili{} of\ili{} MWEs\ili{} into\ili{} single\ili{} units\ili{} \ili{} decrements\ili{} the\ili{} total\ili{} number\ili{} of\ili{} evaluated\ili{} dependencies\ili{}.\ili{} It\ili{} is\ili{} thus\ili{} possible\ili{} to\ili{} obtain\ili{} different\ili{} scores\ili{} without\ili{} actually\ili{} changing\ili{} the\ili{} quality\ili{} of\ili{} the\ili{} parser\ili{},\ili{} but\ili{} simply\ili{} the\ili{} representation\ili{} of\ili{} the\ili{} results\ili{}.\ili{} Instead\ili{} of\ili{} \ili{}\asu\ili{}~\ili{} and\ili{} \ili{}\asl\ili{}~\ili{} metrics\ili{},\ili{} the\ili{} attachment\ili{} scores\ili{} on\ili{} the\ili{} surrounding\ili{} structures\ili{},\ili{} namely\ili{} \ili{}\asus\ili{}~\ili{} and\ili{} \ili{}\asls\ili{}~\ili{} \ili{}(\ili{}\ie\ili{}{}\ili{} the\ili{} accuracy\ili{} on\ili{} the\ili{} dependency\ili{} relations\ili{} excluding\ili{} the\ili{} ones\ili{} between\ili{} MWE\ili{} elements\ili{})\ili{} are\ili{} more\ili{} appropriate\ili{} for\ili{} extrinsic\ili{} evaluation\ili{} of\ili{} the\ili{} impact\ili{} of\ili{} MWE\ili{} identification\ili{} on\ili{} parsing\ili{}.\ili{} Similar\ili{} considerations\ili{} apply\ili{} to\ili{} constituency\ili{} parsing\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure\ili{}*}\ili{}[htbp\ili{}]\ili{}
+\ili{} \ili{} \ili{}\centering\ili{}
+\ili{}%\ili{} \ili{} \ili{}\begin\ili{}{turn}\ili{}{\ili{}-\ili{}.8}\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\includegraphics\ili{}[width\ili{}=1\ili{}.00\ili{}\textwidth\ili{}]\ili{}{figures\ili{}/Presentation1}\ili{}%example\ili{}-constant\ili{}.png}\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{}\end\ili{}{turn}\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}\caption\ili{}{Extrinsic\ili{} evaluation\ili{} examples\ili{} of\ili{} the\ili{} impact\ili{} of\ili{} MWE\ili{} identification\ili{} on\ili{} dependency\ili{} parsing\ili{} performances\ili{}.}\ili{}
+\ili{}	\ili{}\label\ili{}{fig\ili{}:example}\ili{}
+\ili{}\end\ili{}{figure\ili{}*}\ili{}
+\ili{}
+\ili{}
+Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:example}\ili{} provides\ili{} two\ili{} example\ili{} sequences\ili{} for\ili{} the\ili{} phenomena\ili{} discussed\ili{} above\ili{};\ili{} one\ili{} containing\ili{} a\ili{} contiguous\ili{} MWE\ili{} \ili{}(on\ili{} the\ili{} left\ili{} side\ili{})\ili{} \ili{} and\ili{} another\ili{} one\ili{} containing\ili{} a\ili{} non\ili{}-contiguous\ili{} MWE\ili{} \ili{}(on\ili{} the\ili{} right\ili{} side\ili{})\ili{}.\ili{}
+The\ili{} dependency\ili{} trees\ili{} in\ili{} this\ili{} figure\ili{} provide\ili{} the\ili{} gold\ili{} standard\ili{} unlabeled\ili{} dependency\ili{} relations\ili{} for\ili{} both\ili{} examples\ili{}.\ili{}
+Correctly\ili{} predicted\ili{} dependencies\ili{} \ili{}%by\ili{} the\ili{} used\ili{} setting\ili{} \ili{}
+are\ili{} presented\ili{} with\ili{} check\ili{} marks\ili{} \ili{}(\ili{}\checkmark\ili{})\ili{} over\ili{} the\ili{} relations\ili{},\ili{} whereas\ili{} the\ili{} wrongly\ili{} predicted\ili{} dependencies\ili{} are\ili{} presented\ili{} with\ili{} a\ili{} cross\ili{} mark\ili{} \ili{}(\ili{}\ding\ili{}{55}\ili{})\ili{}.\ili{} \ili{}
+The\ili{} contiguous\ili{} MWE\ili{} of\ili{} the\ili{} left\ili{} side\ili{} sequence\ili{} consists\ili{} of\ili{} three\ili{} tokens\ili{} \ili{}(w\ili{}$_4\ili{}$\ili{},\ili{} w\ili{}$_5\ili{}$\ili{} and\ili{} w\ili{}$_6\ili{}$\ili{})\ili{}.\ili{} In\ili{} other\ili{} words\ili{},\ili{} the\ili{} two\ili{} dependency\ili{} relations\ili{} of\ili{} the\ili{} overall\ili{} sequence\ili{} belong\ili{} to\ili{} the\ili{} relations\ili{} between\ili{} MWE\ili{} elements\ili{}.\ili{} The\ili{} non\ili{}-contiguous\ili{} MWE\ili{} of\ili{} the\ili{} right\ili{} side\ili{} sequence\ili{} consists\ili{} of\ili{} two\ili{} tokens\ili{} \ili{}(w\ili{}$_3\ili{}$\ili{} and\ili{} w\ili{}$_6\ili{}$\ili{})\ili{}.\ili{}
+\ili{}
+The\ili{} first\ili{} examples\ili{} of\ili{} each\ili{} column\ili{} \ili{}(\ili{}`\ili{}`\ili{}(A\ili{})\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`\ili{}(E\ili{})\ili{}'\ili{}'\ili{})\ili{} show\ili{} the\ili{} success\ili{} of\ili{} a\ili{} dependency\ili{} parser\ili{} without\ili{} any\ili{} prior\ili{} MWE\ili{} identification\ili{} process\ili{}.\ili{} \ili{}
+In\ili{} the\ili{} remaining\ili{} settings\ili{},\ili{} an\ili{} MWE\ili{} identifier\ili{} is\ili{} run\ili{} over\ili{} the\ili{} given\ili{} sequence\ili{} before\ili{} parsing\ili{}.\ili{}
+Both\ili{} the\ili{} overall\ili{} unlabeled\ili{} accuracy\ili{} \ili{}\asuo\ili{}{}\ili{} and\ili{} the\ili{} accuracy\ili{} of\ili{} the\ili{} surrounding\ili{} structures\ili{} \ili{}\asus\ili{}{}\ili{} are\ili{} provided\ili{} next\ili{} to\ili{} the\ili{} trees\ili{}.\ili{} Examples\ili{} \ili{}`\ili{}`\ili{}(B\ili{})\ili{}'\ili{}'\ili{},\ili{} \ili{}`\ili{}`\ili{}(C\ili{})\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`\ili{}(D\ili{})\ili{}'\ili{}'\ili{} show\ili{} the\ili{} correctly\ili{} detected\ili{} relations\ili{} by\ili{} applying\ili{} an\ili{} MWE\ili{} identifier\ili{} prior\ili{} to\ili{} the\ili{} \ili{}\isi\ili{}{syntactic\ili{} parsing}\ili{}.\ili{} In\ili{} \ili{}`\ili{}`\ili{}(C\ili{})\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`\ili{}(D\ili{})\ili{}'\ili{}'\ili{},\ili{} the\ili{} detected\ili{} MWE\ili{} is\ili{} combined\ili{} into\ili{} a\ili{} single\ili{} unit\ili{} \ili{}(w\ili{}$_4\ili{}$w\ili{}$_5\ili{}$w\ili{}$_6\ili{}$\ili{})\ili{} whereas\ili{} in\ili{} \ili{}`\ili{}`\ili{}(B\ili{})\ili{}'\ili{}'\ili{},\ili{} the\ili{} detected\ili{} MWE\ili{} is\ili{} represented\ili{} as\ili{} a\ili{} subtree\ili{}.\ili{} \ili{}%\ili{} constraint\ili{} to\ili{} the\ili{} \ili{}\isi\ili{}{syntactic\ili{} parsing}\ili{}.\ili{}
+\ili{}
+\ili{}%One\ili{} may\ili{} notice\ili{} from\ili{} this\ili{} example\ili{} that\ili{} i\ili{}
+In\ili{} \ili{}`\ili{}`\ili{}(A\ili{})\ili{}'\ili{}'\ili{},\ili{} \ili{}`\ili{}`\ili{}(B\ili{})\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`\ili{}(C\ili{})\ili{}'\ili{}'\ili{},\ili{} although\ili{} the\ili{} parser\ili{} success\ili{} does\ili{} not\ili{} change\ili{} on\ili{} detecting\ili{} the\ili{} syntactic\ili{} dependencies\ili{},\ili{} \ili{}\asuo\ili{}~\ili{} is\ili{} affected\ili{} by\ili{} the\ili{} total\ili{} number\ili{} of\ili{} evaluated\ili{} dependencies\ili{},\ili{} whereas\ili{} \ili{}\asus\ili{}~\ili{} remains\ili{} stable\ili{},\ili{} as\ili{} expected\ili{}.\ili{}
+In\ili{} \ili{}`\ili{}`\ili{}(D\ili{})\ili{}'\ili{}'\ili{},\ili{} MWE\ili{} identification\ili{} helps\ili{} the\ili{} parser\ili{} to\ili{} detect\ili{} one\ili{} more\ili{} dependency\ili{} relation\ili{} which\ili{},\ili{} is\ili{} reflected\ili{} in\ili{} \ili{}\asus\ili{}{}\ili{}.\ili{}
+Similarly\ili{},\ili{} in\ili{} \ili{}`\ili{}`\ili{}(F\ili{})\ili{}'\ili{}'\ili{},\ili{} the\ili{} pre\ili{}-identification\ili{} of\ili{} \ili{} \ili{}`\ili{}`w\ili{}$_3\ili{}$\ili{} \ili{}-\ili{} w\ili{}$_6\ili{}$\ili{}'\ili{}'\ili{} MWE\ili{} has\ili{} no\ili{} impact\ili{} on\ili{} the\ili{} parser\ili{}'s\ili{} performance\ili{}.\ili{}
+\ili{}%\ili{}\mycyan\ili{}{\ili{}
+Although\ili{} this\ili{} can\ili{} be\ili{} directly\ili{} observed\ili{} by\ili{} \ili{}\asus\ili{}~\ili{}(60\ili{}\\ili{}%\ili{})\ili{},\ili{} \ili{}\asuo\ili{}~\ili{} mistakenly\ili{} gives\ili{} the\ili{} impression\ili{} of\ili{} an\ili{} improvement\ili{} in\ili{} parsing\ili{} performance\ili{} \ili{}(50\ili{}\\ili{}%\ili{}$\ili{}\Rightarrow\ili{}$66\ili{}.6\ili{}\\ili{}%\ili{})\ili{}.\ili{} This\ili{} is\ili{} because\ili{} \ili{} in\ili{} this\ili{} setting\ili{} \ili{}(second\ili{} column\ili{} of\ili{} Figure\ili{}~\ili{}\ref\ili{}{fig\ili{}:example}\ili{})\ili{}
+\ili{}%2nd\ili{} column\ili{} non\ili{}-contiguous\ili{} MWE\ili{} elements\ili{})\ili{},\ili{} \ili{}
+\ili{}\asuo\ili{}~\ili{} evaluates\ili{} the\ili{} performance\ili{} of\ili{} MWE\ili{} pre\ili{}-identification\ili{} and\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} as\ili{} a\ili{} whole\ili{}.\ili{}
+\ili{}%}\ili{}
+In\ili{} \ili{}`\ili{}`\ili{}(G\ili{})\ili{}'\ili{}'\ili{},\ili{} the\ili{} parser\ili{} performs\ili{} better\ili{} after\ili{} MWE\ili{} identification\ili{},\ili{} which\ili{} is\ili{} again\ili{} reflected\ili{} in\ili{} the\ili{} surrounding\ili{} structure\ili{} evaluation\ili{}.\ili{}
+\ili{}
+Although\ili{} \ili{}\asus\ili{}~\ili{} and\ili{} \ili{}\asls\ili{}~\ili{} are\ili{} valuable\ili{} scores\ili{} for\ili{} measuring\ili{} the\ili{} impact\ili{} of\ili{} identifying\ili{} different\ili{} MWE\ili{} types\ili{} on\ili{} parsing\ili{} performance\ili{},\ili{} they\ili{} are\ili{} troublesome\ili{} with\ili{} automatic\ili{} MWE\ili{} identification\ili{},\ili{} when\ili{} gold\ili{}-standard\ili{} MWE\ili{} segmentation\ili{} is\ili{} not\ili{} available\ili{}.\ili{} Then\ili{},\ili{} erroneous\ili{} MWE\ili{} identification\ili{} would\ili{} degrade\ili{} parsing\ili{} scores\ili{} on\ili{} the\ili{} surrounding\ili{} dependencies\ili{}.\ili{}
+An\ili{} alternative\ili{} solution\ili{} is\ili{} to\ili{} detach\ili{} the\ili{} concatenated\ili{} MWE\ili{} components\ili{} \ili{}(if\ili{} any\ili{})\ili{} into\ili{} a\ili{} dependency\ili{} or\ili{} constituency\ili{} subtree\ili{} \ili{}\citep\ili{}{candito2014strategies\ili{},Eryigit\ili{}:2011\ili{}:MES\ili{}:2206359\ili{}.2206365}\ili{}.\ili{} This\ili{} way\ili{},\ili{} the\ili{} standard\ili{} evaluation\ili{} scores\ili{} \ili{}\asu\ili{}{}\ili{} and\ili{} \ili{}\asl\ili{}{}\ili{} are\ili{} still\ili{} applicable\ili{} in\ili{} all\ili{} different\ili{} orchestration\ili{} scenarios\ili{},\ili{} for\ili{} both\ili{} contiguous\ili{} and\ili{} non\ili{}-contiguous\ili{} MWEs\ili{},\ili{} successfully\ili{} assessing\ili{} the\ili{} performance\ili{} of\ili{} joint\ili{} \ili{}\isi\ili{}{syntactic\ili{} parsing}\ili{} and\ili{} MWE\ili{} identification\ili{} as\ili{} a\ili{} whole\ili{}.\ili{}
+\ili{}
+\ili{}%\ili{}\input\ili{}{constantetal\ili{}/08\ili{}-conclusions}\ili{}
+\ili{}\section\ili{}{Conclusions}\ili{}
+\ili{}\label\ili{}{sec\ili{}:conclusions}\ili{}
+\ili{}
+\ili{}
+In\ili{} this\ili{} chapter\ili{},\ili{} we\ili{} \ili{}
+elaborated\ili{} upon\ili{}
+several\ili{} approaches\ili{} for\ili{} combining\ili{} MWE\ili{} processing\ili{} with\ili{} \ili{}\isi\ili{}{statistical\ili{} parsing}\ili{} to\ili{} yield\ili{} statistical\ili{} MWE\ili{}-aware\ili{} parsing\ili{}.\ili{} These\ili{} approaches\ili{} depend\ili{} on\ili{} different\ili{} parameters\ili{} such\ili{} as\ili{} \ili{}\isi\ili{}{MWE\ili{} representation}\ili{},\ili{} orchestration\ili{} and\ili{} external\ili{} resource\ili{} integration\ili{}.\ili{} First\ili{} of\ili{} all\ili{},\ili{} the\ili{} selected\ili{} \ili{}\isi\ili{}{MWE\ili{} representation}\ili{} combined\ili{} with\ili{} syntactic\ili{} analysis\ili{} have\ili{} a\ili{} strong\ili{} impact\ili{} on\ili{} the\ili{} system\ili{} implementation\ili{},\ili{} since\ili{} \ili{}
+the\ili{} more\ili{} elaborated\ili{} and\ili{} hence\ili{} more\ili{} linguistically\ili{} expressive\ili{} the\ili{} representation\ili{} is\ili{},\ili{} the\ili{} more\ili{} complex\ili{} the\ili{} computational\ili{} system\ili{} has\ili{} to\ili{} be\ili{}.\ili{}
+Representations\ili{} vary\ili{} from\ili{} simple\ili{} words\ili{} with\ili{} spaces\ili{} to\ili{} multilayer\ili{} structures\ili{}.\ili{} The\ili{} timing\ili{} of\ili{} MWE\ili{} identification\ili{} with\ili{} respect\ili{} to\ili{} \ili{}\isi\ili{}{syntactic\ili{} parsing}\ili{},\ili{} namely\ili{} orchestration\ili{},\ili{} is\ili{} a\ili{} crucial\ili{} feature\ili{} that\ili{} needs\ili{} to\ili{} be\ili{} carefully\ili{} taken\ili{} into\ili{} account\ili{} when\ili{} designing\ili{} a\ili{} statistical\ili{} MWE\ili{}-aware\ili{} parser\ili{},\ili{} as\ili{} the\ili{} best\ili{} choice\ili{} partly\ili{} depends\ili{} on\ili{} MWE\ili{} type\ili{} under\ili{} consideration\ili{}.\ili{} MWE\ili{} identification\ili{} may\ili{} be\ili{} performed\ili{} before\ili{},\ili{} after\ili{},\ili{} or\ili{} during\ili{} parsing\ili{}.\ili{} The\ili{} first\ili{} two\ili{} were\ili{} discussed\ili{} under\ili{} the\ili{} rubric\ili{} \ili{}`\ili{}`pipeline\ili{}'\ili{}'\ili{} approaches\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:pipeline}\ili{};\ili{} the\ili{} third\ili{},\ili{} under\ili{} \ili{}`\ili{}`joint\ili{}'\ili{}'\ili{} approaches\ili{},\ili{} in\ili{} Section\ili{}~\ili{}\ref\ili{}{sec\ili{}:joint}\ili{}.\ili{} Last\ili{},\ili{} we\ili{} showed\ili{} that\ili{} the\ili{} use\ili{} of\ili{} external\ili{} resources\ili{} is\ili{} another\ili{} important\ili{} feature\ili{} that\ili{} is\ili{} required\ili{} to\ili{} handle\ili{} the\ili{} sparsity\ili{} problem\ili{},\ili{} not\ili{} only\ili{} to\ili{} support\ili{} syntactic\ili{} attachment\ili{} decisions\ili{},\ili{} but\ili{} also\ili{} MWE\ili{} identification\ili{}.\ili{} \ili{}
+\ili{}
+Although\ili{} it\ili{} is\ili{} difficult\ili{} to\ili{} draw\ili{} hard\ili{} and\ili{} fast\ili{} conclusions\ili{},\ili{} it\ili{} seems\ili{} that\ili{} further\ili{} investigation\ili{} of\ili{} dedicated\ili{} MWE\ili{}-aware\ili{} parsing\ili{} models\ili{} is\ili{} \ili{}
+called\ili{} for\ili{}.\ili{}
+Such\ili{} models\ili{} can\ili{} benefit\ili{} from\ili{} joint\ili{} modeling\ili{} of\ili{} closely\ili{} related\ili{} tasks\ili{},\ili{} with\ili{} information\ili{} from\ili{} one\ili{} layer\ili{} helping\ili{} to\ili{} disambiguate\ili{} the\ili{} other\ili{}.\ili{} \ili{}
+Joint\ili{} approaches\ili{} seem\ili{} to\ili{} offer\ili{} a\ili{} very\ili{} promising\ili{} line\ili{} of\ili{} research\ili{},\ili{} as\ili{} has\ili{} been\ili{} shown\ili{} for\ili{} other\ili{} NLP\ili{} tasks\ili{}:\ili{} \ili{}\eg\ili{}{}\ili{} joint\ili{} POS\ili{} tagging\ili{} and\ili{} parsing\ili{} \ili{}\citep\ili{}{bohnet\ili{}:2013}\ili{},\ili{} joint\ili{} syntactic\ili{} and\ili{} semantic\ili{} parsing\ili{} \ili{}\citep\ili{}{Henderson\ili{}:2013}\ili{}.\ili{} Such\ili{} approaches\ili{} are\ili{} now\ili{} becoming\ili{} prominent\ili{} in\ili{} NLP\ili{} alongside\ili{} the\ili{} deep\ili{} learning\ili{} revolution\ili{}.\ili{} In\ili{} fact\ili{},\ili{} most\ili{} joint\ili{} approaches\ili{} to\ili{} statistical\ili{} MWE\ili{}-aware\ili{} parsing\ili{} are\ili{} not\ili{} truly\ili{} joint\ili{},\ili{} as\ili{} they\ili{} consist\ili{} of\ili{} workaround\ili{} solutions\ili{}.\ili{} We\ili{} saw\ili{} how\ili{} many\ili{} studies\ili{} investigated\ili{} the\ili{} use\ili{} of\ili{} off\ili{}-the\ili{}-shelf\ili{} parsers\ili{} by\ili{} modifying\ili{} training\ili{} data\ili{},\ili{} thus\ili{} making\ili{} the\ili{} datasets\ili{} MWE\ili{}-aware\ili{}.\ili{} Truly\ili{} joint\ili{} systems\ili{} are\ili{} rarer\ili{},\ili{} requiring\ili{} the\ili{} use\ili{} of\ili{} specific\ili{} grammatical\ili{} formalisms\ili{} for\ili{} constituency\ili{} parsing\ili{} or\ili{} the\ili{} development\ili{} of\ili{} new\ili{} \ili{}\isi\ili{}{dependency\ili{} parsing}\ili{} mechanisms\ili{} dedicated\ili{} to\ili{} MWE\ili{} identification\ili{}.\ili{} \ili{}
+\ili{}
+As\ili{} a\ili{} consequence\ili{},\ili{} there\ili{} is\ili{} much\ili{} ground\ili{} for\ili{} future\ili{} work\ili{}.\ili{}
+However\ili{},\ili{} special\ili{} emphasis\ili{} should\ili{} be\ili{} given\ili{} to\ili{} the\ili{} development\ili{} of\ili{} MWE\ili{}-rich\ili{} \ili{}\isi\ili{}{treebanks}\ili{}.\ili{}
+Not\ili{} only\ili{} are\ili{} these\ili{} resources\ili{} lacking\ili{} for\ili{} many\ili{} languages\ili{},\ili{} but\ili{} also\ili{} the\ili{} representation\ili{} and\ili{} covered\ili{} MWE\ili{} types\ili{} vary\ili{} considerably\ili{} among\ili{} different\ili{} resources\ili{}.\ili{}
+We\ili{} believe\ili{} that\ili{} the\ili{} development\ili{} of\ili{} new\ili{} MWE\ili{}-aware\ili{} parsing\ili{} models\ili{} and\ili{} resources\ili{} would\ili{} enable\ili{} satisfactory\ili{} solutions\ili{} for\ili{} this\ili{} hard\ili{} problem\ili{}.\ili{}
+Such\ili{} solutions\ili{} could\ili{} then\ili{} be\ili{} further\ili{} integrated\ili{} into\ili{} downstream\ili{} applications\ili{},\ili{} taking\ili{} a\ili{} significant\ili{} step\ili{} towards\ili{} semantic\ili{} processing\ili{} of\ili{} MWEs\ili{},\ili{} and\ili{} thus\ili{} of\ili{} a\ili{} key\ili{} element\ili{} of\ili{} language\ili{} itself\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\section\ili{}*\ili{}{Acknowledgements}\ili{}
+\ili{}
+This\ili{} work\ili{} was\ili{} supported\ili{} by\ili{} the\ili{} PARSEME\ili{} action\ili{} \ili{}(COST\ili{} IC1207\ili{})\ili{}.\ili{} \ili{} It\ili{} was\ili{} also\ili{} partially\ili{} funded\ili{} by\ili{} the\ili{} \ili{}\ili\ili{}{French}\ili{} National\ili{} Research\ili{} Agency\ili{} \ili{}(ANR\ili{})\ili{} through\ili{} the\ili{} PARSEME\ili{}-FR\ili{} project\ili{} \ili{}(ANR\ili{}-14\ili{}-CERA\ili{}-0001\ili{})\ili{} and\ili{} by\ili{} a\ili{} TUBITAK\ili{} 1001\ili{} grant\ili{} \ili{}(no\ili{}:\ili{} 112E276\ili{})\ili{}.\ili{}
+\ili{}%We\ili{} are\ili{} thankful\ili{} to\ili{} XXX\ili{}
+\ili{}
+\ili{}\printbibliography\ili{}[heading\ili{}=subbibliography\ili{},notkeyword\ili{}=this\ili{}]\ili{}
+\ili{}
+\ili{}\end\ili{}{document}\ili{}
+\ili{}

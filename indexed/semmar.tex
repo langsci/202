@@ -1,0 +1,706 @@
+\documentclass[output=paper,modfonts,nonflat]{langsci/langscibook} 
+
+\usepackage{amsmath}
+\usepackage{multirow}
+
+\title{Extracting and aligning multiword expressions from parallel corpora} 
+
+\author{%
+ Nasredine Semmar\affiliation{CEA LIST, Vision and Content Engineering Laboratory}\and 
+ Christophe Servan\affiliation{University of Grenoble Alpes -- Grenoble Informatics Laboratory\\ SYSTRAN}\and
+ Meriama Laib\affiliation{CEA LIST, Vision and Content Engineering Laboratory}\and
+ Dhouha Bouamor\affiliation{Actimos, Groupe Accord}\lastand 
+ Morgane Marchand\affiliation{eXenSa}
+}
+
+\lehead{N. Semmar, C. Servan, M. Laib, D. Bouamor \& M. Marchand}
+%\shorttitlerunninghead{}
+
+% \chapterDOI{} %will be filled in at production
+% \epigram{}
+
+\abstract{
+Bilingual lexicons of multiword expressions play a vital role in several natural language processing applications such as machine translation and cross-language information retrieval because they  often characterize specific-domains vocabularies. Word alignment approaches are generally used to construct bilingual lexicons automatically from parallel corpora. We present in this chapter three approaches to align multiword expressions from parallel corpora. We evaluate the bilingual lexicons produced by these approaches using two methods: a manual evaluation of the alignment quality and an evaluation of the impact of this alignment on the translation quality of the phrase-based statistical machine translation system Moses. We experimentally show that the integration of the bilingual lexicons of multiword expressions in the translation model improves the performance of Moses
+
+}
+
+\begin{document}\ili{}
+\ili{}\maketitle\ili{}
+\ili{}
+\ili{}%\ili{} Introduction\ili{}
+\ili{}\section\ili{}{Introduction}\ili{}
+\ili{}
+A\ili{} MultiWord\ili{} Expression\ili{} \ili{}(MWE\ili{})\ili{} is\ili{} a\ili{} combination\ili{} of\ili{} words\ili{} for\ili{} which\ili{} syntactic\ili{} or\ili{} semantic\ili{} properties\ili{} of\ili{} the\ili{} whole\ili{} expression\ili{} cannot\ili{} be\ili{} obtained\ili{} from\ili{} its\ili{} parts\ili{} \ili{}\citep\ili{}{Sag02}\ili{}.\ili{} Such\ili{} units\ili{} could\ili{} be\ili{} collocations\ili{},\ili{} compound\ili{} words\ili{},\ili{} named\ili{} entities\ili{},\ili{} etc\ili{}.\ili{} They\ili{} constitute\ili{} an\ili{} important\ili{} part\ili{} of\ili{} the\ili{} lexicon\ili{} of\ili{} any\ili{} natural\ili{} language\ili{} \ili{}\citep\ili{}{jackendoff1997architecture}\ili{}.\ili{} Bilingual\ili{} lexicons\ili{} of\ili{} MWEs\ili{} play\ili{} a\ili{} vital\ili{} role\ili{} in\ili{} several\ili{} Natural\ili{} Language\ili{} Processing\ili{} \ili{}(NLP\ili{})\ili{} applications\ili{} such\ili{} as\ili{} Machine\ili{} Translation\ili{} \ili{}(MT\ili{})\ili{} and\ili{} Cross\ili{}-Language\ili{} Information\ili{} Retrieval\ili{} \ili{}(CLIR\ili{})\ili{} because\ili{} they\ili{} generally\ili{} characterize\ili{} specific\ili{}-domains\ili{} vocabularies\ili{}.\ili{} The\ili{} manual\ili{} construction\ili{} of\ili{} these\ili{} lexicons\ili{} is\ili{} often\ili{} costly\ili{} and\ili{} time\ili{} consuming\ili{}.\ili{} Word\ili{} alignment\ili{} approaches\ili{} are\ili{} generally\ili{} used\ili{} to\ili{} automatically\ili{} construct\ili{} bilingual\ili{} lexicons\ili{} from\ili{} parallel\ili{} or\ili{} comparable\ili{} corpora\ili{}.\ili{} Several\ili{} \ili{}\isi\ili{}{word\ili{} alignment}\ili{} approaches\ili{} have\ili{} been\ili{} explored\ili{} \ili{}\citep\ili{}{daille1994towards\ili{},blank2000terminology\ili{},Barbu2004}\ili{} and\ili{} many\ili{} automatic\ili{} \ili{}\isi\ili{}{word\ili{} alignment}\ili{} tools\ili{} are\ili{} available\ili{},\ili{} such\ili{} as\ili{} GIZA\ili{}+\ili{}+\ili{} \ili{}\citep\ili{}{och2000improved}\ili{}.\ili{} However\ili{},\ili{} most\ili{} of\ili{} these\ili{} tools\ili{} are\ili{} efficient\ili{} only\ili{} to\ili{} align\ili{} single\ili{} words\ili{} \ili{}\citep\ili{}{fraser2007measuring}\ili{}.\ili{}
+\ili{}
+The\ili{} chapter\ili{} is\ili{} organized\ili{} as\ili{} follows\ili{}.\ili{} We\ili{} survey\ili{} in\ili{} Section\ili{} 2\ili{} previous\ili{} works\ili{} addressing\ili{} the\ili{} tasks\ili{} of\ili{} extracting\ili{} and\ili{} aligning\ili{} MWEs\ili{} from\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{}.\ili{} We\ili{} define\ili{} in\ili{} Section\ili{} 3\ili{} the\ili{} notion\ili{} of\ili{} MultiWord\ili{} Expression\ili{} and\ili{} describe\ili{} different\ili{} types\ili{} of\ili{} MWEs\ili{} with\ili{} examples\ili{}.\ili{} \ili{} In\ili{} Section\ili{} 4\ili{},\ili{} we\ili{} introduce\ili{} three\ili{} approaches\ili{} to\ili{} build\ili{} bilingual\ili{} lexicons\ili{} of\ili{} MWEs\ili{} from\ili{} sentence\ili{} aligned\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{}.\ili{} The\ili{} experimental\ili{} results\ili{} are\ili{} reported\ili{} and\ili{} discussed\ili{} in\ili{} Section\ili{} 5\ili{}.\ili{} Finally\ili{},\ili{} we\ili{} present\ili{} in\ili{} Section\ili{} 6\ili{} the\ili{} conclusion\ili{} and\ili{} future\ili{} work\ili{}.\ili{}
+\ili{}
+\ili{}%\ili{} Related\ili{} work\ili{}
+\ili{}\section\ili{}{Related\ili{} work}\ili{}
+\ili{}
+There\ili{} are\ili{} mainly\ili{} two\ili{} strategies\ili{} to\ili{} extract\ili{} bilingual\ili{} MWEs\ili{} from\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{}.\ili{} The\ili{} first\ili{} strategy\ili{} consists\ili{} to\ili{} acquire\ili{} translations\ili{} of\ili{} phrases\ili{} from\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{} in\ili{} one\ili{} step\ili{}.\ili{} Phrases\ili{} are\ili{} not\ili{} necessary\ili{} MWEs\ili{},\ili{} they\ili{} can\ili{} be\ili{} contiguous\ili{} sequences\ili{} of\ili{} a\ili{} few\ili{} words\ili{} that\ili{} encapsulate\ili{} enough\ili{} context\ili{} to\ili{} be\ili{} translatable\ili{} \ili{}\citep\ili{}{denero2008complexity}\ili{}.\ili{} The\ili{} second\ili{} strategy\ili{} firstly\ili{},\ili{} identifies\ili{} monolingual\ili{} MWE\ili{} candidates\ili{} and\ili{} then\ili{} applies\ili{} alignment\ili{} approaches\ili{} to\ili{} find\ili{} bilingual\ili{} correspondences\ili{} \ili{}\citep\ili{}{daille1994towards\ili{},blank2000terminology\ili{},gaussier2011modeles\ili{},Barbu2004}\ili{}.\ili{} \ili{}
+\ili{}
+In\ili{} the\ili{} second\ili{} strategy\ili{},\ili{} MWEs\ili{} extraction\ili{} can\ili{} be\ili{} processed\ili{} by\ili{} using\ili{} symbolic\ili{} methods\ili{} based\ili{} on\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{},\ili{} or\ili{},\ili{} though\ili{} statistical\ili{} approaches\ili{},\ili{} which\ili{} use\ili{} automatic\ili{} measures\ili{} to\ili{} rank\ili{} MWE\ili{} candidates\ili{}.\ili{} Finally\ili{},\ili{} MWEs\ili{} extraction\ili{} can\ili{} be\ili{} done\ili{} by\ili{} using\ili{} hybrid\ili{} approaches\ili{},\ili{} which\ili{} combine\ili{} the\ili{} two\ili{} first\ili{} strategies\ili{}.\ili{}
+\ili{}
+\ili{}\cite\ili{}{dagan1994termight}\ili{} proposed\ili{} to\ili{} use\ili{} syntactic\ili{} analysis\ili{} to\ili{} extract\ili{} terminology\ili{}.\ili{} MWEs\ili{} are\ili{} extracted\ili{} by\ili{} grouping\ili{} linguistically\ili{} related\ili{} terms\ili{}.\ili{} In\ili{} the\ili{} same\ili{} way\ili{},\ili{} \ili{}\cite\ili{}{okita2010multi}\ili{} proposed\ili{} to\ili{} link\ili{} across\ili{} two\ili{} languages\ili{} MWEs\ili{} according\ili{} to\ili{} their\ili{} syntactic\ili{} and\ili{} lexical\ili{} information\ili{}.\ili{} \ili{}\cite\ili{}{tufis2007parallel}\ili{} and\ili{} \ili{}\cite\ili{}{seretan2007Collocation}\ili{} introduce\ili{} a\ili{} linguistic\ili{} approach\ili{} in\ili{} which\ili{} they\ili{} claim\ili{} that\ili{} MWEs\ili{} keep\ili{} in\ili{} most\ili{} cases\ili{} the\ili{} same\ili{} morpho\ili{}-\ili{}\isi\ili{}{syntactic\ili{} structure}\ili{} in\ili{} the\ili{} source\ili{} and\ili{} target\ili{} languages\ili{}.\ili{}
+\ili{}
+Statistical\ili{} approaches\ili{} also\ili{} have\ili{} proven\ili{} to\ili{} be\ili{} useful\ili{} in\ili{} collecting\ili{} bilingual\ili{} MWEs\ili{} from\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{}.\ili{} \ili{}\cite\ili{}{kupiec1993algorithm}\ili{} introduced\ili{} the\ili{} use\ili{} of\ili{} machine\ili{} learning\ili{} algorithms\ili{} such\ili{} as\ili{} the\ili{} Expectation\ili{} Maximization\ili{} \ili{}(EM\ili{})\ili{} to\ili{} extract\ili{} MWEs\ili{}.\ili{} Similarly\ili{},\ili{} \ili{}\cite\ili{}{vintar2008harvesting}\ili{} proposed\ili{} to\ili{} extract\ili{} bilingual\ili{} MWEs\ili{} by\ili{} translating\ili{} MWEs\ili{} from\ili{} a\ili{} well\ili{} known\ili{} language\ili{} \ili{}(\ili{}\ili\ili{}{English}\ili{})\ili{} to\ili{} a\ili{} low\ili{} resource\ili{} language\ili{} \ili{}(Slovene\ili{})\ili{} by\ili{} using\ili{} machine\ili{} translation\ili{}.\ili{} They\ili{} have\ili{} shown\ili{} that\ili{} their\ili{} translation\ili{} based\ili{} approach\ili{} performs\ili{} better\ili{} than\ili{} using\ili{} linguistic\ili{} approaches\ili{}.\ili{} But\ili{} they\ili{} did\ili{} not\ili{} combine\ili{} these\ili{} two\ili{} kind\ili{} of\ili{} approaches\ili{}.\ili{} The\ili{} combination\ili{} of\ili{} such\ili{} approaches\ili{} enables\ili{} to\ili{} extract\ili{} finer\ili{} MWEs\ili{} \ili{}\citep\ili{}{daille2001extraction}\ili{}.\ili{} In\ili{} this\ili{} way\ili{} \ili{}\cite\ili{}{wu2003bilingual}\ili{} and\ili{} later\ili{} \ili{}\cite\ili{}{boulaknadel2008multiterm}\ili{},\ili{} proposed\ili{} to\ili{} use\ili{} syntactic\ili{} and\ili{} statistical\ili{} analysis\ili{} to\ili{} extract\ili{} bilingual\ili{} MWEs\ili{} from\ili{} a\ili{} parallel\ili{} corpus\ili{}.\ili{} The\ili{} main\ili{} aspect\ili{} of\ili{} their\ili{} approach\ili{} is\ili{} a\ili{} monolingual\ili{} parsing\ili{} to\ili{} extract\ili{} MWEs\ili{} combined\ili{} with\ili{} statistical\ili{} detection\ili{} in\ili{} each\ili{} language\ili{},\ili{} then\ili{},\ili{} they\ili{} confront\ili{} candidates\ili{} from\ili{} each\ili{} side\ili{} to\ili{} find\ili{} bilingual\ili{} MWEs\ili{}.\ili{}
+\ili{}
+Other\ili{} approaches\ili{} proposed\ili{} to\ili{} use\ili{} machine\ili{} translation\ili{} to\ili{} translate\ili{} MWEs\ili{} candidates\ili{} found\ili{} with\ili{} a\ili{} syntactic\ili{} analysis\ili{} \ili{}\citep\ili{}{seretan2007Collocation}\ili{}.\ili{} Again\ili{},\ili{} the\ili{} first\ili{} step\ili{} is\ili{} done\ili{} on\ili{} each\ili{} language\ili{} independently\ili{} and\ili{} then\ili{},\ili{} a\ili{} second\ili{} step\ili{} aims\ili{} to\ili{} match\ili{} candidates\ili{} across\ili{} languages\ili{}.\ili{}
+\ili{}
+\ili{}%\ili{} \ili{}\isi\ili{}{Multiword\ili{} Expressions}\ili{}
+\ili{}\section\ili{}{Multiword\ili{} expressions}\ili{}
+In\ili{} natural\ili{} language\ili{} processing\ili{},\ili{} a\ili{} multiword\ili{} expression\ili{} \ili{} refers\ili{} to\ili{} a\ili{} non\ili{}-composi\ili{}\\ili{}-tional\ili{} sequence\ili{} of\ili{} words\ili{} whose\ili{} exact\ili{} and\ili{} unambiguous\ili{} meaning\ili{},\ili{} connotation\ili{} and\ili{} syntactic\ili{} properties\ili{} cannot\ili{} be\ili{} derived\ili{} from\ili{} the\ili{} meaning\ili{} or\ili{} connotation\ili{} of\ili{} its\ili{} components\ili{} \ili{}\citep\ili{}{choueka1988looking\ili{},Sag02}\ili{}.\ili{}
+MWEs\ili{} are\ili{} frequently\ili{} used\ili{} in\ili{} written\ili{} texts\ili{} and\ili{} constitute\ili{} a\ili{} significant\ili{} part\ili{} of\ili{} the\ili{} language\ili{} lexicon\ili{}.\ili{}
+\ili{}
+\ili{}\cite\ili{}{jackendoff1997architecture}\ili{} considers\ili{} that\ili{} the\ili{} frequency\ili{} of\ili{} their\ili{} use\ili{} is\ili{} equivalent\ili{} to\ili{} that\ili{} of\ili{} single\ili{} words\ili{}.\ili{}
+Although\ili{} MWEs\ili{} are\ili{} easily\ili{} computed\ili{},\ili{} stored\ili{} and\ili{} used\ili{} by\ili{} humans\ili{},\ili{} their\ili{} identification\ili{} is\ili{} a\ili{} major\ili{} issue\ili{} for\ili{} different\ili{} type\ili{} of\ili{} NLP\ili{} applications\ili{},\ili{} namely\ili{} for\ili{} syntactic\ili{} analysis\ili{} \ili{}\citep\ili{}{nivre2004multiword\ili{},constant2011integrer}\ili{},\ili{} automatic\ili{} summarization\ili{} \ili{}\citep\ili{}{hogan2007exploiting}\ili{},\ili{} information\ili{} extraction\ili{} \ili{}\citep\ili{}{vechtomova2005role}\ili{} and\ili{} especially\ili{} for\ili{} machine\ili{} translation\ili{} and\ili{} cross\ili{}-language\ili{} information\ili{} retrieval\ili{} \ili{}\citep\ili{}{carpuat2010task\ili{},ren2009improving}\ili{}.\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Multiword\ili{} expressions\ili{} typology}\ili{}
+\ili{}
+In\ili{} the\ili{} literature\ili{},\ili{} MWEs\ili{} are\ili{} presented\ili{} under\ili{} different\ili{} names\ili{} or\ili{} classifications\ili{} such\ili{} as\ili{} idioms\ili{},\ili{} lexicalized\ili{} phrases\ili{} or\ili{} collocations\ili{} and\ili{} several\ili{} authors\ili{} \ili{}\citep\ili{}{ramisch2013introduction}\ili{} give\ili{} a\ili{} list\ili{} of\ili{} examples\ili{} instead\ili{} of\ili{} giving\ili{} an\ili{} exact\ili{} description\ili{} of\ili{} them\ili{}.\ili{}
+According\ili{} to\ili{} \ili{}\cite\ili{}{calzolari2002}\ili{},\ili{} MWEs\ili{} are\ili{} a\ili{} \ili{}`\ili{}`different\ili{} but\ili{} related\ili{} phenomena\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`At\ili{} the\ili{} level\ili{} of\ili{} greatest\ili{} generality\ili{},\ili{} all\ili{} of\ili{} these\ili{} phenomena\ili{} can\ili{} be\ili{} described\ili{} as\ili{} a\ili{} sequence\ili{} of\ili{} words\ili{} that\ili{} acts\ili{} as\ili{} a\ili{} single\ili{} unit\ili{} at\ili{} some\ili{} level\ili{} of\ili{} \ili{}\isi\ili{}{linguistic\ili{} analysis}\ili{}'\ili{}'\ili{}.\ili{}
+\ili{}
+\ili{}\cite\ili{}{Sag02}\ili{} classify\ili{} them\ili{} into\ili{} two\ili{} main\ili{} categories\ili{}:\ili{} lexicalized\ili{} phrases\ili{} and\ili{} institutionalized\ili{} phrases\ili{} \ili{}(Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:TypoMWE}\ili{})\ili{}.\ili{}
+Lexicalized\ili{} phrases\ili{} \ili{}`\ili{}`have\ili{} at\ili{} least\ili{} partially\ili{} idiosyncratic\ili{} syntax\ili{} or\ili{} semantics\ili{},\ili{} or\ili{} contain\ili{} \ili{}`\ili{}`words\ili{}'\ili{}'\ili{} which\ili{} do\ili{} not\ili{} occur\ili{} in\ili{} isolation\ili{}'\ili{}'\ili{}.\ili{}
+Institutionalized\ili{} phrases\ili{} are\ili{} \ili{}`\ili{}`semantically\ili{} and\ili{} syntactically\ili{} compositional\ili{},\ili{} but\ili{} statistically\ili{} idiosyncratic\ili{}'\ili{}'\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=\ili{}\linewidth\ili{}]\ili{}{figures\ili{}/figureTypologyMWE_NB\ili{}.pdf}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{fig\ili{}:TypoMWE}Typology\ili{} of\ili{} multiword\ili{} expressions\ili{} by\ili{} \ili{}\cite\ili{}{Sag02}\ili{}.}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Lexicalized\ili{} phrases}\ili{}
+In\ili{} a\ili{} decreasing\ili{} order\ili{} of\ili{} lexical\ili{} rigidity\ili{},\ili{} these\ili{} MWEs\ili{} are\ili{} broken\ili{} down\ili{} into\ili{} three\ili{} classes\ili{}:\ili{} fixed\ili{} expressions\ili{},\ili{} semi\ili{}-fixed\ili{} expressions\ili{} and\ili{} syntactically\ili{}-flexible\ili{} expressions\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsubsection\ili{}{Fixed\ili{} expressions}\ili{}
+Fixed\ili{} expressions\ili{} are\ili{} non\ili{}-compositional\ili{} sequences\ili{} of\ili{} words\ili{}.\ili{}
+They\ili{} are\ili{} syntactically\ili{} and\ili{} morphologically\ili{} rigid\ili{} and\ili{} undergo\ili{} neither\ili{} internal\ili{} modification\ili{} nor\ili{} morphological\ili{} and\ili{} syntactical\ili{} \ili{}\isi\ili{}{variations}\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} \ili{}`\ili{}`nest\ili{} of\ili{} vipers\ili{}'\ili{}'\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} or\ili{} \ili{}`\ili{}`pom\ili{}\\ili{}-me\ili{} de\ili{} terre\ili{}'\ili{}'\ili{} in\ili{} \ili{} \ili{}\ili\ili{}{French}\ili{})\ili{}.\ili{}
+To\ili{} determine\ili{} whether\ili{} or\ili{} not\ili{} a\ili{} sequence\ili{} of\ili{} words\ili{} is\ili{} a\ili{} fixed\ili{} expression\ili{},\ili{} we\ili{} can\ili{} use\ili{} linguistic\ili{} criteria\ili{} such\ili{} as\ili{} using\ili{} synonyms\ili{} or\ili{} adding\ili{} words\ili{} between\ili{} its\ili{} components\ili{} \ili{}(cf\ili{}.\ili{} \ili{}`\ili{}`nest\ili{} of\ili{} many\ili{} black\ili{} vipers\ili{}'\ili{}'\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} or\ili{} \ili{}`\ili{}`pomme\ili{} de\ili{} jolie\ili{} terre\ili{} lointaine\ili{}'\ili{}'\ili{} in\ili{} \ili{}\ili\ili{}{French}\ili{})\ili{}.\ili{}
+Fixed\ili{} expressions\ili{} can\ili{} be\ili{} considered\ili{} as\ili{} single\ili{} entries\ili{} in\ili{} the\ili{} dictionary\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsubsection\ili{}{Semi\ili{}-fixed\ili{} expressions}\ili{}
+A\ili{} semi\ili{}-fixed\ili{} expression\ili{} is\ili{} a\ili{} non\ili{}-compositional\ili{} sequence\ili{} of\ili{} words\ili{} whose\ili{} components\ili{} do\ili{} not\ili{} contribute\ili{} to\ili{} its\ili{} figurative\ili{} meaning\ili{}.\ili{}
+Semi\ili{}-fixed\ili{} expressions\ili{} should\ili{} respect\ili{} a\ili{} strict\ili{} word\ili{} order\ili{} and\ili{} some\ili{} of\ili{} them\ili{} undergo\ili{} limited\ili{} lexical\ili{} and\ili{} morphological\ili{} variability\ili{} such\ili{} as\ili{} inflection\ili{} and\ili{} some\ili{} variation\ili{} in\ili{} the\ili{} reflexive\ili{} form\ili{}.\ili{}
+According\ili{} to\ili{} their\ili{} characteristics\ili{},\ili{} they\ili{} can\ili{} be\ili{} broken\ili{} down\ili{} into\ili{} three\ili{} basic\ili{} categories\ili{}:\ili{} non\ili{}-decomposable\ili{} idioms\ili{},\ili{} proper\ili{} names\ili{} and\ili{} some\ili{} compound\ili{} nominals\ili{} \ili{}\citep\ili{}{Sag02}\ili{}.\ili{}
+\ili{}
+Non\ili{}-Decomposable\ili{} Idioms\ili{} do\ili{} not\ili{} undergo\ili{} syntax\ili{} variability\ili{} but\ili{} their\ili{} components\ili{} accept\ili{} lexical\ili{} changes\ili{} such\ili{} as\ili{} pronominal\ili{} reflexivity\ili{} form\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} \ili{}`\ili{}`wet\ili{} himself\ili{}'\ili{}'\ili{},\ili{} \ili{}`\ili{}`wet\ili{} themselves\ili{}'\ili{}'\ili{})\ili{},\ili{} verbal\ili{} inflection\ili{} \ili{}(\ili{}`\ili{}`kick\ili{} the\ili{} bucket\ili{}'\ili{}'\ili{},\ili{} \ili{}`\ili{}`kicked\ili{} the\ili{} bucket\ili{}'\ili{}'\ili{})\ili{} or\ili{} \ili{}\isi\ili{}{passivization}\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} \ili{}`\ili{}`briser\ili{} le\ili{} silence\ili{}'\ili{}'\ili{} or\ili{} \ili{} \ili{}`\ili{}`le\ili{} silence\ili{} est\ili{} brisé\ili{}'\ili{}'\ili{} in\ili{} \ili{}\ili\ili{}{French}\ili{})\ili{}.\ili{}
+Proper\ili{} Names\ili{} \ili{}`\ili{}`are\ili{} syntactically\ili{} highly\ili{} idiosyncratic\ili{}'\ili{}'\ili{} \ili{}\citep\ili{}{Sag02}\ili{}.\ili{}
+They\ili{} can\ili{} be\ili{} complex\ili{} with\ili{} two\ili{} or\ili{} three\ili{} proper\ili{} names\ili{} as\ili{} components\ili{},\ili{} including\ili{} person\ili{},\ili{} places\ili{} and\ili{} organization\ili{} names\ili{}.\ili{}
+\ili{}
+Compound\ili{} Nominals\ili{} are\ili{} syntactically\ili{} unalterable\ili{} and\ili{} undergo\ili{} number\ili{} inflection\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} \ili{}`\ili{}`car\ili{} park\ili{}(s\ili{})\ili{}'\ili{}'\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{} or\ili{} \ili{}`\ili{}`pomme\ili{}(s\ili{})\ili{} de\ili{} terre\ili{}'\ili{}'\ili{} in\ili{} \ili{}\ili\ili{}{French}\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsubsection\ili{}{Syntactically\ili{}-flexible\ili{} expressions}\ili{}
+\ili{}
+Unlike\ili{} semi\ili{}-fixed\ili{} expressions\ili{},\ili{} syntactically\ili{}-flexible\ili{} expressions\ili{} undergo\ili{} a\ili{} wide\ili{} degree\ili{} of\ili{} syntactic\ili{} variation\ili{} such\ili{} as\ili{} passivation\ili{} \ili{}(eg\ili{}.\ili{} The\ili{} cat\ili{} was\ili{} let\ili{} out\ili{} of\ili{} the\ili{} bag\ili{})\ili{} and\ili{} allow\ili{} external\ili{} elements\ili{} to\ili{} intervene\ili{} between\ili{} their\ili{} components\ili{} \ili{}(eg\ili{}.\ili{} slow\ili{} the\ili{} car\ili{} down\ili{})\ili{}.\ili{} This\ili{} type\ili{} of\ili{} expressions\ili{} includes\ili{} \ili{}\isi\ili{}{verb\ili{}-particle\ili{} constructions}\ili{},\ili{} decomposable\ili{} idioms\ili{}.\ili{} \ili{}
+Particle\ili{} verbs\ili{} constructions\ili{} are\ili{} made\ili{} up\ili{} of\ili{} a\ili{} verb\ili{} whose\ili{} meaning\ili{} is\ili{} modified\ili{} by\ili{} one\ili{} or\ili{} more\ili{} particles\ili{}.\ili{} They\ili{} can\ili{} be\ili{} either\ili{} semantically\ili{} idiosyncratic\ili{} such\ili{} as\ili{} \ili{}`\ili{}`brush\ili{} up\ili{} on\ili{}'\ili{}'\ili{} \ili{} or\ili{} compositional\ili{} such\ili{} as\ili{} \ili{}`\ili{}`take\ili{} after\ili{}'\ili{}'\ili{},\ili{} \ili{}`\ili{}`look\ili{} out\ili{}'\ili{}'\ili{},\ili{} \ili{}`\ili{}`go\ili{} back\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`run\ili{} over\ili{}'\ili{}'\ili{}.\ili{}
+Decomposable\ili{} idioms\ili{} tend\ili{} to\ili{} be\ili{} syntactically\ili{} flexible\ili{} to\ili{} some\ili{} degree\ili{} that\ili{} is\ili{} unpredictable\ili{} \ili{}\citep\ili{}{Riehemann01}\ili{}.\ili{} Semantically\ili{},\ili{} they\ili{} behave\ili{} as\ili{} if\ili{} their\ili{} components\ili{} were\ili{} linked\ili{} parts\ili{} contributing\ili{} independently\ili{} to\ili{} the\ili{} figurative\ili{} interpretation\ili{} of\ili{} the\ili{} expression\ili{} as\ili{} a\ili{} whole\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Institutionalized\ili{} phrases}\ili{}
+Institutionalized\ili{} phrases\ili{} are\ili{} semantically\ili{} and\ili{} syntactically\ili{} fully\ili{} compositional\ili{},\ili{} but\ili{} statistically\ili{} idiosyncratic\ili{} \ili{}\citep\ili{}{Sag02}\ili{}.\ili{} They\ili{} occur\ili{} in\ili{} a\ili{} high\ili{} frequency\ili{} and\ili{} their\ili{} idiosyncrasy\ili{} is\ili{} statistical\ili{} rather\ili{} than\ili{} linguistic\ili{}.\ili{} They\ili{} generally\ili{} allow\ili{} one\ili{} available\ili{} meaning\ili{}.\ili{} Institutionalized\ili{} phrases\ili{} often\ili{} refer\ili{} to\ili{} \ili{}“collocations\ili{}”\ili{} \ili{}\citep\ili{}{barz1996komposition\ili{},Riehemann01\ili{},burger2010phraseologie}\ili{},\ili{} described\ili{} as\ili{} sequences\ili{} of\ili{} words\ili{} that\ili{} statistically\ili{} have\ili{} a\ili{} high\ili{} probability\ili{} to\ili{} appear\ili{} together\ili{} whether\ili{} they\ili{} are\ili{} contiguous\ili{} or\ili{} not\ili{} \ili{}(eg\ili{}.\ili{} \ili{}`\ili{}`make\ili{} love\ili{}'\ili{}'\ili{} or\ili{} \ili{}`\ili{}`make\ili{} a\ili{} difference\ili{}'\ili{}'\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}%\ili{} Construction\ili{} of\ili{} bilingual\ili{} lexicons\ili{} of\ili{} MWEs\ili{} from\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{}
+\ili{}\section\ili{}{Construction\ili{} of\ili{} bilingual\ili{} lexicons\ili{} of\ili{} MWEs\ili{} from\ili{} parallel\ili{} corpora}\ili{}
+\ili{}
+\ili{}
+In\ili{} this\ili{} section\ili{},\ili{} we\ili{} describe\ili{} three\ili{} approaches\ili{} to\ili{} build\ili{} bilingual\ili{} lexicons\ili{} of\ili{} MWEs\ili{} from\ili{} a\ili{}
+sentence\ili{} aligned\ili{} parallel\ili{} corpus\ili{}.\ili{} The\ili{} first\ili{} two\ili{} approaches\ili{} are\ili{} composed\ili{} of\ili{} two\ili{} steps\ili{}.\ili{} The\ili{} first\ili{} step\ili{} identifies\ili{} multiword\ili{} expressions\ili{} present\ili{} in\ili{} the\ili{} parallel\ili{} corpus\ili{},\ili{} and\ili{} the\ili{} second\ili{} step\ili{} establishes\ili{} correspondence\ili{} relations\ili{} between\ili{} the\ili{} MWES\ili{} of\ili{} the\ili{} source\ili{} text\ili{} and\ili{} their\ili{} translations\ili{} in\ili{} the\ili{} target\ili{} text\ili{}.\ili{} The\ili{} third\ili{} approach\ili{} performs\ili{} the\ili{} terminology\ili{} extraction\ili{} and\ili{} alignment\ili{} tasks\ili{} in\ili{} one\ili{} step\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}%\ili{} Statistical\ili{} approach\ili{} for\ili{} \ili{}\isi\ili{}{MWE\ili{} alignment}\ili{}
+\ili{}\subsection\ili{}{Statistical\ili{} approach\ili{} for\ili{} MWEs\ili{} alignment}\ili{}
+\ili{}
+The\ili{} statistical\ili{} approach\ili{} for\ili{} MWEs\ili{} alignment\ili{} consists\ili{} first\ili{} in\ili{} identifying\ili{} the\ili{} relevant\ili{} word\ili{} groups\ili{} through\ili{} the\ili{} use\ili{} of\ili{} \ili{}$n\ili{}$\ili{}-gram\ili{} statistics\ili{} in\ili{} both\ili{} the\ili{} source\ili{} and\ili{} target\ili{} languages\ili{}.\ili{} \ili{}
+Then\ili{} for\ili{} each\ili{} source\ili{} MWE\ili{} extracted\ili{} we\ili{} compile\ili{} a\ili{} list\ili{} of\ili{} candidate\ili{} translations\ili{} through\ili{} the\ili{} use\ili{} of\ili{} two\ili{} distance\ili{} metrics\ili{}.\ili{} \ili{}
+The\ili{} list\ili{} of\ili{} candidates\ili{} is\ili{} then\ili{} pruned\ili{} through\ili{} the\ili{} use\ili{} of\ili{} heuristics\ili{} like\ili{} the\ili{} length\ili{} of\ili{} each\ili{} MWE\ili{},\ili{} and\ili{} a\ili{} translation\ili{} is\ili{} \ili{}`\ili{}`found\ili{}'\ili{}'\ili{} if\ili{} it\ili{} satisfies\ili{} confidence\ili{} threshold\ili{} on\ili{} the\ili{} distance\ili{} metric\ili{} and\ili{} the\ili{} heuristics\ili{}.\ili{}
+\ili{}
+The\ili{} alignment\ili{} process\ili{} has\ili{} the\ili{} following\ili{} four\ili{} steps\ili{} \ili{}\citep\ili{}{semmar2010hybrid}\ili{}:\ili{}
+\ili{}\begin\ili{}{enumerate}\ili{}
+\ili{} \ili{}\item\ili{} Monolingual\ili{} extraction\ili{} of\ili{} MWEs\ili{}:\ili{} The\ili{} role\ili{} of\ili{} this\ili{} step\ili{} consists\ili{} to\ili{} identify\ili{} all\ili{} the\ili{} \ili{}$n\ili{}$\ili{}-grams\ili{} \ili{}(up\ili{} to\ili{} 6\ili{}-grams\ili{})\ili{} that\ili{} may\ili{} represent\ili{} a\ili{} MWE\ili{}.\ili{} This\ili{} is\ili{} done\ili{} through\ili{} frequency\ili{} analysis\ili{} and\ili{} heuristic\ili{} scoring\ili{}.\ili{} This\ili{} step\ili{} outputs\ili{} two\ili{} lists\ili{} of\ili{} terms\ili{},\ili{} which\ili{} we\ili{} will\ili{} refer\ili{} to\ili{} as\ili{} SC\ili{} \ili{}(MWE\ili{} in\ili{} the\ili{} Source\ili{} Language\ili{})\ili{} and\ili{} TC\ili{} \ili{}(MWE\ili{} in\ili{} the\ili{} Target\ili{} Language\ili{})\ili{}.\ili{}
+\ili{} \ili{}\item\ili{} Frequency\ili{} distance\ili{} calculation\ili{}:\ili{} This\ili{} step\ili{} calculates\ili{} for\ili{} all\ili{} source\ili{} MWEs\ili{} in\ili{} SC\ili{} the\ili{} distance\ili{} to\ili{} each\ili{} of\ili{} the\ili{} target\ili{} MWEs\ili{} in\ili{} TC\ili{}.\ili{} The\ili{} main\ili{} idea\ili{} of\ili{} this\ili{} metric\ili{} is\ili{} that\ili{} if\ili{} two\ili{} MWEs\ili{} are\ili{} translations\ili{} of\ili{} each\ili{} other\ili{} then\ili{} they\ili{} must\ili{} appear\ili{} together\ili{} in\ili{} the\ili{} corpus\ili{} segments\ili{},\ili{} and\ili{} only\ili{} together\ili{}.\ili{} Their\ili{} frequency\ili{} distance\ili{} is\ili{} then\ili{} calculated\ili{} as\ili{} follows\ili{}:\ili{}
+\ili{} \ili{}\begin\ili{}{equation}\ili{}
+\ili{} \ili{} FD\ili{}(s\ili{},t\ili{})\ili{}=\ili{}\frac\ili{}{\ili{}|f\ili{}(s\ili{})\ili{}-f\ili{}(t\ili{})\ili{}|}\ili{}{max\ili{}(f\ili{}(s\ili{})\ili{},f\ili{}(t\ili{})\ili{})}\ili{}
+\ili{} \ili{}\end\ili{}{equation}\ili{}
+\ili{} Where\ili{},\ili{} \ili{}$f\ili{}(s\ili{})\ili{}$\ili{} is\ili{} the\ili{} frequency\ili{} of\ili{} the\ili{} source\ili{} MWE\ili{} and\ili{} \ili{}$f\ili{}(t\ili{})\ili{}$\ili{} is\ili{} the\ili{} frequency\ili{} of\ili{} the\ili{} target\ili{} MWE\ili{} under\ili{} consideration\ili{}.\ili{}
+\ili{}
+We\ili{} observe\ili{} that\ili{} if\ili{} \ili{}$T\ili{}$\ili{} is\ili{} the\ili{} translation\ili{} of\ili{} \ili{}$s\ili{}$\ili{},\ili{} \ili{}$f\ili{}(s\ili{})\ili{} \ili{}=\ili{} f\ili{}(t\ili{})\ili{} \ili{}$\ili{} then\ili{} we\ili{} have\ili{} distance\ili{} equal\ili{} to\ili{} 0\ili{}.\ili{} \ili{}
+Also\ili{},\ili{} if\ili{} two\ili{} MWEs\ili{} always\ili{} occur\ili{} together\ili{} but\ili{} one\ili{} is\ili{} much\ili{} more\ili{} frequent\ili{} than\ili{} the\ili{} other\ili{},\ili{} the\ili{} distance\ili{} could\ili{} have\ili{} a\ili{} value\ili{} other\ili{} than\ili{} 0\ili{} and\ili{} they\ili{} would\ili{} not\ili{} be\ili{} considered\ili{} translations\ili{} of\ili{} each\ili{} other\ili{}.\ili{} \ili{}
+Here\ili{} we\ili{} chose\ili{} to\ili{} apply\ili{} a\ili{} threshold\ili{} of\ili{} 0\ili{}.25\ili{} as\ili{} the\ili{} maximum\ili{} allowable\ili{} distance\ili{}.\ili{} This\ili{} threshold\ili{} is\ili{} calculated\ili{} empirically\ili{} and\ili{} can\ili{} be\ili{} tuned\ili{} to\ili{} achieve\ili{} better\ili{} precision\ili{}.\ili{}
+\ili{}
+\ili{}\item\ili{} Co\ili{}-occurrence\ili{} distance\ili{} \ili{}(\ili{}$CD\ili{}$\ili{})\ili{}:\ili{} The\ili{} previous\ili{} step\ili{} only\ili{} considers\ili{} frequencies\ili{} so\ili{} it\ili{} may\ili{} be\ili{} possible\ili{} for\ili{} two\ili{} completely\ili{} unrelated\ili{} MWEs\ili{} to\ili{} achieve\ili{} a\ili{} low\ili{} distance\ili{} score\ili{}.\ili{} To\ili{} refine\ili{} extraction\ili{} results\ili{},\ili{} we\ili{} also\ili{} check\ili{} for\ili{} a\ili{} co\ili{}-occurrence\ili{} score\ili{} as\ili{} follows\ili{}:\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+\ili{} \ili{} CD\ili{}(X\ili{},Y\ili{})\ili{}=\ili{}\frac\ili{}{\ili{}\sqrt\ili{}{\ili{}\sum\ili{}(X_i\ili{}-Y_i\ili{})\ili{}^2}}\ili{}{N}\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+Where\ili{},\ili{} \ili{}$X_i\ili{}$\ili{} is\ili{} the\ili{} number\ili{} of\ili{} occurrences\ili{} of\ili{} \ili{}$s\ili{}$\ili{} in\ili{} the\ili{} \ili{}$i\ili{}^\ili{}{th}\ili{}$\ili{} \ili{}\isi\ili{}{segment}\ili{} of\ili{} the\ili{} SL\ili{},\ili{} \ili{}$Y_i\ili{}$\ili{} is\ili{} the\ili{} number\ili{} of\ili{} occurrences\ili{} of\ili{} \ili{}$t\ili{}$\ili{} in\ili{} the\ili{} \ili{}$i\ili{}^\ili{}{th}\ili{}$\ili{} \ili{}\isi\ili{}{segment}\ili{} of\ili{} the\ili{} \ili{}$TL\ili{}$\ili{} and\ili{} \ili{}$N\ili{}$\ili{} is\ili{} the\ili{} number\ili{} of\ili{} segments\ili{}.\ili{}
+\ili{}
+This\ili{} check\ili{} allows\ili{} the\ili{} rejection\ili{} of\ili{} the\ili{} MWEs\ili{} that\ili{} fortuitously\ili{} have\ili{} similar\ili{} frequency\ili{}.\ili{} Since\ili{} they\ili{} would\ili{} not\ili{} appear\ili{} in\ili{} the\ili{} same\ili{} segments\ili{},\ili{} the\ili{} terms\ili{} \ili{}$X_i\ili{}-Y_i\ili{}$\ili{} would\ili{} increase\ili{}.\ili{} The\ili{} candidate\ili{} list\ili{} can\ili{} be\ili{} ordered\ili{} through\ili{} \ili{}$CD\ili{}$\ili{}.\ili{}
+\ili{}
+\ili{}\item\ili{} Pruning\ili{} MWEs\ili{} candidates\ili{}:\ili{} After\ili{} obtaining\ili{} an\ili{} ordered\ili{} list\ili{} of\ili{} target\ili{} MWEs\ili{} candidates\ili{},\ili{} we\ili{} remove\ili{}:\ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{} \ili{}\item\ili{} The\ili{} candidates\ili{} which\ili{} have\ili{} a\ili{} length\ili{} different\ili{} from\ili{} the\ili{} source\ili{} MWE\ili{};\ili{}
+\ili{} \ili{}\item\ili{} The\ili{} candidates\ili{} which\ili{} have\ili{} been\ili{} previously\ili{} aligned\ili{} with\ili{} another\ili{} source\ili{} MWE\ili{} and\ili{} where\ili{} the\ili{} co\ili{}-occurrence\ili{} score\ili{} was\ili{} better\ili{}.\ili{}
+\ili{}\end\ili{}{itemize}\ili{}
+\ili{}\end\ili{}{enumerate}\ili{}
+\ili{}
+Because\ili{} of\ili{} the\ili{} statistical\ili{} nature\ili{} of\ili{} this\ili{} approach\ili{},\ili{} it\ili{} performs\ili{} much\ili{} better\ili{} for\ili{} MWEs\ili{} that\ili{} occur\ili{} often\ili{} in\ili{} the\ili{} corpus\ili{}.\ili{} Table\ili{} \ili{}\ref\ili{}{MWEexamples}\ili{} illustrates\ili{} some\ili{} MWEs\ili{} and\ili{} their\ili{} translations\ili{} extracted\ili{} from\ili{} the\ili{} bi\ili{}-sentence\ili{} \ili{}“Approval\ili{} of\ili{} the\ili{} Minutes\ili{} of\ili{} the\ili{} previous\ili{} sitting\ili{}/Approbation\ili{} du\ili{} procès\ili{}-verbal\ili{} de\ili{} la\ili{} séance\ili{} précédente\ili{}”\ili{}.\ili{} It\ili{} should\ili{} be\ili{} noted\ili{} that\ili{} before\ili{} applying\ili{} the\ili{} MWEs\ili{} alignment\ili{} approach\ili{},\ili{} we\ili{} lemmatize\ili{} the\ili{} parallel\ili{} corpus\ili{}.\ili{} This\ili{} lemmatization\ili{} is\ili{} achieved\ili{} using\ili{} the\ili{} CEA\ili{} LIST\ili{} Multilingual\ili{} Analyzer\ili{} LIMA\ili{} \ili{} \ili{}\citep\ili{}{Besancon2010}\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\caption\ili{}{Some\ili{} examples\ili{} of\ili{} aligned\ili{} MWEs\ili{} with\ili{} the\ili{} statistical\ili{} approach\ili{}.}\ili{}
+\ili{}\label\ili{}{MWEexamples}\ili{}
+\ili{} \ili{}\begin\ili{}{tabular}\ili{}{ll}\ili{} \ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\ili\ili{}{English}\ili{} MWE\ili{}&\ili{} \ili{}\ili\ili{}{French}\ili{} MWE\ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+minute\ili{} \ili{}&\ili{} procès\ili{}-verbal\ili{} \ili{}\\ili{}\\ili{}
+approval\ili{} of\ili{} the\ili{} minute\ili{} \ili{}&\ili{} approbation\ili{} du\ili{} procès\ili{}-verbal\ili{} \ili{}\\ili{}\\ili{}
+previous\ili{} sitting\ili{} \ili{}&\ili{} séance\ili{} précédent\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}%\ili{} Hybrid\ili{} approach\ili{} for\ili{} \ili{}\isi\ili{}{MWE\ili{} alignment}\ili{} using\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{}
+\ili{}\subsection\ili{}{Hybrid\ili{} approach\ili{} for\ili{} MWEs\ili{} alignment\ili{} based\ili{} on\ili{} morpho\ili{}-syntactic\ili{} patterns}\ili{} \ili{}
+The\ili{} hybrid\ili{} approach\ili{} for\ili{} MWEs\ili{} alignment\ili{} is\ili{} composed\ili{} of\ili{} the\ili{} following\ili{} two\ili{} steps\ili{} \ili{}\citep\ili{}{Bouamor2012\ili{},bouamor2012automatic\ili{},bouamor2012identifying}\ili{}:\ili{}
+\ili{}\begin\ili{}{enumerate}\ili{}
+\ili{} \ili{}\item\ili{} MWEs\ili{} identification\ili{}:\ili{} The\ili{} method\ili{} used\ili{} to\ili{} extract\ili{} MWEs\ili{} is\ili{} based\ili{} on\ili{} a\ili{} symbolic\ili{} approach\ili{} relying\ili{} on\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{}.\ili{}
+\ili{}\item\ili{} MWEs\ili{} alignment\ili{}:\ili{} After\ili{} extracting\ili{} MWE\ili{} candidates\ili{},\ili{} context\ili{} vectors\ili{} from\ili{} the\ili{} parallel\ili{} corpus\ili{} are\ili{} separately\ili{} built\ili{} and\ili{} similarity\ili{} scores\ili{} between\ili{} one\ili{} MWE\ili{} and\ili{} all\ili{} target\ili{} MWEs\ili{} are\ili{} computed\ili{}.\ili{}
+\ili{}\end\ili{}{enumerate}\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{MWEs\ili{} extraction}\ili{}
+\ili{}
+The\ili{} method\ili{} to\ili{} extract\ili{} monolingual\ili{} MWEs\ili{} from\ili{} a\ili{} parallel\ili{} corpus\ili{} is\ili{} based\ili{} on\ili{} a\ili{} symbolic\ili{} approach\ili{} relying\ili{} on\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{}.\ili{} \ili{}
+It\ili{} handles\ili{} both\ili{} frequent\ili{} and\ili{} infrequent\ili{} expressions\ili{} and\ili{} do\ili{} not\ili{} use\ili{} any\ili{} lexicon\ili{}.\ili{} This\ili{} method\ili{} involves\ili{} a\ili{} full\ili{} morpho\ili{}-syntactic\ili{} analysis\ili{} of\ili{} source\ili{} and\ili{} target\ili{} texts\ili{}.\ili{} \ili{}
+The\ili{} analysis\ili{} is\ili{} done\ili{} using\ili{} the\ili{} CEA\ili{} LIST\ili{} Multilingual\ili{} Analysis\ili{} platform\ili{} LIMA\ili{} \ili{}\citep\ili{}{Besancon2010}\ili{},\ili{} which\ili{} produces\ili{} Part\ili{}-of\ili{}-Speech\ili{} \ili{}(POS\ili{})\ili{} tags\ili{} and\ili{} lemmas\ili{} associated\ili{} to\ili{} each\ili{} word\ili{}.\ili{} Since\ili{} most\ili{} MWEs\ili{} consist\ili{} of\ili{} noun\ili{},\ili{} adjectives\ili{} and\ili{} prepositions\ili{},\ili{} we\ili{} adopted\ili{} a\ili{} linguistic\ili{} filter\ili{}.\ili{} \ili{}
+It\ili{} consists\ili{} in\ili{} keeping\ili{} only\ili{} \ili{}$n\ili{}$\ili{}-gram\ili{} \ili{}(\ili{}$n\ili{}$\ili{} from\ili{} 2\ili{} to\ili{} 4\ili{})\ili{} units\ili{},\ili{} which\ili{} match\ili{} with\ili{} a\ili{} list\ili{} of\ili{} a\ili{} hand\ili{} created\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{}.\ili{} \ili{}
+Such\ili{} process\ili{} is\ili{} used\ili{} to\ili{} keep\ili{} only\ili{} specific\ili{} strings\ili{} and\ili{} filter\ili{} out\ili{} undesirable\ili{} ones\ili{} such\ili{} as\ili{} candidates\ili{} composed\ili{} mainly\ili{} of\ili{} stop\ili{} words\ili{} \ili{}(\ili{}`\ili{}`of\ili{} a\ili{},\ili{} is\ili{} a\ili{},\ili{} that\ili{} was\ili{}'\ili{}'\ili{})\ili{}.\ili{} \ili{}
+The\ili{} algorithm\ili{} operates\ili{} on\ili{} lemmas\ili{} instead\ili{} of\ili{} surface\ili{} forms\ili{} which\ili{} can\ili{} draw\ili{} on\ili{} richer\ili{} statistics\ili{} and\ili{} overcome\ili{} the\ili{} data\ili{} sparseness\ili{} problems\ili{}.\ili{} \ili{}
+\ili{}
+In\ili{} Table\ili{} \ili{}\ref\ili{}{MWEexamplespatterns}\ili{},\ili{} we\ili{} give\ili{} an\ili{} example\ili{} of\ili{} MWE\ili{} produced\ili{} for\ili{} each\ili{} pattern\ili{}.\ili{} There\ili{} exists\ili{} extraction\ili{} patterns\ili{} \ili{}(or\ili{} configurations\ili{})\ili{} for\ili{} which\ili{} no\ili{} MWE\ili{} has\ili{} been\ili{} generated\ili{} \ili{}(i\ili{}.e\ili{}.\ili{} Noun\ili{}-Adj\ili{})\ili{}.\ili{} \ili{}
+To\ili{} this\ili{} list\ili{} are\ili{} added\ili{} some\ili{} prepositional\ili{} idiomatic\ili{} expressions\ili{} \ili{}(in\ili{} particular\ili{},\ili{} in\ili{} the\ili{} light\ili{} of\ili{},\ili{} as\ili{} regards\ili{},\ili{} etc\ili{}.\ili{})\ili{} and\ili{} named\ili{} entities\ili{} \ili{}(Middle\ili{} East\ili{},\ili{} South\ili{} Africa\ili{},\ili{} United\ili{} States\ili{} of\ili{} America\ili{},\ili{} etc\ili{}.\ili{})\ili{} recognized\ili{} by\ili{} the\ili{} morpho\ili{}-syntactic\ili{} analyzer\ili{} LIMA\ili{}.\ili{} \ili{}
+Then\ili{},\ili{} we\ili{} scored\ili{} all\ili{} extracted\ili{} MWEs\ili{} with\ili{} their\ili{} total\ili{} frequency\ili{} of\ili{} occurrence\ili{} in\ili{} the\ili{} corpus\ili{}.\ili{} To\ili{} avoid\ili{} an\ili{} over\ili{}-generation\ili{} of\ili{} MWEs\ili{} and\ili{} remove\ili{} irrelevant\ili{} candidates\ili{} from\ili{} the\ili{} process\ili{},\ili{} a\ili{} redundancy\ili{} cleaning\ili{} approach\ili{} is\ili{} introduced\ili{}.\ili{}
+In\ili{} this\ili{} approach\ili{},\ili{} if\ili{} a\ili{} MWE\ili{} is\ili{} nested\ili{} in\ili{} another\ili{},\ili{} and\ili{} they\ili{} both\ili{} have\ili{} the\ili{} same\ili{} frequency\ili{},\ili{} we\ili{} discard\ili{} the\ili{} smaller\ili{} one\ili{}.\ili{} Otherwise\ili{} we\ili{} keep\ili{} both\ili{} of\ili{} them\ili{}.\ili{} We\ili{} consider\ili{} also\ili{} the\ili{} case\ili{} in\ili{} which\ili{} a\ili{} MWE\ili{} appears\ili{} in\ili{} a\ili{} high\ili{} number\ili{} of\ili{} terms\ili{} and\ili{} discard\ili{} all\ili{} longer\ili{} ones\ili{}.\ili{} \ili{}
+\ili{}
+Our\ili{} approach\ili{} does\ili{} not\ili{} use\ili{} any\ili{} additional\ili{} correlations\ili{} statistics\ili{} such\ili{} as\ili{} Mutual\ili{} Information\ili{} or\ili{} Log\ili{} Likelihood\ili{} Ratio\ili{}.\ili{} It\ili{} finds\ili{} translations\ili{} for\ili{} all\ili{} extracted\ili{} MWEs\ili{} \ili{}(both\ili{} frequent\ili{} and\ili{} infrequent\ili{} ones\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\scriptsize\ili{}
+\ili{}\centering\ili{}
+\ili{}\caption\ili{}{Example\ili{} of\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{} used\ili{} to\ili{} detect\ili{} MWEs\ili{} in\ili{} each\ili{} language\ili{} independently\ili{}.}\ili{}
+\ili{}\label\ili{}{MWEexamplespatterns}\ili{}
+\ili{} \ili{}\begin\ili{}{tabular}\ili{}{lll}\ili{} \ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} Pattern\ili{} \ili{}&\ili{} \ili{}\ili\ili{}{English}\ili{} MWE\ili{} \ili{}&\ili{} \ili{}\ili\ili{}{French}\ili{} MWE\ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} Adj\ili{}-Noun\ili{} \ili{}&\ili{} planery\ili{} meeting\ili{} \ili{}&\ili{} libre\ili{} circulation\ili{}\\ili{}\\ili{} \ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} Noun\ili{}-Noun\ili{} \ili{}&\ili{} member\ili{} state\ili{} \ili{}&\ili{} état\ili{} membre\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} Noun\ili{}-Prep\ili{}-Noun\ili{} \ili{}&\ili{} point\ili{} of\ili{} view\ili{} \ili{}&\ili{} point\ili{} de\ili{} vue\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} Noun\ili{}-Prep\ili{}-Adj\ili{}-Noun\ili{} \ili{}&\ili{} court\ili{} of\ili{} first\ili{} instance\ili{} \ili{}&\ili{} court\ili{} de\ili{} première\ili{} instance\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{MWEs\ili{} alignment}\ili{}
+MWEs\ili{} alignment\ili{} aims\ili{} to\ili{} find\ili{} for\ili{} each\ili{} MWE\ili{} in\ili{} a\ili{} source\ili{} language\ili{} its\ili{} adequate\ili{} translation\ili{} in\ili{} the\ili{} target\ili{} one\ili{}.\ili{} \ili{}
+This\ili{} task\ili{} used\ili{} to\ili{} be\ili{} handled\ili{} through\ili{} an\ili{} external\ili{} linguistic\ili{} resource\ili{} such\ili{} as\ili{} bilingual\ili{} lexicons\ili{} or\ili{} single\ili{} words\ili{} alignment\ili{} tools\ili{}.\ili{} Our\ili{} approach\ili{} for\ili{} MWEs\ili{} alignment\ili{} is\ili{} resource\ili{}-independent\ili{} and\ili{} uses\ili{} a\ili{} parallel\ili{} corpus\ili{} and\ili{} a\ili{} list\ili{} of\ili{} input\ili{} MWEs\ili{} candidates\ili{} to\ili{} translate\ili{}.\ili{} It\ili{} associates\ili{} a\ili{} specific\ili{} representation\ili{} to\ili{} each\ili{} expression\ili{} \ili{}(source\ili{} and\ili{} target\ili{})\ili{}.\ili{} \ili{}
+\ili{}
+We\ili{} associate\ili{} to\ili{} each\ili{} MWE\ili{} an\ili{} \ili{}\textit\ili{}{N}\ili{} sized\ili{} vector\ili{},\ili{} where\ili{} \ili{}\textit\ili{}{N}\ili{} is\ili{} the\ili{} number\ili{} of\ili{} sentences\ili{} in\ili{} the\ili{} corpus\ili{},\ili{} indicating\ili{} whether\ili{} it\ili{} appears\ili{} or\ili{} not\ili{} in\ili{} each\ili{} sentence\ili{} of\ili{} the\ili{} corpus\ili{}.\ili{} \ili{}
+Our\ili{} algorithm\ili{} is\ili{} based\ili{} on\ili{} the\ili{} Vector\ili{} Space\ili{} Model\ili{} \ili{}\citep\ili{}{salton1975vector}\ili{}.\ili{}
+This\ili{} vector\ili{} space\ili{} representation\ili{} will\ili{} serve\ili{},\ili{} eventually\ili{},\ili{} as\ili{} a\ili{} basis\ili{} to\ili{} establish\ili{} a\ili{} translation\ili{} relation\ili{} between\ili{} each\ili{} pair\ili{} of\ili{} MWEs\ili{}.\ili{} \ili{}
+\ili{} \ili{}
+To\ili{} extract\ili{} translation\ili{} pairs\ili{} of\ili{} MWEs\ili{},\ili{} we\ili{} propose\ili{} an\ili{} iterative\ili{} alignment\ili{} algorithm\ili{} operating\ili{} as\ili{} follows\ili{}:\ili{}
+\ili{}\begin\ili{}{enumerate}\ili{}
+\ili{}\item\ili{} Find\ili{} the\ili{} most\ili{} frequent\ili{} MWE\ili{} \ili{}\textit\ili{}{exp}\ili{} in\ili{} each\ili{} source\ili{} sentence\ili{};\ili{}
+\ili{}\item\ili{} Extract\ili{} all\ili{} target\ili{} translation\ili{} candidates\ili{},\ili{} appearing\ili{} in\ili{} all\ili{} parallel\ili{} sentences\ili{} to\ili{} those\ili{} containing\ili{} \ili{}\textit\ili{}{exp}\ili{};\ili{}
+\ili{}\item\ili{} Compute\ili{} a\ili{} confidence\ili{} value\ili{} \ili{}$V_\ili{}{Conf}\ili{}$\ili{} for\ili{} each\ili{} translation\ili{} relation\ili{} between\ili{} \ili{}\textit\ili{}{exp}\ili{} and\ili{} all\ili{} target\ili{} translation\ili{} candidates\ili{};\ili{}
+\ili{}\item\ili{} Consider\ili{} that\ili{} the\ili{} target\ili{} MWE\ili{} maximizing\ili{} \ili{}$V_\ili{}{Conf}\ili{}$\ili{} is\ili{} the\ili{} best\ili{} translation\ili{};\ili{}
+\ili{}\item\ili{} Discard\ili{} the\ili{} translation\ili{} pair\ili{} from\ili{} the\ili{} process\ili{} and\ili{} go\ili{} back\ili{} to\ili{} 1\ili{}.\ili{}
+\ili{}\end\ili{}{enumerate}\ili{}
+\ili{}
+To\ili{} compute\ili{} the\ili{} confidence\ili{} value\ili{} \ili{}$V_\ili{}{Conf}\ili{}$\ili{},\ili{} we\ili{} adopted\ili{} the\ili{} \ili{}$Jaccard\ili{}$\ili{} Index\ili{}.\ili{} \ili{}%\ili{} \ili{}(see\ili{} equation\ili{} \ili{}\ref\ili{}{jaccard}\ili{})\ili{}.\ili{}
+This\ili{} measure\ili{} is\ili{} based\ili{} on\ili{} the\ili{} number\ili{} \ili{}$I_\ili{}{st}\ili{}$\ili{} of\ili{} sentences\ili{} shared\ili{} by\ili{} each\ili{} target\ili{} and\ili{} a\ili{} source\ili{} MWE\ili{}.\ili{} \ili{}
+\ili{}$I_\ili{}{st}\ili{}$\ili{} is\ili{} normalized\ili{} by\ili{} the\ili{} sum\ili{} of\ili{} the\ili{} number\ili{} of\ili{} sentences\ili{} where\ili{} the\ili{} source\ili{} and\ili{} target\ili{} MWEs\ili{} appear\ili{} independently\ili{} of\ili{} each\ili{} other\ili{} \ili{}(respectively\ili{} \ili{}$V_s\ili{}$\ili{} and\ili{} \ili{}$V_t\ili{}$\ili{})\ili{} decreased\ili{} by\ili{} \ili{}$I_\ili{}{st}\ili{}$\ili{}.\ili{} \ili{}
+\ili{} \ili{}\begin\ili{}{equation}\ili{}
+\ili{} \ili{}\label\ili{}{jaccard}\ili{}
+\ili{} \ili{} Jaccard\ili{}=\ili{}\frac\ili{}{I_\ili{}{st}}\ili{}{V_s\ili{}+V_t\ili{}-I_\ili{}{st}}\ili{}
+\ili{} \ili{}\end\ili{}{equation}\ili{}
+\ili{}
+\ili{}
+We\ili{} illustrate\ili{} in\ili{} Table\ili{} \ili{}\ref\ili{}{MWEexamplesalignements}\ili{},\ili{} a\ili{} sample\ili{} of\ili{} aligned\ili{} MWEs\ili{} by\ili{} means\ili{} of\ili{} the\ili{} algorithm\ili{} described\ili{} above\ili{}.\ili{} \ili{} When\ili{} we\ili{} observe\ili{} MWE\ili{} pairs\ili{},\ili{} we\ili{} noticed\ili{} that\ili{} our\ili{} method\ili{} has\ili{} two\ili{} advantages\ili{}.\ili{} On\ili{} the\ili{} one\ili{} hand\ili{},\ili{} it\ili{} allows\ili{} the\ili{} translation\ili{} of\ili{} MWE\ili{} aligned\ili{} in\ili{} most\ili{} previous\ili{} work\ili{} \ili{}\citep\ili{}{dagan1994termight\ili{},ren2009improving}\ili{} using\ili{} single\ili{} words\ili{} alignment\ili{} tools\ili{} to\ili{} establish\ili{} word\ili{}-to\ili{}-word\ili{} alignment\ili{} relations\ili{}.\ili{} \ili{}
+The\ili{} approach\ili{} can\ili{} capture\ili{} the\ili{} semantic\ili{} equivalence\ili{} between\ili{} expressions\ili{} such\ili{} as\ili{} \ili{}`\ili{}`insulaire\ili{} en\ili{} développement\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`small\ili{} island\ili{} developing\ili{}'\ili{}'\ili{} in\ili{} a\ili{} different\ili{} way\ili{}.\ili{}
+\ili{} On\ili{} the\ili{} other\ili{} hand\ili{},\ili{} the\ili{} approach\ili{} enables\ili{} the\ili{} alignment\ili{} of\ili{} idioms\ili{} such\ili{} as\ili{} \ili{}`\ili{}`à\ili{} nouveau\ili{}'\ili{}'\ili{} \ili{}(once\ili{} more\ili{})\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}%\ili{}\begin\ili{}{table}\ili{}
+\ili{}%\ili{}\caption\ili{}{Some\ili{} examples\ili{} of\ili{} aligned\ili{} MWEs\ili{} with\ili{} the\ili{} hybrid\ili{} approach\ili{}.}\ili{}
+\ili{}%\ili{}\label\ili{}{MWEexamplesalignements}\ili{}
+\ili{}%\ili{} \ili{}\begin\ili{}{tabular}\ili{}{cc}\ili{} \ili{}
+\ili{}%\ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\multicolumn\ili{}{2}\ili{}{c}\ili{}{\ili{}\ili\ili{}{English}\ili{}$\ili{}\rightarrow\ili{}$\ili{}\ili\ili{}{French}\ili{} MWEs}\ili{}\\ili{}\\ili{} \ili{}
+\ili{}%\ili{} \ili{} \ili{}\midrule\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} european\ili{} parliament\ili{} \ili{}&\ili{} parlement\ili{} européen\ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} military\ili{} coup\ili{} \ili{}&\ili{} coup\ili{} d\ili{}'état\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} in\ili{} favour\ili{} of\ili{} \ili{}&\ili{} \ili{} en\ili{} faveur\ili{} de\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} no\ili{} smoking\ili{} area\ili{} \ili{}&\ili{} zone\ili{} non\ili{} fumeur\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} small\ili{} island\ili{} developing\ili{} \ili{}&\ili{} insulaire\ili{} en\ili{} développement\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} good\ili{} faith\ili{} \ili{}&\ili{} de\ili{} bonne\ili{} foi\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} competition\ili{} policy\ili{} \ili{}&\ili{} politique\ili{} de\ili{} concurrence\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} process\ili{} of\ili{} consultation\ili{} \ili{}&\ili{} processus\ili{} de\ili{} consultation\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} railway\ili{} sector\ili{} \ili{}&\ili{} chemin\ili{} de\ili{} fer\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} with\ili{} regard\ili{} to\ili{} \ili{}&\ili{} en\ili{} ce\ili{} qui\ili{} concerne\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{}	\ili{}	\ili{}	\ili{}	\ili{}	\ili{}	once\ili{} more\ili{} \ili{}&\ili{} à\ili{} nouveau\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} cut\ili{} in\ili{} forestation\ili{} \ili{}&\ili{} coupe\ili{} forestière\ili{} \ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{}%\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{}%\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\caption\ili{}{Some\ili{} examples\ili{} of\ili{} aligned\ili{} MWEs\ili{} with\ili{} the\ili{} hybrid\ili{} approach\ili{} based\ili{} on\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{}.}\ili{}
+\ili{}\label\ili{}{MWEexamplesalignements}\ili{}
+\ili{} \ili{}\begin\ili{}{tabular}\ili{}{lllll}\ili{} \ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\ili\ili{}{English}\ili{} MWE\ili{}&\ili{} \ili{}\ili\ili{}{French}\ili{} MWE\ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+\ili{}	\ili{}	\ili{}	\ili{}	\ili{}	\ili{}	european\ili{} parliament\ili{} \ili{}&\ili{} parlement\ili{} européen\ili{} \ili{}\\ili{}\\ili{} \ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} military\ili{} coup\ili{} \ili{}&\ili{} coup\ili{} d\ili{}'état\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} in\ili{} favour\ili{} of\ili{} \ili{}&\ili{} \ili{} en\ili{} faveur\ili{} de\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} no\ili{} smoking\ili{} area\ili{} \ili{}&\ili{} zone\ili{} non\ili{} fumeur\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} small\ili{} island\ili{} developing\ili{} \ili{}&\ili{} insulaire\ili{} en\ili{} développement\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} good\ili{} faith\ili{} \ili{}&\ili{} de\ili{} bonne\ili{} foi\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} competition\ili{} policy\ili{} \ili{}&\ili{} politique\ili{} de\ili{} concurrence\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} process\ili{} of\ili{} consultation\ili{} \ili{}&\ili{} processus\ili{} de\ili{} consultation\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} railway\ili{} sector\ili{} \ili{}&\ili{} chemin\ili{} de\ili{} fer\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} with\ili{} regard\ili{} to\ili{} \ili{}&\ili{} en\ili{} ce\ili{} qui\ili{} concerne\ili{} \ili{}\\ili{}\\ili{}
+\ili{}	\ili{}	\ili{}	\ili{}	\ili{}	\ili{}	once\ili{} more\ili{} \ili{}&\ili{} à\ili{} nouveau\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} cut\ili{} in\ili{} forestation\ili{} \ili{}&\ili{} coupe\ili{} forestière\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}%\ili{} \ili{}\end\ili{}{enumerate}\ili{}
+\ili{}
+\ili{}%\ili{} Hybrid\ili{} approach\ili{} for\ili{} \ili{}\isi\ili{}{MWE\ili{} alignment}\ili{} based\ili{} on\ili{} \ili{}\isi\ili{}{linear\ili{} programming}\ili{}
+\ili{}\subsection\ili{}{Hybrid\ili{} approach\ili{} for\ili{} MWEs\ili{} alignment\ili{} based\ili{} on\ili{} linear\ili{} programming}\ili{}
+This\ili{} section\ili{} describes\ili{} a\ili{} hybrid\ili{} approach\ili{} combining\ili{} linguistic\ili{} and\ili{} statistical\ili{} information\ili{} which\ili{} performs\ili{} terminology\ili{} extraction\ili{} and\ili{} alignment\ili{} of\ili{} MWEs\ili{} from\ili{} parallel\ili{} texts\ili{} in\ili{} one\ili{} step\ili{} \ili{}\citep\ili{}{marchandhybrid2011}\ili{}.\ili{} \ili{}
+\ili{}
+Most\ili{} of\ili{} works\ili{} on\ili{} MWEs\ili{} alignment\ili{} are\ili{} divided\ili{} in\ili{} two\ili{} tasks\ili{}:\ili{} a\ili{} monolingual\ili{} step\ili{} in\ili{} which\ili{} candidate\ili{} terms\ili{} are\ili{} extracted\ili{} and\ili{} a\ili{} bilingual\ili{} step\ili{} in\ili{} which\ili{} these\ili{} terms\ili{} are\ili{} aligned\ili{} with\ili{} their\ili{} translations\ili{} \ili{}\citep\ili{}{gaussier2011modeles}\ili{}.\ili{} Word\ili{} alignment\ili{} techniques\ili{} are\ili{} generally\ili{} used\ili{} to\ili{} achieve\ili{} the\ili{} bilingual\ili{} step\ili{}.\ili{} These\ili{} approaches\ili{} in\ili{} multiple\ili{} steps\ili{} have\ili{} the\ili{} disadvantage\ili{} to\ili{} potentially\ili{} propagate\ili{} errors\ili{}.\ili{}
+\ili{}
+The\ili{} main\ili{} idea\ili{} of\ili{} the\ili{} hybrid\ili{} approach\ili{} for\ili{} MWEs\ili{} alignment\ili{} based\ili{} on\ili{} \ili{}\isi\ili{}{linear\ili{} programming}\ili{} is\ili{} to\ili{} consider\ili{} the\ili{} global\ili{} task\ili{} of\ili{} selection\ili{} and\ili{} alignment\ili{} as\ili{} an\ili{} optimization\ili{} problem\ili{}.\ili{} \ili{}
+The\ili{} challenge\ili{} when\ili{} we\ili{} deal\ili{} with\ili{} alignment\ili{} of\ili{} MWEs\ili{} is\ili{} the\ili{} exponential\ili{} complexity\ili{} of\ili{} such\ili{} a\ili{} task\ili{}.\ili{} \ili{}
+The\ili{} possible\ili{} number\ili{} of\ili{} fragments\ili{} in\ili{} a\ili{} sentence\ili{} improves\ili{} exponentially\ili{} according\ili{} to\ili{} the\ili{} number\ili{} of\ili{} the\ili{} words\ili{} of\ili{} the\ili{} sentence\ili{}.\ili{} \ili{}
+Several\ili{} works\ili{} impose\ili{} some\ili{} constraints\ili{} on\ili{} the\ili{} number\ili{} of\ili{} fragments\ili{} of\ili{} a\ili{} MWE\ili{}.\ili{} \ili{}
+In\ili{} our\ili{} approach\ili{},\ili{} the\ili{} only\ili{} restriction\ili{} we\ili{} made\ili{} on\ili{} MWEs\ili{} is\ili{} contiguity\ili{}.\ili{} The\ili{} advantage\ili{} to\ili{} assume\ili{} the\ili{} continuity\ili{} is\ili{} to\ili{} enable\ili{} a\ili{} linearized\ili{} formulation\ili{} of\ili{} the\ili{} optimization\ili{} problem\ili{} to\ili{} solve\ili{}.\ili{} We\ili{} use\ili{} an\ili{} integer\ili{} \ili{}\isi\ili{}{linear\ili{} programming}\ili{} approach\ili{} inspired\ili{} by\ili{} the\ili{} work\ili{} described\ili{} in\ili{} \ili{}\citep\ili{}{denero2008complexity}\ili{} to\ili{} quickly\ili{} find\ili{} an\ili{} approximated\ili{} optimal\ili{} solution\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Linear\ili{} programming\ili{} model}\ili{}
+\ili{}
+A\ili{} sentence\ili{} pair\ili{} consists\ili{} of\ili{} two\ili{} word\ili{} sequences\ili{}:\ili{} \ili{}$e\ili{}$\ili{} and\ili{} \ili{}$f\ili{}$\ili{}.\ili{} \ili{}
+\ili{}$e_\ili{}{ij}\ili{}$\ili{} is\ili{} the\ili{} MWE\ili{} from\ili{} between\ili{}-word\ili{} positions\ili{} \ili{}$i\ili{}$\ili{} to\ili{} \ili{}$j\ili{}$\ili{} of\ili{} \ili{}$e\ili{}$\ili{}.\ili{} \ili{}
+\ili{}$f_\ili{}{kl}\ili{}$\ili{} is\ili{} the\ili{} same\ili{} for\ili{} \ili{}$f\ili{}$\ili{}.\ili{} \ili{}
+A\ili{} link\ili{} is\ili{} an\ili{} aligned\ili{} pair\ili{} of\ili{} MWEs\ili{},\ili{} denoted\ili{} \ili{}$\ili{}(e_\ili{}{ij}\ili{},f_\ili{}{kl}\ili{})\ili{}$\ili{}.\ili{} \ili{}
+Each\ili{} \ili{}$e_\ili{}{ij}\ili{}$\ili{} is\ili{} allowed\ili{} to\ili{} be\ili{} linked\ili{} with\ili{} several\ili{} \ili{}$f_\ili{}{kl}\ili{}$\ili{} and\ili{} each\ili{} \ili{}$f_\ili{}{kl}\ili{}$\ili{} with\ili{} several\ili{} \ili{}$e_\ili{}{ij}\ili{}$\ili{}.\ili{} \ili{}
+An\ili{} alignment\ili{} \ili{}$a\ili{}$\ili{} of\ili{} the\ili{} sentence\ili{} pair\ili{} \ili{}$\ili{}(e\ili{},f\ili{})\ili{}$\ili{} is\ili{} a\ili{} segmentation\ili{} of\ili{} the\ili{} two\ili{} sentences\ili{} in\ili{} MWEs\ili{} with\ili{} the\ili{} set\ili{} of\ili{} links\ili{} between\ili{} these\ili{} MWEs\ili{}.\ili{}
+We\ili{} use\ili{} a\ili{} real\ili{}-valued\ili{} function\ili{} \ili{}$\ili{}\phi\ili{}:\ili{}\\ili{}{e_\ili{}{ij}\ili{}\}\ili{}\times\ili{}\\ili{}{f_\ili{}{kl}\ili{}\}\ili{}\rightarrow\ili{} R\ili{}$\ili{} to\ili{} score\ili{} links\ili{}.\ili{} \ili{}
+The\ili{} score\ili{} of\ili{} an\ili{} alignment\ili{} is\ili{} then\ili{} the\ili{} product\ili{} of\ili{} all\ili{} the\ili{} links\ili{} inside\ili{} it\ili{}:\ili{}
+\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+\ili{}\phi\ili{}(a\ili{})\ili{}=\ili{}\prod_\ili{}{\ili{}(e_\ili{}{ij}\ili{},f_\ili{}{kl}\ili{})\ili{}\in\ili{} a}\ili{} \ili{}\phi\ili{}(e_\ili{}{ij}\ili{},f_\ili{}{kl}\ili{})\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=3cm\ili{}]\ili{}{figures\ili{}/Figure_exempleAli}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{fig\ili{}:aliEx}Example\ili{} of\ili{} alignment\ili{}.}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}
+In\ili{} the\ili{} example\ili{} shown\ili{} in\ili{} Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:aliEx}\ili{},\ili{} the\ili{} score\ili{} of\ili{} the\ili{} alignment\ili{} is\ili{} computed\ili{} as\ili{} the\ili{} following\ili{}:\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+\ili{}\phi\ili{}(a\ili{})\ili{}=\ili{}\phi\ili{}(e_\ili{}{0\ili{},2}\ili{},f_\ili{}{0\ili{},2}\ili{})\ili{} \ili{}\times\ili{} \ili{}\phi\ili{}(e_\ili{}{2\ili{},3}\ili{},f_\ili{}{2\ili{},3}\ili{})\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}
+Formally\ili{} this\ili{} function\ili{} has\ili{} no\ili{} constraints\ili{} other\ili{} than\ili{} that\ili{} of\ili{} being\ili{} real\ili{}.\ili{} \ili{}
+In\ili{} practice\ili{},\ili{} we\ili{} choose\ili{} a\ili{} function\ili{} that\ili{} gives\ili{} an\ili{} idea\ili{} about\ili{} the\ili{} relevance\ili{} to\ili{} align\ili{} such\ili{} fragments\ili{}.\ili{} \ili{}
+The\ili{} higher\ili{} the\ili{} score\ili{},\ili{} the\ili{} higher\ili{} the\ili{} relevance\ili{} of\ili{} alignment\ili{} is\ili{} important\ili{}.\ili{} \ili{}
+Therefore\ili{},\ili{} we\ili{} look\ili{} for\ili{} the\ili{} alignment\ili{} \ili{}(segmentation\ili{} \ili{}+\ili{} links\ili{})\ili{} that\ili{} maximizes\ili{} the\ili{} score\ili{} described\ili{} above\ili{}.\ili{}
+\ili{}
+First\ili{},\ili{} we\ili{} introduce\ili{} binary\ili{} variables\ili{} \ili{}$A_\ili{}{i\ili{},j\ili{},k\ili{},l}\ili{}$\ili{} denoting\ili{} whether\ili{} \ili{}$\ili{}(e_\ili{}{ij}\ili{},f_\ili{}{kl}\ili{})\ili{} \ili{}\in\ili{} a\ili{}$\ili{}.\ili{}
+Furthermore\ili{},\ili{} we\ili{} introduce\ili{} binary\ili{} indicators\ili{} \ili{}$E_\ili{}{i\ili{},j}\ili{}$\ili{} and\ili{} \ili{}$F_\ili{}{k\ili{},l}\ili{}$\ili{} that\ili{} denote\ili{} whether\ili{} some\ili{} \ili{}$\ili{}(e_\ili{}{ij}\ili{} \ili{},\ili{} \ili{} \ili{}\cdotp\ili{})\ili{}$\ili{} or\ili{} \ili{}$\ili{}(\ili{} \ili{}\cdotp\ili{},\ili{} f_\ili{}{kl}\ili{})\ili{}$\ili{} appears\ili{} in\ili{} \ili{}\textit\ili{}{a}\ili{},\ili{} respectively\ili{}.\ili{} \ili{}
+Finally\ili{},\ili{} we\ili{} will\ili{} use\ili{} \ili{}$W_\ili{}{i\ili{},j\ili{},k\ili{},l}\ili{} \ili{}=\ili{} log\ili{} \ili{}\phi\ili{}(e_\ili{}{ij}\ili{},f_\ili{}{kl}\ili{})\ili{}$\ili{} to\ili{} transform\ili{} the\ili{} product\ili{} into\ili{} a\ili{} sum\ili{}.\ili{}
+When\ili{} optimized\ili{}\footnote\ili{}{We\ili{} used\ili{} the\ili{} open\ili{} source\ili{} solver\ili{} GLPK\ili{} \ili{}(GNU\ili{} Linear\ili{} Programming\ili{} Kit\ili{})\ili{},\ili{} available\ili{} at\ili{} \ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/www\ili{}.gnu\ili{}.org\ili{}/s\ili{}/glpk\ili{}/}}\ili{},\ili{} the\ili{} integer\ili{} program\ili{} yields\ili{} the\ili{} optimal\ili{} alignment\ili{}:\ili{}
+\ili{}
+\ili{}%\ili{} Début\ili{} formule\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+\ili{}	\ili{}\begin\ili{}{cases}\ili{}
+\ili{}	\ili{} \ili{} \ili{} \ili{} \ili{}\max\ili{} \ili{}\sum\ili{}\limits_\ili{}{i\ili{},j\ili{},k\ili{},l}\ili{}{W_\ili{}{i\ili{},j\ili{},k\ili{},l}A_\ili{}{i\ili{},j\ili{},k\ili{},l}}\ili{}\\ili{}\\ili{}
+\ili{}	\ili{} \ili{} \ili{} \ili{} \ili{}\\ili{}\\ili{}
+\ili{}	\ili{} \ili{} \ili{} \ili{} \ili{}\forall\ili{}~x\ili{}:\ili{} 1\ili{}\leq\ili{} x\ili{}\leq\ili{} \ili{}|e\ili{}|\ili{} \ili{}&\ili{} \ili{}\sum\ili{}\limits_\ili{}{i\ili{},j\ili{}:\ili{} i\ili{}<x\ili{}\leq\ili{} j}\ili{}{E_\ili{}{i\ili{},j}}\ili{} \ili{}=\ili{} 1\ili{} \ili{}\hspace\ili{}{1\ili{}.3cm}\ili{}(1\ili{})\ili{}\\ili{}\\ili{}
+\ili{}	\ili{} \ili{} \ili{} \ili{} \ili{}\forall\ili{}~y\ili{}:\ili{} 1\ili{}\leq\ili{} y\ili{}\leq\ili{} \ili{}|f\ili{}|\ili{} \ili{}&\ili{} \ili{}\sum\ili{}\limits_\ili{}{k\ili{},l\ili{}:\ili{} k\ili{}<y\ili{}\leq\ili{} l}\ili{}{F_\ili{}{k\ili{},l}}\ili{} \ili{}=\ili{} 1\ili{} \ili{}\hspace\ili{}{1\ili{}.3cm}\ili{}(2\ili{})\ili{}\\ili{}\\ili{}
+\ili{}	\ili{} \ili{} \ili{} \ili{} \ili{}\forall\ili{}~i\ili{},j\ili{} \ili{}&\ili{} \ili{}\sum\ili{}\limits_\ili{}{k\ili{},l}\ili{}{A_\ili{}{i\ili{},j\ili{},k\ili{},l}}\ili{} \ili{}\geq\ili{} E_\ili{}{i\ili{},j}\ili{} \ili{}\hspace\ili{}{1\ili{}.2cm}\ili{}(3\ili{})\ili{}\\ili{}\\ili{}
+\ili{}	\ili{} \ili{} \ili{} \ili{} \ili{}\forall\ili{}~k\ili{},l\ili{} \ili{}&\ili{} \ili{}\sum\ili{}\limits_\ili{}{i\ili{},j}\ili{}{A_\ili{}{i\ili{},j\ili{},k\ili{},l}}\ili{} \ili{}\geq\ili{} F_\ili{}{k\ili{},l}\ili{} \ili{}\hspace\ili{}{1\ili{}.2cm}\ili{}(4\ili{})\ili{}\\ili{}\\ili{}
+\ili{}	\ili{} \ili{} \ili{} \ili{} \ili{}\forall\ili{}~i\ili{},j\ili{},k\ili{},l\ili{} \ili{}&\ili{} 2\ili{}\cdot\ili{} A_\ili{}{i\ili{},j\ili{},k\ili{},l}\ili{} \ili{}\leq\ili{} E_\ili{}{i\ili{},j}\ili{}+F_\ili{}{k\ili{},l}\ili{} \ili{}\hspace\ili{}{0\ili{}.3cm}\ili{}(5\ili{})\ili{}\\ili{}\\ili{}
+\ili{}	\ili{}\end\ili{}{cases}\ili{}\\ili{}\\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}	With\ili{} the\ili{} following\ili{} constraints\ili{}:\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+\ili{}	\ili{}\begin\ili{}{cases}\ili{}
+\ili{}	0\ili{} \ili{}\leq\ili{} i\ili{} \ili{}<\ili{} \ili{}|e\ili{}|\ili{},\ili{} \ili{}&\ili{} 0\ili{} \ili{}<\ili{} j\ili{} \ili{}\leq\ili{} \ili{}|e\ili{}|\ili{},\ili{} \ili{}\hspace\ili{}{0\ili{}.3cm}\ili{} i\ili{} \ili{}<\ili{} j\ili{}\\ili{}\\ili{}
+\ili{}	0\ili{} \ili{}\leq\ili{} k\ili{} \ili{}<\ili{} \ili{}|f\ili{}|\ili{},\ili{} \ili{}&\ili{} 0\ili{} \ili{}<\ili{} l\ili{} \ili{}\leq\ili{} \ili{}|f\ili{}|\ili{},\ili{} \ili{}\hspace\ili{}{0\ili{}.3cm}\ili{} k\ili{} \ili{}<\ili{} l\ili{}\\ili{}\\ili{} \ili{}
+\ili{}	\ili{}\end\ili{}{cases}\ili{}\\ili{}\\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}%\ili{} Fin\ili{} formule\ili{}
+\ili{}
+Constraints\ili{} \ili{}(1\ili{})\ili{} and\ili{} \ili{}(2\ili{})\ili{} indicate\ili{} that\ili{} a\ili{} word\ili{} is\ili{} inside\ili{} exactly\ili{} one\ili{} \ili{}\isi\ili{}{phrase}\ili{}.\ili{} Constraint\ili{} \ili{}(3\ili{})\ili{} ensures\ili{} that\ili{} each\ili{} \ili{}\isi\ili{}{phrase}\ili{} in\ili{} the\ili{} selected\ili{} partition\ili{} of\ili{} \ili{}$e\ili{}$\ili{} appears\ili{} in\ili{} at\ili{} least\ili{} one\ili{} link\ili{} \ili{}(and\ili{} likewise\ili{} constraint\ili{} \ili{}(4\ili{})\ili{} for\ili{} \ili{}$f\ili{}$\ili{})\ili{}.\ili{} Finally\ili{},\ili{} constraint\ili{} \ili{}(5\ili{})\ili{} ensures\ili{} that\ili{} if\ili{} a\ili{} link\ili{} exists\ili{} between\ili{} \ili{}$e_\ili{}{ij}\ili{}$\ili{} and\ili{} \ili{}$f_\ili{}{kl}\ili{}$\ili{} \ili{}(i\ili{}.e\ili{}.\ili{} \ili{}$A_\ili{}{i\ili{},j\ili{},k\ili{},l}\ili{}=1\ili{}$\ili{})\ili{} then\ili{} \ili{}$e_\ili{}{ij}\ili{}$\ili{} and\ili{} \ili{}$f_\ili{}{kl}\ili{}$\ili{} are\ili{} in\ili{} the\ili{} selected\ili{} partitions\ili{} of\ili{} \ili{}$e\ili{}$\ili{} and\ili{} \ili{}$f\ili{}$\ili{}.\ili{}
+\ili{}
+In\ili{} that\ili{} way\ili{},\ili{} our\ili{} approach\ili{} differs\ili{} from\ili{} the\ili{} one\ili{} proposed\ili{} in\ili{} \ili{}\citep\ili{}{denero2008complexity}\ili{}.\ili{} \ili{}
+Their\ili{} work\ili{} focuses\ili{} on\ili{} bijective\ili{} alignments\ili{} while\ili{} we\ili{} consider\ili{} surjective\ili{} alignments\ili{}.\ili{} \ili{}
+We\ili{} have\ili{} also\ili{} modified\ili{} constraints\ili{} \ili{}(3\ili{})\ili{} and\ili{} \ili{}(4\ili{})\ili{} and\ili{} added\ili{} constraint\ili{} \ili{}(5\ili{})\ili{} to\ili{} allow\ili{} a\ili{} \ili{}\isi\ili{}{phrase}\ili{} to\ili{} be\ili{} aligned\ili{} with\ili{} several\ili{} other\ili{} phrases\ili{}.\ili{} \ili{}
+We\ili{} have\ili{} chosen\ili{} this\ili{} formalism\ili{} because\ili{} phrases\ili{} are\ili{} not\ili{} necessarily\ili{} composed\ili{} of\ili{} contiguous\ili{} words\ili{}.\ili{}
+\ili{}
+This\ili{} integer\ili{} program\ili{} can\ili{} work\ili{} with\ili{} any\ili{} real\ili{}-valued\ili{} scoring\ili{} function\ili{}.\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Co\ili{}-occurrence\ili{} based\ili{} metric}\ili{}
+\ili{}
+We\ili{} use\ili{} a\ili{} corpus\ili{} aligned\ili{} sentence\ili{}-by\ili{}-sentence\ili{} to\ili{} compute\ili{} co\ili{}-occurrence\ili{} distance\ili{}.\ili{} For\ili{} each\ili{} MWE\ili{},\ili{} we\ili{} consider\ili{} the\ili{} presence\ili{} or\ili{} absence\ili{} in\ili{} each\ili{} sentence\ili{}.\ili{} Then\ili{} the\ili{} score\ili{} between\ili{} two\ili{} MWEs\ili{} \ili{}$e_\ili{}{ij}\ili{}$\ili{} and\ili{} \ili{}$f_\ili{}{kl}\ili{}$\ili{} is\ili{} calculated\ili{} as\ili{} follows\ili{}:\ili{}
+\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+\ili{}\phi_c\ili{}(e_\ili{}{ij}\ili{},f_\ili{}{kl}\ili{})\ili{}=\ili{}\frac\ili{}{\ili{}\sum\ili{}\limits_\ili{}{s\ili{}'\ili{}\in\ili{} S}\ili{} N_\ili{}{s\ili{}'}\ili{}(e_\ili{}{ij}\ili{})\ili{} \ili{}\times\ili{} N_\ili{}{s\ili{}'}\ili{}(f_\ili{}{kl}\ili{})}\ili{}{\ili{}\sum\ili{}\limits_\ili{}{s\ili{}\in\ili{} S}\ili{} N_\ili{}{s}\ili{}(e_\ili{}{ij}\ili{})\ili{} \ili{}+\ili{} N_\ili{}{s}\ili{}(f_\ili{}{kl}\ili{})\ili{} \ili{}-\ili{} N_\ili{}{s}\ili{}(e_\ili{}{ij}\ili{})\ili{} \ili{}\times\ili{} N_\ili{}{s}\ili{}(f_\ili{}{kl}\ili{})}\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}
+Where\ili{} \ili{}$N_\ili{}{s}\ili{}(e_\ili{}{ij}\ili{})\ili{}$\ili{} is\ili{} 1\ili{} if\ili{} the\ili{} \ili{}\isi\ili{}{phrase}\ili{} \ili{}$e_\ili{}{ij}\ili{}$\ili{} of\ili{} the\ili{} first\ili{} language\ili{} is\ili{} present\ili{} in\ili{} the\ili{} sentence\ili{} \ili{}$s\ili{}$\ili{} of\ili{} the\ili{} corpus\ili{} \ili{}$S\ili{}$\ili{} and\ili{} \ili{}$0\ili{}$\ili{} otherwise\ili{}.\ili{} \ili{}
+\ili{}$N_\ili{}{s}\ili{}(f_\ili{}{kl}\ili{})\ili{}$\ili{} is\ili{} similar\ili{} for\ili{} the\ili{} other\ili{} language\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}[h\ili{}!\ili{}]\ili{}
+\ili{}\begin\ili{}{tabular}\ili{}{rcl}\ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+Je\ili{} mange\ili{} un\ili{} \ili{}\textbf\ili{}{avocat}\ili{} \ili{}&\ili{} \ili{}-\ili{}-\ili{} \ili{}&\ili{} I\ili{}'m\ili{} eating\ili{} an\ili{} \ili{}\textbf\ili{}{avocado}\ili{} \ili{}\\ili{}\\ili{}
+L\ili{}'\ili{}\textbf\ili{}{avocat}\ili{} prend\ili{} la\ili{} parole\ili{} \ili{}&\ili{} \ili{}-\ili{}-\ili{} \ili{}&\ili{} The\ili{} \ili{}\textbf\ili{}{lawyer}\ili{} takes\ili{} the\ili{} floor\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{}\end\ili{}{tabular}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{tab\ili{}:probtrans}\ili{} Example\ili{} of\ili{} ambiguous\ili{} translation\ili{} of\ili{} MWEs\ili{}.}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+This\ili{} score\ili{} calculates\ili{} the\ili{} number\ili{} of\ili{} common\ili{} presence\ili{} of\ili{} both\ili{} phrases\ili{} divided\ili{} by\ili{} the\ili{} number\ili{} of\ili{} total\ili{} presence\ili{} of\ili{} either\ili{} \ili{}\isi\ili{}{phrase}\ili{}.\ili{} \ili{}
+Note\ili{} that\ili{} if\ili{} none\ili{} of\ili{} \ili{}$e_\ili{}{ij}\ili{}$\ili{} or\ili{} \ili{}$f_\ili{}{kl}\ili{}$\ili{} appears\ili{} in\ili{} the\ili{} whole\ili{} corpus\ili{},\ili{} the\ili{} score\ili{} is\ili{} set\ili{} to\ili{} \ili{}$0\ili{}$\ili{}.\ili{} \ili{}
+Indeed\ili{},\ili{} if\ili{} two\ili{} MWEs\ili{} appear\ili{} exactly\ili{} in\ili{} the\ili{} same\ili{} bi\ili{}-sentences\ili{},\ili{} they\ili{} are\ili{} probably\ili{} translation\ili{} of\ili{} each\ili{} other\ili{} and\ili{} the\ili{} score\ili{} will\ili{} be\ili{} \ili{}$1\ili{}$\ili{}.\ili{} \ili{}
+The\ili{} example\ili{} in\ili{} Table\ili{} \ili{}\ref\ili{}{tab\ili{}:probtrans}\ili{} illustrates\ili{} this\ili{} score\ili{}.\ili{}
+\ili{}
+In\ili{} this\ili{} small\ili{} corpus\ili{},\ili{} \ili{}$N_1\ili{}(avocat\ili{})\ili{} \ili{}=\ili{} 1\ili{}$\ili{},\ili{} \ili{}$N_1\ili{}(avocado\ili{})\ili{} \ili{}=\ili{} 1\ili{}$\ili{},\ili{} \ili{}$N_2\ili{}(avocat\ili{})\ili{} \ili{}=\ili{} 1\ili{}$\ili{} and\ili{} \ili{}$N_2\ili{}(avocado\ili{})\ili{} \ili{}=\ili{} 0\ili{}$\ili{}.\ili{} Thus\ili{},\ili{} the\ili{} co\ili{}-occurence\ili{} score\ili{} for\ili{} the\ili{} bi\ili{}-gram\ili{} \ili{}"avocat\ili{}/avocado\ili{}"\ili{} has\ili{} the\ili{} value\ili{}:\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+\ili{}\phi_\ili{}{c}\ili{}(avocado\ili{},avocat\ili{})\ili{} \ili{}=\ili{} \ili{}\frac\ili{}{\ili{}(1\ili{} \ili{}\times\ili{} 1\ili{})\ili{} \ili{}+\ili{} \ili{}(1\ili{} \ili{}\times\ili{} 0\ili{})}\ili{}{\ili{}(1\ili{} \ili{}+\ili{} 1\ili{} \ili{}-1\ili{} \ili{}\times\ili{} 1\ili{})\ili{} \ili{}+\ili{} \ili{}(1\ili{} \ili{}+\ili{} 0\ili{} \ili{}-\ili{} 1\ili{} \ili{}\times\ili{} 0\ili{})}\ili{} \ili{}=\ili{} \ili{}\frac\ili{}{1}\ili{}{2}\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}
+We\ili{} observed\ili{} after\ili{} aligning\ili{} some\ili{} sentences\ili{} that\ili{} when\ili{} both\ili{} sentence\ili{} structures\ili{} are\ili{} similar\ili{},\ili{} the\ili{} aligner\ili{} performs\ili{} well\ili{} as\ili{} shown\ili{} in\ili{} Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:goodali}\ili{}.\ili{} The\ili{} segmentation\ili{} is\ili{} word\ili{} to\ili{} word\ili{} or\ili{} MWE\ili{} to\ili{} MWE\ili{} depending\ili{} on\ili{} what\ili{} is\ili{} more\ili{} frequent\ili{} in\ili{} the\ili{} corpus\ili{}.\ili{} Moreover\ili{},\ili{} the\ili{} surjective\ili{} formulation\ili{} of\ili{} the\ili{} problem\ili{} allows\ili{} us\ili{} to\ili{} begin\ili{} to\ili{} detect\ili{} expressions\ili{} in\ili{} two\ili{} parts\ili{}.\ili{} \ili{}
+We\ili{} can\ili{} see\ili{} that\ili{} \ili{}`\ili{}`rôle\ili{}'\ili{}'\ili{} is\ili{} linked\ili{} to\ili{} both\ili{} \ili{}`\ili{}`role\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`play\ili{}'\ili{}'\ili{} \ili{}(Figure\ili{} 3\ili{},\ili{} Alignment\ili{} 3\ili{})\ili{}.\ili{}
+\ili{}
+This\ili{} would\ili{} have\ili{} been\ili{} impossible\ili{} with\ili{} the\ili{} bijective\ili{} formulation\ili{} of\ili{} \ili{}\citep\ili{}{denero2008complexity}\ili{}.\ili{} This\ili{} result\ili{} is\ili{} encouraging\ili{} but\ili{} not\ili{} yet\ili{} sufficient\ili{}.\ili{} \ili{}
+Actually\ili{} this\ili{} expression\ili{} is\ili{} partially\ili{} recognized\ili{} because\ili{} it\ili{} includes\ili{} two\ili{} plain\ili{} words\ili{}.\ili{} \ili{}
+Expressions\ili{} with\ili{} postponed\ili{} prepositions\ili{} would\ili{} not\ili{} be\ili{} recovered\ili{} this\ili{} way\ili{} because\ili{} the\ili{} prepositions\ili{} are\ili{} too\ili{} common\ili{} to\ili{} be\ili{} statistically\ili{} relevant\ili{}.\ili{}
+If\ili{} the\ili{} structure\ili{} is\ili{} different\ili{} we\ili{} have\ili{} more\ili{} difficulties\ili{} \ili{}(as\ili{} shown\ili{} in\ili{} Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:badali}\ili{})\ili{}.\ili{} \ili{}
+Some\ili{} sentences\ili{} are\ili{} also\ili{} difficult\ili{} to\ili{} align\ili{} because\ili{} they\ili{} aren\ili{}'t\ili{} perfect\ili{} translation\ili{}:\ili{} \ili{}
+\ili{}`\ili{}`They\ili{}/la\ili{} population\ili{}'\ili{}'\ili{} or\ili{} adverbs\ili{} like\ili{} \ili{}`\ili{}`also\ili{}'\ili{}'\ili{} or\ili{} \ili{}`\ili{}`very\ili{}'\ili{}'\ili{} which\ili{} are\ili{} not\ili{} translated\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=0\ili{}.6\ili{}\linewidth\ili{}]\ili{}{figures\ili{}/Figure_goodAli}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{fig\ili{}:goodali}Good\ili{} alignments\ili{} with\ili{} co\ili{}-occurrence\ili{} based\ili{} metric\ili{}.}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=0\ili{}.6\ili{}\linewidth\ili{}]\ili{}{figures\ili{}/Figure_badAli}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{fig\ili{}:badali}Bad\ili{} alignments\ili{} with\ili{} co\ili{}-occurrence\ili{} based\ili{} metric\ili{}.}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+We\ili{} also\ili{} observe\ili{} that\ili{},\ili{} for\ili{} common\ili{} words\ili{},\ili{} the\ili{} distribution\ili{} of\ili{} apparition\ili{} is\ili{} meaningless\ili{}:\ili{} \ili{}`\ili{}`to\ili{}'\ili{}'\ili{} is\ili{} linked\ili{} with\ili{} \ili{}`\ili{}`de\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`a\ili{}'\ili{}'\ili{}.\ili{} \ili{}
+We\ili{} should\ili{} use\ili{} a\ili{} measure\ili{} of\ili{} information\ili{} as\ili{} suggested\ili{} in\ili{} \ili{}\citep\ili{}{gao1998automatic}\ili{}.\ili{}
+In\ili{} addition\ili{},\ili{} the\ili{} program\ili{} is\ili{} powerless\ili{} if\ili{} it\ili{} finds\ili{} an\ili{} unknown\ili{} word\ili{} or\ili{} if\ili{} a\ili{} word\ili{} co\ili{}-occurs\ili{} with\ili{} no\ili{} other\ili{} word\ili{} of\ili{} the\ili{} translated\ili{} sentence\ili{}.\ili{} \ili{}
+In\ili{} that\ili{} case\ili{},\ili{} all\ili{} links\ili{} containing\ili{} this\ili{} word\ili{} will\ili{} obtain\ili{} the\ili{} score\ili{} of\ili{} 0\ili{} as\ili{} they\ili{} never\ili{} occur\ili{}.\ili{} \ili{}
+And\ili{} as\ili{} we\ili{} use\ili{} a\ili{} multiplicative\ili{} metric\ili{},\ili{} the\ili{} global\ili{} score\ili{} of\ili{} the\ili{} alignment\ili{} will\ili{} be\ili{} 0\ili{} whatever\ili{} the\ili{} other\ili{} links\ili{} of\ili{} the\ili{} alignment\ili{}.\ili{} Unknown\ili{} links\ili{} should\ili{} have\ili{} a\ili{} small\ili{},\ili{} non\ili{}-null\ili{} score\ili{} to\ili{} allow\ili{} the\ili{} discovery\ili{} of\ili{} new\ili{} links\ili{}.\ili{} \ili{}
+Moreover\ili{},\ili{} we\ili{} can\ili{} use\ili{} an\ili{} external\ili{} resource\ili{} such\ili{} as\ili{} a\ili{} bilingual\ili{} lexicon\ili{} of\ili{} single\ili{} words\ili{} which\ili{} can\ili{} improve\ili{} the\ili{} alignment\ili{} of\ili{} phrases\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Bilingual\ili{} dictionary\ili{} based\ili{} metric}\ili{}
+\ili{}
+The\ili{} bilingual\ili{} dictionary\ili{} gives\ili{} us\ili{} several\ili{} word\ili{}-to\ili{}-word\ili{} alignments\ili{}.\ili{} We\ili{} want\ili{} to\ili{} comply\ili{} with\ili{} these\ili{} alignments\ili{} as\ili{} often\ili{} as\ili{} possible\ili{} as\ili{} we\ili{} infer\ili{} that\ili{} they\ili{} are\ili{} mostly\ili{} correct\ili{}.\ili{} \ili{}%\ili{}(We\ili{} consider\ili{} alignment\ili{} only\ili{} for\ili{} plain\ili{} words\ili{},\ili{} not\ili{} function\ili{} words\ili{})\ili{}.\ili{}
+The\ili{} dictionary\ili{} also\ili{} gives\ili{} negative\ili{} alignment\ili{} information\ili{}.\ili{} Of\ili{} course\ili{} if\ili{} two\ili{} words\ili{} are\ili{} not\ili{} aligned\ili{} by\ili{} the\ili{} dictionary\ili{} we\ili{} can\ili{}'t\ili{} take\ili{} for\ili{} sure\ili{} that\ili{} they\ili{} shouldn\ili{}'t\ili{}.\ili{} But\ili{} we\ili{} have\ili{} to\ili{} take\ili{} that\ili{} into\ili{} account\ili{}.\ili{}
+\ili{}
+The\ili{} bilingual\ili{} dictionary\ili{} score\ili{} is\ili{} calculated\ili{} as\ili{} follows\ili{}:\ili{}
+\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+\ili{}\phi_\ili{}(e_\ili{}{ij}\ili{},f_\ili{}{kl}\ili{})\ili{}=\ili{}\frac\ili{}{a\ili{}\times\ili{} R_1\ili{} \ili{}+\ili{} b\ili{}\times\ili{} R_0}\ili{}{a\ili{}\times\ili{} R_1\ili{} \ili{}+\ili{} b\ili{}\times\ili{} R_0\ili{} \ili{}+\ili{} c\ili{}\times\ili{} N_1\ili{} \ili{}+\ili{} d\ili{}\times\ili{} N_0}\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}
+\ili{}$R_1\ili{}$\ili{} is\ili{} the\ili{} number\ili{} of\ili{} respected\ili{} links\ili{},\ili{} \ili{}$R_0\ili{}$\ili{} is\ili{} the\ili{} number\ili{} of\ili{} respected\ili{} non\ili{}-links\ili{},\ili{} \ili{}$N_1\ili{}$\ili{} is\ili{} the\ili{} number\ili{} of\ili{} non\ili{}-respected\ili{} links\ili{},\ili{} and\ili{} \ili{}$N_0\ili{}$\ili{} is\ili{} the\ili{} number\ili{} of\ili{} non\ili{}-respected\ili{} non\ili{}-links\ili{}.\ili{}
+\ili{}
+The\ili{} coefficients\ili{} \ili{}\textit\ili{}{a}\ili{},\ili{} \ili{}\textit\ili{}{b}\ili{},\ili{} \ili{}\textit\ili{}{c}\ili{} and\ili{} \ili{}\textit\ili{}{d}\ili{} can\ili{} be\ili{} adapted\ili{} to\ili{} balance\ili{} the\ili{} relative\ili{} influence\ili{} of\ili{} the\ili{} four\ili{} terms\ili{}.\ili{} \ili{}
+We\ili{} analyzed\ili{} a\ili{} small\ili{} corpus\ili{} that\ili{} allowed\ili{} us\ili{} to\ili{} empirically\ili{} choose\ili{} the\ili{} use\ili{} the\ili{} following\ili{} values\ili{}:\ili{} \ili{} \ili{}\textit\ili{}{a}\ili{} \ili{}=\ili{} \ili{}\textit\ili{}{b}\ili{} \ili{}=\ili{} \ili{}\textit\ili{}{c}\ili{} \ili{}=\ili{} 1\ili{} and\ili{} \ili{}\textit\ili{}{d}\ili{} \ili{}=\ili{} 0\ili{}.5\ili{}.\ili{} \ili{}
+The\ili{} score\ili{} is\ili{} calculated\ili{} for\ili{} each\ili{} part\ili{} of\ili{} the\ili{} bi\ili{}-\ili{}\isi\ili{}{phrase}\ili{} and\ili{} then\ili{} the\ili{} two\ili{} of\ili{} them\ili{} are\ili{} multiplied\ili{}.\ili{} We\ili{} have\ili{} to\ili{} take\ili{} into\ili{} account\ili{} \ili{}$R_0\ili{}$\ili{} and\ili{} \ili{}$N_0\ili{}$\ili{} because\ili{} otherwise\ili{} the\ili{} whole\ili{} bi\ili{}-sentence\ili{} would\ili{} be\ili{} the\ili{} optimal\ili{} segmentation\ili{}.\ili{}
+\ili{}
+As\ili{} we\ili{} can\ili{} see\ili{},\ili{} this\ili{} metric\ili{} has\ili{} a\ili{} double\ili{} effect\ili{}.\ili{} \ili{}
+First\ili{},\ili{} it\ili{} gives\ili{} a\ili{} high\ili{} score\ili{} if\ili{} bi\ili{}-phrases\ili{} respect\ili{} dictionary\ili{} word\ili{} to\ili{} \ili{}\isi\ili{}{word\ili{} alignment}\ili{}.\ili{} \ili{}
+And\ili{} second\ili{},\ili{} due\ili{} to\ili{} \ili{}$R_0\ili{}$\ili{},\ili{} it\ili{} sets\ili{} a\ili{} threshold\ili{} score\ili{} for\ili{} unknown\ili{} couples\ili{}.\ili{} \ili{}
+Both\ili{} effects\ili{} can\ili{} have\ili{} a\ili{} positive\ili{} role\ili{} in\ili{} alignment\ili{} task\ili{} as\ili{} we\ili{} will\ili{} see\ili{} in\ili{} the\ili{} following\ili{} examples\ili{}.\ili{} The\ili{} dictionary\ili{}-based\ili{} metric\ili{} is\ili{} not\ili{} intended\ili{} to\ili{} be\ili{} used\ili{} separately\ili{}.\ili{} It\ili{} is\ili{} mixed\ili{} with\ili{} \ili{}
+co\ili{}-occurrence\ili{} score\ili{}.\ili{} We\ili{} used\ili{} an\ili{} \ili{}\ili\ili{}{English}\ili{}-\ili{}\ili\ili{}{French}\ili{} bilingual\ili{} dictionary\ili{} containing\ili{} 243\ili{},539\ili{} entries\ili{} with\ili{} doubles\ili{}.\ili{}\footnote\ili{}{\ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/catalog\ili{}.elra\ili{}.info\ili{}/product_info\ili{}.php\ili{}?products_id\ili{}=666\ili{}.}}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=0\ili{}.6\ili{}\linewidth\ili{}]\ili{}{figures\ili{}/Figure_degAli}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{fig\ili{}:degali}Degradation\ili{} of\ili{} alignments\ili{} \ili{}-\ili{} \ili{}(a\ili{})\ili{} Alignments\ili{} without\ili{} the\ili{} bilingual\ili{} dictionary\ili{} and\ili{} \ili{}(b\ili{})\ili{} Alignments\ili{} with\ili{} the\ili{} bilingual\ili{} dictionary\ili{}.}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=0\ili{}.7\ili{}\linewidth\ili{}]\ili{}{figures\ili{}/Figure_impAli\ili{}-}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{fig\ili{}:improvali}Amelioration\ili{} of\ili{} alignments\ili{} \ili{}-\ili{} \ili{}(a\ili{})\ili{} Alignments\ili{} without\ili{} the\ili{} bilingual\ili{} dictionary\ili{} and\ili{} \ili{}(b\ili{})\ili{} Alignments\ili{} with\ili{} the\ili{} bilingual\ili{} dictionary\ili{}.}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+\ili{}
+In\ili{} Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:degali}\ili{},\ili{} we\ili{} observe\ili{} some\ili{} degradation\ili{} of\ili{} alignments\ili{}.\ili{}
+For\ili{} these\ili{} sentences\ili{},\ili{} the\ili{} threshold\ili{} for\ili{} unknown\ili{} couples\ili{} is\ili{} too\ili{} high\ili{} relatively\ili{} to\ili{} the\ili{} statistical\ili{} score\ili{}.\ili{} \ili{}
+So\ili{} we\ili{} lose\ili{} the\ili{} benefit\ili{} of\ili{} the\ili{} co\ili{}-occurrence\ili{} metric\ili{}.\ili{} \ili{}
+This\ili{} problem\ili{} should\ili{} be\ili{} partially\ili{} solved\ili{} by\ili{} scaling\ili{} the\ili{} two\ili{} metrics\ili{}.\ili{} However\ili{} we\ili{} have\ili{} already\ili{} observed\ili{} some\ili{} improvements\ili{},\ili{} as\ili{} presented\ili{} in\ili{} Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:improvali}\ili{}.\ili{} In\ili{} the\ili{} first\ili{} example\ili{},\ili{} the\ili{} bilingual\ili{} dictionary\ili{} gives\ili{} the\ili{} alignments\ili{}:\ili{} \ili{}`\ili{}`be\ili{}/être\ili{}'\ili{}'\ili{},\ili{} \ili{}`\ili{}`decided\ili{}/décidé\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`there\ili{}/y\ili{}'\ili{}'\ili{}.\ili{} So\ili{} the\ili{} program\ili{} manages\ili{} to\ili{} reconstruct\ili{} the\ili{} whole\ili{} expression\ili{} \ili{}`\ili{}`is\ili{} to\ili{} be\ili{} decided\ili{} on\ili{} there\ili{}/doit\ili{} y\ili{} être\ili{} décidé\ili{}'\ili{}'\ili{}.\ili{} Moreover\ili{} the\ili{} links\ili{} \ili{}`\ili{}`concrete\ili{}/concret\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`programme\ili{}/programme\ili{}'\ili{}'\ili{} are\ili{} strengthened\ili{}.\ili{} The\ili{} second\ili{} example\ili{} is\ili{} difficult\ili{} to\ili{} align\ili{} due\ili{} to\ili{} the\ili{} difference\ili{} of\ili{} structure\ili{}.\ili{} The\ili{} alignment\ili{} with\ili{} dictionary\ili{} is\ili{} not\ili{} perfect\ili{} but\ili{} is\ili{} far\ili{} more\ili{} better\ili{}.\ili{} In\ili{} this\ili{} case\ili{} the\ili{} dictionary\ili{} only\ili{} gives\ili{} links\ili{} \ili{}`\ili{}`verdict\ili{}/jugement\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`request\ili{}/requête\ili{}'\ili{}'\ili{} which\ili{} were\ili{} already\ili{} aligned\ili{}.\ili{} However\ili{} they\ili{} are\ili{} strengthened\ili{} and\ili{} others\ili{} links\ili{} are\ili{} weakened\ili{}.\ili{} That\ili{} is\ili{} why\ili{} we\ili{} can\ili{} observe\ili{} an\ili{} improvement\ili{}.\ili{}
+\ili{}
+Finally\ili{} in\ili{} the\ili{} last\ili{} example\ili{},\ili{} the\ili{} dictionary\ili{} gives\ili{} no\ili{} links\ili{} because\ili{} the\ili{} words\ili{} are\ili{} not\ili{} lemmatized\ili{}.\ili{} The\ili{} good\ili{} result\ili{} is\ili{} here\ili{} exclusively\ili{} due\ili{} to\ili{} the\ili{} threshold\ili{} effect\ili{}.\ili{} The\ili{} programme\ili{} is\ili{} allowed\ili{} to\ili{} consider\ili{} links\ili{} with\ili{} no\ili{} co\ili{}-occurrence\ili{} as\ili{} long\ili{} as\ili{} others\ili{} links\ili{} have\ili{} a\ili{} good\ili{} co\ili{}-occurrence\ili{} score\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{} Experimental\ili{} results\ili{}
+\ili{}\section\ili{}{Experimental\ili{} results}\ili{}
+The\ili{} quality\ili{} of\ili{} alignment\ili{} of\ili{} MWEs\ili{} and\ili{} the\ili{} impact\ili{} of\ili{} using\ili{} MWEs\ili{} on\ili{} machine\ili{} translation\ili{} have\ili{} been\ili{} evaluated\ili{},\ili{} firstly\ili{},\ili{} manually\ili{},\ili{} by\ili{} comparing\ili{} the\ili{} results\ili{} of\ili{} the\ili{} three\ili{} MWEs\ili{} aligners\ili{} with\ili{} a\ili{} reference\ili{} alignment\ili{};\ili{}
+and\ili{} secondly\ili{} automatically\ili{} by\ili{} using\ili{} the\ili{} results\ili{} of\ili{} the\ili{} three\ili{} MWEs\ili{} aligners\ili{} to\ili{} build\ili{} the\ili{} \ili{}\isi\ili{}{translation\ili{} model}\ili{} of\ili{} the\ili{} state\ili{}-of\ili{}-the\ili{}-art\ili{} \ili{}\isi\ili{}{statistical\ili{} machine\ili{} translation}\ili{} system\ili{} Moses\ili{} \ili{}\citep\ili{}{koehn2007moses}\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Manual\ili{} evaluation}\ili{}
+\ili{}
+The\ili{} three\ili{} approaches\ili{} for\ili{} MWEs\ili{} alignment\ili{} and\ili{} the\ili{} baseline\ili{} Giza\ili{}+\ili{}+\ili{} \ili{}\citep\ili{}{och2000improved}\ili{} have\ili{} been\ili{} evaluated\ili{} using\ili{} the\ili{} following\ili{} evaluation\ili{} metrics\ili{}.\ili{} \ili{}
+Given\ili{} an\ili{} alignment\ili{} A\ili{},\ili{} and\ili{} a\ili{} gold\ili{} standard\ili{} alignment\ili{} \ili{}(reference\ili{} alignment\ili{})\ili{} G\ili{},\ili{} each\ili{} such\ili{} alignment\ili{} set\ili{} eventually\ili{} consisting\ili{} of\ili{} two\ili{} sets\ili{} \ili{}$\ili{}(A_s\ili{},\ili{} A_p\ili{})\ili{}$\ili{},\ili{} and\ili{} \ili{}$\ili{}(G_s\ili{},\ili{} G_p\ili{})\ili{}$\ili{} where\ili{} \ili{}`\ili{}`s\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`p\ili{}'\ili{}'\ili{} correspond\ili{} respectively\ili{} to\ili{} \ili{}`\ili{}`Sure\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`Probable\ili{}'\ili{}'\ili{} alignments\ili{}.\ili{} \ili{}
+The\ili{} following\ili{} measures\ili{} are\ili{} defined\ili{} \ili{}(where\ili{} T\ili{} is\ili{} the\ili{} alignment\ili{} type\ili{},\ili{} and\ili{} can\ili{} be\ili{} set\ili{} to\ili{} either\ili{} S\ili{} or\ili{} P\ili{})\ili{}.\ili{} Each\ili{} word\ili{} aligner\ili{} was\ili{} evaluated\ili{} in\ili{} terms\ili{} of\ili{} Precision\ili{} \ili{}(\ili{}$P_T\ili{}$\ili{})\ili{},\ili{} Recall\ili{} \ili{}(\ili{}$R_T\ili{}$\ili{})\ili{} and\ili{} F\ili{}-Measure\ili{} \ili{}(\ili{}$F_T\ili{}$\ili{})\ili{}.\ili{}
+\ili{}\begin\ili{}{equation}\ili{}
+P_T\ili{}=\ili{}\frac\ili{}{A_T\ili{} \ili{}\cap\ili{} G_T}\ili{}{A_T}\ili{} \ili{};\ili{}~\ili{}
+R_T\ili{}=\ili{}\frac\ili{}{A_T\ili{} \ili{}\cap\ili{} G_T}\ili{}{G_T}\ili{} \ili{};\ili{}~\ili{}
+F_T\ili{}=\ili{}\frac\ili{}{2\ili{} \ili{}\times\ili{} P_T\ili{} \ili{}\times\ili{} R_T}\ili{}{P_T\ili{} \ili{}+\ili{} R_T}\ili{}
+\ili{}\label\ili{}{equa\ili{}:PRF}\ili{}
+\ili{}\end\ili{}{equation}\ili{}
+\ili{}
+The\ili{} corpus\ili{} used\ili{} to\ili{} evaluate\ili{} the\ili{} performance\ili{} of\ili{} the\ili{} \ili{}\ili\ili{}{English}\ili{}-\ili{}\ili\ili{}{French}\ili{} MWE\ili{} aligners\ili{} is\ili{} composed\ili{} of\ili{} a\ili{} set\ili{} of\ili{} 1992\ili{} parallel\ili{} sentences\ili{} extracted\ili{} from\ili{} Europarl\ili{} \ili{}(European\ili{} Parliament\ili{} Proceedings\ili{})\ili{}.\ili{} This\ili{} parallel\ili{} corpus\ili{} is\ili{} composed\ili{} of\ili{} 46265\ili{} \ili{}\ili\ili{}{English}\ili{} words\ili{} and\ili{} 49332\ili{} \ili{}\ili\ili{}{French}\ili{} words\ili{} and\ili{} has\ili{} been\ili{} used\ili{} to\ili{} build\ili{} manually\ili{} the\ili{} reference\ili{} alignment\ili{} by\ili{} the\ili{} Yawat\ili{} tool\ili{} \ili{}(Germann\ili{},\ili{} 2008\ili{})\ili{}.\ili{}
+\ili{}
+Table\ili{} \ili{}\ref\ili{}{tab\ili{}:resultsPRF_en\ili{}-fr}\ili{} summarizes\ili{} the\ili{} results\ili{} of\ili{} the\ili{} three\ili{} approaches\ili{} for\ili{} \ili{}\ili\ili{}{English}\ili{}-\ili{}-\ili{}\ili\ili{}{French}\ili{} MWEs\ili{} alignments\ili{} and\ili{} the\ili{} baseline\ili{} \ili{}(Giza\ili{}+\ili{}+\ili{})\ili{} in\ili{} terms\ili{} of\ili{} precision\ili{},\ili{} recall\ili{} and\ili{} f\ili{}-measure\ili{}.\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\caption\ili{}{Performance\ili{} of\ili{} the\ili{} different\ili{} English\ili{}-\ili{}-French\ili{} MWE\ili{} aligners\ili{}.}\ili{}
+\ili{}\label\ili{}{tab\ili{}:resultsPRF_en\ili{}-fr}\ili{}
+\ili{} \ili{}\begin\ili{}{tabular}\ili{}{p\ili{}{6\ili{}.5cm}ccc}\ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}\textbf\ili{}{MWE\ili{} Aligner}\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{Precision}\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{Recall}\ili{} \ili{}&\ili{} \ili{}\textbf\ili{}{F\ili{}-measure}\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+Baseline\ili{} \ili{}(Giza\ili{}+\ili{}+\ili{})\ili{} \ili{}&\ili{} 0\ili{}.83\ili{} \ili{}&\ili{} 0\ili{}.37\ili{} \ili{}&\ili{} 0\ili{}.51\ili{} \ili{}\\ili{}\\ili{}
+Statistical\ili{} \ili{}&\ili{} 0\ili{}.81\ili{} \ili{}&\ili{} 0\ili{}.39\ili{} \ili{}&\ili{} 0\ili{}.52\ili{} \ili{}\\ili{}\\ili{}
+Hybrid\ili{} using\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{} \ili{}&\ili{} 0\ili{}.87\ili{} \ili{}&\ili{} 0\ili{}.55\ili{} \ili{}&\ili{} 0\ili{}.67\ili{} \ili{}\\ili{}\\ili{}
+Hybrid\ili{} using\ili{} co\ili{}-occurrence\ili{} \ili{}&\ili{} 0\ili{}.61\ili{} \ili{}&\ili{} 0\ili{}.63\ili{} \ili{}&\ili{} 0\ili{}.61\ili{} \ili{}\\ili{}\\ili{}
+Hybrid\ili{} using\ili{} co\ili{}-occurrence\ili{} \ili{}+\ili{} lexicon\ili{} \ili{}&\ili{} 0\ili{}.85\ili{} \ili{}&\ili{} 0\ili{}.54\ili{} \ili{}&\ili{} 0\ili{}.66\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}
+\ili{}
+The\ili{} first\ili{} observation\ili{} is\ili{} that\ili{},\ili{} the\ili{} hybrid\ili{} approach\ili{} based\ili{} on\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{} performs\ili{} better\ili{} than\ili{} all\ili{} the\ili{} other\ili{} methods\ili{}.\ili{} It\ili{} clearly\ili{} appears\ili{} that\ili{} the\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{} used\ili{} to\ili{} extract\ili{} the\ili{} MWEs\ili{} present\ili{} in\ili{} source\ili{} and\ili{} target\ili{} texts\ili{} has\ili{} had\ili{} a\ili{} significant\ili{} impact\ili{} on\ili{} the\ili{} precision\ili{} of\ili{} the\ili{} alignment\ili{}.\ili{} On\ili{} the\ili{} other\ili{} hand\ili{},\ili{} the\ili{} statistical\ili{} approach\ili{} has\ili{} the\ili{} lower\ili{} recall\ili{} but\ili{} it\ili{} is\ili{} better\ili{} than\ili{} the\ili{} recall\ili{} of\ili{} the\ili{} baseline\ili{} \ili{}(Giza\ili{}+\ili{}+\ili{})\ili{}.\ili{} And\ili{} as\ili{} a\ili{} second\ili{} observation\ili{},\ili{} adding\ili{} information\ili{} coming\ili{} from\ili{} a\ili{} bilingual\ili{} lexicon\ili{} to\ili{} the\ili{} co\ili{}-occurrence\ili{} metric\ili{} used\ili{} in\ili{} the\ili{} hybrid\ili{} approach\ili{} based\ili{} on\ili{} \ili{}\isi\ili{}{linear\ili{} programming}\ili{},\ili{} certainly\ili{} has\ili{} improved\ili{} the\ili{} precision\ili{} but\ili{} the\ili{} recall\ili{} has\ili{} dropped\ili{}.\ili{}
+\ili{}
+\ili{}\subsection\ili{}{Alignment\ili{} evaluation\ili{} through\ili{} a\ili{} translation\ili{} task}\ili{}
+\ili{}
+The\ili{} unavailability\ili{} of\ili{} a\ili{} reference\ili{} alignment\ili{} of\ili{} a\ili{} significant\ili{} size\ili{} for\ili{} MWEs\ili{} does\ili{} not\ili{} allow\ili{} us\ili{} to\ili{} achieve\ili{} a\ili{} large\ili{} evaluation\ili{} and\ili{} to\ili{} compare\ili{} our\ili{} approaches\ili{} with\ili{} the\ili{} state\ili{}-of\ili{}-the\ili{}-art\ili{} work\ili{}.\ili{} That\ili{}'s\ili{} why\ili{} we\ili{} decided\ili{} to\ili{} study\ili{} the\ili{} impact\ili{} of\ili{} MWEs\ili{} on\ili{} the\ili{} quality\ili{} of\ili{} translation\ili{} by\ili{} integrating\ili{} the\ili{} results\ili{} of\ili{} our\ili{} word\ili{} aligners\ili{} in\ili{} the\ili{} training\ili{} corpus\ili{} used\ili{} to\ili{} extract\ili{} the\ili{} \ili{}\isi\ili{}{translation\ili{} model}\ili{} of\ili{} the\ili{} \ili{}\isi\ili{}{phrase}\ili{} based\ili{} \ili{}\isi\ili{}{statistical\ili{} machine\ili{} translation}\ili{} system\ili{} Moses\ili{}.\ili{} We\ili{} use\ili{} the\ili{} factored\ili{} \ili{}\isi\ili{}{translation\ili{} model}\ili{} \ili{}\citep\ili{}{koehn2007factored}\ili{} as\ili{} our\ili{} baseline\ili{} system\ili{}.\ili{} It\ili{} is\ili{} an\ili{} extension\ili{} of\ili{} the\ili{} \ili{}\isi\ili{}{phrase}\ili{} based\ili{} models\ili{} which\ili{} are\ili{} limited\ili{} to\ili{} the\ili{} mappings\ili{} of\ili{} phrases\ili{} without\ili{} any\ili{} explicit\ili{} use\ili{} of\ili{} linguistic\ili{} information\ili{}.\ili{} \ili{} The\ili{} factored\ili{} model\ili{} enables\ili{} the\ili{} use\ili{} of\ili{} additional\ili{} markup\ili{} at\ili{} the\ili{} word\ili{} level\ili{} \ili{}(Figure\ili{} \ili{}\ref\ili{}{fig\ili{}:factModel}\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{figure}\ili{}
+\ili{}\centering\ili{}
+\ili{}\includegraphics\ili{}[width\ili{}=0\ili{}.5\ili{}\linewidth\ili{}]\ili{}{figures\ili{}/Figure_FactTrans_NB}\ili{}
+\ili{}\caption\ili{}{\ili{}\label\ili{}{fig\ili{}:factModel}Factored\ili{} model\ili{} used\ili{} in\ili{} the\ili{} SMT\ili{} baseline\ili{} system\ili{}.}\ili{}
+\ili{}\end\ili{}{figure}\ili{}
+\ili{}
+Our\ili{} model\ili{} operates\ili{} on\ili{} lemmas\ili{} instead\ili{} of\ili{} surface\ili{} forms\ili{},\ili{} in\ili{} which\ili{} the\ili{} translation\ili{} process\ili{} is\ili{} broken\ili{} up\ili{} into\ili{} a\ili{} sequence\ili{} of\ili{} mapping\ili{} steps\ili{} that\ili{} either\ili{}:\ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{}\item\ili{} Translate\ili{} source\ili{} lemmas\ili{} into\ili{} target\ili{}'s\ili{} ones\ili{}.\ili{}
+\ili{}\item\ili{} Generate\ili{} surface\ili{} forms\ili{} given\ili{} the\ili{} lemma\ili{}.\ili{}
+\ili{}\end\ili{}{itemize}\ili{}
+\ili{}
+\ili{}
+The\ili{} features\ili{} used\ili{} in\ili{} the\ili{} baseline\ili{} system\ili{} include\ili{}:\ili{} \ili{}(1\ili{})\ili{} four\ili{} translation\ili{} probability\ili{} features\ili{},\ili{} \ili{}(2\ili{})\ili{} two\ili{} language\ili{} models\ili{},\ili{} \ili{}(3\ili{})\ili{} one\ili{} generation\ili{} model\ili{} and\ili{} \ili{}(4\ili{})\ili{} word\ili{} penalty\ili{}.\ili{} \ili{}%For\ili{} the\ili{} CORPUS\ili{} method\ili{},\ili{} bilingual\ili{} MWEs\ili{} are\ili{} added\ili{} into\ili{} the\ili{} training\ili{} corpus\ili{},\ili{} as\ili{} result\ili{},\ili{} new\ili{} alignment\ili{} and\ili{} \ili{}\isi\ili{}{phrase}\ili{} table\ili{} are\ili{} obtained\ili{}.\ili{} \ili{}
+\ili{}
+The\ili{} goal\ili{} of\ili{} these\ili{} experiments\ili{} is\ili{} to\ili{} study\ili{} in\ili{} what\ili{} respect\ili{} MWEs\ili{} are\ili{} useful\ili{} to\ili{} improve\ili{} the\ili{} performance\ili{} of\ili{} Moses\ili{}.\ili{} In\ili{} Moses\ili{},\ili{} \ili{}\isi\ili{}{phrase}\ili{} tables\ili{} are\ili{} the\ili{} main\ili{} knowledge\ili{} source\ili{} for\ili{} the\ili{} machine\ili{} translation\ili{} decoder\ili{}.\ili{} The\ili{} decoder\ili{} consults\ili{} these\ili{} tables\ili{} to\ili{} figure\ili{} out\ili{} how\ili{} to\ili{} translate\ili{} an\ili{} input\ili{} sentence\ili{} into\ili{} the\ili{} target\ili{} language\ili{}.\ili{} These\ili{} tables\ili{} are\ili{} built\ili{} automatically\ili{} using\ili{} the\ili{} open\ili{} source\ili{} \ili{}\isi\ili{}{word\ili{} alignment}\ili{} tool\ili{} Giza\ili{}+\ili{}+\ili{} \ili{}\citep\ili{}{och2000improved}\ili{}.\ili{} However\ili{},\ili{} Giza\ili{}+\ili{}+\ili{} could\ili{} produce\ili{} errors\ili{} in\ili{} particular\ili{} when\ili{} it\ili{} aligns\ili{} multiword\ili{} expressions\ili{} \ili{}\citep\ili{}{fraser2007measuring}\ili{}.\ili{} In\ili{} order\ili{} to\ili{} integrate\ili{} into\ili{} Moses\ili{} the\ili{} bilingual\ili{} lexicon\ili{} which\ili{} is\ili{} extracted\ili{} automatically\ili{} by\ili{} the\ili{} \ili{}\isi\ili{}{MWE\ili{} alignment}\ili{} approaches\ili{},\ili{} we\ili{} propose\ili{} the\ili{} following\ili{} three\ili{} methods\ili{}:\ili{}
+\ili{}\begin\ili{}{itemize}\ili{}
+\ili{}\item\ili{} CORPUS\ili{}:\ili{} In\ili{} this\ili{} method\ili{},\ili{} we\ili{} add\ili{} the\ili{} extracted\ili{} bilingual\ili{} lexicon\ili{} as\ili{} a\ili{} parallel\ili{} corpus\ili{} and\ili{} retrain\ili{} the\ili{} \ili{}\isi\ili{}{translation\ili{} model}\ili{}.\ili{} By\ili{} increasing\ili{} the\ili{} occurrences\ili{} of\ili{} the\ili{} MWEs\ili{} and\ili{} their\ili{} translations\ili{},\ili{} we\ili{} expect\ili{} a\ili{} modification\ili{} of\ili{} alignment\ili{} and\ili{} probability\ili{} estimation\ili{}.\ili{}
+\ili{} \ili{}\item\ili{} TABLE\ili{}:\ili{} This\ili{} method\ili{} consists\ili{} in\ili{} adding\ili{} the\ili{} extracted\ili{} bilingual\ili{} lexicon\ili{} into\ili{} Moses\ili{}’s\ili{} \ili{}\isi\ili{}{phrase}\ili{} table\ili{}.\ili{} We\ili{} use\ili{} a\ili{} smoothed\ili{} probability\ili{} estimator\ili{} to\ili{} construct\ili{} a\ili{} translation\ili{} probability\ili{} for\ili{} each\ili{} MWE\ili{} of\ili{} the\ili{} bilingual\ili{} lexicon\ili{}.\ili{} This\ili{} estimator\ili{} is\ili{} based\ili{} on\ili{} the\ili{} similarity\ili{} measure\ili{} provided\ili{} by\ili{} each\ili{} \ili{}\isi\ili{}{word\ili{} alignment}\ili{} approach\ili{}.\ili{}
+\ili{} \ili{}\item\ili{} FEATURE\ili{}:\ili{} In\ili{} this\ili{} method\ili{},\ili{} we\ili{} extend\ili{} the\ili{} \ili{}`\ili{}`TABLE\ili{}'\ili{}'\ili{} method\ili{} by\ili{} adding\ili{} a\ili{} new\ili{} feature\ili{} indicating\ili{} whether\ili{} a\ili{} MWE\ili{} comes\ili{} from\ili{} the\ili{} bilingual\ili{} lexicon\ili{} or\ili{} not\ili{} \ili{}(l\ili{} or\ili{} 0\ili{} is\ili{} introduced\ili{} for\ili{} each\ili{} entry\ili{} of\ili{} the\ili{} \ili{}\isi\ili{}{phrase}\ili{} table\ili{})\ili{}.\ili{}
+\ili{}\end\ili{}{itemize}\ili{}
+\ili{}
+\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Data\ili{} and\ili{} experimental\ili{} setup}\ili{}
+In\ili{} order\ili{} to\ili{} study\ili{} the\ili{} impact\ili{} of\ili{} the\ili{} bilingual\ili{} lexicon\ili{} of\ili{} MWEs\ili{} on\ili{} the\ili{} performance\ili{} of\ili{} Moses\ili{},\ili{} we\ili{} conducted\ili{} our\ili{} experiments\ili{} on\ili{} two\ili{} \ili{}\ili\ili{}{English}\ili{}-\ili{}\ili\ili{}{French}\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{} \ili{}(Table\ili{} \ili{}\ref\ili{}{tab\ili{}:data}\ili{})\ili{}:\ili{} Europarl\ili{} \ili{}(European\ili{} Parliament\ili{} Proceedings\ili{})\ili{} and\ili{} Emea\ili{} \ili{}(European\ili{} Medicines\ili{} Agency\ili{} Documents\ili{})\ili{}.\ili{} These\ili{} corpora\ili{} were\ili{} extracted\ili{} from\ili{} the\ili{} open\ili{} parallel\ili{} corpus\ili{} OPUS\ili{} \ili{}\citep\ili{}{tiedemann2012parallel}\ili{}.\ili{} For\ili{} each\ili{} \ili{}\isi\ili{}{MWE\ili{} alignment}\ili{} approach\ili{},\ili{} we\ili{} achieved\ili{} three\ili{} runs\ili{} and\ili{} two\ili{} test\ili{} experiments\ili{} for\ili{} each\ili{} run\ili{}:\ili{} In\ili{}-Domain\ili{} and\ili{} Out\ili{}-Of\ili{}-Domain\ili{}.\ili{} For\ili{} this\ili{},\ili{} we\ili{} randomly\ili{} extracted\ili{} 500\ili{} parallel\ili{} sentences\ili{} from\ili{} Europarl\ili{} as\ili{} an\ili{} In\ili{}-Domain\ili{} corpus\ili{} and\ili{} 500\ili{} pairs\ili{} of\ili{} sentences\ili{} from\ili{} Emea\ili{} as\ili{} Out\ili{}-Of\ili{}-Domain\ili{} corpus\ili{}.\ili{} The\ili{} domain\ili{} vocabulary\ili{} is\ili{} represented\ili{} in\ili{} the\ili{} case\ili{} of\ili{} our\ili{} baseline\ili{} \ili{}(Moses\ili{})\ili{} respectively\ili{} by\ili{} the\ili{} specialized\ili{} parallel\ili{} corpus\ili{} Emea\ili{} which\ili{} is\ili{} added\ili{} to\ili{} the\ili{} training\ili{} data\ili{} \ili{}(Europarl\ili{})\ili{}.\ili{} Afterwards\ili{},\ili{} we\ili{} extracted\ili{} bilingual\ili{} MWEs\ili{} from\ili{} the\ili{} training\ili{} corpus\ili{} and\ili{} applied\ili{} the\ili{} three\ili{} methods\ili{} described\ili{} above\ili{}.\ili{} For\ili{} the\ili{} three\ili{} integration\ili{} methods\ili{} \ili{}(CORPUS\ili{},\ili{} TABLE\ili{},\ili{} FEATURE\ili{})\ili{},\ili{} the\ili{} domain\ili{} vocabulary\ili{} is\ili{} identified\ili{} by\ili{} a\ili{} bilingual\ili{} lexicon\ili{} which\ili{} is\ili{} extracted\ili{} automatically\ili{} from\ili{} the\ili{} specialized\ili{} parallel\ili{} corpus\ili{} Emea\ili{} using\ili{} the\ili{} different\ili{} MWEs\ili{} alignment\ili{} approaches\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\caption\ili{}{Europarl\ili{} and\ili{} Emea\ili{} corpora\ili{} details\ili{} used\ili{} to\ili{} train\ili{} language\ili{} and\ili{} translation\ili{} models\ili{} of\ili{} Moses\ili{} \ili{}(K\ili{} refers\ili{} to\ili{} \ili{}$10\ili{}^3\ili{}$\ili{})\ili{}.}\ili{}
+\ili{}\label\ili{}{tab\ili{}:data}\ili{}
+\ili{}\scriptsize\ili{}
+\ili{}\centering\ili{}
+\ili{} \ili{}\begin\ili{}{tabular}\ili{}{lcc}\ili{} \ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{} \ili{} Run\ili{} n\ili{}°\ili{}.\ili{} \ili{}&\ili{} Training\ili{} \ili{}(\ili{}\\ili{}#\ili{} sentences\ili{})\ili{} \ili{}&\ili{} Tuning\ili{} \ili{}(\ili{}\\ili{}#\ili{} sentences\ili{})\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+1\ili{} \ili{}&\ili{} 150K\ili{}+10K\ili{} \ili{}(Europarl\ili{}+Emea\ili{})\ili{} \ili{}&\ili{} 2K\ili{}+0\ili{}.5K\ili{} \ili{}(Europarl\ili{}+Emea\ili{})\ili{}\\ili{}\\ili{}
+2\ili{} \ili{}&\ili{} 150K\ili{}+20K\ili{} \ili{}(Europarl\ili{}+Emea\ili{})\ili{} \ili{}&\ili{} 2K\ili{}+0\ili{}.5K\ili{} \ili{}(Europarl\ili{}+Emea\ili{})\ili{}\\ili{}\\ili{}
+3\ili{} \ili{}&\ili{} 150K\ili{}+30K\ili{} \ili{}(Europarl\ili{}+Emea\ili{})\ili{} \ili{}&\ili{} 2K\ili{}+0\ili{}.5K\ili{} \ili{}(Europarl\ili{}+Emea\ili{})\ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}
+\ili{}\subsubsection\ili{}{Results\ili{} and\ili{} discussion}\ili{}
+The\ili{} performance\ili{} of\ili{} the\ili{} SMT\ili{} system\ili{} Moses\ili{} is\ili{} evaluated\ili{} using\ili{} the\ili{} BLEU\ili{} score\ili{} \ili{}\citep\ili{}{papineni2002bleu}\ili{} on\ili{} the\ili{} two\ili{} test\ili{} sets\ili{} for\ili{} the\ili{} three\ili{} runs\ili{} described\ili{} in\ili{} the\ili{} previous\ili{} section\ili{}.\ili{} \ili{}
+Note\ili{} that\ili{} we\ili{} consider\ili{} one\ili{} reference\ili{} per\ili{} sentence\ili{}.\ili{} The\ili{} obtained\ili{} results\ili{} are\ili{} reported\ili{} in\ili{} tables\ili{} \ili{}\ref\ili{}{tab\ili{}:SMT1}\ili{},\ili{} \ili{}\ref\ili{}{tab\ili{}:SMT2}\ili{},\ili{} \ili{}\ref\ili{}{tab\ili{}:SMT3}\ili{} and\ili{} \ili{}\ref\ili{}{tab\ili{}:SMT4}\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\caption\ili{}{BLEU\ili{} scores\ili{} of\ili{} Moses\ili{} when\ili{} using\ili{} the\ili{} results\ili{} of\ili{} the\ili{} statistical\ili{} approach\ili{}.}\ili{}
+\ili{}\label\ili{}{tab\ili{}:SMT1}\ili{}
+\ili{}\fittable\ili{}{\ili{}%\ili{}
+\ili{}\scriptsize\ili{}
+\ili{}\centering\ili{}
+\ili{} \ili{}\begin\ili{}{tabular}\ili{}{lcccccccc}\ili{} \ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{} \ili{} Run\ili{} n\ili{}°\ili{}.\ili{} \ili{}&\ili{} \ili{}\multicolumn\ili{}{4}\ili{}{c}\ili{}{In\ili{}-Domain\ili{} \ili{}(Europarl\ili{})}\ili{} \ili{}&\ili{} \ili{}\multicolumn\ili{}{4}\ili{}{c}\ili{}{Out\ili{}-Of\ili{}-Domain\ili{} \ili{}(Emea\ili{})}\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{}&\ili{} Baseline\ili{} \ili{}&\ili{} CORPUS\ili{} \ili{}&\ili{} TABLE\ili{} \ili{}&\ili{} FEATURE\ili{} \ili{}&\ili{} Baseline\ili{} \ili{}&\ili{} CORPUS\ili{} \ili{}&\ili{} TABLE\ili{} \ili{}&\ili{} FEATURE\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+1\ili{} \ili{}&\ili{} 32\ili{}.62\ili{} \ili{}&\ili{} 32\ili{}.41\ili{} \ili{}&\ili{} 32\ili{}.36\ili{} \ili{}&\ili{} 32\ili{}.55\ili{} \ili{}&\ili{} 22\ili{}.96\ili{} \ili{}&\ili{} 22\ili{}.82\ili{} \ili{}&\ili{} 22\ili{}.75\ili{} \ili{}&\ili{} 22\ili{}.91\ili{} \ili{}\\ili{}\\ili{}
+2\ili{} \ili{}&\ili{} 33\ili{}.81\ili{} \ili{}&\ili{} 33\ili{}.76\ili{} \ili{}&\ili{} 33\ili{}.71\ili{} \ili{}&\ili{} 33\ili{}.79\ili{} \ili{}&\ili{} 23\ili{}.30\ili{} \ili{}&\ili{} 23\ili{}.09\ili{} \ili{}&\ili{} 23\ili{}.04\ili{} \ili{}&\ili{} 23\ili{}.27\ili{} \ili{}\\ili{}\\ili{}
+3\ili{} \ili{}&\ili{} 34\ili{}.25\ili{} \ili{}&\ili{} 34\ili{}.23\ili{} \ili{}&\ili{} 34\ili{}.21\ili{} \ili{}&\ili{} 34\ili{}.24\ili{} \ili{}&\ili{} 24\ili{}.55\ili{} \ili{}&\ili{} 24\ili{}.49\ili{} \ili{}&\ili{} 24\ili{}.45\ili{} \ili{}&\ili{} 24\ili{}.52\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{} }\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\caption\ili{}{BLEU\ili{} scores\ili{} of\ili{} Moses\ili{} when\ili{} using\ili{} the\ili{} results\ili{} of\ili{} the\ili{} hybrid\ili{} approach\ili{} based\ili{} on\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{}.}\ili{}
+\ili{}\fittable\ili{}{\ili{}%\ili{}
+\ili{}\scriptsize\ili{}
+\ili{}\centering\ili{}
+\ili{}\label\ili{}{tab\ili{}:SMT2}\ili{}
+\ili{} \ili{}\begin\ili{}{tabular}\ili{}{lcccccccc}\ili{} \ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{} \ili{} Run\ili{} n\ili{}°\ili{}.\ili{} \ili{}&\ili{} \ili{}\multicolumn\ili{}{4}\ili{}{c}\ili{}{In\ili{}-Domain\ili{} \ili{}(Europarl\ili{})}\ili{} \ili{}&\ili{} \ili{}\multicolumn\ili{}{4}\ili{}{c}\ili{}{Out\ili{}-Of\ili{}-Domain\ili{} \ili{}(Emea\ili{})}\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{}&\ili{} Baseline\ili{} \ili{}&\ili{} CORPUS\ili{} \ili{}&\ili{} TABLE\ili{} \ili{}&\ili{} FEATURE\ili{} \ili{}&\ili{} Baseline\ili{} \ili{}&\ili{} CORPUS\ili{} \ili{}&\ili{} TABLE\ili{} \ili{}&\ili{} FEATURE\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+1\ili{} \ili{}&\ili{} 32\ili{}.62\ili{} \ili{}&\ili{} 32\ili{}.82\ili{} \ili{}&\ili{} 32\ili{}.15\ili{} \ili{}&\ili{} 32\ili{}.88\ili{} \ili{}&\ili{} 22\ili{}.96\ili{} \ili{}&\ili{} 23\ili{}.45\ili{} \ili{}&\ili{} 23\ili{}.11\ili{} \ili{}&\ili{} 23\ili{}.69\ili{} \ili{}\\ili{}\\ili{}
+2\ili{} \ili{}&\ili{} 33\ili{}.81\ili{} \ili{}&\ili{} 34\ili{}.05\ili{} \ili{}&\ili{} 33\ili{}.48\ili{} \ili{}&\ili{} 34\ili{}.09\ili{} \ili{}&\ili{} 23\ili{}.30\ili{} \ili{}&\ili{} 24\ili{}.09\ili{} \ili{}&\ili{} 23\ili{}.76\ili{} \ili{}&\ili{} 24\ili{}.18\ili{} \ili{}\\ili{}\\ili{}
+3\ili{} \ili{}&\ili{} 34\ili{}.25\ili{} \ili{}&\ili{} 34\ili{}.64\ili{} \ili{}&\ili{} 34\ili{}.11\ili{} \ili{}&\ili{} 34\ili{}.67\ili{} \ili{}&\ili{} 24\ili{}.55\ili{} \ili{}&\ili{} 25\ili{}.43\ili{} \ili{}&\ili{} 25\ili{}.05\ili{} \ili{}&\ili{} 25\ili{}.48\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{} }\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\caption\ili{}{BLEU\ili{} scores\ili{} of\ili{} Moses\ili{} when\ili{} using\ili{} the\ili{} results\ili{} of\ili{} the\ili{} hybrid\ili{} approach\ili{} based\ili{} on\ili{} linear\ili{} programming\ili{}.}\ili{}
+\ili{}\fittable\ili{}{\ili{}%\ili{} \ili{} \ili{}
+\ili{}\scriptsize\ili{}
+\ili{}\centering\ili{}
+\ili{}\label\ili{}{tab\ili{}:SMT3}\ili{}
+\ili{} \ili{}\begin\ili{}{tabular}\ili{}{lcccccccc}\ili{} \ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{} \ili{} Run\ili{} n\ili{}°\ili{}.\ili{} \ili{}&\ili{} \ili{}\multicolumn\ili{}{4}\ili{}{c}\ili{}{In\ili{}-Domain\ili{} \ili{}(Europarl\ili{})}\ili{} \ili{}&\ili{} \ili{}\multicolumn\ili{}{4}\ili{}{c}\ili{}{Out\ili{}-Of\ili{}-Domain\ili{} \ili{}(Emea\ili{})}\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{}&\ili{} Baseline\ili{} \ili{}&\ili{} CORPUS\ili{} \ili{}&\ili{} TABLE\ili{} \ili{}&\ili{} FEATURE\ili{} \ili{}&\ili{} Baseline\ili{} \ili{}&\ili{} CORPUS\ili{} \ili{}&\ili{} TABLE\ili{} \ili{}&\ili{} FEATURE\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+1\ili{} \ili{}&\ili{} 32\ili{}.62\ili{} \ili{}&\ili{} 32\ili{}.69\ili{} \ili{}&\ili{} 32\ili{}.64\ili{} \ili{}&\ili{} 32\ili{}.72\ili{} \ili{}&\ili{} 22\ili{}.96\ili{} \ili{}&\ili{} 23\ili{}.03\ili{} \ili{}&\ili{} 22\ili{}.97\ili{} \ili{}&\ili{} 23\ili{}.06\ili{} \ili{}\\ili{}\\ili{}
+2\ili{} \ili{}&\ili{} 33\ili{}.81\ili{} \ili{}&\ili{} 33\ili{}.88\ili{} \ili{}&\ili{} 33\ili{}.85\ili{} \ili{}&\ili{} 33\ili{}.91\ili{} \ili{}&\ili{} 23\ili{}.30\ili{} \ili{}&\ili{} 23\ili{}.37\ili{} \ili{}&\ili{} 23\ili{}.34\ili{} \ili{}&\ili{} 23\ili{}.40\ili{} \ili{}\\ili{}\\ili{}
+3\ili{} \ili{}&\ili{} 34\ili{}.25\ili{} \ili{}&\ili{} 34\ili{}.30\ili{} \ili{}&\ili{} 34\ili{}.27\ili{} \ili{}&\ili{} 34\ili{}.33\ili{} \ili{}&\ili{} 24\ili{}.55\ili{} \ili{}&\ili{} 24\ili{}.59\ili{} \ili{}&\ili{} 24\ili{}.56\ili{} \ili{}&\ili{} 24\ili{}.62\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{} }\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}
+\ili{}\caption\ili{}{BLEU\ili{} scores\ili{} of\ili{} Moses\ili{} when\ili{} using\ili{} the\ili{} results\ili{} of\ili{} the\ili{} hybrid\ili{} approach\ili{} based\ili{} on\ili{} linear\ili{} programming\ili{} and\ili{} using\ili{} a\ili{} bilingual\ili{} dictionary\ili{}.}\ili{}
+\ili{}\label\ili{}{tab\ili{}:SMT4}\ili{}
+\ili{}\fittable\ili{}{\ili{}%\ili{}
+\ili{}\scriptsize\ili{}
+\ili{}\centering\ili{}
+\ili{} \ili{}\begin\ili{}{tabular}\ili{}{lcccccccc}\ili{} \ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{} \ili{} Run\ili{} n\ili{}°\ili{}.\ili{} \ili{}&\ili{} \ili{}\multicolumn\ili{}{4}\ili{}{c}\ili{}{In\ili{}-Domain\ili{} \ili{}(Europarl\ili{})}\ili{} \ili{}&\ili{} \ili{}\multicolumn\ili{}{4}\ili{}{c}\ili{}{Out\ili{}-Of\ili{}-Domain\ili{} \ili{}(Emea\ili{})}\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{}&\ili{} Baseline\ili{} \ili{}&\ili{} CORPUS\ili{} \ili{}&\ili{} TABLE\ili{} \ili{}&\ili{} FEATURE\ili{} \ili{}&\ili{} Baseline\ili{} \ili{}&\ili{} CORPUS\ili{} \ili{}&\ili{} TABLE\ili{} \ili{}&\ili{} FEATURE\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+1\ili{} \ili{}&\ili{} 32\ili{}.62\ili{} \ili{}&\ili{} 32\ili{}.71\ili{} \ili{}&\ili{} 32\ili{}.68\ili{} \ili{}&\ili{} 32\ili{}.73\ili{} \ili{}&\ili{} 22\ili{}.96\ili{} \ili{}&\ili{} 23\ili{}.06\ili{} \ili{}&\ili{} 22\ili{}.97\ili{} \ili{}&\ili{} 23\ili{}.07\ili{} \ili{}\\ili{}\\ili{}
+2\ili{} \ili{}&\ili{} 33\ili{}.81\ili{} \ili{}&\ili{} 33\ili{}.89\ili{} \ili{}&\ili{} 33\ili{}.87\ili{} \ili{}&\ili{} 33\ili{}.92\ili{} \ili{}&\ili{} 23\ili{}.30\ili{} \ili{}&\ili{} 23\ili{}.39\ili{} \ili{}&\ili{} 23\ili{}.32\ili{} \ili{}&\ili{} 23\ili{}.39\ili{} \ili{}\\ili{}\\ili{}
+3\ili{} \ili{}&\ili{} 34\ili{}.25\ili{} \ili{}&\ili{} 34\ili{}.32\ili{} \ili{}&\ili{} 34\ili{}.29\ili{} \ili{}&\ili{} 34\ili{}.32\ili{} \ili{}&\ili{} 24\ili{}.55\ili{} \ili{}&\ili{} 24\ili{}.62\ili{} \ili{}&\ili{} 24\ili{}.56\ili{} \ili{}&\ili{} 24\ili{}.63\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{} }\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+As\ili{} shown\ili{} in\ili{} tables\ili{} 6\ili{},\ili{} 7\ili{},\ili{} 8\ili{} and\ili{} 9\ili{},\ili{} for\ili{} In\ili{}-Domain\ili{} texts\ili{},\ili{} Moses\ili{} achieve\ili{} a\ili{} relatively\ili{} high\ili{} BLEU\ili{} score\ili{} and\ili{} the\ili{} scores\ili{} of\ili{} Moses\ili{} when\ili{} using\ili{} the\ili{} results\ili{} of\ili{} the\ili{} hybrid\ili{} approach\ili{} based\ili{} on\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{} are\ili{} better\ili{} in\ili{} all\ili{} the\ili{} runs\ili{}.\ili{} The\ili{} best\ili{} improvement\ili{} is\ili{} achieved\ili{} using\ili{} the\ili{} \ili{}`\ili{}`FEATURE\ili{}'\ili{}'\ili{} method\ili{}.\ili{} \ili{}%This\ili{} method\ili{} \ili{}(when\ili{} compared\ili{} to\ili{} the\ili{} baseline\ili{} system\ili{})\ili{} reports\ili{} a\ili{} gain\ili{} of\ili{} \ili{}+0\ili{}.42\ili{} points\ili{} in\ili{} BLEU\ili{} score\ili{} for\ili{} In\ili{}-Domain\ili{} texts\ili{} and\ili{} \ili{}+0\ili{}.93\ili{} points\ili{} for\ili{} the\ili{} Out\ili{}-Of\ili{}-Domain\ili{} sentences\ili{} \ili{}(Table\ili{} 7\ili{},\ili{} Run\ili{} 3\ili{})\ili{}.\ili{}
+The\ili{} \ili{}`\ili{}`CORPUS\ili{}'\ili{}'method\ili{} \ili{}(when\ili{} compared\ili{} to\ili{} the\ili{} baseline\ili{} system\ili{})\ili{} comes\ili{} next\ili{} with\ili{} a\ili{} slightly\ili{} higher\ili{} BLEU\ili{} score\ili{} with\ili{} an\ili{} improvement\ili{} \ili{}%of\ili{} \ili{}+0\ili{}.39\ili{} points\ili{}
+for\ili{} In\ili{}-Domain\ili{} sentences\ili{} and\ili{} \ili{}%\ili{}+0\ili{}.88\ili{} points\ili{} for\ili{} the\ili{}
+Out\ili{}-Of\ili{}-Domain\ili{} texts\ili{}.\ili{}
+\ili{}
+In\ili{} order\ili{} to\ili{} show\ili{} the\ili{} impact\ili{} of\ili{} the\ili{} domain\ili{} vocabulary\ili{} \ili{}(represented\ili{} by\ili{} the\ili{} bilingual\ili{} MWEs\ili{} extracted\ili{} with\ili{} the\ili{} aligner\ili{} based\ili{} on\ili{} the\ili{} hybrid\ili{} approach\ili{} with\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{})\ili{},\ili{} on\ili{} the\ili{} \ili{}\isi\ili{}{translation\ili{} quality}\ili{} of\ili{} Moses\ili{},\ili{} we\ili{} manually\ili{} analyzed\ili{} an\ili{} example\ili{} of\ili{} translations\ili{} drawn\ili{} from\ili{} the\ili{} Out\ili{}-Of\ili{}-Domain\ili{} test\ili{} corpus\ili{} \ili{}(Table\ili{} 11\ili{})\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{table}\ili{}
+\ili{}\caption\ili{}{Translations\ili{} produced\ili{} by\ili{} Moses\ili{} for\ili{} an\ili{} Out\ili{}-Of\ili{}-Domain\ili{} sentence\ili{}.}\ili{}
+\ili{}\label\ili{}{tab\ili{}:SMT_ex2}\ili{}
+\ili{}\small\ili{}
+\ili{}\centering\ili{}
+\ili{} \ili{}\begin\ili{}{tabular}\ili{}{p\ili{}{0\ili{}.3\ili{}\linewidth}p\ili{}{0\ili{}.6\ili{}\linewidth}}\ili{} \ili{}
+\ili{} \ili{} \ili{}\lsptoprule\ili{}
+Input\ili{} sentence\ili{} \ili{}&\ili{} in\ili{} the\ili{} 12\ili{} week\ili{} acute\ili{} phase\ili{} of\ili{} three\ili{} clinical\ili{} trials\ili{} of\ili{} duloxetine\ili{} in\ili{} patients\ili{} with\ili{} diabetic\ili{} neuropathic\ili{} pain\ili{},\ili{} small\ili{} but\ili{} statistically\ili{} significant\ili{} increases\ili{} in\ili{} fasting\ili{} blood\ili{} glucose\ili{} were\ili{} observed\ili{} in\ili{} duloxetine\ili{}-treated\ili{} patients\ili{}.\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+Reference\ili{} translation\ili{} \ili{}&\ili{} lors\ili{} de\ili{} la\ili{} phase\ili{} aiguë\ili{} de\ili{} 12\ili{} semaines\ili{} de\ili{} trois\ili{} essais\ili{} cliniques\ili{} étudiant\ili{} la\ili{} duloxétine\ili{} chez\ili{} les\ili{} patients\ili{} souffrant\ili{} de\ili{} douleur\ili{} neuropathique\ili{} diabétique\ili{},\ili{} des\ili{} augmentations\ili{} faibles\ili{},\ili{} mais\ili{} statistiquement\ili{} significatives\ili{} de\ili{} la\ili{} glycémie\ili{} à\ili{} jeun\ili{} ont\ili{} été\ili{} observées\ili{} chez\ili{} les\ili{} patients\ili{} sous\ili{} duloxétine\ili{}.\ili{} \ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+Moses\ili{} translation\ili{} with\ili{} the\ili{} \ili{}`\ili{}`CORPUS\ili{}'\ili{}'\ili{} integration\ili{} method\ili{} \ili{}&\ili{} dans\ili{} le\ili{} 12\ili{} semaines\ili{} de\ili{} la\ili{} phase\ili{} aiguë\ili{} trois\ili{} études\ili{} cliniques\ili{} de\ili{} duloxetine\ili{} chez\ili{} les\ili{} patients\ili{} avec\ili{} douleur\ili{} neuropathique\ili{} diabétique\ili{},\ili{} petites\ili{} mais\ili{} statistiquement\ili{} significatif\ili{} augmentations\ili{} de\ili{} répréhensible\ili{} glycémie\ili{} artérielle\ili{} a\ili{} été\ili{} observée\ili{} chez\ili{} les\ili{} patients\ili{} traités\ili{} duloxetine\ili{}.\ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+Moses\ili{} translation\ili{} with\ili{} the\ili{} \ili{}`\ili{}`TABLE\ili{}'\ili{}'\ili{} integration\ili{} method\ili{} \ili{}&\ili{} dans\ili{} le\ili{} 12\ili{} semaine\ili{} de\ili{} la\ili{} phase\ili{} aiguë\ili{} de\ili{} trois\ili{} essais\ili{} cliniques\ili{} de\ili{} duloxetine\ili{} dans\ili{} les\ili{} patients\ili{} avec\ili{} douleur\ili{} neuropathique\ili{} diabétique\ili{},\ili{} petites\ili{} mais\ili{} statistiquement\ili{} augmentations\ili{} considérables\ili{} dans\ili{} le\ili{} sang\ili{} répréhensible\ili{} glucose\ili{} ont\ili{} été\ili{} constatées\ili{} dans\ili{} les\ili{} patients\ili{} duloxetine\ili{} traités\ili{}.\ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\midrule\ili{}
+Moses\ili{} translation\ili{} with\ili{} the\ili{} \ili{}`\ili{}`FEATURE\ili{}'\ili{}'\ili{} integration\ili{} method\ili{} \ili{}&\ili{} dans\ili{} le\ili{} 12\ili{} semaines\ili{} de\ili{} la\ili{} phase\ili{} aiguë\ili{} de\ili{} trois\ili{} essais\ili{} cliniques\ili{} chez\ili{} les\ili{} patients\ili{} avec\ili{} douleur\ili{} neuropathique\ili{} diabétique\ili{},\ili{} petites\ili{} mais\ili{} des\ili{} augmentations\ili{} statistiquement\ili{} significatives\ili{} de\ili{} la\ili{} glycémie\ili{} à\ili{} jeun\ili{} ont\ili{} été\ili{} observées\ili{} chez\ili{} les\ili{} patients\ili{} traités\ili{} duloxétine\ili{}.\ili{}\\ili{}\\ili{}
+\ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{}\end\ili{}{table}\ili{}
+\ili{}
+After\ili{} analyzing\ili{} the\ili{} translations\ili{} of\ili{} this\ili{} example\ili{},\ili{} it\ili{} is\ili{} clear\ili{} that\ili{} in\ili{} some\ili{} cases\ili{},\ili{} it\ili{} is\ili{} just\ili{} impossible\ili{} to\ili{} perform\ili{} a\ili{} word\ili{}-to\ili{}-\ili{}\isi\ili{}{word\ili{} alignment}\ili{} between\ili{} two\ili{} MWEs\ili{} that\ili{} are\ili{} translation\ili{} of\ili{} each\ili{} other\ili{}.\ili{} For\ili{} example\ili{},\ili{} the\ili{} \ili{}`\ili{}`FEATURE\ili{}'\ili{}'\ili{} method\ili{} proposes\ili{} the\ili{} compound\ili{} word\ili{} \ili{}“glycémie\ili{} à\ili{} jeun\ili{}”\ili{} as\ili{} a\ili{} translation\ili{} for\ili{} the\ili{} expression\ili{} \ili{}“fasting\ili{} blood\ili{} glucose\ili{}”\ili{} which\ili{} is\ili{} correct\ili{},\ili{} but\ili{},\ili{} \ili{}`\ili{}`CORPUS\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`TABLE\ili{}'\ili{}'\ili{} methods\ili{} propose\ili{} respectively\ili{} the\ili{} translations\ili{} \ili{}“répréhensible\ili{} glycémie\ili{} artérielle\ili{}”\ili{} and\ili{} \ili{}“sang\ili{} répréhensible\ili{} glucose\ili{}”\ili{} which\ili{} are\ili{} completely\ili{} wrong\ili{}.\ili{} However\ili{},\ili{} all\ili{} the\ili{} integration\ili{} methods\ili{} translate\ili{} correctly\ili{} the\ili{} multiword\ili{} expressions\ili{} \ili{}“diabetic\ili{} neuropath\ili{}\\ili{}-ic\ili{} pain\ili{}/douleur\ili{} neuropathique\ili{} diabétique\ili{}”\ili{} and\ili{} \ili{}“acute\ili{} phase\ili{}/phase\ili{} aiguë\ili{}”\ili{}.\ili{} The\ili{} multiword\ili{} expression\ili{} \ili{}“clinical\ili{} trials\ili{}/essais\ili{} cliniques\ili{}”\ili{} is\ili{} translated\ili{} correctly\ili{} by\ili{} \ili{}`\ili{}`TABLE\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`FEATURE\ili{}'\ili{}'\ili{} methods\ili{}.\ili{} Likewise\ili{},\ili{} the\ili{} translation\ili{} provided\ili{} by\ili{} the\ili{} \ili{}`\ili{}`CORPUS\ili{}'\ili{}'\ili{} method\ili{} for\ili{} this\ili{} expression\ili{} is\ili{} also\ili{} correct\ili{} \ili{}“clinical\ili{} trials\ili{}/études\ili{} cliniques\ili{}”\ili{} but\ili{} it\ili{} is\ili{} different\ili{} from\ili{} the\ili{} translation\ili{} of\ili{} the\ili{} reference\ili{}.\ili{} It\ili{} seems\ili{} that\ili{} the\ili{} probabilities\ili{} of\ili{} the\ili{} alignments\ili{} proposed\ili{} by\ili{} Giza\ili{}+\ili{}+\ili{} for\ili{} these\ili{} multiword\ili{} expressions\ili{} were\ili{} very\ili{} high\ili{} and\ili{} helped\ili{} Moses\ili{} decoder\ili{} to\ili{} choose\ili{} these\ili{} alignments\ili{}.\ili{} On\ili{} the\ili{} other\ili{} hand\ili{},\ili{} as\ili{} we\ili{} can\ili{} see\ili{},\ili{} all\ili{} the\ili{} translations\ili{} have\ili{} many\ili{} spelling\ili{} and\ili{} grammatical\ili{} errors\ili{},\ili{} and\ili{} in\ili{} particular\ili{},\ili{} the\ili{} translations\ili{} of\ili{} some\ili{} multiword\ili{} expressions\ili{} \ili{}(statistically\ili{} significant\ili{} increases\ili{}/statistiquement\ili{} significatif\ili{} augmentations\ili{},\ili{} statistically\ili{} significant\ili{} increases\ili{}/statistiquement\ili{} augmentations\ili{} considérables\ili{})\ili{} produced\ili{} by\ili{} the\ili{} \ili{}`\ili{}`CORPUS\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`TABLE\ili{}'\ili{}'\ili{} methods\ili{} are\ili{} very\ili{} approximate\ili{}.\ili{} This\ili{} result\ili{} can\ili{} be\ili{} explained\ili{} by\ili{} the\ili{} fact\ili{} that\ili{},\ili{} on\ili{} the\ili{} one\ili{} hand\ili{},\ili{} \ili{}\isi\ili{}{statistical\ili{} machine\ili{} translation}\ili{} toolkits\ili{} like\ili{} Moses\ili{} have\ili{} not\ili{} been\ili{} designed\ili{} with\ili{} grammatical\ili{} error\ili{} correction\ili{} in\ili{} mind\ili{},\ili{} and\ili{} on\ili{} the\ili{} other\ili{} hand\ili{},\ili{} Giza\ili{}+\ili{}+\ili{} could\ili{} produce\ili{} errors\ili{} in\ili{} particular\ili{} when\ili{} it\ili{} aligns\ili{} multiword\ili{} expressions\ili{} \ili{} \ili{}\citep\ili{}{fraser2007measuring}\ili{}.\ili{} For\ili{} the\ili{} multiword\ili{} expression\ili{} \ili{}“duloxetine\ili{}-treated\ili{} patients\ili{}”\ili{},\ili{} the\ili{} methods\ili{} \ili{}`\ili{}`FEATURE\ili{}'\ili{}'\ili{} and\ili{} \ili{}`\ili{}`CORPUS\ili{}'\ili{}'\ili{} provide\ili{} a\ili{} same\ili{} translation\ili{} which\ili{} is\ili{} more\ili{} or\ili{} less\ili{} correct\ili{} \ili{}(patients\ili{} traités\ili{} duloxetine\ili{})\ili{}.\ili{} However\ili{},\ili{} the\ili{} method\ili{} TABLE\ili{} provides\ili{} a\ili{} translation\ili{} in\ili{} a\ili{} poor\ili{} grammar\ili{} \ili{}(patients\ili{} duloxetine\ili{} traités\ili{})\ili{}.\ili{}
+\ili{}
+Finally\ili{} on\ili{} this\ili{} point\ili{},\ili{} we\ili{} can\ili{} observe\ili{} that\ili{} the\ili{} major\ili{} issues\ili{} of\ili{} Moses\ili{} concern\ili{} errors\ili{} produced\ili{} by\ili{} Giza\ili{}+\ili{}+\ili{} when\ili{} aligning\ili{} multiword\ili{} expressions\ili{} \ili{}(\ili{}\isi\ili{}{translation\ili{} model}\ili{})\ili{},\ili{} and\ili{} incorrect\ili{} spelling\ili{} and\ili{} poor\ili{} grammar\ili{} generated\ili{} by\ili{} the\ili{} decoder\ili{} \ili{}(language\ili{} model\ili{})\ili{}.\ili{} To\ili{} handle\ili{} the\ili{} first\ili{} issue\ili{},\ili{} we\ili{} proposed\ili{} to\ili{} take\ili{} into\ili{} account\ili{} the\ili{} specialized\ili{} bilingual\ili{} lexicon\ili{} extracted\ili{} with\ili{} the\ili{} MWEs\ili{} aligner\ili{} into\ili{} Moses\ili{}’s\ili{} \ili{}\isi\ili{}{phrase}\ili{} table\ili{} and\ili{} we\ili{} added\ili{} a\ili{} new\ili{} feature\ili{} indicating\ili{} whether\ili{} a\ili{} word\ili{} comes\ili{} from\ili{} this\ili{} lexicon\ili{} or\ili{} not\ili{} \ili{}(FEATURE\ili{} method\ili{})\ili{}.\ili{} However\ili{},\ili{} for\ili{} spelling\ili{} and\ili{} grammar\ili{} errors\ili{},\ili{} Moses\ili{} has\ili{} no\ili{} specific\ili{} treatment\ili{}.\ili{}
+\ili{}
+\ili{}\section\ili{}{Conclusion\ili{} and\ili{} future\ili{} work}\ili{}
+\ili{}
+We\ili{} have\ili{} described\ili{},\ili{} in\ili{} this\ili{} chapter\ili{},\ili{} three\ili{} approaches\ili{} aiming\ili{} to\ili{} extract\ili{} and\ili{} align\ili{} MWEs\ili{} in\ili{} \ili{}\ili\ili{}{English}\ili{}-\ili{}\ili\ili{}{French}\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{}.\ili{} We\ili{} have\ili{} also\ili{} presented\ili{} an\ili{} experimental\ili{} evaluation\ili{} of\ili{} the\ili{} impact\ili{} of\ili{} integrating\ili{} the\ili{} results\ili{} of\ili{} these\ili{} MWEs\ili{} alignment\ili{} approaches\ili{} on\ili{} the\ili{} performance\ili{} of\ili{} the\ili{} \ili{}\isi\ili{}{statistical\ili{} machine\ili{} translation}\ili{} system\ili{} Moses\ili{}.\ili{} We\ili{} have\ili{} more\ili{} specifically\ili{} shown\ili{} that\ili{},\ili{} on\ili{} the\ili{} one\ili{} hand\ili{},\ili{} the\ili{} hybrid\ili{} approach\ili{} based\ili{} on\ili{} morpho\ili{}-syntactic\ili{} patterns\ili{} performs\ili{} better\ili{} than\ili{} the\ili{} other\ili{} approaches\ili{} and\ili{} the\ili{} \ili{}`\ili{}`FEATURE\ili{}'\ili{}'\ili{} integration\ili{} method\ili{} achieves\ili{} the\ili{} best\ili{} improvement\ili{},\ili{} and\ili{} on\ili{} the\ili{} other\ili{} hand\ili{},\ili{} using\ili{} MWEs\ili{} as\ili{} additional\ili{} parallel\ili{} sentences\ili{} to\ili{} train\ili{} the\ili{} \ili{}\isi\ili{}{translation\ili{} model}\ili{} of\ili{} Moses\ili{} improves\ili{} its\ili{} BLEU\ili{} score\ili{}.\ili{}
+\ili{}
+This\ili{} study\ili{} offers\ili{} several\ili{} open\ili{} issues\ili{} for\ili{} future\ili{} work\ili{}.\ili{} First\ili{},\ili{} we\ili{} should\ili{} explore\ili{} machine\ili{} learning\ili{} approaches\ili{} to\ili{} extend\ili{} the\ili{} morphosyntactic\ili{} patterns\ili{} to\ili{} take\ili{} into\ili{} account\ili{} other\ili{} forms\ili{} of\ili{} MWEs\ili{}.\ili{} The\ili{} second\ili{} perspective\ili{} is\ili{} to\ili{} explore\ili{} the\ili{} integration\ili{} of\ili{} bilingual\ili{} MWEs\ili{} into\ili{} other\ili{} machine\ili{} translation\ili{} models\ili{} such\ili{} as\ili{} rule\ili{}-based\ili{} translation\ili{} ones\ili{}.\ili{} We\ili{} also\ili{} expect\ili{} to\ili{} explore\ili{} the\ili{} use\ili{} of\ili{} LSTM\ili{} \ili{}(Long\ili{} Short\ili{}-Term\ili{} Memory\ili{})\ili{} recurrent\ili{} neural\ili{} network\ili{} language\ili{} models\ili{} for\ili{} rescoring\ili{} the\ili{} n\ili{}-best\ili{} translations\ili{} produced\ili{} by\ili{} Moses\ili{} in\ili{} order\ili{} to\ili{} reduce\ili{} grammar\ili{} errors\ili{}.\ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{} \ili{}\section\ili{}{Where\ili{} we\ili{} came\ili{} from}\ili{} \ili{}
+\ili{}%\ili{} Phasellus\ili{} maximus\ili{} erat\ili{} ligula\ili{},\ili{} accumsan\ili{} rutrum\ili{} augue\ili{} facilisis\ili{} in\ili{}.\ili{} Proin\ili{} sit\ili{} amet\ili{} pharetra\ili{} nunc\ili{},\ili{} sed\ili{} maximus\ili{} erat\ili{}.\ili{} Duis\ili{} egestas\ili{} mi\ili{} eget\ili{} purus\ili{} venenatis\ili{} vulputate\ili{} vel\ili{} quis\ili{} nunc\ili{}.\ili{} Nullam\ili{} volutpat\ili{} facilisis\ili{} tortor\ili{},\ili{} vitae\ili{} semper\ili{} ligula\ili{} dapibus\ili{} sit\ili{} amet\ili{}.\ili{} Suspendisse\ili{} fringilla\ili{},\ili{} quam\ili{} sed\ili{} laoreet\ili{} maximus\ili{},\ili{} ex\ili{} ex\ili{} placerat\ili{} ipsum\ili{},\ili{} porta\ili{} ultrices\ili{} mi\ili{} risus\ili{} et\ili{} lectus\ili{}.\ili{} Maecenas\ili{} vitae\ili{} mauris\ili{} condimentum\ili{} justo\ili{} fringilla\ili{} sollicitudin\ili{}.\ili{} Fusce\ili{} nec\ili{} interdum\ili{} ante\ili{}.\ili{} Curabitur\ili{} tempus\ili{} dui\ili{} et\ili{} orci\ili{} convallis\ili{} molestie\ili{} \ili{}\citep\ili{}{Chomsky1957}\ili{}.\ili{}
+\ili{}
+\ili{}%\ili{} \ili{}\begin\ili{}{table}\ili{}
+\ili{}%\ili{} \ili{}\caption\ili{}{Frequencies\ili{} of\ili{} word\ili{} classes}\ili{}
+\ili{}%\ili{} \ili{}\label\ili{}{tab\ili{}:1\ili{}:frequencies}\ili{}
+\ili{}%\ili{} \ili{} \ili{}\begin\ili{}{tabular}\ili{}{lllll}\ili{} \ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{}\lsptoprule\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} nouns\ili{} \ili{}&\ili{} verbs\ili{} \ili{}&\ili{} adjectives\ili{} \ili{}&\ili{} adverbs\ili{}\\ili{}\\ili{} \ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{}\midrule\ili{}
+\ili{}%\ili{} \ili{} \ili{} absolute\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} 12\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} 34\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} 23\ili{} \ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} 13\ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} relative\ili{} \ili{} \ili{}&\ili{} \ili{} \ili{} 3\ili{}.1\ili{} \ili{}&\ili{} \ili{} \ili{} 8\ili{}.9\ili{} \ili{}&\ili{} \ili{} \ili{} \ili{} 5\ili{}.7\ili{} \ili{} \ili{} \ili{} \ili{}&\ili{} 3\ili{}.2\ili{}\\ili{}\\ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{}\lspbottomrule\ili{}
+\ili{}%\ili{} \ili{} \ili{}\end\ili{}{tabular}\ili{}
+\ili{}%\ili{} \ili{}\end\ili{}{table}\ili{}
+\ili{}
+\ili{}%\ili{} Sed\ili{} nisi\ili{} urna\ili{},\ili{} dignissim\ili{} sit\ili{} amet\ili{} posuere\ili{} ut\ili{},\ili{} luctus\ili{} ac\ili{} lectus\ili{}.\ili{} Fusce\ili{} vel\ili{} ornare\ili{} nibh\ili{}.\ili{} Nullam\ili{} non\ili{} sapien\ili{} in\ili{} tortor\ili{} hendrerit\ili{} suscipit\ili{}.\ili{} Etiam\ili{} sollicitudin\ili{} nibh\ili{} ligula\ili{}.\ili{} Praesent\ili{} dictum\ili{} gravida\ili{} est\ili{} eget\ili{} maximus\ili{}.\ili{} Integer\ili{} in\ili{} felis\ili{} id\ili{} diam\ili{} sodales\ili{} accumsan\ili{} at\ili{} at\ili{} turpis\ili{}.\ili{} Maecenas\ili{} dignissim\ili{} purus\ili{} non\ili{} libero\ili{} scelerisque\ili{} porttitor\ili{}.\ili{} Integer\ili{} porttitor\ili{} mauris\ili{} ac\ili{} nisi\ili{} iaculis\ili{} molestie\ili{}.\ili{} Sed\ili{} nec\ili{} imperdiet\ili{} orci\ili{}.\ili{} Suspendisse\ili{} sed\ili{} fringilla\ili{} elit\ili{},\ili{} non\ili{} varius\ili{} elit\ili{}.\ili{} Sed\ili{} varius\ili{} nisi\ili{} magna\ili{},\ili{} at\ili{} efficitur\ili{} orci\ili{} consectetur\ili{} a\ili{}.\ili{} Cras\ili{} consequat\ili{} mi\ili{} dui\ili{},\ili{} et\ili{} cursus\ili{} lacus\ili{} vehicula\ili{} vitae\ili{}.\ili{} Pellentesque\ili{} sit\ili{} amet\ili{} justo\ili{} sed\ili{} lectus\ili{} luctus\ili{} vehicula\ili{}.\ili{} Suspendisse\ili{} placerat\ili{} augue\ili{} eget\ili{} felis\ili{} sagittis\ili{} placerat\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}%\ili{} \ili{}\ea\ili{}
+\ili{}%\ili{} \ili{}\gll\ili{} cogito\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} \ili{} ergo\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} sum\ili{}\\ili{}\\ili{} \ili{} \ili{}
+\ili{}%\ili{} \ili{} \ili{} \ili{} \ili{} \ili{} think\ili{}.\ili{}\textsc\ili{}{1sg}\ili{}.\ili{}\textsc\ili{}{pres}\ili{} therefore\ili{} \ili{}\textsc\ili{}{cop}\ili{}.\ili{}\textsc\ili{}{1sg}\ili{}.\ili{}\textsc\ili{}{pres}\ili{}\\ili{}\\ili{} \ili{}
+\ili{}%\ili{} \ili{}\glt\ili{} \ili{}`I\ili{} think\ili{} therefore\ili{} I\ili{} am\ili{}.\ili{}'\ili{}
+\ili{}%\ili{} \ili{}\z\ili{}
+\ili{}
+\ili{}%\ili{} Sed\ili{} cursus\ili{} eros\ili{} condimentum\ili{} mi\ili{} consectetur\ili{},\ili{} ac\ili{} consectetur\ili{} sapien\ili{} pulvinar\ili{}.\ili{} Sed\ili{} consequat\ili{},\ili{} magna\ili{} eu\ili{} scelerisque\ili{} laoreet\ili{},\ili{} ante\ili{} erat\ili{} tristique\ili{} justo\ili{},\ili{} nec\ili{} cursus\ili{} eros\ili{} diam\ili{} eu\ili{} nisl\ili{}.\ili{} Vestibulum\ili{} non\ili{} arcu\ili{} tellus\ili{}.\ili{} Nunc\ili{} dignissim\ili{} tristique\ili{} massa\ili{} ut\ili{} gravida\ili{}.\ili{} Nullam\ili{} auctor\ili{} orci\ili{} gravida\ili{} tellus\ili{} egestas\ili{},\ili{} vitae\ili{} pharetra\ili{} nisl\ili{} porttitor\ili{}.\ili{} Pellentesque\ili{} turpis\ili{} nulla\ili{},\ili{} venenatis\ili{} id\ili{} porttitor\ili{} non\ili{},\ili{} volutpat\ili{} ut\ili{} leo\ili{}.\ili{} Etiam\ili{} hendrerit\ili{} scelerisque\ili{} luctus\ili{}.\ili{} Nam\ili{} sed\ili{} egestas\ili{} est\ili{}.\ili{} Suspendisse\ili{} potenti\ili{}.\ili{} Nunc\ili{} vestibulum\ili{} nec\ili{} odio\ili{} non\ili{} laoreet\ili{}.\ili{} Proin\ili{} lacinia\ili{} nulla\ili{} lectus\ili{},\ili{} eu\ili{} vehicula\ili{} erat\ili{} vehicula\ili{} sed\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}
+\ili{}%\ili{} \ili{}\section\ili{}*\ili{}{Abbreviations}\ili{}
+\ili{}%\ili{} \ili{}\section\ili{}*\ili{}{Acknowledgements}\ili{}
+\ili{}
+\ili{}\printbibliography\ili{}[heading\ili{}=subbibliography\ili{},notkeyword\ili{}=this\ili{}]\ili{}
+\ili{}%\ili{} \ili{}\bibliographystyle\ili{}{langsci\ili{}-unified}\ili{}
+\ili{}%\ili{} \ili{}\bibliography\ili{}{main\ili{}-blx}\ili{}
+\ili{}\end\ili{}{document}\ili{}
+\ili{}

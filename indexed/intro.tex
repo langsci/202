@@ -1,0 +1,211 @@
+\documentclass[output=paper]{langsci/langscibook} 
+\title{Representation and parsing of multiword expressions}
+\author{%
+ Yannick Parmentier\affiliation{Université d'Orléans}\lastand 
+ Jakub Waszczuk\affiliation{Université François Rabelais Tours\\Université d'Orléans}
+}
+% \chapterDOI{} %will be filled in at production
+
+%\epigram{Change epigram in chapters/01.tex or remove it there }
+
+%\lehead{}
+%\shorttitlerunninghead{}
+
+\abstract{%
+}
+
+\maketitle
+\begin{document}\ili{}
+\ili{}
+\ili{}\section\ili{}{Introduction}\ili{} \ili{}
+While\ili{} \ili{}\isi\ili{}{Multiword\ili{} Expressions}\ili{} \ili{}(MWEs\ili{})\ili{},\ili{} i\ili{}.e\ili{}.\ili{} sequences\ili{} of\ili{} words\ili{} with\ili{} some\ili{}
+unpredictable\ili{} properties\ili{} such\ili{} as\ili{} \ili{}\textit\ili{}{to\ili{} count\ili{} somebody\ili{} in}\ili{} or\ili{}
+\ili{}\textit\ili{}{to\ili{} take\ili{} a\ili{} haircut}\ili{},\ili{} have\ili{} been\ili{} attracting\ili{} attention\ili{} for\ili{} a\ili{} long\ili{}
+time\ili{} because\ili{} of\ili{} these\ili{} idiosyncratic\ili{} properties\ili{} which\ili{} go\ili{} beyond\ili{} word\ili{}
+boundaries\ili{},\ili{} they\ili{} remain\ili{} a\ili{} challenge\ili{} for\ili{} both\ili{} linguistic\ili{} theories\ili{} and\ili{}
+natural\ili{} language\ili{} \ili{}(NL\ili{})\ili{} applications\ili{}.\ili{}
+\ili{}
+Indeed\ili{},\ili{} most\ili{} of\ili{} these\ili{} theories\ili{} and\ili{} applications\ili{} admit\ili{} an\ili{} \ili{}(explicit\ili{} or\ili{}
+implicit\ili{})\ili{} division\ili{} of\ili{} language\ili{} phenomena\ili{} into\ili{} clear\ili{}-cut\ili{} levels\ili{}:\ili{}
+\ili{}%\ili{}\begin\ili{}{description}\ili{}
+\ili{}%\ili{}\item\ili{}[\ili{}
+\ili{}(i\ili{})\ili{} tokens\ili{} \ili{}(indivisible\ili{} text\ili{} units\ili{},\ili{} roughly\ili{} words\ili{})\ili{},\ili{}
+\ili{}%\ili{}\item\ili{}[\ili{}
+\ili{}(ii\ili{})\ili{} morphology\ili{} \ili{}(properties\ili{} of\ili{} words\ili{} e\ili{}.g\ili{}.\ili{} number\ili{},\ili{} gender\ili{},\ili{} etc\ili{}.\ili{})\ili{},\ili{}
+\ili{}%\ili{}\item\ili{}[\ili{}
+\ili{}(iii\ili{})\ili{} syntax\ili{} \ili{}(structural\ili{} links\ili{} between\ili{} words\ili{},\ili{} e\ili{}.g\ili{}.\ili{} number\ili{}/gender\ili{} agreement\ili{})\ili{},\ili{}
+\ili{}%\ili{}\item\ili{}[\ili{}
+\ili{}(iv\ili{})\ili{} semantics\ili{} \ili{}(meaning\ili{} of\ili{} words\ili{} and\ili{} sentences\ili{})\ili{}.\ili{}
+\ili{}%\ili{}\end\ili{}{description}\ili{}
+However\ili{},\ili{} human\ili{} languages\ili{} frequently\ili{} show\ili{} a\ili{} high\ili{} degree\ili{} of\ili{} ambiguity\ili{}
+and\ili{} fuzziness\ili{} with\ili{} respect\ili{} to\ili{} this\ili{} layer\ili{}-oriented\ili{} model\ili{}.\ili{} In\ili{}
+particular\ili{},\ili{} MWEs\ili{} are\ili{} placed\ili{} on\ili{} the\ili{} frontier\ili{} between\ili{} these\ili{} levels\ili{} due\ili{}
+to\ili{} their\ili{} idiosyncratic\ili{} properties\ili{} on\ili{} the\ili{} one\ili{} hand\ili{},\ili{} and\ili{} their\ili{}
+morphological\ili{},\ili{} syntactic\ili{} and\ili{} semantic\ili{} \ili{}\isi\ili{}{variations}\ili{} on\ili{} the\ili{} other\ili{}
+hand\ili{}.\ili{} For\ili{} instance\ili{},\ili{} their\ili{} meaning\ili{} is\ili{} often\ili{} non\ili{}-compositional\ili{} as\ili{} in\ili{} \ili{}"to\ili{}
+take\ili{} a\ili{} haircut\ili{}"\ili{} \ili{}(i\ili{}.e\ili{}.\ili{} \ili{}"to\ili{} suffer\ili{} a\ili{} serious\ili{} financial\ili{} loss\ili{}"\ili{})\ili{},\ili{} although\ili{}
+they\ili{} admit\ili{} some\ili{} syntactic\ili{} variation\ili{} similarly\ili{} to\ili{} many\ili{} other\ili{}
+expressions\ili{} \ili{}(\ili{}"take\ili{}/takes\ili{}/have\ili{} taken\ili{}/has\ili{} taken\ili{}/took\ili{} a\ili{} serious\ili{}/70\ili{}\\ili{}%\ili{}
+haircut\ili{}"\ili{})\ili{}.\ili{} Strictly\ili{} layer\ili{}-oriented\ili{} language\ili{} models\ili{} fail\ili{} to\ili{} reflect\ili{}
+this\ili{} specificity\ili{},\ili{} and\ili{} thus\ili{} yield\ili{} erroneous\ili{} text\ili{} processing\ili{} results\ili{}
+\ili{}(e\ili{}.g\ili{}.\ili{} word\ili{}-to\ili{}-word\ili{} translations\ili{} of\ili{} idioms\ili{})\ili{}.\ili{} Although\ili{} the\ili{} quantitative\ili{}
+importance\ili{} of\ili{} MWEs\ili{} is\ili{} well\ili{} known\ili{} \ili{}(they\ili{} cover\ili{} up\ili{} to\ili{} 30\ili{}\\ili{}%\ili{} of\ili{} all\ili{} words\ili{}
+in\ili{} human\ili{} language\ili{} utterances\ili{},\ili{} and\ili{} are\ili{} much\ili{} more\ili{} numerous\ili{} in\ili{} lexicons\ili{}
+than\ili{} single\ili{} words\ili{})\ili{},\ili{} the\ili{} achievements\ili{} in\ili{} their\ili{} formal\ili{} representation\ili{}
+and\ili{} automatic\ili{} processing\ili{} are\ili{} still\ili{} largely\ili{} unsatisfactory\ili{}.\ili{}
+\ili{}
+In\ili{} this\ili{} context\ili{},\ili{} an\ili{} international\ili{} and\ili{} multilingual\ili{} consortium\ili{} of\ili{}
+researchers\ili{} recently\ili{} took\ili{} part\ili{} in\ili{} the\ili{} European\ili{} PARSEME\ili{} COST\ili{}
+Action\ili{}\footnote\ili{}{\ili{}\url\ili{}{http\ili{}:\ili{}/\ili{}/www\ili{}.cost\ili{}.eu\ili{}/COST_Actions\ili{}/ict\ili{}/IC1207}}\ili{}
+\ili{}(2013\ili{}-2017\ili{})\ili{},\ili{} which\ili{} aimed\ili{} at\ili{} better\ili{} understanding\ili{} the\ili{} nature\ili{} of\ili{} MWEs\ili{} in\ili{}
+order\ili{} to\ili{} improve\ili{} their\ili{} support\ili{} in\ili{} natural\ili{} language\ili{} applications\ili{}.\ili{} Two\ili{}
+main\ili{} challenges\ili{} were\ili{} considered\ili{}:\ili{} \ili{}\emph\ili{}{linguistic\ili{} precision}\ili{} \ili{}(how\ili{} to\ili{}
+account\ili{} for\ili{} the\ili{} highly\ili{} heterogeneous\ili{} nature\ili{} of\ili{} MWEs\ili{} in\ili{} linguistic\ili{}
+resources\ili{} and\ili{} treatments\ili{}?\ili{})\ili{} and\ili{} \ili{}\emph\ili{}{computational\ili{} efficiency}\ili{} \ili{}(how\ili{} to\ili{}
+deal\ili{} with\ili{} MWEs\ili{}'\ili{} idiosyncratic\ili{} properties\ili{} within\ili{} reliable\ili{} NL\ili{}
+applications\ili{}?\ili{})\ili{}.\ili{}
+\ili{}
+To\ili{} contribute\ili{} to\ili{} meeting\ili{} these\ili{} two\ili{} challenges\ili{},\ili{} PARSEME\ili{} was\ili{} based\ili{} on\ili{} 4\ili{}
+Working\ili{} Groups\ili{} \ili{}(WGs\ili{})\ili{}:\ili{}
+\ili{}\begin\ili{}{description}\ili{}
+\ili{}\item\ili{}[WG1\ili{}]\ili{} focused\ili{} on\ili{} the\ili{} Grammar\ili{}/Lexicon\ili{} interface\ili{} and\ili{} the\ili{} design\ili{} of\ili{}
+\ili{} \ili{} interoperable\ili{} MWE\ili{} lexicons\ili{},\ili{}
+\ili{}\item\ili{}[WG2\ili{}]\ili{} aimed\ili{} at\ili{} developing\ili{} parsing\ili{} techniques\ili{} for\ili{} MWEs\ili{},\ili{}
+\ili{}\item\ili{}[WG3\ili{}]\ili{} studied\ili{} hybrid\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} symbolic\ili{} and\ili{}/or\ili{} statistical\ili{})\ili{} NL\ili{}
+\ili{} \ili{} applications\ili{} dealing\ili{} with\ili{} MWEs\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} MWE\ili{} detection\ili{},\ili{} machine\ili{}
+\ili{} \ili{} translation\ili{},\ili{} etc\ili{}.\ili{})\ili{},\ili{}
+\ili{}\item\ili{}[WG4\ili{}]\ili{} was\ili{} concerned\ili{} with\ili{} the\ili{} annotation\ili{} of\ili{} MWEs\ili{} within\ili{} \ili{}\isi\ili{}{treebanks}\ili{}.\ili{}
+\ili{}\end\ili{}{description}\ili{}
+\ili{}
+This\ili{} book\ili{} has\ili{} been\ili{} created\ili{} within\ili{} WG2\ili{}.\ili{} It\ili{} consists\ili{} of\ili{} contributions\ili{}
+related\ili{} to\ili{} the\ili{} definition\ili{},\ili{} representation\ili{} and\ili{} parsing\ili{} of\ili{} MWEs\ili{}.\ili{} These\ili{}
+contributions\ili{} were\ili{} collected\ili{} via\ili{} an\ili{} open\ili{} call\ili{} for\ili{} chapters\ili{}.\ili{} Each\ili{}
+Chapter\ili{} proposal\ili{} was\ili{} reviewed\ili{} by\ili{} 2\ili{} members\ili{} of\ili{} the\ili{} editorial\ili{} board\ili{}.\ili{} Out\ili{}
+of\ili{} this\ili{} reviewing\ili{},\ili{} 10\ili{} proposals\ili{} were\ili{} selected\ili{}.\ili{} They\ili{} reflect\ili{} current\ili{}
+trends\ili{} in\ili{} the\ili{} representation\ili{} and\ili{} processing\ili{} of\ili{} MWEs\ili{}.\ili{} They\ili{} cover\ili{}
+various\ili{} \ili{}\emph\ili{}{categories}\ili{} of\ili{} MWEs\ili{} such\ili{} as\ili{} verbal\ili{},\ili{} adverbial\ili{} and\ili{}
+nominal\ili{} MWEs\ili{},\ili{} various\ili{} \ili{}\emph\ili{}{linguistic\ili{} frameworks}\ili{} \ili{}(e\ili{}.g\ili{}.\ili{} tree\ili{}-based\ili{}
+and\ili{} unification\ili{}-based\ili{} grammars\ili{})\ili{},\ili{} various\ili{} \ili{}\emph\ili{}{languages}\ili{} including\ili{}
+\ili{}\ili\ili{}{English}\ili{},\ili{} \ili{}\ili\ili{}{French}\ili{},\ili{} \ili{}\ili\ili{}{Modern\ili{} Greek}\ili{},\ili{} \ili{}\ili\ili{}{Hebrew}\ili{},\ili{} \ili{}\ili\ili{}{Norwegian}\ili{})\ili{},\ili{} and\ili{} various\ili{}
+\ili{}\emph\ili{}{applications}\ili{} \ili{}(namely\ili{} MWE\ili{} detection\ili{},\ili{} parsing\ili{},\ili{} automatic\ili{}
+translation\ili{})\ili{} using\ili{} both\ili{} symbolic\ili{} and\ili{} statistical\ili{} approaches\ili{}.\ili{}
+\ili{}
+\ili{}\section\ili{}{Outline\ili{} of\ili{} the\ili{} book}\ili{}
+\ili{}
+The\ili{} book\ili{} is\ili{} organized\ili{} as\ili{} follows\ili{}.\ili{} \ili{}
+\ili{}
+\ili{}\subsection\ili{}*\ili{}{Part\ili{} 1\ili{}:\ili{} MWE\ili{} representations}\ili{}
+\ili{}
+The\ili{} first\ili{} part\ili{} of\ili{} the\ili{} volume\ili{} \ili{}(Chapters\ili{} 2\ili{} to\ili{} 6\ili{})\ili{} is\ili{} dedicated\ili{} to\ili{} the\ili{}
+study\ili{} of\ili{} MWE\ili{} properties\ili{} and\ili{} representations\ili{}.\ili{}
+\ili{}
+In\ili{} Chapter\ili{}~2\ili{},\ili{} \ili{}\textit\ili{}{Lichte\ili{},\ili{} Petitjean\ili{},\ili{} Savary\ili{} \ili{}\\ili{}&\ili{} Waszczuk}\ili{} discuss\ili{}
+the\ili{} representation\ili{} of\ili{} MWEs\ili{} within\ili{} lexicalised\ili{} formalisms\ili{}.\ili{} In\ili{}
+particular\ili{},\ili{} they\ili{} show\ili{} how\ili{} the\ili{} eXtensible\ili{} MetaGrammar\ili{} \ili{}(XMG2\ili{})\ili{} formalism\ili{}
+offers\ili{} a\ili{} natural\ili{} encoding\ili{} of\ili{} MWEs\ili{},\ili{} which\ili{} allows\ili{} us\ili{} to\ili{} account\ili{} for\ili{} the\ili{}
+fact\ili{} that\ili{} irregularities\ili{} exhibited\ili{} by\ili{} MWEs\ili{} are\ili{} a\ili{} matter\ili{} of\ili{} scale\ili{}
+rather\ili{} than\ili{} binary\ili{} properties\ili{}.\ili{}
+\ili{}
+In\ili{} Chapter\ili{}~3\ili{},\ili{} \ili{}\textit\ili{}{Herzig\ili{} Sheinfux\ili{},\ili{} Arad\ili{} Greshler\ili{},\ili{} Melnik\ili{} \ili{}\\ili{}&\ili{}
+\ili{} \ili{} Wintner}\ili{} study\ili{} a\ili{} specific\ili{} type\ili{} of\ili{} MWEs\ili{} \ili{}(namely\ili{} \ili{}\isi\ili{}{verbal\ili{} MWEs}\ili{})\ili{},\ili{}
+focusing\ili{} mostly\ili{} on\ili{} \ili{}\ili\ili{}{Hebrew}\ili{},\ili{} and\ili{} show\ili{} that\ili{} unlike\ili{} what\ili{} previous\ili{} work\ili{}
+suggests\ili{},\ili{} flexibility\ili{} of\ili{} \ili{}\isi\ili{}{verbal\ili{} MWEs}\ili{} is\ili{} not\ili{} a\ili{} discrete\ili{} concept\ili{} but\ili{}
+rather\ili{} a\ili{} continuous\ili{} property\ili{}.\ili{} They\ili{} propose\ili{} a\ili{} new\ili{} classification\ili{} of\ili{}
+MWEs\ili{} which\ili{} is\ili{} based\ili{} on\ili{} semantic\ili{} notions\ili{}.\ili{}
+\ili{}
+In\ili{} Chapter\ili{}~4\ili{},\ili{} \ili{}\textit\ili{}{Dyvik\ili{},\ili{} Losnegaard\ili{} \ili{}\\ili{}&\ili{} Rosén}\ili{} present\ili{} the\ili{} analysis\ili{}
+of\ili{} MWEs\ili{} in\ili{} an\ili{} LFG\ili{} grammar\ili{} for\ili{} \ili{}\ili\ili{}{Norwegian}\ili{},\ili{} NorGram\ili{},\ili{} which\ili{} is\ili{} used\ili{} in\ili{} the\ili{}
+construction\ili{} of\ili{} NorGramBank\ili{},\ili{} a\ili{} treebank\ili{} of\ili{} parsed\ili{} sentences\ili{}.\ili{} The\ili{}
+chapter\ili{} describes\ili{} how\ili{} classes\ili{} of\ili{} MWEs\ili{} are\ili{} analysed\ili{} by\ili{} means\ili{} of\ili{} LFG\ili{}
+templates\ili{},\ili{} which\ili{} capture\ili{} the\ili{} lexical\ili{} and\ili{} syntactic\ili{} properties\ili{} of\ili{} MWEs\ili{}
+in\ili{} a\ili{} succinct\ili{} way\ili{}.\ili{}
+\ili{}
+In\ili{} Chapter\ili{}~5\ili{},\ili{} \ili{}\textit\ili{}{Markantonatou\ili{},\ili{} Samaridi\ili{} \ili{}\\ili{}&\ili{} Minos}\ili{} present\ili{} a\ili{}
+grammar\ili{} of\ili{} \ili{}\ili\ili{}{Modern\ili{} Greek}\ili{} in\ili{} the\ili{} LFG\ili{} formalism\ili{}.\ili{} Their\ili{} grammar\ili{} has\ili{} been\ili{}
+implemented\ili{} with\ili{} the\ili{} Xerox\ili{} Linguistic\ili{} Engine\ili{} \ili{}(XLE\ili{})\ili{},\ili{} a\ili{} grammar\ili{} editor\ili{}
+which\ili{} also\ili{} includes\ili{} a\ili{} parsing\ili{} engine\ili{}.\ili{} In\ili{} their\ili{} Chapter\ili{},\ili{} the\ili{} authors\ili{}
+pay\ili{} a\ili{} particular\ili{} attention\ili{} to\ili{} the\ili{} use\ili{} of\ili{} a\ili{} pre\ili{}-processor\ili{} to\ili{} detect\ili{} and\ili{}
+annotate\ili{} MWEs\ili{} prior\ili{} to\ili{} parsing\ili{}.\ili{}
+\ili{}
+In\ili{} Chapter\ili{}~6\ili{},\ili{} \ili{}\textit\ili{}{Angelov}\ili{} presents\ili{} the\ili{} Grammatical\ili{} Framework\ili{},\ili{} a\ili{}
+description\ili{} language\ili{} for\ili{} developing\ili{} NLP\ili{} multilingual\ili{} resources\ili{},\ili{} and\ili{}
+its\ili{} application\ili{} to\ili{} some\ili{} classes\ili{} of\ili{} MWEs\ili{}.\ili{} In\ili{} particular\ili{},\ili{} the\ili{} author\ili{}
+shows\ili{} how\ili{} to\ili{} define\ili{} MWE\ili{}-aware\ili{} multilingual\ili{} grammars\ili{},\ili{} which\ili{} can\ili{} be\ili{} used\ili{}
+for\ili{} instance\ili{} for\ili{} in\ili{}-domain\ili{} machine\ili{} translation\ili{}.\ili{}
+\ili{}
+\ili{}\subsection\ili{}*\ili{}{Part\ili{} 2\ili{}:\ili{} MWE\ili{} parsing}\ili{}
+\ili{}
+The\ili{} second\ili{} part\ili{} of\ili{} the\ili{} volume\ili{} \ili{}(Chapters\ili{} 7\ili{} to\ili{} 9\ili{})\ili{} focuses\ili{} on\ili{} MWE\ili{}
+\ili{}\isi\ili{}{parsing}\ili{},\ili{} that\ili{} is\ili{},\ili{} to\ili{} the\ili{} automatic\ili{} construction\ili{} of\ili{} deep\ili{}
+representations\ili{} of\ili{} the\ili{} syntax\ili{} of\ili{} MWEs\ili{}.\ili{} Two\ili{} main\ili{} approaches\ili{} to\ili{} parsing\ili{}
+coexists\ili{}:\ili{} the\ili{} first\ili{} one\ili{},\ili{} called\ili{} data\ili{}-driven\ili{},\ili{} aims\ili{} at\ili{} extracting\ili{}
+syntactic\ili{} information\ili{} from\ili{} corpora\ili{} using\ili{} Machine\ili{} Learning\ili{} techniques\ili{}
+and\ili{} is\ili{} discussed\ili{} in\ili{} Chapter\ili{}~7\ili{}.\ili{} The\ili{} second\ili{} approach\ili{},\ili{} called\ili{}
+knowledge\ili{}-based\ili{},\ili{} relies\ili{} on\ili{} the\ili{} encoding\ili{} of\ili{} linguistic\ili{} properties\ili{} of\ili{}
+MWEs\ili{} within\ili{} lexical\ili{} entries\ili{},\ili{} the\ili{} latter\ili{} being\ili{} used\ili{} by\ili{} a\ili{} parsing\ili{}
+algorithm\ili{} to\ili{} compute\ili{} the\ili{} expected\ili{} \ili{}\isi\ili{}{syntactic\ili{} structure}\ili{}.\ili{} The\ili{} impact\ili{} of\ili{}
+MWE\ili{} detection\ili{} on\ili{} such\ili{} parsing\ili{} algorithms\ili{} is\ili{} discussed\ili{} in\ili{} Chapters\ili{}~8\ili{}
+\ili{}(for\ili{} a\ili{} categorial\ili{} parser\ili{})\ili{} and\ili{}~9\ili{} \ili{}(for\ili{} an\ili{} attachment\ili{}-rule\ili{}-based\ili{} parser\ili{})\ili{}.\ili{}
+\ili{}
+In\ili{} Chapter\ili{}~7\ili{},\ili{} \ili{}\textit\ili{}{Constant\ili{},\ili{} Eryiğit\ili{},\ili{} Ramisch\ili{},\ili{} Rosner\ili{} \ili{}\\ili{}&\ili{} Schneider}\ili{}
+give\ili{} a\ili{} detailed\ili{} overview\ili{} of\ili{} various\ili{} ways\ili{} to\ili{} extend\ili{} statistic\ili{} parsing\ili{}
+with\ili{} MWE\ili{} identification\ili{},\ili{} either\ili{} during\ili{} parsing\ili{} or\ili{} as\ili{} a\ili{} pre\ili{}-\ili{} or\ili{}
+post\ili{}-processing\ili{} step\ili{}.\ili{} These\ili{} extensions\ili{} are\ili{} compared\ili{} and\ili{} their\ili{}
+evaluation\ili{} discussed\ili{}.\ili{}
+\ili{}
+In\ili{} Chapter\ili{}~8\ili{},\ili{} \ili{}\textit\ili{}{de\ili{} Lhoneux\ili{},\ili{} Abend\ili{} \ili{}\\ili{}&\ili{} Steedman}\ili{} extend\ili{} a\ili{} CCG\ili{}
+parsing\ili{} architecture\ili{} for\ili{} \ili{}\ili\ili{}{English}\ili{} with\ili{} a\ili{} module\ili{} for\ili{} detecting\ili{} MWEs\ili{} and\ili{}
+pre\ili{}-process\ili{} them\ili{}.\ili{} The\ili{} effect\ili{} of\ili{} this\ili{} pre\ili{}-processing\ili{} is\ili{} evaluated\ili{} in\ili{}
+terms\ili{} of\ili{} parsing\ili{} accuracy\ili{} when\ili{} \ili{}(i\ili{})\ili{}~the\ili{} parser\ili{} is\ili{} trained\ili{} on\ili{}
+pre\ili{}-processed\ili{} data\ili{} \ili{}(so\ili{}-called\ili{} training\ili{} effect\ili{})\ili{},\ili{} and\ili{} \ili{}(ii\ili{})\ili{}~the\ili{} parser\ili{}
+uses\ili{} information\ili{} from\ili{} pre\ili{}-processed\ili{} data\ili{} \ili{}(so\ili{}-called\ili{} parsing\ili{} effect\ili{})\ili{}.\ili{}
+\ili{}
+In\ili{} Chapter\ili{}~9\ili{},\ili{} \ili{}\textit\ili{}{Foufi\ili{},\ili{} Nerima\ili{} \ili{}\\ili{}&\ili{} Wehrli}\ili{} investigate\ili{} the\ili{}
+extension\ili{} of\ili{} a\ili{} knowledge\ili{}-based\ili{} parser\ili{} with\ili{} collocation\ili{}
+identification\ili{}.\ili{} They\ili{} apply\ili{} this\ili{} extension\ili{} to\ili{} the\ili{} description\ili{} of\ili{} MWEs\ili{}
+for\ili{} various\ili{} languages\ili{} \ili{}(including\ili{} \ili{}\ili\ili{}{English}\ili{} and\ili{} Greek\ili{})\ili{},\ili{} and\ili{} show\ili{} how\ili{} it\ili{}
+improves\ili{} parsing\ili{} efficiency\ili{} in\ili{} terms\ili{} of\ili{} percentages\ili{} of\ili{} complete\ili{}
+analyses\ili{}.\ili{}
+\ili{}
+\ili{}\subsection\ili{}*\ili{}{Part\ili{} 3\ili{}:\ili{} multilingual\ili{} NL\ili{} applications\ili{} for\ili{} MWEs}\ili{}
+\ili{}
+Finally\ili{},\ili{} in\ili{} the\ili{} third\ili{} part\ili{} of\ili{} the\ili{} volume\ili{} \ili{}(Chapters\ili{} 10\ili{} and\ili{} 11\ili{})\ili{},\ili{}
+multilingual\ili{} MWE\ili{} acquisition\ili{} techniques\ili{} are\ili{} presented\ili{}.\ili{}
+\ili{}
+In\ili{} Chapter\ili{}~10\ili{},\ili{} \ili{}\textit\ili{}{Semmar\ili{},\ili{} Servan\ili{},\ili{} Laib\ili{},\ili{} Bouamor\ili{} \ili{}\\ili{}&\ili{} Marchand}\ili{}
+present\ili{} three\ili{} techniques\ili{} for\ili{} word\ili{} alignement\ili{} between\ili{} \ili{}\isi\ili{}{parallel\ili{} corpora}\ili{}
+and\ili{} their\ili{} application\ili{} to\ili{} \ili{}\isi\ili{}{Multiword\ili{} Expressions}\ili{}.\ili{} The\ili{} bilingual\ili{} MWE\ili{}
+lexicons\ili{} built\ili{} using\ili{} these\ili{} techniques\ili{} are\ili{} then\ili{} evaluated\ili{} according\ili{} to\ili{}
+their\ili{} effect\ili{} on\ili{} phrase\ili{}-based\ili{} \ili{}\isi\ili{}{statistical\ili{} machine\ili{} translation}\ili{}.\ili{} The\ili{}
+authors\ili{} empirically\ili{} show\ili{} that\ili{} MWE\ili{}-aware\ili{} lexicons\ili{} improve\ili{} translation\ili{}
+quality\ili{}.\ili{}
+\ili{}
+Finally\ili{},\ili{} in\ili{} Chapter\ili{}~11\ili{},\ili{} \ili{}\textit\ili{}{Jacquet\ili{},\ili{} Ehrmann\ili{},\ili{} Piskorski\ili{},\ili{} Tanev\ili{} \ili{}\\ili{}&\ili{}
+\ili{} \ili{} Steinberger}\ili{} present\ili{} an\ili{} architecture\ili{} which\ili{} allows\ili{} for\ili{} the\ili{}
+identification\ili{} of\ili{} multiword\ili{} entities\ili{} \ili{}(organizations\ili{},\ili{} medical\ili{} terms\ili{},\ili{}
+etc\ili{}.\ili{})\ili{} within\ili{} large\ili{} collections\ili{} of\ili{} texts\ili{},\ili{} together\ili{} with\ili{} the\ili{} linking\ili{} of\ili{}
+monolingual\ili{} variants\ili{} of\ili{} a\ili{} given\ili{} multiword\ili{} entity\ili{},\ili{} and\ili{} of\ili{} groups\ili{} of\ili{}
+variants\ili{} accross\ili{} multiple\ili{} languages\ili{}.\ili{} Their\ili{} architecture\ili{} is\ili{} evaluated\ili{}
+against\ili{} data\ili{} from\ili{} Wikipedia\ili{}.\ili{}
+\ili{}
+\ili{}\section\ili{}*\ili{}{Acknowledgments}\ili{}
+\ili{}
+We\ili{} are\ili{} grateful\ili{} to\ili{} the\ili{} 16\ili{} reviewers\ili{} for\ili{} their\ili{} valuable\ili{} evaluations\ili{},\ili{}
+comments\ili{} and\ili{} feedback\ili{}.\ili{} Without\ili{} their\ili{} help\ili{},\ili{} this\ili{} book\ili{} would\ili{} not\ili{} exist\ili{}.\ili{}
+\ili{}
+We\ili{} also\ili{} would\ili{} like\ili{} to\ili{} thank\ili{} the\ili{} COST\ili{} program\ili{} of\ili{} the\ili{} European\ili{} Union\ili{} for\ili{}
+its\ili{} support\ili{} to\ili{} the\ili{} PARSEME\ili{} Action\ili{},\ili{} which\ili{} created\ili{} a\ili{} dynamic\ili{} environment\ili{}
+leading\ili{} to\ili{} fruitful\ili{} discussions\ili{} around\ili{} the\ili{} topics\ili{} addressed\ili{} in\ili{} this\ili{}
+book\ili{}.\ili{}
+\ili{}
+\ili{}\begin\ili{}{flushright}\ili{}
+\ili{} \ili{} Yannick\ili{} Parmentier\ili{} and\ili{} Jakub\ili{} Waszczuk\ili{},\ili{} Aug\ili{}.\ili{} 2017\ili{}
+\ili{}\end\ili{}{flushright}\ili{}
+\ili{}
+\ili{}%\ili{}\section\ili{}*\ili{}{Abbreviations}\ili{}
+\ili{}%\ili{}\section\ili{}*\ili{}{Acknowledgements}\ili{}
+\ili{}
+\ili{}\printbibliography\ili{}[heading\ili{}=subbibliography\ili{},notkeyword\ili{}=this\ili{}]\ili{}
+\ili{}
+\ili{}\end\ili{}{document}\ili{}
+\ili{}

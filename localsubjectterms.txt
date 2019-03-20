@@ -1,0 +1,65 @@
+adjunct
+alignment
+anaphora
+bilingual lexicon
+collocation detection
+collocation extraction
+collocation identification
+constituency parsing
+co-occurrence metric
+complementation pattern
+compound word
+constraint
+CCG
+decomposability
+dependency parsing
+domain vocabulary
+figuration
+fixed expressions
+flexibility
+free word order
+grammar
+GF
+idioms
+idiomaticity
+lexical entry
+lexical fixedness
+LFG
+linear programming
+linguistic analysis
+long-distance dependencies
+morpho-syntactic pattern
+multilingual parser
+Multiword Expressions
+MWE alignment
+MWE extraction
+MWE parsing
+MWE recognition
+MWE representation
+nominal collocation
+parallel corpora
+passivization
+phrase
+phrasal verbs
+predicate-argument structure
+prepositional verbs
+pronominalization
+relativization
+segment
+statistical parsing
+statistical machine translation
+subcategorization
+syntactic structure
+syntactic parsing
+template
+transformations
+translation model
+translation quality
+transparency
+treebanks
+variations
+verbal MWEs
+verbal collocation
+verb-particle constructions
+wh-questions
+word alignment

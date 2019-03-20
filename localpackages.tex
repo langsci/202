@@ -1,0 +1,165 @@
+% add all extra packages you need to load to this file 
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{amsmath} 
+\usepackage{multicol}
+\usepackage{lipsum}
+\usepackage{caption}
+\usepackage{enumitem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                              %%%
+%%%           Examples                           %%%
+%%%                                              %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% remove the percentage signs in the following lines
+% if your book makes use of linguistic examples
+\usepackage{langsci/styles/avm} 
+\usepackage{langsci/styles/jambox}
+\usepackage{langsci/styles/langsci-optional} 
+\usepackage{langsci/styles/langsci-lgr}
+\usepackage{langsci/styles/langsci-linguex}
+\usepackage{morewrites} 
+
+\makeatletter
+\let\pgfmathModX=\pgfmathMod@
+\usepackage{pgfplots,pgfplotstable}%
+\let\pgfmathMod@=\pgfmathModX
+\makeatother
+\usepgfplotslibrary{colorbrewer,groupplots}
+
+\pgfplotscreateplotcyclelist{langsciblues}{%
+{color=lsLightBlue},
+{color=lsMidBlue},
+{color=lsMidDarkBlue},
+{color=lsDarkBlue},
+{color=lsNightBlue}}
+
+
+\pgfplotscreateplotcyclelist{langscicolorcycle}{% from ./langsci/seriesinfo/langsci-colors.def
+{color=langscicol1},
+{color=langscicol7},
+{color=langscicol11},
+{color=langscicol19}}
+
+\usepackage{siunitx}
+\sisetup{output-decimal-marker={.},detect-weight=true, detect-family=true, detect-all, input-symbols={\%}, uncertainty-separator={\,},group-digits=false,detect-inline-weight=math}
+\DeclareSIUnit[number-unit-product={}]{\percent}{\%}
+\makeatletter \def\new@fontshape{} \makeatother
+\robustify\bfseries % For detect weight to work
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                              %%%
+%%%      Optimality Theory                       %%%
+%%%                                              %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% If you are using OT, uncomment the following lines      
+% % OT pointing hand
+% \usepackage{pifont}
+% \newcommand{\hand}{\ding{43}}
+% % OT tableaux                                                
+% \usepackage{pstricks,colortab}    
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                              %%%
+%%%       Attribute Value Matrices               %%%
+%%%                                              %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%If you are using Attribute-Value-Matrices, uncomment the following lines 
+% \usepackage{lsp-avm}
+% \usepackage{avm}
+% \avmfont{\sc} 
+% \avmvalfont{\it} 
+% % command to fontify the type values of an avm 
+% \newcommand{\tpv}[1]{{\avmjvalfont #1}} 
+% % command to fontify the type of an avm and avmspan it
+% \newcommand{\tp}[1]{\avmspan{\tpv{#1}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                              %%%
+%%%     Discourse Representation Structures      %%%
+%%%                                              %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DRS package by Alexis Dimitriadis
+% \usepackage{drs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                              %%%
+%%%            Chinese Japanese Korean           %%%
+%%%                                              %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% For Chinese characters, uncomment the following lines
+% \usepackage[indentfirst=false]{xeCJK}
+% \setCJKmainfont{SimSun}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                              %%%
+%%%               Arabic / Persian               %%%
+%%%                                              %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% for bidirectional text and support for Arabic/Persian, uncomment the following lines
+%% \usepackage{fontspec}
+% \newfontfamily\Parsifont[Script=Arabic]{XB Niloofar}
+% %\usepackage{bidi}
+% \usepackage{lsp-bidi}
+% \newcommand{\PRL}[1]{\RL{\Parsifont #1}}
+% %\TeXXeTOff
+ 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                              %%%
+%%%          Trees                               %%%
+%%%                                              %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% For trees, uncomment the following lines
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usepackage{tikz-qtree-compat}
+\usepackage{tikz-dependency}
+% has strange side effects
+\tikzset{every tree node/.style={align=left, anchor=north}}
+\tikzset{every roof node/.append style={inner sep=0.1pt,text height=2ex,text depth=0.3ex}}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{float}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%Constant
+\usepackage{color}
+\usepackage{tikz-dependency}
+\usepackage{pifont}
+\usepackage{rotating}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%Fonseca
+%\usepackage{subcaption}
+%\usetikzlibrary{arrows, automata}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%Markantonatou
+\usepackage{forest}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%Lichte
+%\usepackage{linguex}
+\usepackage{soul} % for text highlighting
+\lstset{basicstyle=\ttfamily,tabsize=2,breaklines=true}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%Semmar
+\usepackage{multirow}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%Jacquet
+%\usepackage{booktabs}
+
+%%%%% TIPA
+% % \usepackage{tipa}
+% % \usepackage{tipx}
+
+\usepackage{langsci/styles/langsci-gb4e} 
