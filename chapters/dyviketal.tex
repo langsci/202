@@ -533,9 +533,9 @@ she came fully on edge with the good society \\
 %\z
 
 The mechanisms for representing lexical and morphological restrictions in flexible MWEs are the same as the ones used for regular constructions.
-As described in Section~\ref{dyv:sec:mweiness:LFG}, simplex words are assigned predicate values through equations in the \isi{lexical entry}, as in the entry for the simplex lexeme \emph{buss} in example (\ref{dyv:ex:mweiness:f-descr-bussen}), which has the predicate assignment equation ($\uparrow$~PRED)=`buss'. 
+As described in Section~\ref{dyv:sec:mweiness:LFG}, simplex words are assigned predicate values through equations in the \isi{lexical entry}, as in the entry for the simplex lexeme \emph{buss} in example (\ref{dyv:ex:mweiness:f-descr-bussen}), which has the predicate assignment equation \textsf{($\uparrow$~PRED)=`buss'}. 
 For words that subcategorize for other elements, such as verbs, this is done through the assignment of a \isi{predicate-argument structure} (or \isi{subcategorization} frame). 
-For instance, the intransitive verb \emph{klage} `complain' is assigned a frame through the \isi{template} call @(V-SUBJ klage) in the \isi{lexical entry}, invoking the \isi{template} V-SUBJ. 
+For instance, the intransitive verb \emph{klage} `complain' is assigned a frame through the \isi{template} call \textsf{@(V-SUBJ klage)} in the \isi{lexical entry}, invoking the \isi{template} \textsf{V-SUBJ}. 
 Part of this \isi{template} is shown in (\ref{dyv:ex:mweiness:verb-template}).
 
 \ea\label{dyv:ex:mweiness:verb-template}
@@ -546,8 +546,8 @@ Part of this \isi{template} is shown in (\ref{dyv:ex:mweiness:verb-template}).
 \z
 
 The predicate value of the verb is parameterized and listed together with its arguments in the \isi{subcategorization} frame, which includes everything between quotation marks in (\ref{dyv:ex:mweiness:verb-template}).
-When the \isi{template} is invoked, the lemma form \emph{klage} in the \isi{template} call replaces the parameter P. 
-The equation on the second line assigns one argument, the subject, to P, yielding the predicate-argument  structure `klage$\langle$($\uparrow$~SUBJ)$\rangle$' as the PRED value for the intransitive reading of this verb.
+When the \isi{template} is invoked, the lemma form \emph{klage} in the \isi{template} call replaces the parameter \textsf{P}. 
+The equation on the second line assigns one argument, the subject, to \textsf{P}, yielding the predicate-argument  structure \textsf{`klage$\langle$($\uparrow$~SUBJ)$\rangle$'} as the \textsf{PRED} value for the intransitive reading of this verb.
 
 
 Lexical fixedness in flexible MWEs is handled through lexical selection in the entry of the subcategorizing word. 
@@ -600,15 +600,15 @@ The \isi{template} call in (\ref{dyv:ex:mweiness:lexicalselection}) shows that t
 %\z
 
 The predicate values of the fixed MWE components, i.e. the verb and its selected complements, are merged to form one single idiom predicate which is substituted for the relevant parameter in the \isi{predicate-argument structure}.
-In one of the equations in the \isi{template}, the predicate assignment in (\ref{dyv:ex:mweiness:subcatframe}),  the parameter \%FN is replaced by the predicate name \emph{klage\#nød}, where we use the symbol ``\#'' to signal idiomatic combinations of this kind.
+In one of the equations in the \isi{template}, the predicate assignment in (\ref{dyv:ex:mweiness:subcatframe}),  the parameter \%FN is replaced by the predicate name \emph\textsf{{klage\#nød}}, where we use the symbol ``\textsf{\#}'' to signal idiomatic combinations of this kind.
 Only the free arguments of \isi{verbal MWEs} are specified as semantic arguments to the verb.
-The \isi{subcategorization} frame `klage\#nød$\langle$($\uparrow$~SUBJ)$\rangle$($\uparrow$~OBJ)' lists the semantic argument, in this case SUBJ, inside the angled brackets, while the selected argument OBJ is placed outside the brackets.
-The parameter \%FN and the construction of predicate names such as \emph{klage\#nød} are accounted for in Section~\ref{dyv:sec:mweiness:prepverbs}.  
+The \isi{subcategorization} frame \textsf{`klage\#nød$\langle$($\uparrow$~SUBJ)$\rangle$($\uparrow$~OBJ)'} lists the semantic argument, in this case \textsf{SUBJ}, inside the angled brackets, while the selected argument OBJ is placed outside the brackets.
+The parameter \textsf{\%FN} and the construction of predicate names such as \textsf{klage\#nød} are accounted for in Section~\ref{dyv:sec:mweiness:prepverbs}.  
 
 %Fixed or lexically selected arguments are non-thematic and thus listed outside the angled brackets, like the OBJ in (\ref{dyv:ex:mweiness:subcatframe}) which in this case refers to the selected object \emph{nød}.
 
 Constraints on grammatical features are specified with constraining equations and existential constraints in the entries or templates.
-A constraining equation is an equation with a ``c'' attached to the equal sign.
+A constraining equation is an equation with a ``\textsf{c}'' attached to the equal sign.
 This means that the equation does not actually assign the specified value to the attribute in the f-structure; instead it requires that this value has been assigned to the attribute somewhere else.
 The restriction that the object \emph{sin nød} in (\ref{dyv:ex:mweiness:klagesinnød}) must be definite is specified with the equation in (\ref{dyv:ex:mweiness:defrestriction}).
 The \isi{constraint} in (\ref{dyv:ex:mweiness:possrestriction}) is an existential \isi{constraint} which simply provides  a path of attributes without assigning a particular value.
@@ -656,7 +656,7 @@ it can be he has a good eye to you \\
 \z
 
 When a modifier is lexically restricted, a \isi{constraint} equation is used to specify the possible modifier predicate(s).
-In the entry for \emph{ha et godt øye til}, the equation in (\ref{dyv:ex:mweiness:modrestriction}) ensures that the modifier (ADJUNCT) of the selected object (the noun \emph{øye}) has the PRED value `god'. 
+In the entry for \emph{ha et godt øye til}, the equation in (\ref{dyv:ex:mweiness:modrestriction}) ensures that the modifier (ADJUNCT) of the selected object (the noun \emph{øye}) has the \textsf{PRED} value \textsf{god}. 
 
 \ea\label{dyv:ex:mweiness:modrestriction}
 %@(VPIDIOM-INDEFOBJnonth-POBJ ha ha øye til) \\
@@ -691,7 +691,7 @@ There are also constructions where both prepositions and particles occur; these 
 
 \subsubsection{Prepositional verbs}\label{dyv:sec:mweiness:prepverbs}
 
-In Section~\ref{dyv:sec:mweiness:LFG} the sentence in (\ref{dyv:ex:mweiness:thinking-while-on-bus}) \emph{Hun tenkte på buss-en} was shown to have two readings.
+In Section~\ref{dyv:sec:mweiness:LFG} the sentence in (\ref{dyv:ex:mweiness:thinking-while-on-bus}) \emph{Hun tenkte på bussen} was shown to have two readings.
 When the prepositional \isi{phrase} functions as an \isi{adjunct}, the analysis shown in Figure~\ref{dyv:fig:mweiness:thinking-while-on-bus} obtains.
 When the preposition is selected by the verb, the verb and the preposition constitute an MWE, as indicated in (\ref{dyv:ex:mweiness:tenkepå}), where these words are boldfaced.
 The analysis corresponding to this reading is shown in Figure~\ref{dyv:fig:mweiness:selprepcons}.
@@ -719,11 +719,11 @@ The analysis corresponding to this reading is shown in Figure~\ref{dyv:fig:mwein
   \label{dyv:fig:mweiness:selprepcons}
 \end{figure}
 
-In the c-structure \textit{på bussen} forms a prepositional \isi{phrase} PPsel-n, marked as selected by ``sel-n'' in the node label.
+In the c-structure \textit{på bussen} forms a prepositional \isi{phrase} \textsf{PPsel-n}, marked as selected by \textsf{sel-n} in the node label.
 This analysis captures the fact that the selected preposition \textit{på} can only occur before the object, and that the preposition and its complement behave as one constituent with respect to movement, as in the topicalized version \textit{På bussen tenkte hun ofte} `The bus she was often thinking of'.
-The preposition does not provide its own predicate in the f-structure, but is analyzed as incorporated in the predicate expressed by the verb to form the predicate name `tenke*på'.
-In predicate names the symbol ``*'' is used to signal such combinations of a lexical predicate with a selected particle or preposition.
-The complement of the preposition, \textit{bussen}, fills the function OBL-TH -- oblique-theta -- as an argument of this predicate, i.e., an oblique argument expressing a theta role.
+The preposition does not provide its own predicate in the f-structure, but is analyzed as incorporated in the predicate expressed by the verb to form the predicate name \textsf{tenke*på}.
+In predicate names the symbol ``\textsf{*}'' is used to signal such combinations of a lexical predicate with a selected particle or preposition.
+The complement of the preposition, \textit{bussen}, fills the function \textsf{OBL-TH} -- oblique-theta -- as an argument of this predicate, i.e., an oblique argument expressing a theta role.
 
 The \isi{lexical entry} for \textit{tenke} is associated with the relevant frame through an invocation of the \isi{template} describing this class of constructions.
 The relevant part of the \isi{lexical entry} for \textit{tenke} is shown in  (\ref{dyv:ex:mweiness:tenke-lex}).
@@ -736,7 +736,7 @@ tenke V & \{ \enspace [ ... ]\\
 & | \enspace [ ... ] \enspace \}
 \end{tabular}}}
 
-The invocation of the \isi{template} V-SUBJ-POBJ has two parameters, the predicate name for the verb \textit{tenke} and the form of the selected preposition \textit{på}.
+The invocation of the \isi{template} \textsf{V-SUBJ-POBJ} has two parameters, the predicate name for the verb \textit{tenke} and the form of the selected preposition \textit{på}.
 In (\ref{dyv:ex:mweiness:tenke-template}) part of the \isi{template} is shown (other parts of this \isi{template} for handling passive and other modifications are discussed in Section~\ref{dyv:sec:mweiness:variation}).
 
 \ea\label{dyv:ex:mweiness:tenke-template}
@@ -748,10 +748,10 @@ V-SUBJ-POBJ (P prp) =\\
 }
 \z
 
-The \isi{template} invokes another \isi{template} CONCAT, which concatenates the predicate name P and the preposition form \emph{prp} as the value of the variable \%FN.
-In this example the result is the predicate name `tenke*på', which is then included in the value of PRED.
-The last line assigns the value of \emph{prp} (\textit{på} in the example) as the value of the attribute P-SELFORM under the OBL-TH argument.
-This feature is checked by the syntactic rule which introduces the selected PP, ensuring that only the preposition selected by the verb is accepted.
+The \isi{template} invokes another \isi{template} \textsf{CONCAT}, which concatenates the predicate name P and the preposition form \textsf{prp} as the value of the variable \textsf{\%FN}.
+In this example the result is the predicate name \textsf{tenke*på}, which is then included in the value of \textsf{PRED}.
+The last line assigns the value of \textsf{prp} (\textit{på} in the example) as the value of the attribute \textsf{P-SELFORM} under the \textsf{OBL-TH} argument.
+This feature is checked by the syntactic rule which introduces the selected \textsf{PP}, ensuring that only the preposition selected by the verb is accepted.
 
 %The criterion for assigning a construction to the selected preposition type rather that the particle construction type is the restriction of the preposition to occur only before an object occurring in the verb \isi{phrase}.
 %There is a set of cases where this criterion is not totally satisfactory: cases where the particle/preposition receives stress and does not clearly form a constituent with the object, but is still restricted to occurring before it.
@@ -769,7 +769,7 @@ This feature is checked by the syntactic rule which introduces the selected PP, 
 
 \subsubsection{Verb-particle constructions}\label{dyv:sec:mweiness:prtverbs}
 
-Verb-particle constructions consist of a verb and a selected particle in the form of an adverb or an intransitively used preposition; in NorGram such elements are classified as PRT in the c-structure.
+Verb-particle constructions consist of a verb and a selected particle in the form of an adverb or an intransitively used preposition; in NorGram such elements are classified as \textsf{PRT} in the c-structure.
 The verb and the particle express an idiosyncratic meaning.
 As in \ili{English}, \isi{verb-particle constructions} in \ili{Norwegian} can have the particle either before or after an object, and obligatorily after if the object is pronominal; cf. \cite[276]{baldwin10}.
 The analysis is illustrated in Figures~\ref{dyv:fig:mweiness:particlecons-c} and~\ref{dyv:fig:mweiness:particlecons-f} for the sentence in (\ref{dyv:ex:mweiness:skriveopp}).
@@ -804,8 +804,8 @@ The analysis is illustrated in Figures~\ref{dyv:fig:mweiness:particlecons-c} and
 %  \label{dyv:fig:mweiness:particlecons}
 %\end{figure}
 
-In the c-structure the particle PRT is a separate constituent which may also occur after the NP under VPmain.
-In the f-structure the verb and the particle are analyzed as forming one predicate `skrive*opp', and the particle also provides a value to the feature PRT-FORM.
+In the c-structure the particle \textsf{PRT} is a separate constituent which may also occur after the \textsf{NP} under \textsf{VPmain}.
+In the f-structure the verb and the particle are analyzed as forming one predicate \textsf{skrive*opp}, and the particle also provides a value to the feature \textsf{PRT-FORM}.
 
 As in the case of selected prepositions, the \isi{lexical entry} for \textit{skrive} is associated with the relevant frame through an invocation of the \isi{template} describing this class of constructions.
 Part of the \isi{lexical entry} for \textit{skrive} is shown in  (\ref{dyv:ex:mweiness:skrive-lex}).
@@ -818,7 +818,7 @@ skrive V & \{ \enspace [ ... ]\\
 & | \enspace [ ... ] \enspace \}
 \end{tabular}}}
 
-Part of the invoked \isi{template} V-SUBJ-PRT-OBJ is shown in  (\ref{dyv:ex:mweiness:skrive-template}).
+Part of the invoked \isi{template} \textsf{V-SUBJ-PRT-OBJ} is shown in  (\ref{dyv:ex:mweiness:skrive-template}).
 
 \ea\label{dyv:ex:mweiness:skrive-template}
 {\sffamily 
@@ -830,9 +830,9 @@ V-SUBJ-PRT-OBJ (P prt) =\\
 }
 \z
 
-The CONCAT \isi{template} functions as in the \isi{template} (\ref{dyv:ex:mweiness:tenke-template}), yielding the  predicate name `skrive*opp' as the value of PRED.
-The second last line assigns the value ``+'' to the path CHECK PRT-VERB, a feature which is checked by the syntactic rule introducing the particle PRT; see the VPmain rule in (\ref{dyv:ex:mweiness:rule3}) below.
-The last line is a constraining equation\footnote{This concept is explained in connection with example (\ref{dyv:ex:mweiness:defrestriction}) above.} which checks that the value of the feature PRT-FORM, which is introduced in the sentence by the particle, is the value of prt, i.e. \emph{opp} in the \isi{template} invocation in (\ref{dyv:ex:mweiness:skrive-lex}).
+The \textsf{CONCAT} \isi{template} functions as in the \isi{template} (\ref{dyv:ex:mweiness:tenke-template}), yielding the  predicate name \textsf{skrive*opp} as the value of \textsf{PRED}.
+The second last line assigns the value ``\textsf{+}'' to the path \textsf{CHECK PRT-VERB}, a feature which is checked by the syntactic rule introducing the particle \textsf{PRT}; see the \textsf{VPmain} rule in (\ref{dyv:ex:mweiness:rule3}) below.
+The last line is a constraining equation\footnote{This concept is explained in connection with example (\ref{dyv:ex:mweiness:defrestriction}) above.} which checks that the value of the feature \textsf{PRT-FORM}, which is introduced in the sentence by the particle, is the value of \textsf{prt}, i.e. \emph{opp} in the \isi{template} invocation in (\ref{dyv:ex:mweiness:skrive-lex}).
 
 \subsubsection{Verb-particle constructions with selected prepositions}\label{dyv:sec:mweiness:prtprepverbs}
 
@@ -859,9 +859,9 @@ The analysis of (\ref{dyv:ex:mweiness:sette-seg-inn-i}) is shown in Figures~\ref
   \label{dyv:fig:mweiness:sette-seg-inn-i-f}
 \end{figure}
 
-In this example the MWE  \textit{sette oss inn i} occurs in an infinitival relative (CPinf) in an NP with the head \textit{område} `area'.
-In the f-structure the infinitival relative occurs as a member of the set of adjuncts to the predicate `område', also occurring as the second argument of `sette*seg*inn*i' as its relativized argument (see Section~\ref{dyv:sec:mweiness:longdist} for the analysis of \isi{long-distance dependencies} like \isi{relativization} and topicalization).
-The \isi{template} invoked by the verb \textit{sette}, V-SUBJ-OBJrefl-PRT-POBJ, provides an analysis along the lines of the templates in (\ref{dyv:ex:mweiness:tenke-template}) and (\ref{dyv:ex:mweiness:skrive-template}).
+In this example the MWE  \textit{sette oss inn i} occurs in an infinitival relative (\textsf{CPinf}) in an \textsf{NP} with the head \textit{område} `area'.
+In the f-structure the infinitival relative occurs as a member of the set of adjuncts to the predicate \textsf{område}, also occurring as the second argument of \textsf{sette*seg*inn*i} as its relativized argument (see Section~\ref{dyv:sec:mweiness:longdist} for the analysis of \isi{long-distance dependencies} like \isi{relativization} and topicalization).
+The \isi{template} invoked by the verb \textit{sette}, \textsf{V-SUBJ-OBJrefl-PRT-POBJ}, provides an analysis along the lines of the templates in (\ref{dyv:ex:mweiness:tenke-template}) and (\ref{dyv:ex:mweiness:skrive-template}).
 
 \subsection{Verbal idioms}\label{dyv:sec:mweiness:verbalidioms}
 
@@ -896,8 +896,8 @@ The treebank sentence in (\ref{dyv:ex:mweiness:øyemed}) is analyzed as shown in
 
 The analysis of the selected prepositional \isi{phrase} \textit{med jentungen} is as described in Section~\ref{dyv:sec:mweiness:prepverbs} for example (\ref{dyv:ex:mweiness:tenkepå}).
 The selected lexeme in (\ref{dyv:ex:mweiness:øyemed}) is \textit{øye}.
-In the f-structure in Figure~\ref{dyv:fig:mweiness:øyemed-f} the idiomatic meaning is represented by incorporating `øye' in the predicate name, deriving the predicate name `holde\#øye*med'. %, where we use the symbol ``\#'' to signal an idiomatic combination of this kind.
-The \isi{phrase} \textit{et skarpt øye} fills the function of OBJ, but is not analyzed as a semantic argument of the sentence predicate, which appears from its position outside the angled brackets $\langle$...$\rangle$ surrounding the argument list.
+In the f-structure in Figure~\ref{dyv:fig:mweiness:øyemed-f} the idiomatic meaning is represented by incorporating \textsf{øye} in the predicate name, deriving the predicate name \textsf{holde\#øye*med}. %, where we use the symbol ``\#'' to signal an idiomatic combination of this kind.
+The \isi{phrase} \textit{et skarpt øye} fills the function of \textsf{OBJ}, but is not analyzed as a semantic argument of the sentence predicate, which appears from its position outside the angled brackets $\langle$...$\rangle$ surrounding the argument list.
 This position signals that the constituent is syntactically subcategorized for without being a semantic argument.
 
 The \isi{lexical entry} for \textit{holde} is associated with the VP idiom through an invocation of the idiom \isi{template} describing the relevant class of \isi{idioms}.
@@ -927,10 +927,10 @@ holde V & \{ \enspace [ ... ]\\
 
 In addition to the \isi{template} call, the \isi{lexical entry} in   (\ref{dyv:ex:mweiness:holde-lex}) also specifies that the selected object should be singular.
 It is a matter of choice whether such information should be included in the individual \isi{lexical entry} or give rise to a distinction between more fine-grained templates.
-In the \isi{template} definition in (\ref{dyv:ex:mweiness:holde-template}), OP (object predicate) is the variable for the selected noun predicate and \emph{prp} for the selected preposition.
-As in the case of the \isi{template} in (\ref{dyv:ex:mweiness:skrive-template}), the \isi{template} invokes the CONCAT \isi{template} which builds the predicate name.
-The second last equation requires the object to have the value of OP as its predicate (in this case `øye'), and the final equation requires the object not to be definite.
-As for the equation mentioning P-SELFORM, see the explanation of the \isi{template} in (\ref{dyv:ex:mweiness:tenke-template}).
+In the \isi{template} definition in (\ref{dyv:ex:mweiness:holde-template}), \textsf{OP} (object predicate) is the variable for the selected noun predicate and \textsf{prp} for the selected preposition.
+As in the case of the \isi{template} in (\ref{dyv:ex:mweiness:skrive-template}), the \isi{template} invokes the \textsf{CONCAT} \isi{template} which builds the predicate name.
+The second last equation requires the object to have the value of \textsf{OP} as its predicate (in this case `øye'), and the final equation requires the object not to be definite.
+As for the equation mentioning \textsf{P-SELFORM}, see the explanation of the \isi{template} in (\ref{dyv:ex:mweiness:tenke-template}).
 
 \subsection{Nonverbal flexible expressions}\label{dyv:sec:mweiness:nonverbal}
 
@@ -976,8 +976,8 @@ For example, the noun \textit{ansvar} `responsibility' may select the prepositio
 \end{figure}
 
 Example (\ref{dyv:ex:mweiness:ansvarfor-NP}) is analyzed as in Figure~\ref{dyv:fig:mweiness:ansvarfor-NP-c-f}.
-As in the case of \isi{prepositional verbs}, the selected preposition does not contribute a PRED of its own, but is analyzed as forming a single predicate `ansvar*for' with the noun, taking the complement of the preposition as an argument with the function OBL-TH (an oblique argument expressing a theta role).
-With an infinitival or a clausal complement the syntactic function is COMP.
+As in the case of \isi{prepositional verbs}, the selected preposition does not contribute a \textsf{PRED} of its own, but is analyzed as forming a single predicate \textsf{ansvar*for} with the noun, taking the complement of the preposition as an argument with the function \textsf{OBL-TH} (an oblique argument expressing a theta role).
+With an infinitival or a clausal complement the syntactic function is \textsf{COMP}.
 The \isi{lexical entry} for \textit{ansvar} in (\ref{dyv:ex:mweiness:ansvar-lex}) invokes three alternative templates for the three possible kinds of complements, in addition to its basic \isi{template} as a mass noun.
 
 \eabox{\label{dyv:ex:mweiness:ansvar-lex}
@@ -1006,9 +1006,9 @@ Similarly, adjectives may select prepositional phrases as complements, for insta
 \end{figure}
 
 Example  (\ref{dyv:ex:mweiness:flinktil}) is analyzed as in Figure~\ref{dyv:fig:mweiness:flinktil-c-f}.
-In this example the complement of the selected preposition has been questioned and occurs in the f-structure as the value of FOCUS-INT, i.e., interrogative focus.
-The predicative complement (PREDLINK) has the predicate `flink*til', taking the prepositional complement as its OBL-TH.
-The value of OBL-TH is identical with the value of  FOCUS-INT, which is indicated by the shared index 8, resulting from the general analysis of \textit{wh}-questions in the \isi{grammar}.
+In this example the complement of the selected preposition has been questioned and occurs in the f-structure as the value of \textsf{FOCUS-INT}, i.e., interrogative focus.
+The predicative complement (\textsf{PREDLINK}) has the predicate \textsf{flink*til}, taking the prepositional complement as its \textsf{OBL-TH}.
+The value of \textsf{OBL-TH} is identical with the value of  \textsf{FOCUS-INT}, which is indicated by the shared index \textsf{8}, resulting from the general analysis of \textit{wh}-questions in the \isi{grammar}.
 
 \section{Representing flexibility}\label{dyv:sec:mweiness:variation}
 
@@ -1035,7 +1035,7 @@ We will present the analyses of some cases.
 
 The simplest case of syntactic modification of an MWE is when other words, typically adverbs, occur between the MWE components.
 In a verb-second language like \ili{Norwegian} the sentence subject also frequently breaks up a verb \isi{phrase} MWE.
-The treebank example in (\ref{dyv:ex:mweiness:trekketilbake})  illustrates the recognition of the predicate `trekke*seg*tilbake' (`withdraw', literally: `draw oneself back') across several intervening words.
+The treebank example in (\ref{dyv:ex:mweiness:trekketilbake})  illustrates the recognition of the predicate \textsf{trekke*seg*tilbake} (`withdraw', literally: `draw oneself back') across several intervening words.
 The analysis is shown in Figures~\ref{dyv:fig:mweiness:trekketilbake-c} and~\ref{dyv:fig:mweiness:trekketilbake-f}. 
 
 \ea\label{dyv:ex:mweiness:trekketilbake}
@@ -1063,7 +1063,7 @@ The analysis is shown in Figures~\ref{dyv:fig:mweiness:trekketilbake-c} and~\ref
 \end{figure}
 
 The mechanism for achieving this lies in the projection architecture of \isi{LFG}, in which different constituents in c-structure may project the same f-structure, within which dependencies may be formulated.
-To illustrate we may consider the relevant fragments of the c-structure rules for I′, S and VPmain in (\ref{dyv:ex:mweiness:rule1}--\ref{dyv:ex:mweiness:rule3}).
+To illustrate we may consider the relevant fragments of the c-structure rules for \textsf{I′}, \textsf{S} and \textsf{VPmain} in (\ref{dyv:ex:mweiness:rule1}--\ref{dyv:ex:mweiness:rule3}).
 
 \eabox{\label{dyv:ex:mweiness:rule1}
 {\sffamily 
@@ -1081,9 +1081,9 @@ S $\rightarrow$ &  (PRONP: & ($\uparrow$ SUBJ)=$\downarrow$\\
 & (PRONrfl: & \{ \enspace ($\uparrow$ OBJ-BEN)=$\downarrow$\\
 & & | \enspace ($\uparrow$ OBJ)=$\downarrow$ \enspace \}) \\
 & [...]\\
- & (ADVPs+: & $\downarrow$ ∈ ($\uparrow$ ADJUNCT))\\
+ & (ADVPs+: & $\downarrow$ $∈$ ($\uparrow$ ADJUNCT))\\
 & [...]\\
-& (APsmpl:  & $\downarrow$ ∈ ($\uparrow$ ADJUNCT))\\
+& (APsmpl:  & $\downarrow$ $∈$ ($\uparrow$ ADJUNCT))\\
 & [...]\\
  & (VPmain: & $\uparrow$=$\downarrow$)\\
 & [...]\\\\
@@ -1128,12 +1128,12 @@ VPmain $\rightarrow$ & [...]\\
 %\end{tabular}}
 
 As explained in Section~\ref{dyv:sec:mweiness:LFG}, the equation $\uparrow$=$\downarrow$ annotated to a rule daughter means that the rule daughter and its mother will project the same f-structure.
-Thus it can be seen that the Vfin daughter of I′ (the verb) and the PRTP daughter of VPmain (the particle) will project the same f-structure.
+Thus it can be seen that the \textsf{Vfin} daughter of \textsf{I′} (the verb) and the \textsf{PRTP} daughter of \textsf{VPmain} (the particle) will project the same f-structure.
 
 A particle verb presupposes the presence of the required particle in the sentence, and a particle presupposes the presence of a particle verb.
-This mutual dependency is captured through two features, one feature PRT-VERB=+, carried by the verb and required by the rule introducing the particle, and, conversely, one feature PRT-FORM, carried by the particle and required by the verb to have the appropriate value.
-Thus, the \isi{constraint} equation annotated to PRTP, ($\uparrow$ CHECK PRT-VERB)=c +, demanding that its f-structure should have a feature PRT-VERB=+ (i.e., that the verb should be a particle verb), will be satisfied if the finite verb has contributed such a feature to this common f-structure.
-A similar \isi{constraint} equation associated with the verb, (($\uparrow$ PRT-FORM)=c prt in (\ref{dyv:ex:mweiness:trekke-template}) below), ensures that the particle has the form required by the verb.
+This mutual dependency is captured through two features, one feature \textsf{PRT-VERB=+}, carried by the verb and required by the rule introducing the particle, and, conversely, one feature \textsf{PRT-FORM}, carried by the particle and required by the verb to have the appropriate value.
+Thus, the \isi{constraint} equation annotated to \textsf{PRTP}, \textsf{($\uparrow$ CHECK PRT-VERB)=c +}, demanding that its f-structure should have a feature \textsf{PRT-VERB=+} (i.e., that the verb should be a particle verb), will be satisfied if the finite verb has contributed such a feature to this common f-structure.
+A similar \isi{constraint} equation associated with the verb, \textsf{(($\uparrow$ PRT-FORM)=c prt} in (\ref{dyv:ex:mweiness:trekke-template}) below), ensures that the particle has the form required by the verb.
 
 The \isi{lexical entry} for \textit{trekke} is associated with the relevant frame through an invocation of the \isi{template} for reflexive \isi{verb-particle constructions}.
 Part of the \isi{lexical entry} for \textit{trekke} is shown in  (\ref{dyv:ex:mweiness:trekke-lex}).
@@ -1163,12 +1163,12 @@ V-SUBJ-OBJrefl-PRT (P prt) =\\%[.5em]
 }
 \z
 
-The \isi{template} CONCAT constructs the predicate name `trekke*seg*tilbake' as the value of PRED.
-The reflexive occurring with reflexive verbs is analyzed as OBJ-BEN (indirect object).
-The reason for this is that there will be a direct object in the alternative presentative construction with an expletive \textit{det} subject, such as \textit{Det trekker seg tilbake store styrker} `There are big forces withdrawing', in which \textit{store styrker} occurs as a syntactic object (OBJ); there can only be one OBJ.
+The \isi{template} \textsf{CONCAT} constructs the predicate name \textsf{trekke*seg*tilbake} as the value of \textsf{PRED}.
+The reflexive occurring with reflexive verbs is analyzed as \textsf{OBJ-BEN} (indirect object).
+The reason for this is that there will be a direct object in the alternative presentative construction with an expletive \textit{det} subject, such as \textit{Det trekker seg tilbake store styrker} `There are big forces withdrawing', in which \textit{store styrker} occurs as a syntactic object (OBJ); there can only be one \textsf{OBJ}.
 The presentative construction is described as the second alternative in the disjunction \{...|...\} in the \isi{template}.
-The reflexive, like the expletive subject, is analyzed as a non-argument, which appears from the fact that it is placed outside the argument list enclosed by $\langle$...$\rangle$ in the value of PRED.
-The features PRT-VRB and PRT-FORM are explained in the discussion of the \isi{template} in (\ref{dyv:ex:mweiness:skrive-template}).
+The reflexive, like the expletive subject, is analyzed as a non-argument, which appears from the fact that it is placed outside the argument list enclosed by $\langle$...$\rangle$ in the value of \textsf{PRED}.
+The features \textsf{PRT-VRB} and \textsf{PRT-FORM} are explained in the discussion of the \isi{template} in (\ref{dyv:ex:mweiness:skrive-template}).
 
 \subsection{Long-distance dependencies}\label{dyv:sec:mweiness:longdist}
 
@@ -1187,10 +1187,10 @@ IP $\rightarrow$ &  XP: & ($\uparrow$ TOPIC)=$\downarrow$\\
 }
 }
 
-The first equation annotated to XP in (\ref{dyv:ex:mweiness:furule}) specifies that the f-structure of the XP daughter ($\downarrow$) is the value of the attribute TOPIC of the f-structure of the IP mother ($\uparrow$).
+The first equation annotated to \textsf{XP} in (\ref{dyv:ex:mweiness:furule}) specifies that the f-structure of the \textsf{XP} daughter ($\downarrow$) is the value of the attribute \textsf{TOPIC} of the f-structure of the \textsf{IP} mother ($\uparrow$).
 The second equation specifies that the daughter f-structure is also the value of one of a set of alternative attribute paths.
 COMP and XCOMP are the attributes of embedded finite and non-finite clauses.
-The regular expression \{COMP | XCOMP\}* describes all possible strings over the elements COMP and XCOMP (with repetitions), and the final disjunction specifies the last attribute of the string, enabling the TOPIC to be identical with an embedded SUBJ, OBJ or OBL-TH.
+The regular expression \textsf{\{COMP | XCOMP\}*} describes all possible strings over the elements \textsf{COMP} and \textsf{XCOMP} (with repetitions), and the final disjunction specifies the last attribute of the string, enabling the \textsf{TOPIC} to be identical with an embedded \textsf{SUBJ}, \textsf{OBJ} or \textsf{OBL-TH}.
 We may illustrate with the treebank example in (\ref{dyv:ex:mweiness:fortelleom}) of a prepositional verb \textit{fortelle om} `tell about' in a sentence where the OBL-TH, i.e., the selected prepositional \isi{phrase}, has been topicalized.
 
 \ea\label{dyv:ex:mweiness:fortelleom}
@@ -1218,8 +1218,8 @@ We may illustrate with the treebank example in (\ref{dyv:ex:mweiness:fortelleom}
 \end{figure}
 
 The analysis of  (\ref{dyv:ex:mweiness:fortelleom}) is shown in Figure~\ref{dyv:fig:mweiness:fortelle-om-c-f}.
-In the f-structure the value of TOPIC, indexed 6, is also found as the value of OBL-TH in the embedded XCOMP with `fortelle*om' as predicate.
-Thus the attribute string from the set specified by the functional uncertainty equation in (\ref{dyv:ex:mweiness:furule}) for this example is ($\uparrow$ XCOMP OBL-TH).
+In the f-structure the value of \textsf{TOPIC}, indexed \textsf{6}, is also found as the value of \textsf{OBL-TH} in the embedded \textsf{XCOMP} with \textsf{fortelle*om} as predicate.
+Thus the attribute string from the set specified by the functional uncertainty equation in (\ref{dyv:ex:mweiness:furule}) for this example is \textsf{($\uparrow$ XCOMP OBL-TH)}.
 
 \subsection{Passive alternations}\label{dyv:sec:mweiness:vpidiomsyntax}
 
@@ -1247,8 +1247,8 @@ The full version of the VP idiom \isi{template} in (\ref{dyv:ex:mweiness:holde-t
 \z
 
 After the second line there follows a disjunction of two alternatives.
-The first alternative invokes the \isi{template} PASS-OBL-TH, taking the \isi{predicate-argument structure} as a parameter.
-This \isi{template} allows the active/passive alternation whereby the OBL-TH, i.e., the complement of the selected preposition (see the discussion of example \ref{dyv:ex:mweiness:tenkepå}), may be the subject in a passive construction, as in the treebank example in (\ref{dyv:ex:mweiness:øyemedpass}).
+The first alternative invokes the \isi{template} \textsf{PASS-OBL-TH}, taking the \isi{predicate-argument structure} as a parameter.
+This \isi{template} allows the active/passive alternation whereby the \textsf{OBL-TH}, i.e., the complement of the selected preposition (see the discussion of example \ref{dyv:ex:mweiness:tenkepå}), may be the subject in a passive construction, as in the treebank example in (\ref{dyv:ex:mweiness:øyemedpass}).
 
 \ea\label{dyv:ex:mweiness:øyemedpass}
 \gll De var derimot ikke klar over at de ble \textbf{holdt} \textbf{øye} \textbf{med}. \\
@@ -1264,7 +1264,7 @@ The second alternative in the main disjunction describes the impersonal (present
 \glt `Someone was keeping an eye on them.'
 \z
 
-The embedded disjunction of two predicate-argument structures in the fourth and fifth lines of the \isi{template} describes the possibility of including an OBL-AG, i.e., an oblique agent in a prepositional \isi{phrase} with \textit{av} `by'.
+The embedded disjunction of two predicate-argument structures in the fourth and fifth lines of the \isi{template} describes the possibility of including an \textsf{OBL-AG}, i.e., an oblique agent in a prepositional \isi{phrase} with \textit{av} `by'.
 The remaining equations require the passive form of the verb and expletive type of the subject pronoun.
 
 \section{Complementation patterns}\label{dyv:sec:mweiness:complementation}
@@ -1290,31 +1290,31 @@ While the shift in transitivity does not significantly affect the semantics of t
 \z
 
 More precisely, the theme object that is implicit in the intransitive usage in (\ref{dyv:ex:mweiness:transitivity-a}) is explicit in (\ref{dyv:ex:mweiness:transitivity-b}), while in (\ref{dyv:ex:mweiness:transitivity-c}) the object has the semantic role of experiencer instead of theme.
-The frames V-SUBJ-PRT and V-SUBJ-PRT-OBJ represent the intransitive and the transitive usages of \emph{si opp}.
+The frames \textsf{V-SUBJ-PRT} and \textsf{V-SUBJ-PRT-OBJ} represent the intransitive and the transitive usages of \emph{si opp}.
 NorGram, being mainly a syntactic framework, has one frame for both transitive readings, leaving semantic roles underspecified. 
 
 Most of the \isi{verbal MWEs} in NorGram are \isi{phrasal verbs} or VP \isi{idioms}.
 Such MWEs have free subjects, so that any argument variation is in the complements.\footnote{The exception to free subjects in VP \isi{idioms} is expressions with the expletive subject \emph{det} `it'. However, this type of argument variation is analyzed as a grammatical rather than a lexical selection of the subject and is thus not considered here.}
 The lexical entries display a wide range of complementation patterns, one type being MWEs where the verb selects all of its complements. 
 Table~\ref{dyv:tab:mweiness:selected} presents types of VP \isi{idioms} in NorGram with only selected complements. 
-In \isi{idioms} where the verb subcategorizes for only one selected complement, the selected element is either a nominal (O), a prepositional ([P + O]) or a predicative (PC) complement. 
-There is also a type of VP idiom with two selected complements (O~+~PRT).
+In \isi{idioms} where the verb subcategorizes for only one selected complement, the selected element is either a nominal (\textsf{O}), a prepositional (\textsf{[P + O]}) or a predicative (\textsf{PC}) complement. 
+There is also a type of VP idiom with two selected complements (\textsf{O~+~PRT}).
 
 \begin{table}
   \begin{tabular}{llll}
     \lsptoprule
     pattern & example & lit. translation & id. translation\\
     \midrule
-    V + O & \emph{slå følge} &  `beat company' &  `accompany' \\
+    \textsf{V + O} & \emph{slå følge} &  `beat company' &  `accompany' \\
     & \emph{slå leir} & `beat camp' &  `camp' \\
     & \emph{ta feil} & `take wrong' & `be wrong'  \\
     & \emph{ta fyr} & `take fire' &  `catch fire' \\ \tablevspace
-    V + [P + O] & \emph{gå i oppløsning} & `go in dissolution' & `dissolve' \\ 
+    \textsf{V + [P + O]} & \emph{gå i oppløsning} & `go in dissolution' & `dissolve' \\ 
     & \emph{komme for en dag} & `come for a day' & `be revealed' \\     
     & \emph{løfte i flokk} & `lift in flock' & `join forces' \\
     & \emph{legge på svøm} & `lay on swim' &  `start swimming' \\ \tablevspace
-    V + PC & \emph{stå brud} & `stand bride' & `get married' \\ \tablevspace
-    V + O + PRT & \emph{sette livet til} & `put the life to' & `lose one's life' \\
+    \textsf{V + PC} & \emph{stå brud} & `stand bride' & `get married' \\ \tablevspace
+    \textsf{V + O + PRT} & \emph{sette livet til} & `put the life to' & `lose one's life' \\
     \lspbottomrule
   \end{tabular}
   \caption{Verbal MWEs with only selected complements}
@@ -1365,13 +1365,13 @@ In the VP idiom \emph{legge merke til} `notice', the verb \emph{legge} `lay' sel
 %\z
 
 MWEs that subcategorize for different types of complements are represented in the lexicon with one frame for each \isi{subcategorization} pattern.
-In the \isi{template} invocations in (\ref{dyv:ex:mweiness:leggemerketilframes}), POBJ, PCOMP and PCOMPint represent the different types of prepositional complements that occur with \emph{legge merke til} in (\ref{dyv:ex:mweiness:leggemerketil-a}), (\ref{dyv:ex:mweiness:leggemerketil-b}), and (\ref{dyv:ex:mweiness:leggemerketil-c}), respectively.
+In the \isi{template} invocations in (\ref{dyv:ex:mweiness:leggemerketilframes}), \textsf{POBJ}, \textsf{PCOMP} and \textsf{PCOMPint} represent the different types of prepositional complements that occur with \emph{legge merke til} in (\ref{dyv:ex:mweiness:leggemerketil-a}), (\ref{dyv:ex:mweiness:leggemerketil-b}), and (\ref{dyv:ex:mweiness:leggemerketil-c}), respectively.
 
 \ea\label{dyv:ex:mweiness:leggemerketilframes}
 \begin{xlist}
-\ex \label{dyv:ex:mweiness:leggemerketilframes-a}@(VPIDIOM-INDEFOBJ-POBJ legge merke til) \\ 
-\ex \label{dyv:ex:mweiness:leggemerketilframes-b}@(VPIDIOM-INDEFOBJ-PCOMP  legge merke til) \\
-\ex \label{dyv:ex:mweiness:leggemerketilframes-c}@(VPIDIOM-INDEFOBJ-PCOMPint legge merke til) \\
+\ex \label{dyv:ex:mweiness:leggemerketilframes-a}\textsf{@(VPIDIOM-INDEFOBJ-POBJ legge merke til)} \\ 
+\ex \label{dyv:ex:mweiness:leggemerketilframes-b}\textsf{@(VPIDIOM-INDEFOBJ-PCOMP  legge merke til)} \\
+\ex \label{dyv:ex:mweiness:leggemerketilframes-c}\textsf{@(VPIDIOM-INDEFOBJ-PCOMPint legge merke til)} \\
 \end{xlist}
 \z	
 
@@ -1391,14 +1391,14 @@ For instance, NorGram has more than 80 templates for \isi{phrasal verbs}; these 
     \lsptoprule
     type & example frame & example MWE \\
     \midrule
-    V + PRT & V-SUBJ-PRT & \emph{stryke med} \\
-    V + PRT + 1 complement & V-SUBJ-PRT-XCOMP & \emph{få til} \\
-    V + PRT + 2 complements & V-SUBJ-PRT-OBJ-OBJ & \emph{gjøre etter}\\     \tablevspace
-    V + PPsel & V-SUBJ-POBJ & \emph{advare mot} \\
-    V + PPsel + 1 complement  & V-SUBJ-OBJ-PACOMP & \emph{erklære for} \\
-    V + PPsel + 2 complements & V-SUBJ-OBJ-POBJ-PCOMP & \emph{vedde med på} \\ \tablevspace
-    V + PRT + PPsel & V-SUBJ-PRT-POBJ & \emph{gå med på} \\
-    V + PRT + PPsel + 1 complement & V-SUBJ-PRT-OBJ-POBJ & \emph{venne av med} \\ % gjøre om til
+    \textsf{V + PRT} & \textsf{V-SUBJ-PRT} & \emph{stryke med} \\
+    \textsf{V + PRT} + 1 complement & \textsf{V-SUBJ-PRT-XCOMP} & \emph{få til} \\
+    \textsf{V + PRT} + 2 complements & \textsf{V-SUBJ-PRT-OBJ-OBJ} & \emph{gjøre etter}\\     \tablevspace
+    \textsf{V + PPsel} & \textsf{V-SUBJ-POBJ} & \emph{advare mot} \\
+    \textsf{V + PPsel} + 1 complement  & \textsf{V-SUBJ-OBJ-PACOMP} & \emph{erklære for} \\
+    \textsf{V + PPsel} + 2 complements & \textsf{V-SUBJ-OBJ-POBJ-PCOMP} & \emph{vedde med på} \\ \tablevspace
+    \textsf{V + PRT + PPsel} & \textsf{V-SUBJ-PRT-POBJ} & \emph{gå med på} \\
+    \textsf{V + PRT + PPsel} + 1 complement & \textsf{V-SUBJ-PRT-OBJ-POBJ} & \emph{venne av med} \\ % gjøre om til
     \lspbottomrule
   \end{tabular}
   \caption{Main types of complementation patterns in phrasal verbs in NorGram}
@@ -1406,7 +1406,7 @@ For instance, NorGram has more than 80 templates for \isi{phrasal verbs}; these 
 \end{table}
 
 Table~\ref{dyv:tab:mweiness:phrasaltypes} presents the different types of complementation patterns for \isi{verb-particle constructions}, \isi{prepositional verbs}, and \isi{verb-particle constructions} with selected prepositions.
-The first column in the table is the pattern type, represented in terms of the main complement(s), which may be a particle (PRT), a selected prepositional \isi{phrase} (PPsel), or both, and the number of additional complements.\footnote{``Main complement'' in this context refers to the selected complement which determines the type of the overall construction, such as PRT in \isi{verb-particle constructions}.} 
+The first column in the table is the pattern type, represented in terms of the main complement(s), which may be a particle (\textsf{PRT}), a selected prepositional \isi{phrase} (\textsf{PPsel)}, or both, and the number of additional complements.\footnote{``Main complement'' in this context refers to the selected complement which determines the type of the overall construction, such as \textsf{PRT} in \isi{verb-particle constructions}.} 
 %The first column in the table is the pattern type, represented in terms of the main complement (PRT, PPsel or both) and the number of additional complements.\footnote{``Main complement'' in this context refers to the selected complement which determines the type of the overall construction, such as PRT in \isi{verb-particle constructions}.} 
 Examples of \isi{subcategorization} frames for each type are given in the second column using \isi{template} names.
 The example MWEs, represented in the table with only their fixed components, are instances of the example frames and are discussed in more detail in (\ref{dyv:ex:mweiness:strykemed}--\ref{dyv:ex:mweiness:venneavmed}).
@@ -1442,8 +1442,8 @@ The example MWEs, represented in the table with only their fixed components, are
 \z
 
 
-The example \emph{få noe til} in (\ref{dyv:ex:mweiness:fåtil-1}) is an instantiation of the frame V-SUBJ-PRT-XCOMP, with one free complement in the form of the infinitival complement \emph{å tenke igjen} `to think again'.  
-There is one other frame for this particular MWE in the lexicon, with a nominal object instead of the infinitival complement (V-SUBJ-PRT-OBJ). 
+The example \emph{få noe til} in (\ref{dyv:ex:mweiness:fåtil-1}) is an instantiation of the frame \textsf{V-SUBJ-PRT-XCOMP}, with one free complement in the form of the infinitival complement \emph{å tenke igjen} `to think again'.  
+There is one other frame for this particular MWE in the lexicon, with a nominal object instead of the infinitival complement (\textsf{V-SUBJ-PRT-OBJ}). 
 Example (\ref{dyv:ex:mweiness:fåtil-2}) illustrates this complement structure.
 
 %«Dette er hva du fikk til.»
@@ -1466,13 +1466,13 @@ These should thus be considered different MWEs.
 \glt `Why can't we make them stay?' \\ 
 \z
 
-The last type of verb-particle construction in Table~\ref{dyv:tab:mweiness:phrasaltypes}, with two free complements in addition to the particle, is exemplified with the frame V-SUBJ-PRT-OBJ-OBJ.
-This argument structure, illustrated in (\ref{dyv:ex:mweiness:gjøreetter}) for \emph{gjøre noen noe etter}, involves both an indirect object (OBJ-BEN), \emph{ham} `him', and a direct object (OBJ), \emph{noe slikt} `something like that' (OBJ-BEN is shortened to OBJ in the name of the \isi{template}).
+The last type of verb-particle construction in Table~\ref{dyv:tab:mweiness:phrasaltypes}, with two free complements in addition to the particle, is exemplified with the frame \textsf{V-SUBJ-PRT-OBJ-OBJ}.
+This argument structure, illustrated in (\ref{dyv:ex:mweiness:gjøreetter}) for \emph{gjøre noen noe etter}, involves both an indirect object (\textsf{OBJ-BEN}), \emph{ham} `him', and a direct object (\textsf{OBJ}), \emph{noe slikt} `something like that' (\textsf{OBJ-BEN} is shortened to \textsf{OBJ} in the name of the \isi{template}).
 %This argument structure, illustrated in (\ref{dyv:ex:mweiness:gjøreetter}) for \emph{gjøre noen noe etter}, is idiosyncratic because verbs normally do not take two objects.
 %Other frames with two free complements are V-SUBJ-PRT-POBJrefl-COMPat and V-SUBJexpl-PRT-OBJ-COMP.
-A second frame of this type, which is slightly more complex with a nominal object and a clausal complement (COMP) as well as an expletive subject, is V-SUBJexpl-PRT-OBJ-COMP. 
+A second frame of this type, which is slightly more complex with a nominal object and a clausal complement (\textsf{COMP}) as well as an expletive subject, is \textsf{V-SUBJexpl-PRT-OBJ-COMP}. 
 The MWE \emph{det faller noen noe inn} `something occurs to someone' in (\ref{dyv:ex:mweiness:falleinn}) is an example of this frame, literally translating into `it falls someone something in'.
-Except for the expletive subject and the particle, the frame has the same arguments as V-SUBJ-OBJ-COMP for single verbs such as \emph{forklare} `explain'.
+Except for the expletive subject and the particle, the frame has the same arguments as \textsf{V-SUBJ-OBJ-COMP} for single verbs such as \emph{forklare} `explain'.
 The frame is thus regular in terms of argument structure.   
 %\footnote{Compare to the frame V-SUBJ-OBJ-COMP for the verb \emph{forklare} `explain'.} 
 %http://clarino.uib.no/iness/lfg-sentence?treebank=nob-avis&version=2016-05-17&unique-id=3789406&solution-nr=0&session-id=241982373627117
@@ -1486,7 +1486,7 @@ The frame is thus regular in terms of argument structure.
 
 In contrast to \isi{verb-particle constructions} which may be intransitive, \isi{prepositional verbs} will always have a free complement, introduced by the selected preposition.
 Prepositional verbs can subcategorize for exactly one prepositional \isi{phrase}, as in
-\emph{advare mot noe} `warn against something' in (\ref{dyv:ex:mweiness:advaremot}), where \emph{mot segregering} `against segregation' is a PPsel. 
+\emph{advare mot noe} `warn against something' in (\ref{dyv:ex:mweiness:advaremot}), where \emph{mot segregering} `against segregation' is a \textsf{PPsel}. 
 
 %Treebank: nob-avis version: 2016-05-17; Document: Stærk, Bjørn: ; \isi{grammar}: \ili{Norwegian} Bokmål
 %Sentence #62: Han advarer mot segregering.
@@ -1509,9 +1509,9 @@ In (\ref{dyv:ex:mweiness:erklærefor}), \emph{erklære noen for noe} `declare so
 \z
 
 %The MWE in (\ref{dyv:ex:mweiness:erklærefor}) examplifies the pattern type V + PPsel + 1 complement in Table~\ref{dyv:tab:mweiness:phrasaltypes}, and has the \isi{subcategorization} frame V-SUBJ-OBJ-PACOMP.   
-The relevant frame in (\ref{dyv:ex:mweiness:erklærefor}) is V-SUBJ-OBJ-PACOMP, where PACOMP is the selected prepositional \isi{phrase}.
-While PPsel is the c-structure category for constituents headed by selected prepositions and may refer to any type of prepositional complement, PACOMP is a syntactic variable that reflects the type of complement. %, cf. POBJ, PCOMP and PXCOMP in (\ref{dyv:ex:mweiness:leggemerketilframes}). 
+The relevant frame in (\ref{dyv:ex:mweiness:erklærefor}) is \textsf{V-SUBJ-OBJ-PACOMP}, where \textsf{PACOMP} is the selected prepositional \isi{phrase}.
 In this case, the preposition \emph{for} takes the adjectival predicative complement \emph{død} `dead'. %\footnote{A nominal predicative complement (as in \emph{declare someone king}) would be represented with the category NCOMP in the \isi{subcategorization} frame.}
+While \textsf{PPsel} is the c-structure category for constituents headed by selected prepositions and may refer to any type of prepositional complement, \textsf{PACOMP} is a syntactic variable that reflects the type of complement. %, cf. POBJ, PCOMP and PXCOMP in (\ref{dyv:ex:mweiness:leggemerketilframes}). 
 
 The final type of prepositional verb in Table~\ref{dyv:tab:mweiness:phrasaltypes} is illustrated in (\ref{dyv:ex:mweiness:veddemedpå}) with the MWE \emph{vedde noe med noen på noe} `bet something with someone on something'. 
 
@@ -1521,13 +1521,13 @@ The final type of prepositional verb in Table~\ref{dyv:tab:mweiness:phrasaltypes
 \glt `Abrams bets a cigarette with Brown that it {was raining}.' \\ 
 \z
 
-This example is an instance of the frame V-SUBJ-OBJ-POBJ-PCOMP, which has two complements in addition to a PPsel, in this case a free object and a second PPsel.
+This example is an instance of the frame \textsf{V-SUBJ-OBJ-POBJ-PCOMP}, which has two complements in addition to a \textsf{PPsel}, in this case a free object and a second \textsf{PPsel}.
 The free object is \emph{en sigarett} `a cigarette'.
-In the first PPsel, which corresponds to POBJ in the \isi{subcategorization} frame, the selected preposition \emph{med} `with' takes the nominal object \emph{Brown}. 
-In the second PPsel, corresponding to PCOMP,  the preposition \emph{på} `on' takes the clausal complement \emph{at det regnet} `that it was raining'.
+In the first \textsf{PPsel}, which corresponds to \textsf{POBJ} in the \isi{subcategorization} frame, the selected preposition \emph{med} `with' takes the nominal object \emph{Brown}. 
+In the second \textsf{PPsel}, corresponding to \textsf{PCOMP},  the preposition \emph{på} `on' takes the clausal complement \emph{at det regnet} `that it was raining'.
 
 Like \isi{prepositional verbs}, \isi{verb-particle constructions} with selected prepositions always subcategorize for at least one free complement. 
-Such constructions can have one complement, as in \emph{gå med på noe} `go along with something' in (\ref{dyv:ex:mweiness:gåmedpå}), which is an instance of the frame V-SUBJ-PRT-POBJ.
+Such constructions can have one complement, as in \emph{gå med på noe} `go along with something' in (\ref{dyv:ex:mweiness:gåmedpå}), which is an instance of the frame \textsf{V-SUBJ-PRT-POBJ}.
  
 %Treebank: nob-avis version: 2016-05-17; Document: Melgård, Marie; Kagge, Gunnar: ; \isi{grammar}: \ili{Norwegian} Bokmål
 %Sentence #27: I land som Sverige gikk fagbevegelsen med på de nye tankene.
@@ -1564,9 +1564,9 @@ With the infinitival complement, there is a shift in meaning from `go along with
 
 Verb-particle constructions with selected prepositions may also have two free complements. 
 This is the case for \emph{venne noen av med noe} `wean someone off something' in (\ref{dyv:ex:mweiness:venneavmed}).
-This example, instantiating the frame V-SUBJ-PRT-OBJ-POBJ, has the particle \emph{av} `off', the free pronominal object \emph{meg} `me', and the selected prepositional object \emph{med det} `with that'.
+This example, instantiating the frame \textsf{V-SUBJ-PRT-OBJ-POBJ}, has the particle \emph{av} `off', the free pronominal object \emph{meg} `me', and the selected prepositional object \emph{med det} `with that'.
 Also here, the prepositional complement may vary.
-The alternative frame is V-SUBJ-PRT-OBJ-PXCOMP, allowing an infinitival prepositional complement, but in this case yielding no difference in meaning.
+The alternative frame is \textsf{V-SUBJ-PRT-OBJ-PXCOMP}, allowing an infinitival prepositional complement, but in this case yielding no difference in meaning.
 
 %Mor klarte aldri å venne meg av med det.
 %http://clarino.uib.no/iness/lfg-sentence?treebank=nob-novel_2&version=2016-05-17&unique-id=2170917&solution-nr=0
@@ -1583,7 +1583,7 @@ The alternative frame is V-SUBJ-PRT-OBJ-PXCOMP, allowing an infinitival preposit
 
 The examples of complementation patterns for \isi{phrasal verbs} in NorGram show that the subcategorizational properties of MWEs can be the source of variation both at the syntactic and the semantic levels. 
 We have seen that the main types of complementation patterns in Table~\ref{dyv:tab:mweiness:phrasaltypes} are shared by a number of \isi{subcategorization} frames. %, which indicates a certain variance within each type. 
-Table~\ref{dyv:tab:mweiness:ppsel1comp} presents some of the frames that are variants of the type V + PPsel + 1 complement in Table~\ref{dyv:tab:mweiness:phrasaltypes} (\isi{prepositional verbs} with one free complement). 
+Table~\ref{dyv:tab:mweiness:ppsel1comp} presents some of the frames that are variants of the type \textsf{V + PPsel} + 1 complement in Table~\ref{dyv:tab:mweiness:phrasaltypes} (\isi{prepositional verbs} with one free complement). 
 The frames are divided into groups of MWEs that share the same or similar types of arguments, resulting in five categories of argument patterning for this type.\footnote{Several frames of this type are not listed here, including frames with expletive subjects and objects and subtypes of clausal complements.} 
 %Presenting these argument types would require some elaboration and they are thus left out of this overview.}
 %Subcategorization frames for new MWEs have so far been added to the lexicon under the relevant \isi{lexical entry}, ensuring that the MWE will receive an idiomatic analysis during parsing. 
@@ -1594,33 +1594,33 @@ While the current section provides only superficial observations about the types
     \lsptoprule
 complementation type & subcategorization frame \\
     \midrule
-free object & V-SUBJ-OBJ-PACOMP \\
-and PPsel & V-SUBJ-OBJ-POBJACOMP \\
-& V-SUBJ-OBJ-POBJNCOMP \\
-& V-SUBJ-OBJ-POBJ \\
-& V-SUBJ-OBJ-PCOMP \\
-& V-SUBJ-OBJ-PCOMPinf \\
-& V-SUBJ-OBJ-PCOMPint \\
-& V-SUBJ-OBJ-PXCOMP \\ 
-& V-SUBJ-INDOBJ-POBJ \\
+free object & \textsf{V-SUBJ-OBJ-PACOMP} \\
+and \textsf{PPsel} & \textsf{V-SUBJ-OBJ-POBJACOMP} \\
+& \textsf{V-SUBJ-OBJ-POBJNCOMP} \\
+& \textsf{V-SUBJ-OBJ-POBJ} \\
+& \textsf{V-SUBJ-OBJ-PCOMP} \\
+& \textsf{V-SUBJ-OBJ-PCOMPinf} \\
+& \textsf{V-SUBJ-OBJ-PCOMPint} \\
+& \textsf{V-SUBJ-OBJ-PXCOMP} \\ 
+& \textsf{V-SUBJ-INDOBJ-POBJ} \\
 %& V-SUBJ-OBJexpl-POBJ \\
-& V-SUBJexpl-OBJ-POBJ \\ \tablevspace
-Reflexive object  & V-SUBJ-OBJrefl-POBJ \\
- and PPsel  & V-SUBJ-OBJrefl-PCOMP \\
-& V-SUBJ-OBJrefl-PCOMPat \\
-& V-SUBJ-OBJrefl-PCOMPint \\
-& V-SUBJ-OBJrefl-PXCOMP \\ \tablevspace
-PPsel & V-SUBJ-POBJ-COMP \\
-and free  & V-SUBJ-POBJ-XCOMP \\
-nominal  & V-SUBJ-POBJ-OBL \\
-complement & V-SUBJ-POBJ-OBLBEN \\ \tablevspace
-prepositional reflexive object & V-SUBJ-POBJrefl-OBJ \\
-and free nominal complement & V-SUBJ-POBJrefl-COMP \\ \tablevspace
-PPsel & V-SUBJ-POBJ-PXCOMP \\
-and PPsel & V-SUBJ-POBJrefl-POBJ \\ %\hline
+& \textsf{V-SUBJexpl-OBJ-POBJ} \\ \tablevspace
+Reflexive object  & \textsf{V-SUBJ-OBJrefl-POBJ} \\
+ and \textsf{PPsel}  & \textsf{V-SUBJ-OBJrefl-PCOMP} \\
+& \textsf{V-SUBJ-OBJrefl-PCOMPat} \\
+& \textsf{V-SUBJ-OBJrefl-PCOMPint} \\
+& \textsf{V-SUBJ-OBJrefl-PXCOMP} \\ \tablevspace
+\textsf{PPsel} & \textsf{V-SUBJ-POBJ-COMP} \\
+and free  & \textsf{V-SUBJ-POBJ-XCOMP} \\
+nominal  & \textsf{V-SUBJ-POBJ-OBL} \\
+complement & \textsf{V-SUBJ-POBJ-OBLBEN} \\ \tablevspace
+prepositional reflexive object & \textsf{V-SUBJ-POBJrefl-OBJ} \\
+and free nominal complement & \textsf{V-SUBJ-POBJrefl-COMP} \\ \tablevspace
+\textsf{PPsel} & \textsf{V-SUBJ-POBJ-PXCOMP} \\
+and \textsf{PPsel} & \textsf{V-SUBJ-POBJrefl-POBJ} \\ %\hline
         \lspbottomrule
   \end{tabular}
-  \caption{Some variants of  V + PPsel + 1 complement}
+  \caption{Some variants of  \textsf{V} + \textsf{PPsel} + 1 complement}
   \label{dyv:tab:mweiness:ppsel1comp}
 \end{table}
  
