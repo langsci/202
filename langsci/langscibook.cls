@@ -231,9 +231,9 @@
 % 	\newcommand{\kr}[1]{{\sffamily #1}}
 % 	\AdditionalFontImprint{Korean}}
 \DeclareVoidOption{arabicfont}{
-	\AtEndPreamble{\newfontfamily\arabicfont[Script=Arabic,ItalicFont=*,Scale=MatchLowercase]{DejaVu Sans}
+	\AtEndPreamble{\newfontfamily\arabicfont[Script=Arabic,ItalicFont=*,Scale=MatchLowercase,Path=\fontpath]{ScheherazadeRegOT_Jazm.ttf}
 % 	\newcommand{\textarabic}[1]{{\arabicfont #1}}
-	\AdditionalFontImprint{Arabtype}}
+	\AdditionalFontImprint{ScheherazadeRegOT}}
 }
 \DeclareVoidOption{hebrewfont}{
 	\newfontfamily\hebrewfont[Script=Hebrew,ItalicFont=*, Scale=0.9]{SBLHebrew.ttf}

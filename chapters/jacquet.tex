@@ -888,13 +888,13 @@ St [DOT] [] [LOW_W] [] [LOW_W] [] [LOW_W] [] [LOW_W] [] school (0.24)
 Figure~\ref{jac:pattern-distr} depicts the distribution of patterns with
 respect to their reliability scores.
 
-\begin{figure}
+\begin{figure}[H]
 \includegraphics[width=.95\textwidth]{figures/patterns-distr.png}
-\caption{\label{jac:pattern-distr}Distribution of patterns with respect to their reliability score for English and Spanish. Each of the bars represents the fraction of patterns, whose reliability score is within the range $(x,x+0.5>$, where $x \in \{0,0.5,\ldots{},0.95\}$.\todo[inline]{Please check the expression $(x,x+0.5>$, esp. the closing angle bracket}}
+\caption{\label{jac:pattern-distr}Distribution of patterns with respect to their reliability score for English and Spanish. Each of the bars represents the fraction of patterns, whose reliability score is within the range $(x,x+0.5)$, where $x \in \{0,0.5,\ldots{},0.95\}$.}
 \end{figure}
 
 \subsection{Evaluation}
-In order to evaluate the quality of the learned patterns we used two NE annotated corpora from the CoNLL shared task for \ili{English} and \ili{Spanish}\footnote{\url{http://www.cnts.ua.ac.be/conll2002/ner/} and \url{http://www.cnts.ua.ac.be/conll2003/ner/}}\todo{Dead links in Fn 7}, which contains respectively 6,300 and 7,389 organisation occurrences, and tested the performance using different settings. In particular, we compared three settings: (a) using only BabelNet-derived patterns (denoted in the figures with \textsc{patterns}),  (b) using only an existing rule-based NER system as a baseline (denoted \textsc{rules}), (c) combining rule-based NER system and BabelNet-derived patterns (denoted in the figures with \textsc{rules+patterns}).
+In order to evaluate the quality of the learned patterns we used two NE annotated corpora from the CoNLL shared task for \ili{English} and \ili{Spanish}\footnote{\url{https://www.clips.uantwerpen.be/conll2002/ner/} and \url{https://www.clips.uantwerpen.be/conll2003/ner/}}, which contains respectively 6,300 and 7,389 organisation occurrences, and tested the performance using different settings. In particular, we compared three settings: (a) using only BabelNet-derived patterns (denoted in the figures with \textsc{patterns}),  (b) using only an existing rule-based NER system as a baseline (denoted \textsc{rules}), (c) combining rule-based NER system and BabelNet-derived patterns (denoted in the figures with \textsc{rules+patterns}).
 In our experiments, we used an in-house rule based NER system \citep{steinberger-11, ehrmann-15} that is geared towards high precision. The choice of a specific NER system is not decisive for these experiments, but by combining an existing NER system with our BabelNet-derived patterns, we aim at testing how our automatically created patterns could be useful to improve the quality of the NER recognition.
 
 Figures~\ref{jac:fig:eval_patterns_english_precision},~\ref{jac:fig:eval_patterns_english_recall},~\ref{jac:fig:eval_patterns_spanish_precision}
@@ -1067,18 +1067,17 @@ Table~\ref{jac:tab:EvalPatterns} provides the results obtained with a pattern-re
 \clearpage
 
 
-\subsubsection{Mistakes and fuzzy matchings}
-\todo[inline]{This subsubsection is the only subsection to ``Evaluation''}
+\subsection{Mistakes and fuzzy matchings}
 Using existing NE annotated corpora for our preliminary experiments was the most obvious choice to measure the quality of our patterns. Nevertheless, it appears that some MWEntities recognised by the BabelNet-derived patterns considered as incorrectly extracted according to the annotated corpora, could still be considered as correct extractions.
 Figure~\ref{jac:fig:error_analysis} provides the complete list of ``wrong'' MWEntities (first column) recognised by our patterns when pattern reliability threshold equals 0.90. Even if some cases are clear mistakes, like \textit{Results of European Super} or \textit{Bank on Thursday}, a large fraction of the extractions could be considered as valid organisation names. The two other columns show the partial matches with the same reliability threshold, which are considered as incorrect in the \emph{Exact matching} evaluation, and correct in the \emph{Fuzzy matching} evaluation. Again, if some of them are clear mismatches, like \textit{European Commission on Wednesday} or \textit{NATO and the European Union}, most of the extractions appear to be consistent entities.
 
 We expect to achieve higher precision of the learned patterns through
 embracing in the computation of the reliability score additional
 external evidence, i.e., exploiting contextual information obtained
-from pattern matchings in a web-scale corpus to judge the correctness.
+from pattern matchings in a web-scale corpus to judge the correctness.\largerpage
 
-\begin{figure}
-\includegraphics[scale=0.54]{figures/error_analysis.png}
+\begin{figure}[H]
+\includegraphics[width=.9\textwidth]{figures/error_analysis.png}
 \caption{Complete list of ``wrong'' MWEntities and left or right boundary mismatching with pattern reliability threshold = 0.90}
 \label{jac:fig:error_analysis}
 \end{figure}
