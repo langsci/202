@@ -53,12 +53,12 @@ Table~\ref{dyv:tab:mweiness:flexibilityclasses} illustrates how common types of 
     Flexibility class & Type & Example MWE \\
     \midrule
 	Fixed &  & \emph{by the way} \\\tablevspace
-	Semi-fixed & Compound nominals  & \emph{chicken soup} \\
-	& Proper names & \emph{Donald Duck} \\
-	& Non-decomposable \isi{idioms} & \emph{kick the bucket} \\\tablevspace
-	Flexible & \isi{verb-particle constructions} &  \emph{give up} \\
-	& Light verbs & \emph{give a speech} \\
-	& Decomposable \isi{idioms} & \emph{spill the beans} \\
+	Semi-fixed      & compound nominals  & \emph{chicken soup} \\
+                    & proper names & \emph{Donald Duck} \\
+                    & non-decomposable \isi{idioms} & \emph{kick the bucket} \\\tablevspace
+    Flexible        & \isi{verb-particle constructions} &  \emph{give up} \\
+                    & light verbs   & \emph{give a speech} \\
+                    & decomposable \isi{idioms} & \emph{spill the beans} \\
     \lspbottomrule
   \end{tabular}
   \caption{Classes of flexibility}
@@ -380,11 +380,11 @@ There is also a coherence requirement to the effect that subcategorizable syntac
 The argument lists in semantic forms are thus crucial for determining grammaticality.
 The semantic forms ``govern the process of semantic interpretation” \citep[177]{kaplanbresnan82}.
 
-The crucial challenge of representing MWEs is that they defy normal compositional analysis.
-The \isi{LFG} solution that is implemented in NorGram is to assign to each MWE a special \isi{lexical entry} that has its own \textsf{PRED} value and thus its own argument structure.
-Each MWE has a semantic form with a special predicate name and a list of any syntactic arguments that this predicate requires.
-%This approach makes it possible to have a clear separation between the 
-This will be shown in detail for the various types of MWEs in the following sections.
+% The crucial challenge of representing MWEs is that they defy normal compositional analysis.
+% The \isi{LFG} solution that is implemented in NorGram is to assign to each MWE a special \isi{lexical entry} that has its own \textsf{PRED} value and thus its own argument structure.
+% Each MWE has a semantic form with a special predicate name and a list of any syntactic arguments that this predicate requires.
+% %This approach makes it possible to have a clear separation between the 
+% This will be shown in detail for the various types of MWEs in the following sections.
 %This \isi{template} can be invoked in the \isi{lexical entry} in (\ref{dyv:ex:mweiness:def-entry}).
 
 %\ea\label{dyv:ex:mweiness:entry-def-new}
@@ -435,13 +435,15 @@ This will be shown in detail for the various types of MWEs in the following sect
 %
 %The entries for \textit{+Noun} and \textit{+Sg} each contribute one equation.
  
- \section{Implementing MWEs}\label{dyv:sec:mweiness:implementing}
+\section{Implementing MWEs}\label{dyv:sec:mweiness:implementing}
+The crucial challenge of representing MWEs is that they defy normal compositional analysis. The LFG solution that is implemented in NorGram is to assign to each MWE a special lexical entry that has its own PRED value and thus its own argument structure. Each MWE has a semantic form with a special predicate name and a list of any syntactic arguments that this predicate requires. This will be shown in detail for the various types of MWEs in the following.
  
- The crucial challenge of representing MWEs is that they defy normal compositional analysis.
-The \isi{LFG} solution that is implemented in NorGram is to assign to each MWE a special \isi{lexical entry} that has its own \textsf{PRED} value and thus its own argument structure.
-Each MWE has a semantic form with a special predicate name and a list of any syntactic arguments that this predicate requires.
-%This approach makes it possible to have a clear separation between the 
-This will be shown in detail for the various types of MWEs in the following.
+ 
+% % %  The crucial challenge of representing MWEs is that they defy normal compositional analysis.
+% % % The \isi{LFG} solution that is implemented in NorGram is to assign to each MWE a special \isi{lexical entry} that has its own \textsf{PRED} value and thus its own argument structure.
+% % % Each MWE has a semantic form with a special predicate name and a list of any syntactic arguments that this predicate requires.
+% % % %This approach makes it possible to have a clear separation between the 
+% % % This will be shown in detail for the various types of MWEs in the following.
 
  \subsection{Fixed expressions}\label{dyv:sec:mweiness:fixed}
 
@@ -1310,7 +1312,7 @@ There is also a type of VP idiom with two selected complements (\textsf{O~+~PRT}
 \begin{table}
   \begin{tabular}{llll}
     \lsptoprule
-    pattern & example & lit. translation & id. translation\\
+    Pattern & Example & Lit. translation & Id. translation\\
     \midrule
     \textsf{V + O} & \emph{slå følge} &  `beat company' &  `accompany' \\
     & \emph{slå leir} & `beat camp' &  `camp' \\
@@ -1396,7 +1398,7 @@ For instance, NorGram has more than 80 templates for \isi{phrasal verbs}; these 
 \begin{table}
   \begin{tabular}{l@{~}l@{~}l}
     \lsptoprule
-    type & example frame & example MWE \\
+    Type & Example frame & Example MWE \\
     \midrule
     \textsf{V + PRT} & \textsf{V-SUBJ-PRT} & \emph{stryke med} \\
     \textsf{V + PRT} + 1 complement & \textsf{V-SUBJ-PRT-XCOMP} & \emph{få til} \\
@@ -1599,9 +1601,9 @@ While the current section provides only superficial observations about the types
 \begin{table}[htbp]
   \begin{tabular}{ll}
     \lsptoprule
-complementation type & subcategorization frame \\
+Complementation type & Subcategorization frame \\
     \midrule
-free object & \textsf{V-SUBJ-OBJ-PACOMP} \\
+Free object & \textsf{V-SUBJ-OBJ-PACOMP} \\
 and \textsf{PPsel} & \textsf{V-SUBJ-OBJ-POBJACOMP} \\
 & \textsf{V-SUBJ-OBJ-POBJNCOMP} \\
 & \textsf{V-SUBJ-OBJ-POBJ} \\
@@ -1613,7 +1615,7 @@ and \textsf{PPsel} & \textsf{V-SUBJ-OBJ-POBJACOMP} \\
 %& V-SUBJ-OBJexpl-POBJ \\
 & \textsf{V-SUBJexpl-OBJ-POBJ} \\ \tablevspace
 Reflexive object  & \textsf{V-SUBJ-OBJrefl-POBJ} \\
- and \textsf{PPsel}  & \textsf{V-SUBJ-OBJrefl-PCOMP} \\
+and \textsf{PPsel}  & \textsf{V-SUBJ-OBJrefl-PCOMP} \\
 & \textsf{V-SUBJ-OBJrefl-PCOMPat} \\
 & \textsf{V-SUBJ-OBJrefl-PCOMPint} \\
 & \textsf{V-SUBJ-OBJrefl-PXCOMP} \\ \tablevspace
@@ -1621,11 +1623,11 @@ Reflexive object  & \textsf{V-SUBJ-OBJrefl-POBJ} \\
 and free  & \textsf{V-SUBJ-POBJ-XCOMP} \\
 nominal  & \textsf{V-SUBJ-POBJ-OBL} \\
 complement & \textsf{V-SUBJ-POBJ-OBLBEN} \\ \tablevspace
-prepositional reflexive object & \textsf{V-SUBJ-POBJrefl-OBJ} \\
+Prepositional reflexive object & \textsf{V-SUBJ-POBJrefl-OBJ} \\
 and free nominal complement & \textsf{V-SUBJ-POBJrefl-COMP} \\ \tablevspace
 \textsf{PPsel} & \textsf{V-SUBJ-POBJ-PXCOMP} \\
 and \textsf{PPsel} & \textsf{V-SUBJ-POBJrefl-POBJ} \\ %\hline
-        \lspbottomrule
+\lspbottomrule
   \end{tabular}
   \caption{Some variants of  \textsf{V} + \textsf{PPsel} + 1 complement}
   \label{dyv:tab:mweiness:ppsel1comp}
