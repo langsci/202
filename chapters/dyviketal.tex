@@ -150,7 +150,7 @@ The rule daughters are listed vertically after the horizontal arrow, with each n
 \ea\label{dyv:ex:mweiness:PP-rule}
 {\sffamily 
 PP	$\rightarrow$	P: $\uparrow=\downarrow$ \\
-\hspace{2.3em} NP: ($\uparrow$~OBJ)=$\downarrow$
+\hspace{2.3em} NP: ($\uparrow$~OBJ)\,=\,$\downarrow$
 }
 \z
 
@@ -163,7 +163,7 @@ NP	$\rightarrow$	N: $\uparrow=\downarrow$ \\
 The annotations on the rule daughters describe the associated f-structures.
 In the equations, \textsf{$\uparrow$} refers to the f-structure of the mother node (the category on the left-hand side of the rule), while \textsf{$\downarrow$} refers to the f-structure of the daughter node (the category carrying the annotation on the right-hand side of the rule).
 Thus the equation \textsf{$\uparrow=\downarrow$} annotated to a rule daughter means that the daughter node and its mother node will project the same f-structure.
-The equation \textsf{($\uparrow$~OBJ)=$\downarrow$} on the \textsf{NP} node in (\ref{dyv:ex:mweiness:PP-rule}) specifies that the f-structure of the mother node (\textsf{PP}) has an object (\textsf{OBJ}) which is the f-structure of the daughter node (\textsf{NP}).
+The equation \textsf{($\uparrow$~OBJ)\,=\,$\downarrow$} on the \textsf{NP} node in (\ref{dyv:ex:mweiness:PP-rule}) specifies that the f-structure of the mother node (\textsf{PP}) has an object (\textsf{OBJ}) which is the f-structure of the daughter node (\textsf{NP}).
 In this way the highlighted f-structure with the index ``\textsf{2}'' at its lower left corner in Figure~\ref{dyv:fig:mweiness:thinking-while-on-bus} is projected from the \textsf{PP} node.
 Both the \textsf{PP} node and the \textsf{P} node are highlighted in the c-structure since they both project this same f-structure.
 
@@ -187,17 +187,17 @@ These equations are part of the f-description for the f-structure that is the va
 
 \ea\label{dyv:ex:mweiness:f-descr-bussen}
 {\sffamily 
-($\uparrow$~PRED)=`buss' \\
-($\uparrow$~NTYPE NSEM COMMON)=count \\
-($\uparrow$~NTYPE NSYN)=common \\
-($\uparrow$~GEND NEUT)=$-$ \\
-($\uparrow$~GEND MASC)=$+$ \\
-($\uparrow$~GEND FEM)=$-$ \\
-($\uparrow$~PERS)=3 \\
-($\uparrow$~NUM)=sg \\
-($\uparrow$~DEF-MORPH)=$+$ \\
-($\uparrow$~DEF)=$+$ \\
-%($\uparrow$~CASE)=obl \\
+($\uparrow$~PRED)\,=\,`buss' \\
+($\uparrow$~NTYPE NSEM COMMON)\,=\,count \\
+($\uparrow$~NTYPE NSYN)\,=\,common \\
+($\uparrow$~GEND NEUT)\,=\,$-$ \\
+($\uparrow$~GEND MASC)\,=\,$+$ \\
+($\uparrow$~GEND FEM)\,=\,$-$ \\
+($\uparrow$~PERS)\,=\,3 \\
+($\uparrow$~NUM)\,=\,sg \\
+($\uparrow$~DEF-MORPH)\,=\,$+$ \\
+($\uparrow$~DEF)\,=\,$+$ \\
+%($\uparrow$~CASE)\,=\,obl \\
 }
 \z
 
@@ -211,13 +211,13 @@ Each \isi{lexical entry} specifies a lexical category; \textsf{SUFF} (for suffix
 
 \ea\label{dyv:ex:mweiness:entry-noun}
 {\sffamily 
-$+$Noun \hspace{0.4em} SUFF \hspace{0.4em} ($\uparrow$~PERS)=3
+$+$Noun \hspace{0.4em} SUFF \hspace{0.4em} ($\uparrow$~PERS)\,=\,3
 }
 \z
 
 \ea\label{dyv:ex:mweiness:entry-sg}
 {\sffamily 
-$+$Sg \hspace{1.7em} SUFF \hspace{0.4em} ($\uparrow$~NUM)=sg
+$+$Sg \hspace{1.7em} SUFF \hspace{0.4em} ($\uparrow$~NUM)\,=\,sg
 }
 \z
 
@@ -268,8 +268,8 @@ All nouns inflected in the definite form will carry these two equations, so it c
 \ea\label{dyv:ex:mweiness:def-template}
 {\sffamily 
 DEF = \\
-\hspace{2em}  ($\uparrow$~DEF-MORPH)=$+$ \\
-\hspace{2em}  ($\uparrow$~DEF)=$+$ \\
+\hspace{2em}  ($\uparrow$~DEF-MORPH)\,=\,$+$ \\
+\hspace{2em}  ($\uparrow$~DEF)\,=\,$+$ \\
 }
 \z
 
@@ -283,14 +283,14 @@ DEF = \\
 To account for this, each noun must receive a plus or minus value for each of the three genders.
 The equations needed for specifying masculine gender are included in the \isi{template} in (\ref{dyv:ex:mweiness:masc-template}).
 These equations do not simply describe attribute-value pairs; they describe paths through the f-structure.
-The equation \textsf{($\uparrow$ GEND MASC)=$+$} states that the f-structure has an attribute \textsf{GEND} which has as its value a subsidiary f-structure which in its turn has an attribute \textsf{MASC} with the value \textsf{$+$}.
+The equation \textsf{($\uparrow$ GEND MASC)\,=\,$+$} states that the f-structure has an attribute \textsf{GEND} which has as its value a subsidiary f-structure which in its turn has an attribute \textsf{MASC} with the value \textsf{$+$}.
 
 \ea\label{dyv:ex:mweiness:masc-template}
 {\sffamily 
 MASC = \\
-\hspace{2em}  ($\uparrow$ GEND MASC)=$+$ \\
-\hspace{2em}  ($\uparrow$ GEND FEM)=$-$ \\
-\hspace{2em}  ($\uparrow$ GEND NEUT)=$-$ \\
+\hspace{2em}  ($\uparrow$ GEND MASC)\,=\,$+$ \\
+\hspace{2em}  ($\uparrow$ GEND FEM)\,=\,$-$ \\
+\hspace{2em}  ($\uparrow$ GEND NEUT)\,=\,$-$ \\
 }
 \z
 
@@ -360,9 +360,9 @@ The \isi{template} in (\ref{dyv:ex:mweiness:countnoun-template}) is parameterize
 \ea\label{dyv:ex:mweiness:countnoun-template}
 {\sffamily 
 COUNTNOUN (P) = \\
-\hspace{2em}  ($\uparrow$ PRED)=P \\
-\hspace{2em}  ($\uparrow$ NTYPE NSEM COMMON)=count \\
-\hspace{2em}  ($\uparrow$ NTYPE NSYN)=common \\
+\hspace{2em}  ($\uparrow$ PRED)\,=\,P \\
+\hspace{2em}  ($\uparrow$ NTYPE NSEM COMMON)\,=\,count \\
+\hspace{2em}  ($\uparrow$ NTYPE NSYN)\,=\,common \\
 }
 \z
 
@@ -542,7 +542,7 @@ she came fully on edge with the good society \\
 %\z
 
 The mechanisms for representing lexical and morphological restrictions in flexible MWEs are the same as the ones used for regular constructions.
-As described in Section~\ref{dyv:sec:mweiness:LFG}, simplex words are assigned predicate values through equations in the \isi{lexical entry}, as in the entry for the simplex lexeme \emph{buss} in example (\ref{dyv:ex:mweiness:f-descr-bussen}), which has the predicate assignment equation \textsf{($\uparrow$~PRED)=`buss'}. 
+As described in Section~\ref{dyv:sec:mweiness:LFG}, simplex words are assigned predicate values through equations in the \isi{lexical entry}, as in the entry for the simplex lexeme \emph{buss} in example (\ref{dyv:ex:mweiness:f-descr-bussen}), which has the predicate assignment equation \textsf{($\uparrow$~PRED)\,=\,`buss'}. 
 For words that subcategorize for other elements, such as verbs, this is done through the assignment of a \isi{predicate-argument structure} (or \isi{subcategorization} frame). 
 For instance, the intransitive verb \emph{klage} `complain' is assigned a frame through the \isi{template} call \textsf{@(V-SUBJ klage)} in the \isi{lexical entry}, invoking the \isi{template} \textsf{V-SUBJ}. 
 Part of this \isi{template} is shown in (\ref{dyv:ex:mweiness:verb-template}).
@@ -550,7 +550,7 @@ Part of this \isi{template} is shown in (\ref{dyv:ex:mweiness:verb-template}).
 \ea\label{dyv:ex:mweiness:verb-template}
 {\sffamily 
  V-SUBJ (P) = \\
-\hspace{2em} ($\uparrow$ PRED)=`P$\langle$($\uparrow$ SUBJ)$\rangle$' \\
+\hspace{2em} ($\uparrow$ PRED)\,=\,`P$\langle$($\uparrow$ SUBJ)$\rangle$' \\
 }
 \z
 
@@ -590,7 +590,7 @@ The \isi{template} call in (\ref{dyv:ex:mweiness:lexicalselection}) shows that t
 {\sffamily
 %VPIDIOM-DEFOBJ (P S OP) =  \\
 %	  @(CONCAT P `# OP \%FN) \\
-	  ($\uparrow$ PRED)=`\%FN$\langle$($\uparrow$ SUBJ)$\rangle$($\uparrow$ OBJ)'  \\
+	  ($\uparrow$ PRED)\,=\,`\%FN$\langle$($\uparrow$ SUBJ)$\rangle$($\uparrow$ OBJ)'  \\
 %	  (^ OBJ PRED FN)=c OP
 %	  (^ OBJ DEF)=+
 %          (^ OBJ NUM)=c sg
@@ -625,7 +625,7 @@ The interpretation is that this path of attributes must have some value in the f
 
 \ea\label{dyv:ex:mweiness:defrestriction}
 {\sffamily 
-($\uparrow$ OBJ DEF)=c +.
+($\uparrow$ OBJ DEF)\,=\,c +.
 }
 \z
 
@@ -673,7 +673,7 @@ In the entry for \emph{ha et godt øye til}, the equation in (\ref{dyv:ex:mweine
 %		  (^ OBJ SPEC DET DET-TYPE)=c article \\
 %		  (^ VTYPE)=c main \\
 {\sffamily 
-($\uparrow$ OBJ ADJUNCT PRED)=c god \\
+($\uparrow$ OBJ ADJUNCT PRED)\,=\,c god \\
 }
 \z
 %NOTE-GSL: simplified the equation to avoid having to explain that a) the path refers to the set of adjuncts, and b) that FN is a local parameter 
@@ -752,8 +752,8 @@ In (\ref{dyv:ex:mweiness:tenke-template}) part of the \isi{template} is shown (o
 {\sffamily 
 V-SUBJ-POBJ (P prp) =\\
 \hspace{2em} @(CONCAT P `* prp \%FN)\\
-\hspace{2em}  ($\uparrow$ PRED)=`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBL-TH)$\rangle$'\\
-\hspace{2em}  ($\uparrow$ OBL-TH CHECK P-SELFORM)=prp
+\hspace{2em}  ($\uparrow$ PRED)\,=\,`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBL-TH)$\rangle$'\\
+\hspace{2em}  ($\uparrow$ OBL-TH CHECK P-SELFORM)\,=\,prp
 }
 \z
 
@@ -833,9 +833,9 @@ Part of the invoked \isi{template} \textsf{V-SUBJ-PRT-OBJ} is shown in  (\ref{dy
 {\sffamily 
 V-SUBJ-PRT-OBJ (P prt) =\\
 \hspace{2em} @(CONCAT P `* prt \%FN)\\
-\hspace{2em}  ($\uparrow$ PRED)=`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBJ)$\rangle$'\\
-\hspace{2em}  ($\uparrow$ CHECK PRT-VERB)=+\\
-\hspace{2em}  ($\uparrow$ PRT-FORM)=c prt
+\hspace{2em}  ($\uparrow$ PRED)\,=\,`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBJ)$\rangle$'\\
+\hspace{2em}  ($\uparrow$ CHECK PRT-VERB)\,=\,+\\
+\hspace{2em}  ($\uparrow$ PRT-FORM)\,=\,c prt
 }
 \z
 
@@ -919,7 +919,7 @@ Part of the \isi{template} is shown in  (\ref{dyv:ex:mweiness:holde-template}); 
 \begin{tabular}{ll}
 holde V & \{ \enspace [ ... ]\\
 & | \enspace @(VPIDIOM-INDEFOBJ-POBJ holde øye med)\\
-& \quad ($\uparrow$ OBJ NUM)=c sg\\
+& \quad ($\uparrow$ OBJ NUM)\,=\,c sg\\
 & | \enspace [ ... ] \enspace \}\\
 \end{tabular}}}
 
@@ -927,10 +927,10 @@ holde V & \{ \enspace [ ... ]\\
 {\sffamily 
  VPIDIOM-INDEFOBJ-POBJ (P OP prp) =\\
 \hspace{1.5em} @(CONCAT P `\# OP `* prp \%FN)\\
-\hspace{1.5em}  ($\uparrow$  PRED)=`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBL-TH)$\rangle$($\uparrow$ OBJ)\\
-\hspace{1.5em} ($\uparrow$ OBL-TH CHECK P-SELFORM)=prp\\
-\hspace{1.5em} ($\uparrow$ OBJ PRED FN)=c OP\\
-\hspace{1.5em} {\textasciitilde}($\uparrow$ OBJ DEF)=+
+\hspace{1.5em}  ($\uparrow$  PRED)\,=\,`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBL-TH)$\rangle$($\uparrow$ OBJ)\\
+\hspace{1.5em} ($\uparrow$ OBL-TH CHECK P-SELFORM)\,=\,prp\\
+\hspace{1.5em} ($\uparrow$ OBJ PRED FN)\,=\,c OP\\
+\hspace{1.5em} {\textasciitilde}($\uparrow$ OBJ DEF)\,=\,+
 }
 \z
 
@@ -1077,24 +1077,24 @@ To illustrate we may consider the relevant fragments of the c-structure rules fo
 \eabox{\label{dyv:ex:mweiness:rule1}
 {\sffamily 
 \begin{tabular}{lll}
-I′ $\rightarrow$ &  Vfin: & $\uparrow$=$\downarrow$\\
- & (S: & $\uparrow$=$\downarrow$)\\\\
+I′ $\rightarrow$ &  Vfin: & $\uparrow$\,=\,$\downarrow$\\
+ & (S: & $\uparrow$\,=\,$\downarrow$)\\\\
 \end{tabular}}}
 
 \eabox{\label{dyv:ex:mweiness:rule2}
 {\sffamily 
 \begin{tabular}{lll}
-S $\rightarrow$ &  (PRONP: & ($\uparrow$ SUBJ)=$\downarrow$\\
+S $\rightarrow$ &  (PRONP: & ($\uparrow$ SUBJ)\,=\,$\downarrow$\\
 & &@SUBJCASE)\\
 & [...]\\
-& (PRONrfl: & \{ \enspace ($\uparrow$ OBJ-BEN)=$\downarrow$\\
-& & | \enspace ($\uparrow$ OBJ)=$\downarrow$ \enspace \}) \\
+& (PRONrfl: & \{ \enspace ($\uparrow$ OBJ-BEN)\,=\,$\downarrow$\\
+& & | \enspace ($\uparrow$ OBJ)\,=\,$\downarrow$ \enspace \}) \\
 & [...]\\
  & (ADVPs+: & $\downarrow$ $∈$ ($\uparrow$ ADJUNCT))\\
 & [...]\\
 & (APsmpl:  & $\downarrow$ $∈$ ($\uparrow$ ADJUNCT))\\
 & [...]\\
- & (VPmain: & $\uparrow$=$\downarrow$)\\
+ & (VPmain: & $\uparrow$\,=\,$\downarrow$)\\
 & [...]\\\\
 \end{tabular}}}
 
@@ -1102,8 +1102,8 @@ S $\rightarrow$ &  (PRONP: & ($\uparrow$ SUBJ)=$\downarrow$\\
 {\sffamily 
 \begin{tabular}{lll}
 VPmain $\rightarrow$ & [...]\\
-& (PRTP: & $\uparrow$=$\downarrow$\\
-& & ($\uparrow$ CHECK PRT-VERB)=c +)\\
+& (PRTP: & $\uparrow$\,=\,$\downarrow$\\
+& & ($\uparrow$ CHECK PRT-VERB)\,=\,c +)\\
 & [...]\\\\
 \end{tabular}}}
 
@@ -1136,13 +1136,13 @@ VPmain $\rightarrow$ & [...]\\
 %& [...]\\\\
 %\end{tabular}}
 
-As explained in Section~\ref{dyv:sec:mweiness:LFG}, the equation $\uparrow$=$\downarrow$ annotated to a rule daughter means that the rule daughter and its mother will project the same f-structure.
+As explained in Section~\ref{dyv:sec:mweiness:LFG}, the equation $\uparrow$\,=\,$\downarrow$ annotated to a rule daughter means that the rule daughter and its mother will project the same f-structure.
 Thus it can be seen that the \textsf{Vfin} daughter of \textsf{I′} (the verb) and the \textsf{PRTP} daughter of \textsf{VPmain} (the particle) will project the same f-structure.
 
 A particle verb presupposes the presence of the required particle in the sentence, and a particle presupposes the presence of a particle verb.
-This mutual dependency is captured through two features, one feature \textsf{PRT-VERB=+}, carried by the verb and required by the rule introducing the particle, and, conversely, one feature \textsf{PRT-FORM}, carried by the particle and required by the verb to have the appropriate value.
-Thus, the \isi{constraint} equation annotated to \textsf{PRTP}, \textsf{($\uparrow$ CHECK PRT-VERB)=c +}, demanding that its f-structure should have a feature \textsf{PRT-VERB=+} (i.e., that the verb should be a particle verb), will be satisfied if the finite verb has contributed such a feature to this common f-structure.
-A similar \isi{constraint} equation associated with the verb, (\textsf{($\uparrow$ PRT-FORM)=c prt} in (\ref{dyv:ex:mweiness:trekke-template}) below), ensures that the particle has the form required by the verb.
+This mutual dependency is captured through two features, one feature \textsf{PRT-VERB\,=\,+}, carried by the verb and required by the rule introducing the particle, and, conversely, one feature \textsf{PRT-FORM}, carried by the particle and required by the verb to have the appropriate value.
+Thus, the \isi{constraint} equation annotated to \textsf{PRTP}, \textsf{($\uparrow$ CHECK PRT-VERB)\,=\,c +}, demanding that its f-structure should have a feature \textsf{PRT-VERB\,=\,+} (i.e., that the verb should be a particle verb), will be satisfied if the finite verb has contributed such a feature to this common f-structure.
+A similar \isi{constraint} equation associated with the verb, (\textsf{($\uparrow$ PRT-FORM)\,=\,c prt} in (\ref{dyv:ex:mweiness:trekke-template}) below), ensures that the particle has the form required by the verb.
 
 The \isi{lexical entry} for \textit{trekke} is associated with the relevant frame through an invocation of the \isi{template} for reflexive \isi{verb-particle constructions}.
 Part of the \isi{lexical entry} for \textit{trekke} is shown in  (\ref{dyv:ex:mweiness:trekke-lex}).
@@ -1160,15 +1160,15 @@ trekke V & \{ \enspace [ ... ]\\
 {\sffamily 
 V-SUBJ-OBJrefl-PRT (P prt) =\\%[.5em]
 \hspace{1.5em} @(CONCAT P `* seg `* prt  \%FN)\\%[.5em]
-\hspace{1.5em}  \{ \enspace ($\uparrow$  PRED)=`\%FN$\langle$($\uparrow$ SUBJ)$\rangle$($\uparrow$ OBJ-BEN)'\\%[.5em]
-\hspace{1.5em} | \enspace ($\uparrow$  PRED)=`\%FN$\langle\uparrow$ OBJ)$\rangle$($\uparrow$  OBJ-BEN)($\uparrow$ SUBJ)'\\%[.5em]
-\hspace{1.5em} \quad ($\uparrow$ PRESENTATIVE)=+\\%[.5em]
-\hspace{1.5em} \quad ($\uparrow$ SUBJ PRON-TYPE)=c expl\\%[.5em]
-\hspace{1.5em} \quad \char`~($\uparrow$ OBJ DEF)=+ \enspace \}\\%[.5em]
+\hspace{1.5em}  \{ \enspace ($\uparrow$  PRED)\,=\,`\%FN$\langle$($\uparrow$ SUBJ)$\rangle$($\uparrow$ OBJ-BEN)'\\%[.5em]
+\hspace{1.5em} | \enspace ($\uparrow$  PRED)\,=\,`\%FN$\langle\uparrow$ OBJ)$\rangle$($\uparrow$  OBJ-BEN)($\uparrow$ SUBJ)'\\%[.5em]
+\hspace{1.5em} \quad ($\uparrow$ PRESENTATIVE)\,=\,+\\%[.5em]
+\hspace{1.5em} \quad ($\uparrow$ SUBJ PRON-TYPE)\,=\,c expl\\%[.5em]
+\hspace{1.5em} \quad \char`~($\uparrow$ OBJ DEF)\,=\,+ \enspace \}\\%[.5em]
 \hspace{1.5em} @(REFLEXIVE OBJ-BEN)\\%[.5em]
-\hspace{1.5em} ($\uparrow$ CHECK PRT-VRB)=+\\%[.5em]
-\hspace{1.5em} ($\uparrow$ PRT-FORM)=c prt\\%[.5em]
-\hspace{1.5em} \char`~($\uparrow$ PASSIVE)=+
+\hspace{1.5em} ($\uparrow$ CHECK PRT-VRB)\,=\,+\\%[.5em]
+\hspace{1.5em} ($\uparrow$ PRT-FORM)\,=\,c prt\\%[.5em]
+\hspace{1.5em} \char`~($\uparrow$ PASSIVE)\,=\,+
 }
 \z
 
@@ -1189,8 +1189,8 @@ The rule in (\ref{dyv:ex:mweiness:furule}) shows a simplified version of the fun
 \eabox{\label{dyv:ex:mweiness:furule}
   {\sffamily
 \begin{tabular}{lll}
-IP $\rightarrow$ &  XP: & ($\uparrow$ TOPIC)=$\downarrow$\\
-& & ($\uparrow$ \{COMP | XCOMP\}* \{SUBJ | OBJ | OBL-TH\})=$\downarrow$\\
+IP $\rightarrow$ &  XP: & ($\uparrow$ TOPIC)\,=\,$\downarrow$\\
+& & ($\uparrow$ \{COMP | XCOMP\}* \{SUBJ | OBJ | OBL-TH\})\,=\,$\downarrow$\\
 & [ ... ]
 \end{tabular}
 }
@@ -1243,15 +1243,15 @@ The full version of the VP idiom \isi{template} in (\ref{dyv:ex:mweiness:holde-t
 {\sffamily 
  VPIDIOM-INDEFOBJ-POBJ (P OP prp) =\\%[.5em]
 \hspace{1.5em} @(CONCAT P `\# OP `* prp \%FN)\\%[.5em]
-\hspace{1.5em}  \{ \enspace @(PASS-OBL-TH [($\uparrow$  PRED)=`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBL-TH)$\rangle$($\uparrow$ OBJ) ])\\%[.5em]
-\hspace{1.5em} | \enspace \{ \enspace ($\uparrow$  PRED)=`\%FN$\langle$NULL($\uparrow$ OBL-TH)$\rangle$($\uparrow$ SUBJ)($\uparrow$ OBJ)'\\%[.5em]
-\hspace{1.5em} \quad | \enspace ($\uparrow$  PRED)=`\%FN$\langle$$\uparrow$ OBL-AG)($\uparrow$  OBL-TH)$\rangle$($\uparrow$ SUBJ)($\uparrow$ OBJ)' \enspace \}\\%[.5em]
-\hspace{1.5em} \quad ($\uparrow$ PASSIVE)=c +\\%[.5em]
-\hspace{1.5em} \quad ($\uparrow$ PRESENTATIVE-TYPE)=passive\\%[.5em]
-\hspace{1.5em} \quad ($\uparrow$ SUBJ PRON-TYPE)=c expl \enspace \}\\%[.5em]
-\hspace{1.5em} ($\uparrow$ OBL-TH CHECK P-SELFORM)=prp\\%[.5em]
-\hspace{1.5em} ($\uparrow$ OBJ PRED FN)=c OP\\%[.5em]
-\hspace{1.5em} {\textasciitilde}($\uparrow$ OBJ DEF)=+
+\hspace{1.5em}  \{ \enspace @(PASS-OBL-TH [($\uparrow$  PRED)\,=\,`\%FN$\langle$($\uparrow$ SUBJ)($\uparrow$ OBL-TH)$\rangle$($\uparrow$ OBJ) ])\\%[.5em]
+\hspace{1.5em} | \enspace \{ \enspace ($\uparrow$  PRED)\,=\,`\%FN$\langle$NULL($\uparrow$ OBL-TH)$\rangle$($\uparrow$ SUBJ)($\uparrow$ OBJ)'\\%[.5em]
+\hspace{1.5em} \quad | \enspace ($\uparrow$  PRED)\,=\,`\%FN$\langle$$\uparrow$ OBL-AG)($\uparrow$  OBL-TH)$\rangle$($\uparrow$ SUBJ)($\uparrow$ OBJ)' \enspace \}\\%[.5em]
+\hspace{1.5em} \quad ($\uparrow$ PASSIVE)\,=\,c +\\%[.5em]
+\hspace{1.5em} \quad ($\uparrow$ PRESENTATIVE-TYPE)\,=\,passive\\%[.5em]
+\hspace{1.5em} \quad ($\uparrow$ SUBJ PRON-TYPE)\,=\,c expl \enspace \}\\%[.5em]
+\hspace{1.5em} ($\uparrow$ OBL-TH CHECK P-SELFORM)\,=\,prp\\%[.5em]
+\hspace{1.5em} ($\uparrow$ OBJ PRED FN)\,=\,c OP\\%[.5em]
+\hspace{1.5em} {\textasciitilde}($\uparrow$ OBJ DEF)\,=\,+
 }
 \z
 
