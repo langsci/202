@@ -283,7 +283,7 @@ DEF = \\
 To account for this, each noun must receive a plus or minus value for each of the three genders.
 The equations needed for specifying masculine gender are included in the \isi{template} in (\ref{dyv:ex:mweiness:masc-template}).
 These equations do not simply describe attribute-value pairs; they describe paths through the f-structure.
-The equation \textsf{($\uparrow$ GEND MASC)\,=\,$+$} states that the f-structure has an attribute \textsf{GEND} which has as its value a subsidiary f-structure which in its turn has an attribute \textsf{MASC} with the value \textsf{$+$}.
+The equation \textsf{($\uparrow$ GEND MASC)\,=\,$+$} states that the f-structure has an attribute \textsf{GEND} which has as its value a subsidiary f-structure which in its turn has an attribute \textsf{MASC} with the value~\textsf{$+$}.
 
 \ea\label{dyv:ex:mweiness:masc-template}
 {\sffamily 
@@ -347,7 +347,7 @@ MASC = \\
 %
 
 
-Like the \isi{template} \textsf{MASC}, the \isi{template} \textsf{COUNTNOUN} also describes paths through the f-structure.
+Like the \isi{template} \textsf{MASC}, the \isi{template} \textsf{COUNTNOUN} also describes paths\linebreak through the f-structure.
 The \textsf{NTYPE NSYN} features distinguish between common nouns, proper nouns, pronouns, etc. while the \textsf{NTYPE NSEM COMMON} features distinguish between count nouns, mass nouns, etc.
 All nouns must contribute a \textsf{PRED} feature to the f-structure, but the \textsf{PRED} feature itself will differ from noun to noun.
 The \isi{template} in (\ref{dyv:ex:mweiness:countnoun-template}) is parameterized; the parameter \textsf{P} will be substituted by the argument supplied in the invocation of the \isi{template}, for example the word \textit{buss} in (\ref{dyv:ex:mweiness:entry-buss}).
@@ -695,7 +695,7 @@ While syntactic heads are subcategorized for by the verb, dependents are specifi
 
 Phrasal verbs are MWEs consisting of a verb and an adverb, preposition or other word that together have a meaning that is in some way idiosyncratic.
 It is common to distinguish between two main classes of \isi{phrasal verbs}, \isi{prepositional verbs} and \isi{verb-particle constructions}.
-We present these two types in Sections~\ref{dyv:sec:mweiness:prepverbs} and~\ref{dyv:sec:mweiness:prtverbs}, respectively.
+We present these two types in Sections \ref{dyv:sec:mweiness:prepverbs} and~\ref{dyv:sec:mweiness:prtverbs}, respectively.
 There are also constructions where both prepositions and particles occur; these are presented in Section~\ref{dyv:sec:mweiness:prtprepverbs}.
 
 \subsubsection{Prepositional verbs}\label{dyv:sec:mweiness:prepverbs}
@@ -732,7 +732,7 @@ In the c-structure \textit{på bussen} forms a prepositional \isi{phrase} \texts
 This analysis captures the fact that the selected preposition \textit{på} can only occur before the object, and that the preposition and its complement behave as one constituent with respect to movement, as in the topicalized version \textit{På bussen tenkte hun ofte} `The bus she was often thinking of'.
 The preposition does not provide its own predicate in the f-structure, but is analyzed as incorporated in the predicate expressed by the verb to form the predicate name \textsf{tenke*på}.
 In predicate names the symbol ``\textsf{*}'' is used to signal such combinations of a lexical predicate with a selected particle or preposition.
-The complement of the preposition, \textit{bussen}, fills the function \textsf{OBL-TH} -- oblique-theta -- as an argument of this predicate, i.e., an oblique argument expressing a theta role.
+The complement of the preposition, \textit{bussen}, fills the function \textsf{OBL-TH} -- oblique-theta~-- as an argument of this predicate, i.e., an oblique argument expressing a theta role.
 
 The \isi{lexical entry} for \textit{tenke} is associated with the relevant frame through an invocation of the \isi{template} describing this class of constructions.
 The relevant part of the \isi{lexical entry} for \textit{tenke} is shown in  (\ref{dyv:ex:mweiness:tenke-lex}).
@@ -1059,13 +1059,13 @@ The analysis is shown in Figures~\ref{dyv:fig:mweiness:trekketilbake-c} and~\ref
 %\glt `Then I simply withdraw silently and calmly.'
 %\z
 
-\begin{figure}
+\begin{figure}[H]
   \includegraphics[height=.31\textheight]{figures/trekketilbake-c.png}
   \caption{C-structure of sentence (\ref{dyv:ex:mweiness:trekketilbake})}
   \label{dyv:fig:mweiness:trekketilbake-c}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
   \includegraphics[height=.175\textheight]{figures/trekketilbake-f.png}
   \caption{Simplified f-structure of sentence (\ref{dyv:ex:mweiness:trekketilbake})}
   \label{dyv:fig:mweiness:trekketilbake-f}
@@ -1374,7 +1374,7 @@ In the VP idiom \emph{legge merke til} `notice', the verb \emph{legge} `lay' sel
 %\z
 
 MWEs that subcategorize for different types of complements are represented in the lexicon with one frame for each \isi{subcategorization} pattern.
-In the \isi{template} invocations in (\ref{dyv:ex:mweiness:leggemerketilframes}), \textsf{POBJ}, \textsf{PCOMP} and \textsf{PCOMPint} represent the different types of prepositional complements that occur with \emph{legge merke til} in (\ref{dyv:ex:mweiness:leggemerketil-a}), (\ref{dyv:ex:mweiness:leggemerketil-b}), and (\ref{dyv:ex:mweiness:leggemerketil-c}), respectively.
+In the \isi{template} invocations in (\ref{dyv:ex:mweiness:leggemerketilframes}), \textsf{POBJ}, \textsf{PCOMP} and \textsf{PCOMPint} represent the different types of prepositional complements that occur with \emph{legge merke til} in (\ref{dyv:ex:mweiness:leggemerketil-a}), (\ref{dyv:ex:mweiness:leggemerketil-b}), and (\ref{dyv:ex:mweiness:leggemerketil-c}), respectively.\largerpage
 
 \ea\label{dyv:ex:mweiness:leggemerketilframes}
 \begin{xlist}
@@ -1535,7 +1535,7 @@ The free object is \emph{en sigarett} `a cigarette'.
 In the first \textsf{PPsel}, which corresponds to \textsf{POBJ} in the \isi{subcategorization} frame, the selected preposition \emph{med} `with' takes the nominal object \emph{Brown}. 
 In the second \textsf{PPsel}, corresponding to \textsf{PCOMP},  the preposition \emph{på} `on' takes the clausal complement \emph{at det regnet} `that it was raining'.
 
-Like \isi{prepositional verbs}, \isi{verb-particle constructions} with selected prepositions always subcategorize for at least one free complement. 
+Like \isi{prepositional verbs}, \isi{verb-particle constructions} with selected preposi-\linebreak tions always subcategorize for at least one free complement. 
 Such constructions can have one complement, as in \emph{gå med på noe} `go along with something' in (\ref{dyv:ex:mweiness:gåmedpå}), which is an instance of the frame \textsf{V-SUBJ-PRT-POBJ}.
  
 %Treebank: nob-avis version: 2016-05-17; Document: Melgård, Marie; Kagge, Gunnar: ; \isi{grammar}: \ili{Norwegian} Bokmål
