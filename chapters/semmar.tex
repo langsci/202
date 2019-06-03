@@ -39,7 +39,7 @@ Other approaches proposed to use machine translation to translate MWEs candidate
 
 % \isi{Multiword Expressions}
 \section{Multiword expressions}\label{sec:semmar:3}
-\todo[inline]{Section 3 has only one subsection on the first level. Please add another subsection 3.2 or remove subsection 3.1}
+\subsection{Definition}
 In NLP, a multiword expression  refers to a non-composi\-tional sequence of words whose exact and unambiguous meaning, connotation and syntactic properties cannot be derived from the meaning or connotation of its components \citep{choueka1988looking,sag02}.
 MWEs are frequently used in written texts and constitute a significant part of the language lexicon.
 
@@ -270,7 +270,7 @@ The approach can capture the semantic equivalence between expressions such as \t
 % \end{enumerate}
 
 % Hybrid approach for \isi{MWE alignment} based on \isi{linear programming}
-\subsection{Hybrid approach for MWEs alignment based on linear programming}\label{sec:semmar:4.3}
+\subsection{Hybrid approach for MWEs alignment based on linear programming}\label{sec:semmar:4.3}\largerpage
 This section describes a hybrid approach combining linguistic and statistical information which performs terminology extraction and \isi{alignment} of MWEs from parallel texts in one step \citep{marchandhybrid2011}. 
 
 Most of works on MWEs \isi{alignment} are divided in two tasks: a monolingual step in which candidate terms are extracted and a bilingual step in which these terms are aligned with their translations \citep{gaussier2011modeles}. Word \isi{alignment} techniques are generally used to achieve the bilingual step. These approaches in multiple steps have the disadvantage to potentially propagate errors.
@@ -314,7 +314,7 @@ Therefore, we look for the \isi{alignment} (segmentation + links) that maximizes
 
 First, we introduce binary variables $A_{i,j,k,l}$ denoting whether $(e_{ij},f_{kl}) \in a$.
 Furthermore, we introduce binary indicators $E_{i,j}$ and $F_{k,l}$ that denote whether some $(e_{ij} ,  \cdotp)$ or $(\cdotp, f_{kl})$ appears in \textit{a}, respectively. 
-Finally, we will use $W_{i,j,k,l} = \log \phi(e_{ij},f_{kl})$ to transform the product into a sum.
+Finally, we will use $W_{i,j,k,l} = \log \phi(e_{ij},f_{kl})$ to transform the product into a sum.\largerpage
 When optimized\footnote{We used the open source solver GLPK (GNU Linear Programming Kit), available at \url{http://www.gnu.org/s/glpk/}.}, the integer program yields the optimal \isi{alignment}:
 
 % Début formule
@@ -744,7 +744,7 @@ Moses translation with the ``TABLE'' integration method & dans le 12 semaine de 
 Moses translation with the ``FEATURE'' integration method & dans le 12 semaines de la phase aiguë de trois essais cliniques chez les patients avec douleur neuropathique diabétique, petites mais des augmentations statistiquement significatives de la glycémie à jeun ont été observées chez les patients traités duloxétine.\\
   \lspbottomrule
  \end{tabular}
-\end{table}
+\end{table}\pagebreak
 
 After analyzing the translations of this example, it is clear that in some cases, it is just impossible to perform a word-to-\isi{word alignment} between two MWEs that are translation of each other. For example, the ``FEATURE'' method proposes the \isi{compound word} \textit{glycémie à jeun} as a translation for the expression \textit{fasting blood glucose} which is correct, but, ``CORPUS'' and ``TABLE'' methods propose respectively the translations \textit{répréhensible glycémie artérielle} and \textit{sang répréhensible glucose} which are completely wrong. However, all the integration methods translate correctly the multiword expressions \textit{diabetic neuropath\-ic pain\slash douleur neuropathique diabétique} and \textit{acute phase\slash phase aiguë}. The multiword expression \textit{clinical trials\slash essais cliniques} is translated correctly by ``TABLE'' and ``FEATURE'' methods. Likewise, the translation provided by the ``CORPUS'' method for this expression is also correct \textit{clinical trials\slash études cliniques} but it is different from the translation of the reference. It seems that the probabilities of the alignments proposed by Giza++ for these multiword expressions were very high and helped Moses decoder to choose these alignments. On the other hand, as we can see, all the translations have many spelling and grammatical errors, and in particular, the translations of some multiword expressions (`statistically significant increases'/\textit{statistiquement significatif augmentations}, `statistically significant increases'/\textit{statistiquement augmentations considérables}) produced by the ``CORPUS'' and ``TABLE'' methods are very approximate. This result can be explained by the fact that, on the one hand, \isi{statistical machine translation} toolkits like Moses have not been designed with grammatical error correction in mind, and on the other hand, Giza++ could produce errors in particular when it aligns multiword expressions  \citep{fraser2007measuring}. For the multiword expression \textit{duloxetine-treated patients}, the methods ``FEATURE'' and ``CORPUS'' provide a same translation which is more or less correct (\textit{patients traités duloxetine}). However, the method ``TABLE'' provides a translation in a poor \isi{grammar} (\textit{patients duloxetine traités}).
 

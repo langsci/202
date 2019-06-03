@@ -35,10 +35,9 @@
 Despite these varied properties they are all generally agreed to be hard to deal with in NLP applications \citep{sag02} and the importance of dealing with them properly has been increasing over the past decade. As described at length in \citepos{kim2008} thesis, ``dealing with'' MWEs consists in developing systems and models for various kinds of tasks. For syntactic analysis, it is important to identify them in text and extract them to a dictionary. For semantic understanding, it is important to measure their compositionality, classify and interpret them.
 
 
-\subsection{Combinatory Categorial Grammar}
-\todo[inline]{Subsection missing here}
-\label{del:CCG}
-\indent Combinatory Categorial Grammar \citep{steedman2000} is a strongly lexicalized gram\-mar formalism which is currently gaining popularity in the NLP community.\\
+\subsection{Combinatory Categorial Grammar}\label{del:CCG}
+\subsubsection{Presentation}
+Combinatory Categorial Grammar \citep{steedman2000} is a strongly lexicalized\linebreak grammar formalism which is currently gaining popularity in the NLP community.\\
 \indent \isi{CCG} was built with the intent of being linguistically aware as well as computationally tractable partly as a reaction to transformationalist ideas which were predominant in formal grammars at the time. It differs from the latter mainly in having one component including syntactic and semantic information instead of having separate modules for each in the \isi{grammar}. Similarly, instead of having a large amount of rules and a lexicon as is the case in traditional grammars, it has a small set of universal rules and a lexicon which encodes most syntactic information.
 For the sentence \textit{John buys shares}, a traditional \isi{grammar} has information in the lexicon: that \textit{John} is an NP, that \textit{buys} is a verb, that \textit{shares} is an NP, and in the \isi{grammar}: that a V and an NP form a VP and that an NP and a VP form a sentence S, as in Figure~\ref{del:fig:1}.
 By contrast, for the same sentence, \isi{CCG} has information in its lexicon that \textit{John} is an NP, that \textit{shares} is an NP and that \textit{buys} first takes an NP to its right then an NP to its left to form a sentence S, as in Figure~\ref{del:fig:2}.\\
@@ -577,9 +576,7 @@ We build 5 different MWE recognisers with different combinations of these tools.
 \subsection{Summary of our findings}
 We summarise our findings in Table~\ref{del:tab:sum}.
 \begin{table}[h]
-    \centering
-    \fittable{%
-      \begin{tabular}{l l l} %\hline
+      \begin{tabularx}{\textwidth}{Q l l} %\hline
         \lsptoprule
         question & answer & tables concerned\\
         %\hline
@@ -590,8 +587,7 @@ We summarise our findings in Table~\ref{del:tab:sum}.
         Do different types of MWEs impact the results differently? & yes & Table~\ref{del:tab:res3} \tabularnewline %\\
         %\hline
         \lspbottomrule
-    \end{tabular}%
-    }
+    \end{tabularx}%
     \caption{Summary of our findings\label{del:tab:sum}}
 \end{table}
 

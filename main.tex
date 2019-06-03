@@ -14,13 +14,13 @@
 		,nonflat
 	        ,collection
 	        ,collectionchapter
-		,colorlinks,citecolor=brown
+% 		,colorlinks,citecolor=brown
 		,arseneau
 		,arabicfont
 		,chinesefont
  	      % ,draft
 %  	      ,draftmode
-	      % ,showindex
+% 	      ,showindex
 	      % ,multiauthors
 	      % ,nobabel
 		  ]{langsci/langscibook}                              
@@ -36,26 +36,13 @@
 \input{localcommands.tex} 
 \bibliography{localbibliography}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%                                              %%%
-%%%              Temporary                       %%%
-%%%                                              %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\definecolor{mygreen}{RGB}{75,200,75}
-\definecolor{MYGREEN}{RGB}{75,200,75}
-\newcommand{\jwe}[1]{{\color{red}(#1)}}
-% \newcommand{\jwc}[1]{{\color{mygreen}#1}}
-\newcommand{\jwc}{{\color{mygreen}(corrected)}}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                                              %%%
 %%%             Frontmatter                      %%%
 %%%                                              %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \includeonly{chapters/sheinfux}
+
 \begin{document}         
 \maketitle                
 \frontmatter
@@ -72,7 +59,7 @@
 
 %% Additional prefaces and/or introductions that also have authors
 \lsCollectionPaperFrontmatterMode % Enter the Frontmatter Mode. 
-%\includepaper{chapters/prefaceEd}
+\includepaper{chapters/prefaceEd}
 \lsCollectionPaperMainmatterMode % Leave the Frontmatter Mode 
 
 \setcounter{chapter}{0} % Reset the chapter counter so that preceeding prefaces are not counted
