@@ -497,9 +497,9 @@ F_T=\frac{2 \times P_T \times R_T}{P_T + R_T}
 \label{sem:equa:PRF}
 \end{equation}
 
-The corpus used to evaluate the performance of the \ili{English}-\ili{French} MWE aligners is composed of a set of 1992 parallel sentences extracted from Europarl (European Parliament Proceedings). This parallel corpus is composed of 46265 \ili{English} words and 49332 \ili{French} words and has been used to build manually the reference \isi{alignment} by the Yawat tool (Germann, 2008).\todo{Citation missing!}
+The corpus used to evaluate the performance of the \ili{English}-\ili{French} MWE aligners is composed of a set of 1992 parallel sentences extracted from Europarl (European Parliament Proceedings). This parallel corpus is composed of 46265 \ili{English} words and 49332 \ili{French} words and has been used to build manually the reference \isi{alignment} by the Yawat tool \citep{germann-2008-yawat}. %\td{Citation missing!}
 
-Table~\ref{sem:tab:resultsPRF_en-fr} summarizes the results of the three approaches for \ili{English}--\ili{French} MWEs alignments and the baseline (Giza++) in terms of precision, recall and f-measure.\todo{Capital $F$?}
+Table~\ref{sem:tab:resultsPRF_en-fr} summarizes the results of the three approaches for \ili{English}--\ili{French} MWEs alignments and the baseline (Giza++) in terms of precision, recall and F-measure. %\td{Capital $F$?}
 
 \begin{table}
 \caption{Performance of the different English--French MWE aligners}
@@ -612,7 +612,8 @@ The goal of these experiments is to study in what respect MWEs are useful to imp
 \begin{description}
 \item[CORPUS:] In this method, we add the extracted \isi{bilingual lexicon} as a parallel corpus and retrain the \isi{translation model}. By increasing the occurrences of the MWEs and their translations, we expect a modification of \isi{alignment} and probability estimation.
  \item[TABLE:] This method consists in adding the extracted \isi{bilingual lexicon} into\linebreak Moses’s \isi{phrase} table. We use a smoothed probability estimator to construct a translation probability for each MWE of the \isi{bilingual lexicon}. This estimator is based on the similarity measure provided by each \isi{word alignment} approach.
- \item[FEATURE:] In this method, we extend the ``TABLE'' method by adding a new feature indicating whether a MWE comes from the \isi{bilingual lexicon} or not (l\todo{1 (one) instead of l (lowercase L?} or 0 is introduced for each entry of the \isi{phrase} table).
+ \item[FEATURE:] In this method, we extend the ``TABLE'' method by adding a new feature indicating whether a MWE comes from the \isi{bilingual lexicon} or not (1 or 0 is introduced for each entry of the \isi{phrase} table).
+% \td{1 (one) instead of l (lowercase L?}
 \end{description}
 
 

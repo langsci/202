@@ -133,7 +133,7 @@ so performance on verb complements for example is much higher than on verb adjun
 
 A simple representation consists in considering MWEs as single nodes of the syntactic tree \citep{sag02}, such as in the strategy adopted in the \isi{LFG}/XLE parser described by \citetv{chapters/angelov}. This ``words-with-spaces'' representation implies that MWEs have an atomic interpretation. In the constituency framework, the MWE forms are leafs. Their parent nodes correspond to their parts-of-speech (POS) category, as shown in Figure~\ref{con:fig:wws}. For instance, \textit{prime minister} has a noun parent node and \textit{a few} has a determiner parent node. 
 A concrete example where MWEs are represented this way is the first version of the \ili{French} treebank distributed for parsing \citep{candito:2009}. 
-In the dependency framework, the MWE node has the same linguistic attributes as a single word token: POS tag, lemma and morphological features. For instance, \textit{hot dogs} would be a noun in plural, whose lemma is \textit{hot dog}. Such representations imply that MWEs have been pre-identified and represented as word-with-space tokens before parsing. Moreover, they have several drawbacks in terms of linguistic expressiveness. First, discontinuous MWEs like the light-verb construction \textit{make decisions} in Figure~\ref{con:fig:wws} cannot be represented this way. Then, the semantic processing of semi-compositional MWEs might be problematic as the internal \isi{syntactic structure} is impossible to retrieve.%\todo{link to chapter 4 - wws representations in \isi{LFG}/XLE}
+In the dependency framework, the MWE node has the same linguistic attributes as a single word token: POS tag, lemma and morphological features. For instance, \textit{hot dogs} would be a noun in plural, whose lemma is \textit{hot dog}. Such representations imply that MWEs have been pre-identified and represented as word-with-space tokens before parsing. Moreover, they have several drawbacks in terms of linguistic expressiveness. First, discontinuous MWEs like the light-verb construction \textit{make decisions} in Figure~\ref{con:fig:wws} cannot be represented this way. Then, the semantic processing of semi-compositional MWEs might be problematic as the internal \isi{syntactic structure} is impossible to retrieve.%\td{link to chapter 4 - wws representations in \isi{LFG}/XLE}
 
 \subsection {Chunking representations}
 \label{con:ssec:chunking}
@@ -184,7 +184,7 @@ O\&\color{red}B\&\color{red}I\&\color{blue}B\&\color{orange}b\&\color{orange}i\&
 %% \end{center}
 %% \caption{Chunking-based representation with IOB tags \citep{Schneider14mwe}.}
 %% \label{con:fig:iob}
-%% \end{figure}\todo{CR: it is a bit odd that we omit the syntactic tree in Figure~\ref{con:fig:iob}. I suggest adding regular dependencies to represent the structure, and indicate the tags IOB below to show that MWE chunking information is represented as a tag in tokens. Alternatively, we explain that the syntactic tree is omitted.}
+%% \end{figure}\td{CR: it is a bit odd that we omit the syntactic tree in Figure~\ref{con:fig:iob}. I suggest adding regular dependencies to represent the structure, and indicate the tags IOB below to show that MWE chunking information is represented as a tag in tokens. Alternatively, we explain that the syntactic tree is omitted.}
 %% \end{comment}
 
 
@@ -870,7 +870,7 @@ When domain-adapted taggers are available, though, the advantages of the substit
 The performance of adapted taggers is often comparable or slightly higher than that of the substitution approach, as tagging accuracy of technical terms increases. 
 In short, sometimes it is better to adapt statistical models (in this case, a domain-adapted tagger) rather than using lexical resources (in this case, an MWE gazetteer of the domain).% 
 
-\citet{schneider:2014} conducted an experiment using LT-TTT2, an off-the-shelf rule-based named entity recognizer \citep{grover08} on the standard evaluation suite GREVAL \citep{carroll-ea04} with the same approach of replacing multiword named entities by the head of the MWE. The performance of the substitution approach was slightly worse than when leaving the MWE unchanged. %\todo{CR: worse than what? => I told you I'm picky :-P} 
+\citet{schneider:2014} conducted an experiment using LT-TTT2, an off-the-shelf rule-based named entity recognizer \citep{grover08} on the standard evaluation suite GREVAL \citep{carroll-ea04} with the same approach of replacing multiword named entities by the head of the MWE. The performance of the substitution approach was slightly worse than when leaving the MWE unchanged. %\td{CR: worse than what? => I told you I'm picky :-P} 
 Also this experiment did confirm that statistically motivated resources are usually better than purely lexical resources.
 
 

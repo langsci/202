@@ -149,9 +149,11 @@ For the time being, we represent \isi{idioms} as collocations with more restrict
 \subsubsection{Collocation identification mechanism}
 \label{fou:ref:subsubsec:colidme}
 The \isi{collocation identification} mechanism is integrated in the parser. In the pre\-sent version of Fips, collocations, if present in the lexicon, are identified in the input sentence during the analysis of that sentence, rather than at the end. In this way, priority is given to parsing alternatives involving collocations, and collocational information helps the parser through the maze of alternatives. 
-To fulfill the goal of interconnecting the parsing procedure and the identification of collocations, we have incorporated the \isi{collocation identification} mechanism within the constituent attachment procedure (see next section)\todo{Do you mean Sect 3.3.2 or Sect. 4?}. The Fips parser, like many grammar-based parsers, uses left attachment and right attachment rules to build respectively left subconstituents and right subconstituents. The \isi{grammar} used for the computational modelling comprises rules and procedures. Attachment rules describe the conditions under which constituents can combine, while procedures compute properties such as \isi{long-distance dependencies}, agreement, control properties, argument-structure building, and so on. 
+To fulfill the goal of interconnecting the parsing procedure and the identification of collocations, we have incorporated the \isi{collocation identification} mechanism within the constituent attachment procedure (see Section~\ref{fou:ref:subsubsec:treatcolloc}).
+% \td{Do you mean Sect 3.3.2 or Sect. 4?}.
+The Fips parser, like many grammar-based parsers, uses left attachment and right attachment rules to build respectively left subconstituents and right subconstituents. The \isi{grammar} used for the computational modelling comprises rules and procedures. Attachment rules describe the conditions under which constituents can combine, while procedures compute properties such as \isi{long-distance dependencies}, agreement, control properties, argument-structure building, and so on. 
 
-\subsubsection{Treatment of collocations}
+\subsubsection{Treatment of collocations}\label{fou:ref:subsubsec:treatcolloc}
 
 The identification of compounds and named entities can be achieved during the lexical analysis, but the identification of discontinuous words, collocations and \isi{idioms} requires grammatical data and are, therefore, part of the parsing process. The identification of a collocation occurs when the second lexical unit of the collocation is attached, either by means of a left attachment rule (e.g., adjective-noun, noun-noun) or by means of a right-attachment rule (e.g., noun-adjective, noun-prep-noun, verb-object), as shown in example~(\ref{fou:exFirst}). %(\refex{1}) and Figure~\ref{fou:exFirst}.
 
@@ -366,7 +368,8 @@ The parser detects collocations in which the nominal element has been pron\-omin
 
 
 %\paragraph*{\textit{Wh}-constructions} {~~~} \\
-\subsubsection{\textit{Wh}-constructions}\todo[inline]{\textit{Wh} in italics in heading, but in upshape in text.}
+\subsubsection{Wh-constructions}
+%\td[inline]{\textit{Wh} in italics in heading, but in upshape in text.}
 Our parser can also cope with \isi{long-distance dependencies}, such as the ones found in \isi{wh-questions}.\footnote{wh-words are interrogative (or relative) words such as \textit{who}, \textit{what}, \textit{which}, etc. For a general discussion of wh-constructions, see \citep{chomsky77}.} In sentence (\ref{fou:exWhich}) %(\refex{1})
 and Table~\ref{fou:fig4}, the direct object constituent occurs at the beginning of the sentence. Again, assuming a generative \isi{grammar} analysis, we consider that such pre-posed constituents are connected to so-called canonical positions. The fronted element being a direct object, the canonical position is a post-verbal DP position immediately dominated by the VP node. The parser establishes such a link and returns the structure from~(\ref{fou:exWhich}), where [DP~e]\ik{i} stands for the empty category (the ``trace'') of the preposed constituent \textit{Ποιο ρεκόρ} (Pxó rekór) `Which record'. 
 
@@ -546,12 +549,13 @@ The sentence \isi{segment} \textit{the total worldwide labour costs} is displaye
     & \multicolumn{1}{c}{with collocations} & \multicolumn{1}{c}{without collocations} \\ %\hline
     \midrule
     complete analyses & 73.41\% & 72.95\% \\
-    POS-tag differences & 727 \\
+    POS-tag differences & 727 & \multicolumn{1}{c}{-} \\
+    % POS-tag differences & \multicolumn{2}{c}{727} \\
     better tags & 382 & 106\\
     number of collocations & 1668 & \multicolumn{1}{c}{-} \tabularnewline
     \lspbottomrule
   \end{tabular}
-  \caption{\label{fou:fig9}POS-tagging with and without collocation knowledge\todo[inline]{value missing in row 2, col 3? Please indicate if n/a}}
+  \caption{\label{fou:fig9}POS-tagging with and without collocation knowledge} % \td[inline]{value missing in row 2, col 3? Please indicate if n/a}}
 \end{table}  
 
 \begin{figure}[p]
