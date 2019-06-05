@@ -436,7 +436,7 @@ The semantic forms ``govern the process of semantic interpretation” \citep[177
 %The entries for \textit{+Noun} and \textit{+Sg} each contribute one equation.
  
 \section{Implementing MWEs}\label{dyv:sec:mweiness:implementing}
-The crucial challenge of representing MWEs is that they defy normal compositional analysis. The LFG solution that is implemented in NorGram is to assign to each MWE a special lexical entry that has its own PRED value and thus its own argument structure. Each MWE has a semantic form with a special predicate name and a list of any syntactic arguments that this predicate requires. This will be shown in detail for the various types of MWEs in the following.
+The crucial challenge of representing MWEs is that they defy normal compositional analysis. The LFG solution that is implemented in NorGram is to assign to each MWE a special lexical entry that has its own \textsf{PRED} value and thus its own argument structure. Each MWE has a semantic form with a special predicate name and a list of any syntactic arguments that this predicate requires. This will be shown in detail for the various types of MWEs in the following.
  
  
 % % %  The crucial challenge of representing MWEs is that they defy normal compositional analysis.
@@ -1174,7 +1174,7 @@ V-SUBJ-OBJrefl-PRT (P prt) =\\%[.5em]
 
 The \isi{template} \textsf{CONCAT} constructs the predicate name \textsf{trekke*seg*tilbake} as the value of \textsf{PRED}.
 The reflexive occurring with reflexive verbs is analyzed as \textsf{OBJ-BEN} (indirect object).
-The reason for this is that there will be a direct object in the alternative presentative construction with an expletive \textit{det} subject, such as \textit{Det trekker seg tilbake store styrker} `There are big forces withdrawing', in which \textit{store styrker} occurs as a syntactic object (OBJ); there can only be one \textsf{OBJ}.
+The reason for this is that there will be a direct object in the alternative presentative construction with an expletive \textit{det} subject, such as \textit{Det trekker seg tilbake store styrker} `There are big forces withdrawing', in which \textit{store styrker} occurs as a syntactic object (\textsf{OBJ}); there can only be one \textsf{OBJ}.
 The presentative construction is described as the second alternative in the disjunction \textsf{\{...|...\}} in the \isi{template}.
 The reflexive, like the expletive subject, is analyzed as a non-argument, which appears from the fact that it is placed outside the argument list enclosed by \textsf{$\langle$...$\rangle$} in the value of \textsf{PRED}.
 The features \textsf{PRT-VRB} and \textsf{PRT-FORM} are explained in the discussion of the \isi{template} in (\ref{dyv:ex:mweiness:skrive-template}).
@@ -1200,7 +1200,7 @@ The first equation annotated to \textsf{XP} in (\ref{dyv:ex:mweiness:furule}) sp
 The second equation specifies that the daughter f-structure is also the value of one of a set of alternative attribute paths.
 COMP and XCOMP are the attributes of embedded finite and non-finite clauses.
 The regular expression \textsf{\{COMP | XCOMP\}*} describes all possible strings over the elements \textsf{COMP} and \textsf{XCOMP} (with repetitions), and the final disjunction specifies the last attribute of the string, enabling the \textsf{TOPIC} to be identical with an embedded \textsf{SUBJ}, \textsf{OBJ} or \textsf{OBL-TH}.
-We may illustrate with the treebank example in (\ref{dyv:ex:mweiness:fortelleom}) of a prepositional verb \textit{fortelle om} `tell about' in a sentence where the OBL-TH, i.e., the selected prepositional \isi{phrase}, has been topicalized.
+We may illustrate with the treebank example in (\ref{dyv:ex:mweiness:fortelleom}) of a prepositional verb \textit{fortelle om} `tell about' in a sentence where the \textsf{OBL-TH}, i.e., the selected prepositional \isi{phrase}, has been topicalized.
 
 \ea\label{dyv:ex:mweiness:fortelleom}
 \gll \textbf{Om} dette skal jeg \textbf{fortelle} nå.\\
@@ -1233,7 +1233,7 @@ Thus the attribute string from the set specified by the functional uncertainty e
 \subsection{Passive alternations}\label{dyv:sec:mweiness:vpidiomsyntax}
 
 Passive is another source of verbal MWE modifications, changing the syntactic functions of selected constituents.
-In \isi{LFG} passive is analyzed as a lexical phenomenon modifying the value of PRED in a \isi{lexical entry} for a verb, changing the mapping between argument positions and syntactic functions.
+In \isi{LFG} passive is analyzed as a lexical phenomenon modifying the value of \textsf{PRED} in a \isi{lexical entry} for a verb, changing the mapping between argument positions and syntactic functions.
 In NorGram this is handled by passive templates invoked by the verb templates.
 The full version of the VP idiom \isi{template} in (\ref{dyv:ex:mweiness:holde-template}) for \isi{idioms} like \textit{holde øye med} `keep an eye on' is shown in (\ref{dyv:ex:mweiness:holde-template-full}), where different types of passive alternations are handled.
 
